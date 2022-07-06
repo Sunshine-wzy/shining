@@ -1,19 +1,6 @@
-# Building
+# SunSTCore
+* A Bukkit core lib plugin made by SunShine Technology.
+* [MCBBS发布帖](https://www.mcbbs.net/thread-1170416-1-1.html)
 
-* [Gradle](https://gradle.org/) - Dependency Management
-
-The GradleWrapper in included in this project.
-
-**Windows:**
-
-```
-gradlew.bat clean build
-```
-
-**macOS/Linux:**
-
-```
-./gradlew clean build
-```
-
-Build artifacts should be found in `./build/libs` folder.
+# [模块 - modules](https://github.com/Sunshine-wzy/SunSTCore/tree/master/src/main/kotlin/io/github/sunshinewzy/sunstcore/modules)
+SunSTCore的核心功能
