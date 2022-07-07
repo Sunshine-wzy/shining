@@ -172,6 +172,21 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             return this
         }
 
+        fun ItemStack.addLore(vararg lore: String): ItemStack {
+            addLore(lore.toList())
+            return this
+        }
+
+        fun ItemStack.addLore(lore: List<String>): ItemStack {
+            (if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type))?.let { meta ->
+                val existLore = meta.lore ?: mutableListOf()
+                existLore += lore.map { it.replace("&", "§") }
+                meta.lore = existLore
+                itemMeta = meta
+            }
+            return this
+        }
+
         fun ItemStack.setNameAndLore(name: String, vararg lore: String): ItemStack {
             setNameAndLore(name, lore.toList())
             return this
@@ -313,6 +328,8 @@ open class SItem(item: ItemStack) : ItemStack(item) {
         }
         
         fun ItemStack.getSMeta(): ItemMeta = if(hasItemMeta()) itemMeta!! else Bukkit.getItemFactory().getItemMeta(type)!!
+        
+        fun ItemStack.getLore(): MutableList<String> = getSMeta().lore ?: mutableListOf()
         
         fun ItemStack.addUseCount(player: Player, maxCnt: Int): Boolean {
             var itemGive: ItemStack? = null
