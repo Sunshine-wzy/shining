@@ -1,17 +1,17 @@
 package io.github.sunshinewzy.sunstcore.modules.guide.element
 
+import io.github.sunshinewzy.sunstcore.modules.guide.ElementCondition
 import io.github.sunshinewzy.sunstcore.modules.guide.GuideElement
 import io.github.sunshinewzy.sunstcore.modules.guide.SGuide
 import io.github.sunshinewzy.sunstcore.objects.item.GuideIcon
 import io.github.sunshinewzy.sunstcore.objects.orderWith
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Linked
 import java.util.*
 
-class GuideCategory(name: String, symbol: ItemStack) : GuideElement(name, symbol) {
+class GuideCategory(id: String, symbol: ItemStack) : GuideElement(id, symbol) {
     private val elements = LinkedList<GuideElement>()
     
     private val menuBuilder: Linked<GuideElement>.() -> Unit = {
@@ -22,14 +22,10 @@ class GuideCategory(name: String, symbol: ItemStack) : GuideElement(name, symbol
 
         val lockedElements = LinkedList<GuideElement>()
         onGenerate { player, element, index, slot ->
-            val item = element.getConditionSymbol(player)
-            if(item.type == Material.BARRIER) {
-                item.itemMeta?.lore?.firstOrNull()?.let {
-                    if(LOCKED_TEXT == it)
-                        lockedElements += element
-                }
-            }
-            item
+            val condition = element.getCondition(player)
+            if(condition == ElementCondition.LOCKED_DEPENDENCY || condition == ElementCondition.LOCKED_LOCK)
+                lockedElements += element
+            element.getSymbolByCondition(player, condition)
         }
 
         onBuild { inv ->
@@ -55,11 +51,24 @@ class GuideCategory(name: String, symbol: ItemStack) : GuideElement(name, symbol
 
             element.open(event.clicker, element)
         }
+        
+        set(2 orderWith 1, GuideIcon.BACK.item) {
+            if(clicker.isSneaking) {
+                SGuide.open(clicker)
+            } else {
+                back(clicker)
+            }
+        }
     }
     
     
     override fun openAction(player: Player) {
         player.openMenu(SGuide.TITLE, menuBuilder)
+    }
+    
+    
+    fun registerElement(element: GuideElement) {
+        elements += element
     }
     
 }

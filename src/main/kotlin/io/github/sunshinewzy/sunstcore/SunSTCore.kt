@@ -5,15 +5,16 @@ import io.github.sunshinewzy.sunstcore.interfaces.SPlugin
 import io.github.sunshinewzy.sunstcore.listeners.SunSTSubscriber
 import io.github.sunshinewzy.sunstcore.modules.data.DataManager
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SLocationData
+import io.github.sunshinewzy.sunstcore.modules.guide.GuideElement
 import io.github.sunshinewzy.sunstcore.modules.guide.SGuide
 import io.github.sunshinewzy.sunstcore.modules.guide.element.GuideCategory
+import io.github.sunshinewzy.sunstcore.modules.guide.element.GuideItem
+import io.github.sunshinewzy.sunstcore.modules.guide.lock.LockExperience
 import io.github.sunshinewzy.sunstcore.modules.machine.*
 import io.github.sunshinewzy.sunstcore.modules.machine.custom.SMachineRecipe
 import io.github.sunshinewzy.sunstcore.modules.machine.custom.SMachineRecipes
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.objects.SBlock
-import io.github.sunshinewzy.sunstcore.objects.SCraftRecipe
-import io.github.sunshinewzy.sunstcore.objects.SHashMap
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTItem
 import io.github.sunshinewzy.sunstcore.objects.machine.SunSTMachineManager
@@ -21,16 +22,11 @@ import io.github.sunshinewzy.sunstcore.utils.SReflect
 import io.github.sunshinewzy.sunstcore.utils.SunSTTestApi
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
 import org.bukkit.Bukkit
-import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.configuration.serialization.ConfigurationSerialization
-import org.bukkit.entity.Player
 import org.bukkit.event.block.Action
 import org.bukkit.event.inventory.InventoryPickupItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.PluginManager
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Platform
@@ -38,10 +34,7 @@ import taboolib.common.platform.Plugin
 import taboolib.common.platform.SkipTo
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.pluginVersion
-import taboolib.common.platform.function.submit
 import taboolib.module.metrics.Metrics
-import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
 import taboolib.platform.BukkitPlugin
 
 
@@ -49,9 +42,12 @@ import taboolib.platform.BukkitPlugin
 object SunSTCore : Plugin(), SPlugin {
     const val name = "SunSTCore"
     const val colorName = "§eSunSTCore"
+    
+    
     val plugin: BukkitPlugin by lazy { BukkitPlugin.getInstance() }
     val pluginManager: PluginManager by lazy { Bukkit.getPluginManager() }
 
+    
     override fun onEnable() {
         
         registerSerialization()
@@ -108,17 +104,32 @@ object SunSTCore : Plugin(), SPlugin {
     
     @SunSTTestApi
     private fun test() {
-        SGuide.registerElement(GuideCategory("ElectricalAge", SItem(Material.NETHERITE_INGOT, "&a电器时代")), 12)
-        SGuide.registerElement(GuideCategory("StoneAge", SItem(Material.STONE, "&e石器时代")))
-        SGuide.registerElement(GuideCategory("InformationAge", SItem(Material.DIAMOND, "&b信息时代")), 13)
-        SGuide.registerElement(GuideCategory("SteamAge", SItem(Material.IRON_INGOT, "&e蒸汽时代")), 11)
+        val stoneCategory = GuideCategory("STONE_AGE", SItem(Material.STONE, "&f石器时代", "&d一切的起源"))
+        val steamCategory = GuideCategory("STEAM_AGE", SItem(Material.IRON_INGOT, "&e蒸汽时代", "&d第一次工业革命"))
+        val electricalCategory = GuideCategory("ELECTRICAL_AGE", SItem(Material.NETHERITE_INGOT, "&a电器时代", "&d第二次工业革命"))
+        val informationCateGory = GuideCategory("INFORMATION_AGE", SItem(Material.DIAMOND, "&b信息时代", "&d技术爆炸"))
+        
+        steamCategory.registerDependency(stoneCategory)
+        electricalCategory.registerDependency(steamCategory)
+        informationCateGory.registerDependency(electricalCategory)
+        
+        val newStoneCategory = GuideCategory("NEW_STONE_AGE", SItem(Material.COBBLESTONE, "&a新石器时代"))
+        val stickItem = GuideItem("STICK", SItem(Material.STICK, "&6工具的基石"))
+        stickItem.registerLock(LockExperience(5))
+        newStoneCategory.registerElement(stickItem)
+        stoneCategory.registerElement(newStoneCategory)
+        
+        SGuide.registerElement(electricalCategory, 12)
+        SGuide.registerElement(stoneCategory)
+        SGuide.registerElement(informationCateGory, 13)
+        SGuide.registerElement(steamCategory, 11)
         
         
         subscribeEvent<PlayerInteractEvent> { 
             if(player.inventory.itemInMainHand.type != Material.DIAMOND) return@subscribeEvent
             
             if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-                SGuide.open(player)
+                SGuide.openLastElement(player)
             }
         }
         

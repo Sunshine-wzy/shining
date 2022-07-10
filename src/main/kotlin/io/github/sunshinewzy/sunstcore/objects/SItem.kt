@@ -327,9 +327,18 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             return this
         }
         
-        fun ItemStack.getSMeta(): ItemMeta = if(hasItemMeta()) itemMeta!! else Bukkit.getItemFactory().getItemMeta(type)!!
+        fun ItemStack.getMeta(): ItemMeta = if(hasItemMeta()) itemMeta!! else Bukkit.getItemFactory().getItemMeta(type)!!
         
-        fun ItemStack.getLore(): MutableList<String> = getSMeta().lore ?: mutableListOf()
+        fun ItemStack.getLore(): MutableList<String> = getMeta().lore ?: mutableListOf()
+        
+        fun ItemStack.getDisplayName(default: String): String =
+            itemMeta?.run { 
+                if(hasDisplayName()) {
+                    val theName = displayName
+                    if(theName != "") theName
+                    else null
+                } else null
+            } ?: default
         
         fun ItemStack.addUseCount(player: Player, maxCnt: Int): Boolean {
             var itemGive: ItemStack? = null
@@ -340,7 +349,7 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             }
             var flag = false
             
-            val meta = getSMeta()
+            val meta = getMeta()
             val lore = meta.lore ?: ArrayList<String>()
             
             if(lore.isNotEmpty() && lore.last().startsWith("§7||§a=")) {

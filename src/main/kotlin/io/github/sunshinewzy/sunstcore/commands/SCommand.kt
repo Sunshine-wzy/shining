@@ -10,8 +10,6 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import taboolib.common.platform.function.info
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 /**
  * 自带自动补全的指令

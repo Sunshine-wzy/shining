@@ -4,7 +4,7 @@ import io.github.sunshinewzy.sunstcore.exceptions.MachineStructureException
 import io.github.sunshinewzy.sunstcore.exceptions.NoIngredientException
 import io.github.sunshinewzy.sunstcore.objects.SBlock
 import io.github.sunshinewzy.sunstcore.objects.SCoordinate
-import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getSMeta
+import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getMeta
 import io.github.sunshinewzy.sunstcore.utils.addClone
 import io.github.sunshinewzy.sunstcore.utils.setItem
 import org.bukkit.Location
@@ -156,7 +156,7 @@ abstract class SMachineStructure(
                 if(coord == center){
                     sBlock.getItem().clone().apply {
                         addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1)
-                        val meta = getSMeta()
+                        val meta = getMeta()
                         val list = listOf("", "§a用扳手右键敲我以构建多方块结构~")
                         if(meta.hasLore()){
                             meta.lore?.addAll(list)

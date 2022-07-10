@@ -1,7 +1,5 @@
 package io.github.sunshinewzy.sunstcore.utils
 
-import java.util.*
-
 object SManager {
 
     // Object转List
