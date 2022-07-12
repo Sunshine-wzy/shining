@@ -23,6 +23,7 @@ object ChatListener {
                     if(subscriber.action(e)) {
                         shouldRemoveSubscribers += subscriber
                     }
+                    e.isCancelled = true
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                 }

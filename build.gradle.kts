@@ -20,6 +20,7 @@ taboolib {
     install("module-nms-util")
     install("module-ui")
     install("module-ui-receptacle")
+    
     install("platform-bukkit")
     classifier = null
     version = "6.0.9-6"

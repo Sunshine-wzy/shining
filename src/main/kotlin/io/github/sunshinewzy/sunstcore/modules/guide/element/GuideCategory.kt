@@ -5,6 +5,7 @@ import io.github.sunshinewzy.sunstcore.modules.guide.GuideElement
 import io.github.sunshinewzy.sunstcore.modules.guide.SGuide
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.objects.orderWith
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.module.ui.openMenu
@@ -28,11 +29,7 @@ class GuideCategory(id: String, symbol: ItemStack) : GuideElement(id, symbol) {
             element.getSymbolByCondition(player, condition)
         }
 
-        onBuild { inv ->
-            SGuide.edgeOrders.forEach {
-                inv.setItem(it, SunSTIcon.EDGE.item)
-            }
-        }
+        onBuild(onBuild = SGuide.onBuildEdge)
 
         setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
             if(hasPreviousPage) {
@@ -49,11 +46,11 @@ class GuideCategory(id: String, symbol: ItemStack) : GuideElement(id, symbol) {
         onClick { event, element ->
             if(element in lockedElements) return@onClick
 
-            element.open(event.clicker, element)
+            element.open(event.clicker, this@GuideCategory)
         }
         
         set(2 orderWith 1, SunSTIcon.BACK.item) {
-            if(clicker.isSneaking) {
+            if(clickEvent().isShiftClick) {
                 SGuide.open(clicker)
             } else {
                 back(clicker)

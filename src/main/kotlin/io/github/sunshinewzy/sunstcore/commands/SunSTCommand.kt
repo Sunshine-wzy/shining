@@ -7,6 +7,8 @@ import io.github.sunshinewzy.sunstcore.modules.machine.SMachineWrench
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.sunstcore.objects.menu.SunSTMenu
+import io.github.sunshinewzy.sunstcore.utils.ItemEditor
+import io.github.sunshinewzy.sunstcore.utils.createHelper
 import io.github.sunshinewzy.sunstcore.utils.giveItem
 import io.github.sunshinewzy.sunstcore.utils.sendMsg
 import org.bukkit.Material
@@ -14,21 +16,22 @@ import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.command.command
-import taboolib.module.ui.openMenu
 
 object SunSTCommand {
     
     @Awake(LifeCycle.ENABLE)
     fun registerCommands() {
-        command("SunST", aliases = listOf("sst", "sun")) {
+        command("sunst", aliases = listOf("sst", "sun")) {
             literal("item") {
                 execute<Player> { sender, context, argument -> 
                     val item = sender.inventory.itemInMainHand
                     if(item.type != Material.AIR) {
-                        sender.openMenu("物品编辑器", SunSTMenu.itemEditor)
+                        ItemEditor.editItem(item, sender)
                     } else sender.sendMsg(prefixName, "&c手持物品不能为空")
                 }
             }
+            
+            createHelper()
         }
     }
     
@@ -108,7 +111,7 @@ object SunSTCommand {
             .addCommand("item", "手持物品编辑", isOp = true) {
                 empty {
                     val player = getPlayer() ?: return@empty
-                    SunSTMenu.itemEditorOld.openInventory(player)
+                    SunSTMenu.itemEditor.openInventory(player)
                 }
             }
 

@@ -27,6 +27,8 @@ import org.bukkit.material.MaterialData
 import org.bukkit.metadata.MetadataValueAdapter
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.BoundingBox
+import taboolib.common.platform.ProxyCommandSender
+import taboolib.module.chat.colored
 import java.io.File
 import java.util.*
 import kotlin.math.min
@@ -1012,6 +1014,12 @@ fun CommandSender.sendMsg(msg: String) {
 
 fun CommandSender.sendMsg(prefix: String, msg: String) {
     sendMessage("&f[$prefix&f] ".replace('&', '§') + msg.replace('&', '§'))
+}
+
+fun ProxyCommandSender.sendMsg(prefix: String, msg: List<String>) {
+    msg.forEach { 
+        sendMessage("&f[$prefix&f] $it".colored())
+    }
 }
 
 //endregion

@@ -4,8 +4,10 @@ import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.objects.orderWith
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.Inventory
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Linked
+import taboolib.platform.util.isAir
 import java.util.*
 
 object SGuide {
@@ -25,12 +27,7 @@ object SGuide {
             element.getSymbolByCondition(player, condition)
         }
 
-        onBuild { inv ->
-            edgeOrders.forEach { index ->
-                if(inv.getItem(index)?.type != Material.AIR) return@forEach
-                inv.setItem(index, SunSTIcon.EDGE.item)
-            }
-        }
+        onBuild(onBuild = onBuildEdge)
 
         setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
             if(hasPreviousPage) {
@@ -47,7 +44,17 @@ object SGuide {
         onClick { event, element ->
             if(element in lockedElements) return@onClick
             
-            element.open(event.clicker, element)
+            element.open(event.clicker, null)
+        }
+    }
+    
+    val onBuildEdge: (Inventory) -> Unit = { inv ->
+        edgeOrders.forEach { index ->
+            inv.getItem(index)?.let { 
+                if(!it.isAir()) return@forEach
+            }
+            
+            inv.setItem(index, SunSTIcon.EDGE.item)
         }
     }
 
@@ -56,8 +63,6 @@ object SGuide {
     
     
     val edgeOrders = (((1 orderWith 1)..(9 orderWith 1)) + ((1 orderWith 6)..(9 orderWith 6)))
-//    val edgeOrders = (((1 orderWith 1)..(9 orderWith 1)) + ((1 orderWith 6)..(9 orderWith 6))) - (2 orderWith 6) - (8 orderWith 1) - (8 orderWith 6)
-//    val edgeOrders = ((1 orderWith 1)..(9 orderWith 1)) + (1 orderWith 6) + ((3 orderWith 6)..(7 orderWith 6)) + (9 orderWith 6)
     val slotOrders = ((1 orderWith 2)..(9 orderWith 5)).toList()
     val playerLastOpenElementMap = HashMap<UUID, GuideElement>()
     
