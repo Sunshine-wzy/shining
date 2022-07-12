@@ -6,7 +6,7 @@ import io.github.sunshinewzy.sunstcore.objects.*
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setNameAndLore
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SInventoryHolder.Companion.getSHolder
-import io.github.sunshinewzy.sunstcore.objects.item.GuideIcon
+import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.utils.*
 import org.bukkit.Location
 import org.bukkit.Material
@@ -527,7 +527,7 @@ data class SMachineRecipes(
             .setButton(7, 6, SItem(Material.BARRIER, "§c返回并保存"), "BACK") {
                 sMachine.editRecipe(player)
             }
-            .setButton(5, 6, GuideIcon.HOME.item, "HOME") {
+            .setButton(5, 6, SunSTIcon.HOME.item, "HOME") {
                 sMachine.edit(player)
             }
             .setButton(3, 6, SItem(Material.ENDER_PEARL, "§d将此配方类型设为默认", "§a创建配方时将自动采用该种类型搭配"), "DEFAULT") {

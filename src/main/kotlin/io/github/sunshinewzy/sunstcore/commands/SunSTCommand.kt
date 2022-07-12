@@ -1,20 +1,38 @@
 package io.github.sunshinewzy.sunstcore.commands
 
 import io.github.sunshinewzy.sunstcore.SunSTCore.colorName
-import io.github.sunshinewzy.sunstcore.interfaces.Initable
+import io.github.sunshinewzy.sunstcore.SunSTCore.prefixName
 import io.github.sunshinewzy.sunstcore.modules.data.DataManager
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachineWrench
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
-import io.github.sunshinewzy.sunstcore.objects.sunst.SunSTMenu
+import io.github.sunshinewzy.sunstcore.objects.menu.SunSTMenu
 import io.github.sunshinewzy.sunstcore.utils.giveItem
 import io.github.sunshinewzy.sunstcore.utils.sendMsg
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
+import taboolib.common.platform.command.command
+import taboolib.module.ui.openMenu
 
-object SunSTCommand : Initable {
+object SunSTCommand {
     
-    override fun init() {
+    @Awake(LifeCycle.ENABLE)
+    fun registerCommands() {
+        command("SunST", aliases = listOf("sst", "sun")) {
+            literal("item") {
+                execute<Player> { sender, context, argument -> 
+                    val item = sender.inventory.itemInMainHand
+                    if(item.type != Material.AIR) {
+                        sender.openMenu("物品编辑器", SunSTMenu.itemEditor)
+                    } else sender.sendMsg(prefixName, "&c手持物品不能为空")
+                }
+            }
+        }
+    }
+    
+    fun registerSCommands() {
         SCommand("SunST", "sun")
             .addCommand("machine", "多方块机器") {
                 "book" {
@@ -25,7 +43,7 @@ object SunSTCommand : Initable {
                         fun sendTip() {
                             sender.sendMsg("&c请拿着&a扳手&c输入此命令以获得该扳手可构建的机器图鉴！")
                         }
-                        
+
                         if(handItem.type == Material.AIR) {
                             sendTip()
                             return@empty
@@ -35,11 +53,11 @@ object SunSTCommand : Initable {
                             if(handItem.isItemSimilar(wrench)) {
                                 player.giveItem(wrench.illustratedBook)
                                 player.sendMsg(colorName, "&a您已获得 [${wrench.illustratedBook.itemMeta?.displayName}&a]")
-                                
+
                                 return@empty
                             }
                         }
-                        
+
                         sendTip()
                     }
                 }
@@ -48,7 +66,7 @@ object SunSTCommand : Initable {
                     sender.sendMsg(colorName, "&a拿着扳手输入 /sun machine book 即可获得该扳手可构建的机器图鉴！")
                 }
             }
-                
+
             .addCommand("give", "获得一个SunST物品", isOp = true) {
                 SItem.items.keys {
                     empty {
@@ -66,34 +84,34 @@ object SunSTCommand : Initable {
                         }
                     }
                 }
-                
+
                 empty {
                     sender.sendMsg(colorName,"&agive 后加SunST物品名称 (按 TAB 可以自动补全~)")
                 }
             }
-                
+
             .addCommand("reload", "重载配置文件", isOp = true) {
                 empty {
                     DataManager.reloadData()
                     sender.sendMsg(colorName, "&a配置文件重载成功！")
                 }
             }
-        
+
             .addCommand("group", "组", isOp = true) {
-                
-                
-                empty {  
-                    
+
+
+                empty {
+
                 }
             }
-            
+
             .addCommand("item", "手持物品编辑", isOp = true) {
-                empty { 
+                empty {
                     val player = getPlayer() ?: return@empty
-                    SunSTMenu.itemEdit.openInventory(player)
+                    SunSTMenu.itemEditorOld.openInventory(player)
                 }
             }
-            
+
     }
     
 }

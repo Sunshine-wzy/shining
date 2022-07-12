@@ -9,7 +9,7 @@ import io.github.sunshinewzy.sunstcore.modules.machine.SMachine.Companion.hasSMa
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachine.Companion.judgeSMachineStructure
 import io.github.sunshinewzy.sunstcore.objects.*
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SPartProtectInventoryHolder
-import io.github.sunshinewzy.sunstcore.objects.item.GuideIcon
+import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.utils.getPlayer
 import io.github.sunshinewzy.sunstcore.utils.sendMsg
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
@@ -120,8 +120,8 @@ class SMachineWrench(
             }
         }
 
-        menu.setAllTurnPageButton(9, 6, STurnPageType.NEXT_PAGE, GuideIcon.PAGE_NEXT.item)
-        menu.setAllTurnPageButton(1, 6, STurnPageType.PRE_PAGE, GuideIcon.PAGE_PRE.item)
+        menu.setAllTurnPageButton(9, 6, STurnPageType.NEXT_PAGE, SunSTIcon.PAGE_NEXT.item)
+        menu.setAllTurnPageButton(1, 6, STurnPageType.PRE_PAGE, SunSTIcon.PAGE_PRE.item)
     }
 
     fun addMachine(machine: SMachine) {

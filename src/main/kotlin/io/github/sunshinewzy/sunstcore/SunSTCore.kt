@@ -34,6 +34,8 @@ import taboolib.common.platform.Plugin
 import taboolib.common.platform.SkipTo
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.pluginVersion
+import taboolib.module.chat.colored
+import taboolib.module.configuration.Configuration
 import taboolib.module.metrics.Metrics
 import taboolib.platform.BukkitPlugin
 
@@ -46,7 +48,8 @@ object SunSTCore : Plugin(), SPlugin {
     
     val plugin: BukkitPlugin by lazy { BukkitPlugin.getInstance() }
     val pluginManager: PluginManager by lazy { Bukkit.getPluginManager() }
-
+    val prefixName: String by lazy { plugin.config.getString("PrefixName")?.colored() ?: colorName }
+    
     
     override fun onEnable() {
         
@@ -78,7 +81,6 @@ object SunSTCore : Plugin(), SPlugin {
         DataManager.init()
         SunSTItem.init()
         SMachineWrench.init()
-        SunSTCommand.init()
         SLocationData.init()
         SSingleMachine.init()
         SFlatMachine.init()
@@ -133,9 +135,6 @@ object SunSTCore : Plugin(), SPlugin {
             }
         }
         
-        subscribeEvent<InventoryPickupItemEvent> { 
-            info(inventory)
-        }
     }
     
 }

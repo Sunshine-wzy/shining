@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack
 class SCategory(
     private val key: NamespacedKey,
     val displayItem: ItemStack,
-    val tier: Int
+        val tier: Int
 ) : Keyed {
     private lateinit var plugin: SPlugin
     

@@ -3,7 +3,7 @@ package io.github.sunshinewzy.sunstcore.modules.guide.element
 import io.github.sunshinewzy.sunstcore.modules.guide.ElementCondition
 import io.github.sunshinewzy.sunstcore.modules.guide.GuideElement
 import io.github.sunshinewzy.sunstcore.modules.guide.SGuide
-import io.github.sunshinewzy.sunstcore.objects.item.GuideIcon
+import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.objects.orderWith
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -30,20 +30,20 @@ class GuideCategory(id: String, symbol: ItemStack) : GuideElement(id, symbol) {
 
         onBuild { inv ->
             SGuide.edgeOrders.forEach {
-                inv.setItem(it, GuideIcon.EDGE.item)
+                inv.setItem(it, SunSTIcon.EDGE.item)
             }
         }
 
         setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
             if(hasPreviousPage) {
-                GuideIcon.PAGE_PRE_GLASS_PANE.item
-            } else GuideIcon.EDGE.item
+                SunSTIcon.PAGE_PRE_GLASS_PANE.item
+            } else SunSTIcon.EDGE.item
         }
 
         setNextPage(8 orderWith 6) { page, hasNextPage ->
             if(hasNextPage) {
-                GuideIcon.PAGE_NEXT_GLASS_PANE.item
-            } else GuideIcon.EDGE.item
+                SunSTIcon.PAGE_NEXT_GLASS_PANE.item
+            } else SunSTIcon.EDGE.item
         }
 
         onClick { event, element ->
@@ -52,7 +52,7 @@ class GuideCategory(id: String, symbol: ItemStack) : GuideElement(id, symbol) {
             element.open(event.clicker, element)
         }
         
-        set(2 orderWith 1, GuideIcon.BACK.item) {
+        set(2 orderWith 1, SunSTIcon.BACK.item) {
             if(clicker.isSneaking) {
                 SGuide.open(clicker)
             } else {

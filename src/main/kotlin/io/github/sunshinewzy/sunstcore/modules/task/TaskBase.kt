@@ -2,7 +2,7 @@ package io.github.sunshinewzy.sunstcore.modules.task
 
 import io.github.sunshinewzy.sunstcore.interfaces.Itemable
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setLore
-import io.github.sunshinewzy.sunstcore.objects.item.GuideIcon
+import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.objects.orderWith
 import io.github.sunshinewzy.sunstcore.utils.*
 import org.bukkit.Bukkit
@@ -34,7 +34,7 @@ abstract class TaskBase(
     var openSound = taskStage.openSound
     var volume = taskStage.volume
     var pitch = taskStage.pitch
-    var submitItem = GuideIcon.SUBMIT.item.clone().setLore(*descriptionLore)
+    var submitItem = SunSTIcon.SUBMIT.item.clone().setLore(*descriptionLore)
     var isCreateEdge = true
     var edgeItem = taskStage.edgeItem
     
@@ -136,7 +136,7 @@ abstract class TaskBase(
     
     fun setBackItemOrder(x: Int, y: Int) {
         backItemOrder = x orderWith y
-        setSlotItem(backItemOrder, GuideIcon.BACK)
+        setSlotItem(backItemOrder, SunSTIcon.BACK)
     }
     
     

@@ -8,7 +8,7 @@ import io.github.sunshinewzy.sunstcore.objects.STurnPageType.NEXT_PAGE
 import io.github.sunshinewzy.sunstcore.objects.STurnPageType.PRE_PAGE
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SInventoryHolder
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SProtectInventoryHolder
-import io.github.sunshinewzy.sunstcore.objects.item.GuideIcon
+import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.utils.actionList
 import io.github.sunshinewzy.sunstcore.utils.asPlayer
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
@@ -242,8 +242,8 @@ class SMenu(
         setAllTurnPageButton(x orderWith y, buttonType, item)
     
     fun setDefaultTurnPageButton(): SMenu {
-        setAllTurnPageButton(9, size, NEXT_PAGE, GuideIcon.PAGE_NEXT.item)
-        setAllTurnPageButton(1, size, PRE_PAGE, GuideIcon.PAGE_PRE.item)
+        setAllTurnPageButton(9, size, NEXT_PAGE, SunSTIcon.PAGE_NEXT.item)
+        setAllTurnPageButton(1, size, PRE_PAGE, SunSTIcon.PAGE_PRE.item)
         return this
     }
 

@@ -24,7 +24,6 @@ abstract class GuideElement(
     
     
     private val dependencies: MutableList<GuideElement> = LinkedList()
-    private val successors: MutableList<GuideElement> = LinkedList()
     private val previousElementMap = HashMap<UUID, GuideElement>()
     private val locks = LinkedList<ElementLock>()
     

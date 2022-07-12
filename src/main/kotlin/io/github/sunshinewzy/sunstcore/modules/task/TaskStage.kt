@@ -4,7 +4,7 @@ import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setName
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setNameAndLore
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SProtectInventoryHolder
-import io.github.sunshinewzy.sunstcore.objects.item.GuideIcon
+import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.objects.orderWith
 import io.github.sunshinewzy.sunstcore.utils.*
 import org.bukkit.Bukkit
@@ -67,7 +67,7 @@ class TaskStage(
     override fun getTaskInv(player: Player): Inventory {
         val inv = Bukkit.createInventory(holder, invSize * 9, stageName)
         inv.createEdge(invSize, edgeItem)
-        inv.setItem(5, 5, GuideIcon.HOME.item)
+        inv.setItem(5, 5, SunSTIcon.HOME.item)
         
         taskMap.values.forEach { 
             val pre = it.predecessor
