@@ -5,6 +5,7 @@ import io.github.sunshinewzy.sunstcore.listeners.ChatListener
 import io.github.sunshinewzy.sunstcore.modules.guide.SGuide
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getLore
+import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getMeta
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setName
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.objects.orderWith
@@ -44,16 +45,15 @@ object ItemEditor {
             }
 
             onClick('a') { event ->
-                ChatListener.registerPlayerChatSubscriber(PlayerChatSubscriber(player) {
-                    if(message == ".") {
-                        player.sendMsg(SunSTCore.prefixName, "&6物品名称编辑已取消")
-                    } else {
-                        item.setName(message)
-                        player.sendMsg(SunSTCore.prefixName, "&a物品名称编辑成功")
-                    }
+                PlayerChatSubscriber(player, "物品名称编辑") {
+                    item.setName(message)
+                    player.sendMsg(SunSTCore.prefixName, "&a物品名称编辑成功")
 
+                    sync {
+                        editItem(item, player)
+                    }
                     true
-                })
+                }.register()
 
                 player.sendMessage("§f[${SunSTCore.prefixName}§f] 请输入新的物品名称 (可用'§a&§f'表示颜色, 输入'§c.§f'以取消)")
                 player.closeInventory()
@@ -99,66 +99,95 @@ object ItemEditor {
             onClick onClickLore@{ event, element ->
                 when(status) {
                     Status.EDIT -> {
-                        ChatListener.registerPlayerChatSubscriber(PlayerChatSubscriber(player) {
-                            val message = message
-                            if(message == ".") {
-                                player.sendMsg(SunSTCore.prefixName, "&6物品Lore编辑已取消")
-                            } else {
-                                event.currentItem?.itemMeta?.displayName?.let { displayName ->
-                                    item.itemMeta?.let { meta ->
-                                        meta.lore?.let { lore ->
-                                            val index = displayName.substring(2).toInt()
-                                            lore[index] = message.colored()
-                                            meta.lore = lore
-                                            item.itemMeta = meta
-                                            player.sendMsg(SunSTCore.prefixName, "&a物品Lore编辑成功")
+                        event.currentItem?.itemMeta?.displayName?.let { displayName ->
+                            PlayerChatSubscriber(player, "物品Lore编辑") {
+                                item.itemMeta?.let { meta ->
+                                    meta.lore?.let { lore ->
+                                        val index = displayName.substring(2).toInt()
+                                        lore[index] = message.colored()
+                                        meta.lore = lore
+                                        item.itemMeta = meta
+                                        player.sendMsg(SunSTCore.prefixName, "&a物品Lore编辑成功")
 
-                                            sync {
-                                                editLore(item, player)
-                                            }
+                                        sync {
+                                            editLore(item, player)
                                         }
                                     }
                                 }
-                            }
 
-                            true
-                        })
+                                true
+                            }.register()
 
-                        player.sendMessage("§f[${SunSTCore.prefixName}§f] 请输入新的Lore (可用'§a&§f'表示颜色, 输入'§c.§f'以取消)")
-                        player.closeInventory()
+                            player.sendMessage("§f[${SunSTCore.prefixName}§f] 请输入新的Lore (可用'§a&§f'表示颜色, 输入'§c.§f'以取消)")
+                            player.closeInventory()
+                        }
                     }
                     
                     Status.ADD -> {
-                        ChatListener.registerPlayerChatSubscriber(PlayerChatSubscriber(player) {
-                            val message = message
-                            if(message == ".") {
-                                player.sendMsg(SunSTCore.prefixName, "&6物品Lore编辑已取消")
-                            } else {
-                                event.currentItem?.itemMeta?.displayName?.let { displayName ->
-                                    item.itemMeta?.let { meta ->
-                                        meta.lore?.let { lore ->
-                                            val index = displayName.substring(2).toInt()
-                                            lore[index] = message.colored()
-                                            meta.lore = lore
-                                            item.itemMeta = meta
-                                            player.sendMsg(SunSTCore.prefixName, "&a物品Lore编辑成功")
+                        event.currentItem?.itemMeta?.displayName?.let { displayName ->
+                            PlayerChatSubscriber(player, "添加物品Lore") {
+                                item.itemMeta?.let { meta ->
+                                    meta.lore?.let { lore ->
+                                        val index = displayName.substring(2).toInt()
+                                        lore.add(index, message.colored())
+                                        meta.lore = lore
+                                        item.itemMeta = meta
+                                        player.sendMsg(SunSTCore.prefixName, "&a物品Lore添加成功")
 
-                                            sync {
-                                                editLore(item, player)
-                                            }
+                                        sync {
+                                            editLore(item, player)
                                         }
                                     }
                                 }
-                            }
 
-                            true
-                        })
+                                true
+                            }.register()
 
-                        player.playSound(player.location, Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 0.8f)
+                            player.sendMessage("§f[${SunSTCore.prefixName}§f] 请输入要添加的Lore (可用'§a&§f'表示颜色, 输入'§c.§f'以取消)")
+                            player.closeInventory()
+                        }
                     }
                     
                     Status.REMOVE -> {
-                        
+                        event.currentItem?.itemMeta?.displayName?.let { displayName ->
+                            item.itemMeta?.let { meta ->
+                                meta.lore?.let { lore ->
+                                    val index = displayName.substring(2).toInt()
+                                    lore.removeAt(index)
+                                    meta.lore = lore
+                                    item.itemMeta = meta
+                                    player.sendMsg(SunSTCore.prefixName, "&a物品Lore删除成功")
+                                    player.closeInventory()
+
+                                    editLore(item, player)
+                                }
+                            }
+                        }
+                    } 
+                }
+            }
+            
+            onClick { event ->
+                if(status == Status.ADD) {
+                    val currentItem = event.currentItem
+                    if(currentItem == null || currentItem.type == Material.AIR) {
+                        PlayerChatSubscriber(player, "添加物品Lore") {
+                            val meta = item.getMeta()
+                            val lore = meta.lore ?: mutableListOf()
+                            lore += message.colored()
+                            meta.lore = lore
+                            item.itemMeta = meta
+                            player.sendMsg(SunSTCore.prefixName, "&a物品Lore添加成功")
+
+                            sync {
+                                editLore(item, player)
+                            }
+                            
+                            true
+                        }.register()
+
+                        player.sendMessage("§f[${SunSTCore.prefixName}§f] 请输入要添加的Lore (可用'§a&§f'表示颜色, 输入'§c.§f'以取消)")
+                        player.closeInventory()
                     }
                 }
             }
@@ -172,7 +201,7 @@ object ItemEditor {
                     if(status == Status.REMOVE) {
                         status = Status.EDIT
                         currentItem = SunSTIcon.REMOVE_MODE.item
-                    } else {
+                    } else if(status == Status.EDIT) {
                         status = Status.REMOVE
                         currentItem = SunSTIcon.REMOVE_MODE_SHINY.item
                     }
@@ -185,10 +214,10 @@ object ItemEditor {
                 currentItem?.let {
                     if(status == Status.ADD) {
                         status = Status.EDIT
-                        currentItem = SunSTIcon.REMOVE_MODE.item
-                    } else {
+                        currentItem = SunSTIcon.ADD_MODE.item
+                    } else if(status == Status.EDIT) {
                         status = Status.ADD
-                        currentItem = SunSTIcon.REMOVE_MODE_SHINY.item
+                        currentItem = SunSTIcon.ADD_MODE_SHINY.item
                     }
 
                     player.updateInventory()

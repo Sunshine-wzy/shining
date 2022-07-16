@@ -20,10 +20,10 @@ enum class SunSTIcon(val item: ItemStack) : Itemable {
     PAGE_PRE_GLASS_PANE(SItem(Material.LIME_STAINED_GLASS_PANE, "&e⇦ &a上一页")),
     RENAME(SItem(Material.NAME_TAG, "&e重命名")),
     EDIT_LORE(SItem(Material.EMERALD, "&a编辑Lore")),
-    REMOVE_MODE(SItem(Material.BARRIER, "&c删除模式", "", "&a> 点击开启/关闭")),
-    REMOVE_MODE_SHINY(buildItem(REMOVE_MODE.item.clone()) { shiny() }),
-    ADD_MODE(SItem(Material.SLIME_BALL, "&c增添模式", "", "&a> 点击开启/关闭")),
-    ADD_MODE_SHINY(buildItem(ADD_MODE.item.clone()) { shiny() }),
+    REMOVE_MODE(SItem(Material.BARRIER, "&c删除模式", "&7已关闭", "", "&a> 点击开启")),
+    REMOVE_MODE_SHINY(buildItem(SItem(Material.BARRIER, "&c删除模式", "&7已开启", "", "&a> 点击关闭")) { shiny() }),
+    ADD_MODE(SItem(Material.SLIME_BALL, "&e增添模式", "&7已关闭", "", "&a> 点击开启")),
+    ADD_MODE_SHINY(buildItem(SItem(Material.SLIME_BALL, "&e增添模式", "&7已开启", "", "&a> 点击关闭")) { shiny() }),
     
     ;
 

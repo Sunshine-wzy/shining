@@ -13,40 +13,6 @@ import java.util.*
 object SGuide {
     private val elementMap = TreeMap<Int, MutableList<GuideElement>>()
     
-    private val menuBuilder: Linked<GuideElement>.() -> Unit = {
-        rows(6)
-        slots(slotOrders)
-        
-        elements { getElements() }
-
-        val lockedElements = LinkedList<GuideElement>()
-        onGenerate { player, element, index, slot ->
-            val condition = element.getCondition(player)
-            if(condition == ElementCondition.LOCKED_DEPENDENCY || condition == ElementCondition.LOCKED_LOCK)
-                lockedElements += element
-            element.getSymbolByCondition(player, condition)
-        }
-
-        onBuild(onBuild = onBuildEdge)
-
-        setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
-            if(hasPreviousPage) {
-                SunSTIcon.PAGE_PRE_GLASS_PANE.item
-            } else SunSTIcon.EDGE.item
-        }
-
-        setNextPage(8 orderWith 6) { page, hasNextPage ->
-            if(hasNextPage) {
-                SunSTIcon.PAGE_NEXT_GLASS_PANE.item
-            } else SunSTIcon.EDGE.item
-        }
-
-        onClick { event, element ->
-            if(element in lockedElements) return@onClick
-            
-            element.open(event.clicker, null)
-        }
-    }
     
     val onBuildEdge: (Inventory) -> Unit = { inv ->
         edgeOrders.forEach { index ->
@@ -70,7 +36,40 @@ object SGuide {
     fun open(player: Player) {
         playerLastOpenElementMap -= player.uniqueId
         
-        player.openMenu(TITLE, menuBuilder)
+        player.openMenu<Linked<GuideElement>>(TITLE) {
+            rows(6)
+            slots(slotOrders)
+
+            elements { getElements() }
+
+            val lockedElements = LinkedList<GuideElement>()
+            onGenerate { player, element, index, slot ->
+                val condition = element.getCondition(player)
+                if(condition == ElementCondition.LOCKED_DEPENDENCY || condition == ElementCondition.LOCKED_LOCK)
+                    lockedElements += element
+                element.getSymbolByCondition(player, condition)
+            }
+
+            onBuild(onBuild = onBuildEdge)
+
+            setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
+                if(hasPreviousPage) {
+                    SunSTIcon.PAGE_PRE_GLASS_PANE.item
+                } else SunSTIcon.EDGE.item
+            }
+
+            setNextPage(8 orderWith 6) { page, hasNextPage ->
+                if(hasNextPage) {
+                    SunSTIcon.PAGE_NEXT_GLASS_PANE.item
+                } else SunSTIcon.EDGE.item
+            }
+
+            onClick { event, element ->
+                if(element in lockedElements) return@onClick
+
+                element.open(event.clicker, null)
+            }
+        }
     }
     
     fun openLastElement(player: Player) {
