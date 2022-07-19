@@ -74,7 +74,7 @@ object SGuide {
     
     fun openLastElement(player: Player) {
         playerLastOpenElementMap[player.uniqueId]?.let {
-            it.open(player, null)
+            it.open(player)
             return
         }
         

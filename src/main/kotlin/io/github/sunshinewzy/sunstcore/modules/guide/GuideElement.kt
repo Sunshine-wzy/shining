@@ -1,6 +1,8 @@
 package io.github.sunshinewzy.sunstcore.modules.guide
 
+import io.github.sunshinewzy.sunstcore.interfaces.Updatable
 import io.github.sunshinewzy.sunstcore.modules.guide.ElementCondition.*
+import io.github.sunshinewzy.sunstcore.modules.guide.data.ElementPlayerData
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getDisplayName
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getLore
@@ -10,6 +12,8 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*
+import kotlin.collections.HashMap
+import kotlin.reflect.KProperty
 
 abstract class GuideElement(
     id: String,
@@ -24,13 +28,14 @@ abstract class GuideElement(
     
     
     private val dependencies: MutableList<GuideElement> = LinkedList()
-    private val previousElementMap = HashMap<UUID, GuideElement>()
     private val locks = LinkedList<ElementLock>()
     
-    
-    val completedPlayers = HashSet<UUID>()
-    
-    val completedSymbol: ItemStack by lazy {
+    private val previousElementMap = HashMap<UUID, GuideElement>()
+    private val playerDataMap = HashMap<UUID, ElementPlayerData>()
+    private val symbolHandlers = arrayListOf<Updatable>()
+    private val lockLockedItemDelegate = LockLockedItemDelegate()
+
+    private val completedSymbol: ItemStack by SymbolItemDelegate {
         val symbolItem = symbol.clone()
         val loreList = LinkedList<String>()
         loreList += COMPLETE_TEXT
@@ -38,23 +43,28 @@ abstract class GuideElement(
         loreList += symbolItem.getLore()
         symbolItem.setLore(loreList)
     }
-    val lockedSymbol: ItemStack by lazy {
+    private val lockedSymbol: ItemStack by SymbolItemDelegate {
         SItem(
             Material.BARRIER,
             symbol.getMeta().displayName,
             "&7$id",
             LOCKED_TEXT,
-            "",
-            "&a> 解锁条件",
             ""
         )
     }
-    
-    
-    fun open(player: Player, previous: GuideElement?) {
-        if(previous != null)
-            previousElementMap[player.uniqueId] = previous
+    private val dependencyLockedSymbol: ItemStack by SymbolItemDelegate {
+        val symbolItem = lockedSymbol.clone()
         
+        symbolItem
+    }
+    private val lockLockedSymbol: ItemStack by lockLockedItemDelegate
+    
+    
+    fun open(player: Player, previousElement: GuideElement? = null) {
+        if(previousElement != null)
+            previousElementMap[player.uniqueId] = previousElement
+        
+        SGuide.playerLastOpenElementMap[player.uniqueId] = this
         openAction(player)
     }
     
@@ -68,8 +78,26 @@ abstract class GuideElement(
         
         SGuide.open(player)
     }
+    
+    fun unlock(player: Player): Boolean {
+        for(lock in locks) {
+            if(!lock.check(player)) {
+                return false
+            }
+        }
+        
+        locks.forEach { 
+            if(it.isConsume) {
+                it.consume(player)
+            }
+        }
+        
+        getPlayerData(player).isUnlocked = true
+        return true
+    }
 
-    fun isPlayerCompleted(player: Player): Boolean = completedPlayers.contains(player.uniqueId)
+    fun isPlayerCompleted(player: Player): Boolean =
+        playerDataMap[player.uniqueId]?.isComplete ?: false
     
     fun isPlayerDependencyUnlocked(player: Player): Boolean {
         for(dependency in dependencies) {
@@ -81,21 +109,19 @@ abstract class GuideElement(
         return true
     }
     
-    fun isPlayerLockUnlocked(player: Player): Boolean {
-        for (lock in locks) {
-            if(!lock.check(player))
-                return false
-        }
-        
-        return true
-    }
+    fun isPlayerUnlocked(player: Player): Boolean =
+        playerDataMap[player.uniqueId]?.isUnlocked ?: false
+
+    fun hasLock(): Boolean = locks.isNotEmpty()
     
     fun getCondition(player: Player): ElementCondition =
         if(isPlayerCompleted(player)) {
             COMPLETE
+        } else if(isPlayerUnlocked(player)) {
+            UNLOCKED
         } else if(!isPlayerDependencyUnlocked(player)) {
             LOCKED_DEPENDENCY
-        } else if(!isPlayerLockUnlocked(player)) {
+        } else if(hasLock()) {
             LOCKED_LOCK
         } else {
             UNLOCKED
@@ -130,11 +156,7 @@ abstract class GuideElement(
                 val meta = theSymbol.getMeta()
                 
                 val lore = meta.lore ?: mutableListOf()
-                locks.forEach { 
-                    if(!it.check(player)) {
-                        lore += "§7需要 ${it.description}"
-                    }
-                }
+                
                 meta.lore = lore
                 
                 theSymbol.itemMeta = meta
@@ -142,6 +164,13 @@ abstract class GuideElement(
             }
         }
     
+    fun getPlayerData(uuid: UUID): ElementPlayerData =
+        playerDataMap[uuid] ?: ElementPlayerData().also { 
+            playerDataMap[uuid] = it
+        }
+    
+    fun getPlayerData(player: Player): ElementPlayerData =
+        getPlayerData(player.uniqueId)
     
     fun registerDependency(element: GuideElement) {
         dependencies += element
@@ -149,6 +178,7 @@ abstract class GuideElement(
     
     fun registerLock(lock: ElementLock) {
         locks += lock
+        lockLockedItemDelegate.isLockChanged = true
     }
     
     
@@ -157,4 +187,52 @@ abstract class GuideElement(
         const val COMPLETE_TEXT = "&a&l已完成"
     }
     
+    
+    inner class SymbolItemDelegate(val itemBuilder: () -> ItemStack) : Updatable {
+        var symbolItem: ItemStack = itemBuilder()
+        
+        init {
+            symbolHandlers += this
+        }
+        
+        operator fun getValue(ref: Any?, property: KProperty<*>): ItemStack = symbolItem
+        
+        override fun update() {
+            symbolItem = itemBuilder()
+        }
+        
+    }
+    
+    
+    inner class LockLockedItemDelegate {
+        var isLockChanged = false
+        var symbolItem: ItemStack? = null
+
+        operator fun getValue(ref: Any?, property: KProperty<*>): ItemStack =
+            if(isLockChanged) {
+                isLockChanged = false
+                updateSymbolItem()
+            } else {
+                symbolItem ?: updateSymbolItem()
+            }
+        
+        fun updateSymbolItem(): ItemStack {
+            val theItem = lockedSymbol.clone()
+            val lore = theItem.getLore()
+            lore += "&a> 点击解锁"
+            lore += ""
+
+            locks.forEach {
+                lore += if(it.isConsume) {
+                    "&7需要消耗 &b${it.description}"
+                } else {
+                    "&7需要 &b${it.description}"
+                }
+            }
+            
+            theItem.setLore(lore)
+            symbolItem = theItem
+            return theItem
+        }
+    }
 }

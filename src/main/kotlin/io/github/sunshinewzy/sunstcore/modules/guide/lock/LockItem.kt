@@ -9,7 +9,7 @@ class LockItem : ElementLock("") {
         return false
     }
 
-    override fun execute(player: Player): Boolean {
-        return false
+    override fun consume(player: Player) {
+        
     }
 }

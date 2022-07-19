@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.sunstcore
 
 import io.github.sunshinewzy.sunstcore.commands.SunSTCommand
+import io.github.sunshinewzy.sunstcore.enums.SMaterial
 import io.github.sunshinewzy.sunstcore.interfaces.SPlugin
 import io.github.sunshinewzy.sunstcore.listeners.SunSTSubscriber
 import io.github.sunshinewzy.sunstcore.modules.data.DataManager
@@ -115,11 +116,19 @@ object SunSTCore : Plugin(), SPlugin {
         electricalCategory.registerDependency(steamCategory)
         informationCateGory.registerDependency(electricalCategory)
         
-        val newStoneCategory = GuideCategory("NEW_STONE_AGE", SItem(Material.COBBLESTONE, "&a新石器时代"))
+        val lockExperience = LockExperience(5)
+        
+        val newStoneCategory = GuideCategory("NEW_STONE_AGE", SItem(Material.STONE_BRICKS, "&a新石器时代"))
         val stickItem = GuideItem("STICK", SItem(Material.STICK, "&6工具的基石"))
-        stickItem.registerLock(LockExperience(5))
         newStoneCategory.registerElement(stickItem)
         stoneCategory.registerElement(newStoneCategory)
+        
+        val oldStoneCategory = GuideCategory("OLD_STONE_AGE", SItem(Material.COBBLESTONE, "&7旧石器时代"))
+        stoneCategory.registerElement(oldStoneCategory)
+        
+        stickItem.registerLock(lockExperience)
+        newStoneCategory.registerLock(lockExperience)
+        oldStoneCategory.registerLock(LockExperience(10, false))
         
         SGuide.registerElement(electricalCategory, 12)
         SGuide.registerElement(stoneCategory)
@@ -127,11 +136,12 @@ object SunSTCore : Plugin(), SPlugin {
         SGuide.registerElement(steamCategory, 11)
         
         
-        subscribeEvent<PlayerInteractEvent> { 
-            if(player.inventory.itemInMainHand.type != Material.DIAMOND) return@subscribeEvent
-            
-            if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-                SGuide.openLastElement(player)
+        subscribeEvent<PlayerInteractEvent> {
+            val type = player.inventory.itemInMainHand.type
+            if(type == Material.DIAMOND) {
+                if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+                    SGuide.openLastElement(player)
+                }
             }
         }
         

@@ -1,7 +1,9 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     `java-library`
     `maven-publish`
-    id("io.izzel.taboolib") version "1.40"
+    id("io.izzel.taboolib") version "1.41"
     id("org.jetbrains.kotlin.jvm") version "1.5.10"
 }
 
@@ -23,7 +25,7 @@ taboolib {
     
     install("platform-bukkit")
     classifier = null
-    version = "6.0.9-6"
+    version = "6.0.9-33"
     
     description { 
         desc("A core lib made by SunShine Technology.")
@@ -51,14 +53,17 @@ dependencies {
     compileOnly(fileTree("libs"))
 }
 
-tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8"
-}
-
 tasks {
     
 }
 
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "1.8"
+}
 
 configure<JavaPluginExtension> {
     sourceCompatibility = JavaVersion.VERSION_1_8
