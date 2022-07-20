@@ -1,10 +1,14 @@
 package io.github.sunshinewzy.sunstcore.modules.guide
 
+import io.github.sunshinewzy.sunstcore.objects.SCollection
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.objects.orderWith
-import org.bukkit.Material
+import org.bukkit.FireworkEffect
+import org.bukkit.entity.EntityType
+import org.bukkit.entity.Firework
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
+import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Linked
 import taboolib.platform.util.isAir
@@ -21,6 +25,13 @@ object SGuide {
             }
             
             inv.setItem(index, SunSTIcon.EDGE.item)
+        }
+    }
+    val onClickBack: (ClickEvent) -> Unit = {
+        if(it.clickEvent().isShiftClick) {
+            open(it.clicker)
+        } else {
+            openLastElement(it.clicker)
         }
     }
 
@@ -90,6 +101,14 @@ object SGuide {
         val list = LinkedList<GuideElement>()
         list += element
         elementMap[priority] = list
+    }
+    
+    fun fireworkCongratulate(player: Player) {
+        val firework = player.world.spawnEntity(player.location, EntityType.FIREWORK) as Firework
+        val meta = firework.fireworkMeta
+        meta.addEffect(FireworkEffect.builder().with(SCollection.fireworkEffectTypes.random()).withColor(SCollection.colors.random()).build())
+        meta.power = 1
+        firework.fireworkMeta = meta
     }
     
     

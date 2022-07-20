@@ -22,4 +22,15 @@ abstract class ElementLock(
      */
     abstract fun consume(player: Player)
 
+    /**
+     * When the player attempted to unlock the element but failed, it would be run.
+     * 
+     * Override this function only when the [description] is not enough.
+     * 
+     * For example, you can create a menu to help the player understand the requirement he or she needs to meet.
+     */
+    open fun tip(player: Player) {
+        
+    }
+    
 }

@@ -1,12 +1,9 @@
 package io.github.sunshinewzy.sunstcore
 
-import io.github.sunshinewzy.sunstcore.commands.SunSTCommand
-import io.github.sunshinewzy.sunstcore.enums.SMaterial
 import io.github.sunshinewzy.sunstcore.interfaces.SPlugin
 import io.github.sunshinewzy.sunstcore.listeners.SunSTSubscriber
 import io.github.sunshinewzy.sunstcore.modules.data.DataManager
 import io.github.sunshinewzy.sunstcore.modules.data.sunst.SLocationData
-import io.github.sunshinewzy.sunstcore.modules.guide.GuideElement
 import io.github.sunshinewzy.sunstcore.modules.guide.SGuide
 import io.github.sunshinewzy.sunstcore.modules.guide.element.GuideCategory
 import io.github.sunshinewzy.sunstcore.modules.guide.element.GuideItem
@@ -26,8 +23,8 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.configuration.serialization.ConfigurationSerialization
 import org.bukkit.event.block.Action
-import org.bukkit.event.inventory.InventoryPickupItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.plugin.PluginManager
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Platform
@@ -36,9 +33,9 @@ import taboolib.common.platform.SkipTo
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.pluginVersion
 import taboolib.module.chat.colored
-import taboolib.module.configuration.Configuration
 import taboolib.module.metrics.Metrics
 import taboolib.platform.BukkitPlugin
+import kotlin.math.sin
 
 
 @SkipTo(LifeCycle.ENABLE)
@@ -136,15 +133,18 @@ object SunSTCore : Plugin(), SPlugin {
         SGuide.registerElement(steamCategory, 11)
         
         
-        subscribeEvent<PlayerInteractEvent> {
-            val type = player.inventory.itemInMainHand.type
-            if(type == Material.DIAMOND) {
-                if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+        subscribeEvent<PlayerInteractEvent>(ignoreCancelled = false) {
+            if(hand != EquipmentSlot.HAND) return@subscribeEvent
+            
+            if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+                val type = player.inventory.itemInMainHand.type
+                if(type == Material.DIAMOND) {
                     SGuide.openLastElement(player)
+                } else if(type == Material.EMERALD) {
+                    SGuide.fireworkCongratulate(player)
                 }
             }
         }
-        
     }
     
 }

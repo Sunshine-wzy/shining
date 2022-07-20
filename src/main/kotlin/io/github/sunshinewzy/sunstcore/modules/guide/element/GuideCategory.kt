@@ -1,16 +1,10 @@
 package io.github.sunshinewzy.sunstcore.modules.guide.element
 
-import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.modules.guide.ElementCondition
 import io.github.sunshinewzy.sunstcore.modules.guide.GuideElement
 import io.github.sunshinewzy.sunstcore.modules.guide.SGuide
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.objects.orderWith
-import io.github.sunshinewzy.sunstcore.objects.SCollection
-import io.github.sunshinewzy.sunstcore.utils.sendMsg
-import org.bukkit.FireworkEffect
-import org.bukkit.entity.EntityType
-import org.bukkit.entity.Firework
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.module.ui.openMenu
@@ -28,11 +22,14 @@ class GuideCategory(id: String, symbol: ItemStack) : GuideElement(id, symbol) {
 
             elements { elements }
 
-            val lockedElements = LinkedList<GuideElement>()
+            val dependencyLockedElements = LinkedList<GuideElement>()
+            val lockLockedElements = LinkedList<GuideElement>()
             onGenerate { player, element, index, slot ->
                 val condition = element.getCondition(player)
-                if(condition == ElementCondition.LOCKED_DEPENDENCY || condition == ElementCondition.LOCKED_LOCK)
-                    lockedElements += element
+                if(condition == ElementCondition.LOCKED_DEPENDENCY)
+                    dependencyLockedElements += element
+                else if(condition == ElementCondition.LOCKED_LOCK)
+                    lockLockedElements += element
                 element.getSymbolByCondition(player, condition)
             }
 
@@ -51,15 +48,12 @@ class GuideCategory(id: String, symbol: ItemStack) : GuideElement(id, symbol) {
             }
 
             onClick { event, element ->
-                if(element in lockedElements) {
+                if(element in dependencyLockedElements) return@onClick
+                
+                if(element in lockLockedElements) {
                     if(element.unlock(player)) {
-                        val firework = player.world.spawnEntity(player.location, EntityType.FIREWORK) as Firework
-                        val meta = firework.fireworkMeta
-                        meta.addEffect(FireworkEffect.builder().with(SCollection.fireworkEffectTypes.random()).withColor(SCollection.colors.random()).build())
-                        firework.fireworkMeta = meta
+                        SGuide.fireworkCongratulate(player)
                         open(player)
-                    } else {
-                        player.sendMsg(SunSTCore.prefixName, "&c您未达成解锁该元素的所有条件")
                     }
                     
                     return@onClick
@@ -82,5 +76,6 @@ class GuideCategory(id: String, symbol: ItemStack) : GuideElement(id, symbol) {
     fun registerElement(element: GuideElement) {
         elements += element
     }
+    
     
 }

@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.sunstcore.modules.guide
 
+import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.interfaces.Updatable
 import io.github.sunshinewzy.sunstcore.modules.guide.ElementCondition.*
 import io.github.sunshinewzy.sunstcore.modules.guide.data.ElementPlayerData
@@ -8,6 +9,7 @@ import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getDisplayName
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getLore
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getMeta
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setLore
+import io.github.sunshinewzy.sunstcore.utils.sendMsg
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -20,7 +22,7 @@ abstract class GuideElement(
     val symbol: ItemStack
 ) {
     val id: String
-    val name = symbol.getDisplayName(id)
+    var name = symbol.getDisplayName(id)
     
     init {
         this.id = id.uppercase()
@@ -33,7 +35,6 @@ abstract class GuideElement(
     private val previousElementMap = HashMap<UUID, GuideElement>()
     private val playerDataMap = HashMap<UUID, ElementPlayerData>()
     private val symbolHandlers = arrayListOf<Updatable>()
-    private val lockLockedItemDelegate = LockLockedItemDelegate()
 
     private val completedSymbol: ItemStack by SymbolItemDelegate {
         val symbolItem = symbol.clone()
@@ -52,11 +53,7 @@ abstract class GuideElement(
             ""
         )
     }
-    private val dependencyLockedSymbol: ItemStack by SymbolItemDelegate {
-        val symbolItem = lockedSymbol.clone()
-        
-        symbolItem
-    }
+    private val lockLockedItemDelegate = LockLockedItemDelegate()
     private val lockLockedSymbol: ItemStack by lockLockedItemDelegate
     
     
@@ -82,6 +79,7 @@ abstract class GuideElement(
     fun unlock(player: Player): Boolean {
         for(lock in locks) {
             if(!lock.check(player)) {
+                player.sendMsg(SunSTCore.prefixName, "&c您未达成解锁该元素的条件: &b${lock.description}")
                 return false
             }
         }
@@ -94,6 +92,12 @@ abstract class GuideElement(
         
         getPlayerData(player).isUnlocked = true
         return true
+    }
+    
+    fun update() {
+        symbolHandlers.forEach { 
+            it.update()
+        }
     }
 
     fun isPlayerCompleted(player: Player): Boolean =
@@ -138,7 +142,7 @@ abstract class GuideElement(
                 val meta = theSymbol.getMeta()
                 
                 val lore = meta.lore ?: mutableListOf()
-                lore += "§f> 请先完成下列元素"
+                lore += "§a> 请先完成下列元素"
                 lore += ""
                 dependencies.forEach { 
                     if(!it.isPlayerCompleted(player)) {
@@ -151,17 +155,7 @@ abstract class GuideElement(
                 theSymbol
             }
             
-            LOCKED_LOCK -> {
-                val theSymbol = lockedSymbol.clone()
-                val meta = theSymbol.getMeta()
-                
-                val lore = meta.lore ?: mutableListOf()
-                
-                meta.lore = lore
-                
-                theSymbol.itemMeta = meta
-                theSymbol
-            }
+            LOCKED_LOCK -> lockLockedSymbol
         }
     
     fun getPlayerData(uuid: UUID): ElementPlayerData =
@@ -204,10 +198,14 @@ abstract class GuideElement(
     }
     
     
-    inner class LockLockedItemDelegate {
+    inner class LockLockedItemDelegate : Updatable {
         var isLockChanged = false
         var symbolItem: ItemStack? = null
-
+        
+        init {
+            symbolHandlers += this
+        }
+        
         operator fun getValue(ref: Any?, property: KProperty<*>): ItemStack =
             if(isLockChanged) {
                 isLockChanged = false
@@ -233,6 +231,10 @@ abstract class GuideElement(
             theItem.setLore(lore)
             symbolItem = theItem
             return theItem
+        }
+
+        override fun update() {
+            updateSymbolItem()
         }
     }
 }

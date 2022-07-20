@@ -331,14 +331,29 @@ open class SItem(item: ItemStack) : ItemStack(item) {
         
         fun ItemStack.getLore(): MutableList<String> = getMeta().lore ?: mutableListOf()
         
-        fun ItemStack.getDisplayName(default: String): String =
-            itemMeta?.run { 
+        fun ItemStack.getDisplayName(default: String): String {
+            itemMeta?.run {
                 if(hasDisplayName()) {
-                    val theName = displayName
-                    if(theName != "") theName
-                    else null
-                } else null
-            } ?: default
+                    displayName.let { 
+                        if(it != "") return it
+                    }
+                }
+            }
+            
+            return default
+        }
+        
+        fun ItemStack.getName(): String {
+            itemMeta?.run {
+                if(hasDisplayName()) {
+                    displayName.let {
+                        if(it != "") return it
+                    }
+                }
+            }
+            
+            return type.name
+        }
         
         fun ItemStack.addUseCount(player: Player, maxCnt: Int): Boolean {
             var itemGive: ItemStack? = null
