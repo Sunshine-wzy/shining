@@ -5,6 +5,7 @@ plugins {
     `maven-publish`
     id("io.izzel.taboolib") version "1.41"
     id("org.jetbrains.kotlin.jvm") version "1.5.10"
+    kotlin("plugin.serialization") version "1.5.10"
 }
 
 taboolib {
@@ -22,6 +23,9 @@ taboolib {
     install("module-nms-util")
     install("module-ui")
     install("module-ui-receptacle")
+    install("expansion-command-helper")
+    install("expansion-player-database")
+    install("expansion-persistent-container")
     
     install("platform-bukkit")
     classifier = null
@@ -50,6 +54,10 @@ dependencies {
     compileOnly("ink.ptms.core:v11800:11800-minimize:api")
     compileOnly("ink.ptms.core:v11800:11800-minimize:mapped")
     compileOnly(kotlin("stdlib"))
+
+    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.3.3")
+
     compileOnly(fileTree("libs"))
 }
 

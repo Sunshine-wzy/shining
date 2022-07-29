@@ -8,7 +8,6 @@ import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.sunstcore.objects.menu.SunSTMenu
 import io.github.sunshinewzy.sunstcore.utils.ItemEditor
-import io.github.sunshinewzy.sunstcore.utils.createHelper
 import io.github.sunshinewzy.sunstcore.utils.giveItem
 import io.github.sunshinewzy.sunstcore.utils.sendMsg
 import org.bukkit.Material
@@ -16,6 +15,7 @@ import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.command.command
+import taboolib.expansion.createHelper
 
 object SunSTCommand {
     

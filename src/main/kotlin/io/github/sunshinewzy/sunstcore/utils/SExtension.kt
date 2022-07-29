@@ -1084,3 +1084,13 @@ fun <K, T> MutableMap<K, ArrayList<T>>.putElement(key: K, element: T) {
 fun InventoryClickEvent.getPlayer(): Player = view.player as Player
 
 //endregion
+
+//region String
+
+fun String.isLetterOrDigitOrChinese(): Boolean =
+    matches("^[a-z\\dA-Z\u4e00-\u9fa5]+$".toRegex())
+
+fun String.isLetterOrDigitOrUnderline(): Boolean =
+    matches("^\\w+$".toRegex())
+
+//endregion

@@ -327,7 +327,7 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             return this
         }
         
-        fun ItemStack.getMeta(): ItemMeta = if(hasItemMeta()) itemMeta!! else Bukkit.getItemFactory().getItemMeta(type)!!
+        fun ItemStack.getMeta(): ItemMeta = itemMeta ?: Bukkit.getItemFactory().getItemMeta(type)!!
         
         fun ItemStack.getLore(): MutableList<String> = getMeta().lore ?: mutableListOf()
         
@@ -346,9 +346,11 @@ open class SItem(item: ItemStack) : ItemStack(item) {
         fun ItemStack.getName(): String {
             itemMeta?.run {
                 if(hasDisplayName()) {
-                    displayName.let {
-                        if(it != "") return it
-                    }
+                    return displayName
+                }
+                
+                if(hasLocalizedName()) {
+                    return localizedName
                 }
             }
             

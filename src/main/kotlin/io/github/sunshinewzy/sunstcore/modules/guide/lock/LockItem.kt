@@ -2,7 +2,6 @@ package io.github.sunshinewzy.sunstcore.modules.guide.lock
 
 import io.github.sunshinewzy.sunstcore.modules.guide.ElementLock
 import io.github.sunshinewzy.sunstcore.modules.guide.SGuide
-import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getDisplayName
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getName
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.utils.containsItem
@@ -25,7 +24,7 @@ class LockItem(
     }
 
     override fun tip(player: Player) {
-        player.openMenu<Basic> { 
+        player.openMenu<Basic>(SGuide.TITLE) { 
             rows(3)
             
             map(
@@ -37,6 +36,8 @@ class LockItem(
             set('a', item)
             
             onClick('#', SGuide.onClickBack)
+            
+            onClick(lock = true)
         }
     }
 }

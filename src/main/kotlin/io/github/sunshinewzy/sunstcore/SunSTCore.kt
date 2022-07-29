@@ -8,6 +8,7 @@ import io.github.sunshinewzy.sunstcore.modules.guide.SGuide
 import io.github.sunshinewzy.sunstcore.modules.guide.element.GuideCategory
 import io.github.sunshinewzy.sunstcore.modules.guide.element.GuideItem
 import io.github.sunshinewzy.sunstcore.modules.guide.lock.LockExperience
+import io.github.sunshinewzy.sunstcore.modules.guide.lock.LockItem
 import io.github.sunshinewzy.sunstcore.modules.machine.*
 import io.github.sunshinewzy.sunstcore.modules.machine.custom.SMachineRecipe
 import io.github.sunshinewzy.sunstcore.modules.machine.custom.SMachineRecipes
@@ -24,21 +25,41 @@ import org.bukkit.Material
 import org.bukkit.configuration.serialization.ConfigurationSerialization
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.plugin.PluginManager
 import taboolib.common.LifeCycle
+import taboolib.common.env.RuntimeDependencies
+import taboolib.common.env.RuntimeDependency
 import taboolib.common.platform.Platform
 import taboolib.common.platform.Plugin
 import taboolib.common.platform.SkipTo
+import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.pluginVersion
+import taboolib.expansion.getDataContainer
+import taboolib.expansion.setupPlayerDatabase
 import taboolib.module.chat.colored
 import taboolib.module.metrics.Metrics
 import taboolib.platform.BukkitPlugin
-import kotlin.math.sin
+import java.io.File
 
 
 @SkipTo(LifeCycle.ENABLE)
+@RuntimeDependencies(
+    RuntimeDependency(
+        value = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.3",
+        relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]
+    ),
+    RuntimeDependency(
+        value = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3",
+        relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]
+    ),
+    RuntimeDependency(
+        value = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.3.3",
+        relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]
+    )
+)
 object SunSTCore : Plugin(), SPlugin {
     const val name = "SunSTCore"
     const val colorName = "§eSunSTCore"
@@ -54,6 +75,8 @@ object SunSTCore : Plugin(), SPlugin {
         registerSerialization()
         registerListeners()
         init()
+        
+        setupPlayerDatabase(File(getDataFolder(), "player/data.db"))
         
         val metrics = Metrics(10212, pluginVersion, Platform.BUKKIT)
         
@@ -104,6 +127,7 @@ object SunSTCore : Plugin(), SPlugin {
     
     @SunSTTestApi
     private fun test() {
+        
         val stoneCategory = GuideCategory("STONE_AGE", SItem(Material.STONE, "&f石器时代", "&d一切的起源"))
         val steamCategory = GuideCategory("STEAM_AGE", SItem(Material.IRON_INGOT, "&e蒸汽时代", "&d第一次工业革命"))
         val electricalCategory = GuideCategory("ELECTRICAL_AGE", SItem(Material.NETHERITE_INGOT, "&a电器时代", "&d第二次工业革命"))
@@ -125,6 +149,7 @@ object SunSTCore : Plugin(), SPlugin {
         
         stickItem.registerLock(lockExperience)
         newStoneCategory.registerLock(lockExperience)
+        newStoneCategory.registerLock(LockItem(SItem(Material.SNOWBALL, 3)))
         oldStoneCategory.registerLock(LockExperience(10, false))
         
         SGuide.registerElement(electricalCategory, 12)
@@ -144,6 +169,11 @@ object SunSTCore : Plugin(), SPlugin {
                     SGuide.fireworkCongratulate(player)
                 }
             }
+        }
+        
+        subscribeEvent<PlayerJoinEvent> { 
+            player.getDataContainer()["test"] = 1
+            player.getDataContainer()["awa"] = "emm"
         }
     }
     

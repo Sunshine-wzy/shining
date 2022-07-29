@@ -1,8 +1,11 @@
 package io.github.sunshinewzy.sunstcore.modules.guide.data
 
+import io.github.sunshinewzy.sunstcore.modules.guide.ElementCondition
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ElementPlayerData(
-    var isUnlocked: Boolean = false,
-    var isComplete: Boolean = false
+    var condition: ElementCondition = ElementCondition.LOCKED_LOCK 
 ) {
     
     

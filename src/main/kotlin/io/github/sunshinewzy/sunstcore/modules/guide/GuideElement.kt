@@ -14,7 +14,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*
-import kotlin.collections.HashMap
 import kotlin.reflect.KProperty
 
 abstract class GuideElement(
@@ -31,10 +30,10 @@ abstract class GuideElement(
     
     private val dependencies: MutableList<GuideElement> = LinkedList()
     private val locks = LinkedList<ElementLock>()
+    private val symbolHandlers = arrayListOf<Updatable>()
     
     private val previousElementMap = HashMap<UUID, GuideElement>()
-    private val playerDataMap = HashMap<UUID, ElementPlayerData>()
-    private val symbolHandlers = arrayListOf<Updatable>()
+    private val groupDataMap = HashMap<UUID, ElementPlayerData>()
 
     private val completedSymbol: ItemStack by SymbolItemDelegate {
         val symbolItem = symbol.clone()
@@ -80,6 +79,7 @@ abstract class GuideElement(
         for(lock in locks) {
             if(!lock.check(player)) {
                 player.sendMsg(SunSTCore.prefixName, "&c您未达成解锁该元素的条件: &b${lock.description}")
+                lock.tip(player)
                 return false
             }
         }
@@ -90,7 +90,7 @@ abstract class GuideElement(
             }
         }
         
-        getPlayerData(player).isUnlocked = true
+        getPlayerData(player).condition = UNLOCKED
         return true
     }
     
@@ -101,7 +101,7 @@ abstract class GuideElement(
     }
 
     fun isPlayerCompleted(player: Player): Boolean =
-        playerDataMap[player.uniqueId]?.isComplete ?: false
+        groupDataMap[player.uniqueId]?.condition == COMPLETE
     
     fun isPlayerDependencyUnlocked(player: Player): Boolean {
         for(dependency in dependencies) {
@@ -114,7 +114,9 @@ abstract class GuideElement(
     }
     
     fun isPlayerUnlocked(player: Player): Boolean =
-        playerDataMap[player.uniqueId]?.isUnlocked ?: false
+        groupDataMap[player.uniqueId]?.condition?.let { 
+            it == UNLOCKED || it == COMPLETE
+        } ?: false
 
     fun hasLock(): Boolean = locks.isNotEmpty()
     
@@ -159,8 +161,8 @@ abstract class GuideElement(
         }
     
     fun getPlayerData(uuid: UUID): ElementPlayerData =
-        playerDataMap[uuid] ?: ElementPlayerData().also { 
-            playerDataMap[uuid] = it
+        groupDataMap[uuid] ?: ElementPlayerData().also { 
+            groupDataMap[uuid] = it
         }
     
     fun getPlayerData(player: Player): ElementPlayerData =

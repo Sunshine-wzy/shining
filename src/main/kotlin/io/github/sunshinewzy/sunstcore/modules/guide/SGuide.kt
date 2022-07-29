@@ -1,5 +1,7 @@
 package io.github.sunshinewzy.sunstcore.modules.guide
 
+import io.github.sunshinewzy.sunstcore.modules.guide.GuideGroup.GuideGroupManager.getGuideGroup
+import io.github.sunshinewzy.sunstcore.modules.guide.GuideGroup.GuideGroupManager.setupGuideGroup
 import io.github.sunshinewzy.sunstcore.objects.SCollection
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.objects.orderWith
@@ -46,6 +48,11 @@ object SGuide {
     
     fun open(player: Player) {
         playerLastOpenElementMap -= player.uniqueId
+        
+        val group = player.getGuideGroup() ?: kotlin.run { 
+            player.setupGuideGroup()
+            return
+        }
         
         player.openMenu<Linked<GuideElement>>(TITLE) {
             rows(6)

@@ -7,7 +7,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import java.util.*
-import kotlin.collections.HashSet
 
 object ChatListener {
     private val playerSubscribers = HashSet<PlayerChatSubscriber>()
@@ -21,6 +20,8 @@ object ChatListener {
         val shouldRemoveSubscribers = LinkedList<PlayerChatSubscriber>()
         playerSubscribers.forEach { subscriber ->
             if(uuid == subscriber.uuid) {
+                if(subscriber.isInvisible) e.isCancelled = true
+                
                 if(subscriber.isDotCancel && e.message == ".") {
                     e.player.sendMsg(SunSTCore.prefixName, "&6${subscriber.description} &6已取消")
                     shouldRemoveSubscribers += subscriber
@@ -31,7 +32,6 @@ object ChatListener {
                     if(subscriber.action(e)) {
                         shouldRemoveSubscribers += subscriber
                     }
-                    e.isCancelled = true
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                 }
@@ -42,8 +42,8 @@ object ChatListener {
             playerSubscribers.remove(it)
         }
     }
-    
-    
+
+
     fun registerPlayerChatSubscriber(subscriber: PlayerChatSubscriber) {
         playerSubscribers += subscriber
     }
