@@ -1,9 +1,11 @@
 package io.github.sunshinewzy.sunstcore.modules.guide
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
+import io.github.sunshinewzy.sunstcore.modules.data.KeySerializable
+import io.github.sunshinewzy.sunstcore.modules.data.SerialDataContainer
+import io.github.sunshinewzy.sunstcore.modules.data.serializer.UUIDSerializer
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setLore
-import io.github.sunshinewzy.sunstcore.objects.serializer.UUIDSerializer
 import io.github.sunshinewzy.sunstcore.utils.PlayerChatSubscriber
 import io.github.sunshinewzy.sunstcore.utils.isLetterOrDigitOrUnderline
 import io.github.sunshinewzy.sunstcore.utils.sendMsg
@@ -11,7 +13,9 @@ import kotlinx.serialization.Serializable
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
-import taboolib.common.platform.function.submit
+import taboolib.common.LifeCycle
+import taboolib.common.platform.SkipTo
+import taboolib.common.util.sync
 import taboolib.expansion.getDataContainer
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
@@ -23,9 +27,12 @@ class GuideGroup(
     var name: String,
     @Serializable(UUIDSerializer::class)
     var owner: UUID
-) {
+) : KeySerializable {
     private val members: MutableList<@Serializable(UUIDSerializer::class)UUID> = arrayListOf()
-    
+
+
+    override fun key(): String = id
+
     
     fun join(player: Player) {
         join(player.uniqueId)
@@ -46,11 +53,12 @@ class GuideGroup(
     }
     
     
+    @SkipTo(LifeCycle.ENABLE)
     companion object GuideGroupManager {
-        const val GUIDE_GROUP_KEY = "guide_group"
+        const val GUIDE_GROUP = "guide_group"
         
         
-        private val groupMap = hashMapOf<String, GuideGroup>()
+        private val groupData = SerialDataContainer(serializer(), GUIDE_GROUP)
         
         private val createGroupItem = SItem(Material.SLIME_BALL, "&f创建队伍")
         private val joinGroupItem = SItem(Material.ENDER_PEARL, "&f加入队伍")
@@ -59,24 +67,24 @@ class GuideGroup(
         
         
         private fun create(id: String, name: String, owner: Player): Boolean {
-            if(groupMap.containsKey(id)) return false
+            if(groupData.containsKey(id)) return false
             
-            groupMap[id] = GuideGroup(id, name, owner.uniqueId)
-            owner.getDataContainer()[GUIDE_GROUP_KEY] = id
+            groupData[id] = GuideGroup(id, name, owner.uniqueId)
+            owner.getDataContainer()[GUIDE_GROUP] = id
             return true
         }
         
         
         fun Player.hasGuideGroup(): Boolean {
-            getDataContainer()[GUIDE_GROUP_KEY]?.let { 
-                return groupMap.containsKey(it)
+            getDataContainer()[GUIDE_GROUP]?.let { 
+                return groupData.containsKey(it)
             }
             return false
         }
         
         fun Player.getGuideGroup(): GuideGroup? {
-            getDataContainer()[GUIDE_GROUP_KEY]?.let { key ->
-                groupMap[key]?.let {
+            getDataContainer()[GUIDE_GROUP]?.let { key ->
+                groupData[key]?.let {
                     return it
                 }
             }
@@ -127,7 +135,7 @@ class GuideGroup(
                     PlayerChatSubscriber(this@createGuideGroup, "队伍ID编辑") {
                         val groupId = message.replace(" ", "")
                         if(groupId.isLetterOrDigitOrUnderline()) {
-                            submit {
+                            sync {
                                 createGuideGroup(groupId, name)
                             }
                             return@PlayerChatSubscriber true
@@ -144,7 +152,7 @@ class GuideGroup(
                     sendMsg(SunSTCore.prefixName, "请输入队伍名称")
 
                     PlayerChatSubscriber(this@createGuideGroup, "队伍ID编辑") {
-                        submit {
+                        sync {
                             createGuideGroup(id, message.replace(" ", ""))
                         }
                         true

@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.sunstcore.objects
 
-import io.github.sunshinewzy.sunstcore.modules.data.sunst.SLocationData
+import io.github.sunshinewzy.sunstcore.modules.data.internal.SLocationData
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material

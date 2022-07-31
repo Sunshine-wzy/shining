@@ -2,8 +2,10 @@ package io.github.sunshinewzy.sunstcore.modules.data
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
-import io.github.sunshinewzy.sunstcore.modules.data.sunst.SCustomTaskData
-import io.github.sunshinewzy.sunstcore.modules.data.sunst.SunSTPlayerData
+import io.github.sunshinewzy.sunstcore.modules.data.database.DatabaseSQL
+import io.github.sunshinewzy.sunstcore.modules.data.database.DatabaseSQLite
+import io.github.sunshinewzy.sunstcore.modules.data.database.SDatabase
+import io.github.sunshinewzy.sunstcore.modules.data.internal.SunSTPlayerData
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.utils.giveItem
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
@@ -12,21 +14,37 @@ import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.getDataFolder
+import taboolib.expansion.setupPlayerDatabase
+import taboolib.library.configuration.ConfigurationSection
+import taboolib.module.database.HostSQL
 import java.io.File
 
 object DataManager : Initable {
     private val dir = getDataFolder()
     private val allReloadData = ArrayList<SAutoSaveData>()
+
+
+    val databaseConfig: ConfigurationSection by lazy { SunSTCore.config.getConfigurationSection("database") ?: throw RuntimeException("Config 'database' does not exist.") }
+    
+    
+    lateinit var database: SDatabase<*>
+        private set
+    
     
     val allAutoSaveData = ArrayList<SAutoSaveData>()
-    
     val sPlayerData = HashMap<String, SunSTPlayerData>()
-    val sTaskData = HashMap<String, SCustomTaskData>()
-    
     val firstJoinGiveOpenItems = HashMap<String, ItemStack>()
     
     
     override fun init() {
+
+        if(SunSTCore.config.getBoolean("database.enable")) {
+            database = DatabaseSQL(HostSQL(databaseConfig))
+            setupPlayerDatabase(databaseConfig, SunSTCore.config.getString("player_table").toString())
+        } else {
+            database = DatabaseSQLite(File(getDataFolder(), "data/data.db"))
+            setupPlayerDatabase(File(getDataFolder(), "data/player.db"))
+        }
         
         subscribeEvent<PlayerJoinEvent> { 
             val uid = player.uniqueId.toString()
@@ -47,10 +65,6 @@ object DataManager : Initable {
         allAutoSaveData.forEach { 
             it.save()
         }
-        
-//        sPlayerData.values.forEach { 
-//            it.save()
-//        }
     }
     
     fun reloadData() {

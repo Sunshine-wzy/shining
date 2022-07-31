@@ -3,7 +3,7 @@ package io.github.sunshinewzy.sunstcore
 import io.github.sunshinewzy.sunstcore.interfaces.SPlugin
 import io.github.sunshinewzy.sunstcore.listeners.SunSTSubscriber
 import io.github.sunshinewzy.sunstcore.modules.data.DataManager
-import io.github.sunshinewzy.sunstcore.modules.data.sunst.SLocationData
+import io.github.sunshinewzy.sunstcore.modules.data.internal.SLocationData
 import io.github.sunshinewzy.sunstcore.modules.guide.SGuide
 import io.github.sunshinewzy.sunstcore.modules.guide.element.GuideCategory
 import io.github.sunshinewzy.sunstcore.modules.guide.element.GuideItem
@@ -28,24 +28,21 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.plugin.PluginManager
-import taboolib.common.LifeCycle
 import taboolib.common.env.RuntimeDependencies
 import taboolib.common.env.RuntimeDependency
 import taboolib.common.platform.Platform
 import taboolib.common.platform.Plugin
-import taboolib.common.platform.SkipTo
-import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.pluginVersion
 import taboolib.expansion.getDataContainer
-import taboolib.expansion.setupPlayerDatabase
 import taboolib.module.chat.colored
+import taboolib.module.configuration.Config
+import taboolib.module.configuration.Configuration
 import taboolib.module.metrics.Metrics
 import taboolib.platform.BukkitPlugin
-import java.io.File
+import taboolib.platform.util.buildItem
 
 
-@SkipTo(LifeCycle.ENABLE)
 @RuntimeDependencies(
     RuntimeDependency(
         value = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.3",
@@ -64,10 +61,13 @@ object SunSTCore : Plugin(), SPlugin {
     const val name = "SunSTCore"
     const val colorName = "§eSunSTCore"
     
+    @Config
+    lateinit var config: Configuration
+        private set
     
     val plugin: BukkitPlugin by lazy { BukkitPlugin.getInstance() }
     val pluginManager: PluginManager by lazy { Bukkit.getPluginManager() }
-    val prefixName: String by lazy { plugin.config.getString("PrefixName")?.colored() ?: colorName }
+    val prefixName: String by lazy { config.getString("prefix_name")?.colored() ?: colorName }
     
     
     override fun onEnable() {
@@ -75,8 +75,6 @@ object SunSTCore : Plugin(), SPlugin {
         registerSerialization()
         registerListeners()
         init()
-        
-        setupPlayerDatabase(File(getDataFolder(), "player/data.db"))
         
         val metrics = Metrics(10212, pluginVersion, Platform.BUKKIT)
         
@@ -174,6 +172,12 @@ object SunSTCore : Plugin(), SPlugin {
         subscribeEvent<PlayerJoinEvent> { 
             player.getDataContainer()["test"] = 1
             player.getDataContainer()["awa"] = "emm"
+        }
+        
+        val item = buildItem(Material.BARRIER) {
+            customModelData = 1
+            name = "awa"
+            lore += listOf("a", "b", "c")
         }
     }
     

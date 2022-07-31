@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.sunstcore.objects.serializer
+package io.github.sunshinewzy.sunstcore.modules.data.serializer
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind

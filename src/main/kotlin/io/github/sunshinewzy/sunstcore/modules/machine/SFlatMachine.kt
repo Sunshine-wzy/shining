@@ -8,7 +8,7 @@ import io.github.sunshinewzy.sunstcore.exceptions.MachineStructureException
 import io.github.sunshinewzy.sunstcore.exceptions.NoIngredientException
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.interfaces.Registrable
-import io.github.sunshinewzy.sunstcore.modules.data.sunst.SFlatMachineData
+import io.github.sunshinewzy.sunstcore.modules.data.internal.SFlatMachineData
 import io.github.sunshinewzy.sunstcore.objects.SBlock
 import io.github.sunshinewzy.sunstcore.objects.SFlatCoord
 import io.github.sunshinewzy.sunstcore.objects.SLocation

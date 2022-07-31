@@ -1,2 +1,15 @@
-#前缀名称
-PrefixName: &eSunSTCore
+# 前缀名称
+prefix_name: &eSunSTCore
+
+# SQL数据库
+database:
+  # enable 为 false 时使用 SQLite 存储数据
+  # 若要使用自定义的数据库请将 enable 改为 true
+  enable: false
+  host: localhost
+  port: 3306
+  user: root
+  password: root
+  database: root
+  # 玩家数据库表名
+  player_table: player

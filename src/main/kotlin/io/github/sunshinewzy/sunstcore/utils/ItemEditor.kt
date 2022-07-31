@@ -1,7 +1,6 @@
 package io.github.sunshinewzy.sunstcore.utils
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
-import io.github.sunshinewzy.sunstcore.listeners.ChatListener
 import io.github.sunshinewzy.sunstcore.modules.guide.SGuide
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getLore
@@ -10,7 +9,6 @@ import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setName
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.objects.orderWith
 import org.bukkit.Material
-import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.common.util.sync
@@ -21,6 +19,8 @@ import taboolib.module.ui.type.Linked
 
 object ItemEditor {
     val wools = arrayListOf(Material.LIME_WOOL, Material.YELLOW_WOOL, Material.LIGHT_BLUE_WOOL, Material.PINK_WOOL, Material.ORANGE_WOOL, Material.WHITE_WOOL, Material.MAGENTA_WOOL, Material.CYAN_WOOL, Material.LIGHT_GRAY_WOOL, Material.PURPLE_WOOL, Material.BROWN_WOOL, Material.BLUE_WOOL, Material.GREEN_WOOL, Material.GRAY_WOOL, Material.RED_WOOL, Material.BLACK_WOOL)
+
+    val editItemOrder = 2 orderWith 2
     
 
     fun editItem(item: ItemStack, player: Player) {
@@ -37,8 +37,6 @@ object ItemEditor {
             set('x', SunSTIcon.EDGE_GLASS_PANE.item)
             set('a', SunSTIcon.RENAME.item)
             set('b', SunSTIcon.EDIT_LORE.item)
-
-            val editItemOrder = 2 orderWith 2
 
             onBuild { _, inventory ->
                 inventory.setItem(editItemOrder, item)

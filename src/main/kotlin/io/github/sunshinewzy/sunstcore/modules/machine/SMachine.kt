@@ -5,7 +5,7 @@ import io.github.sunshinewzy.sunstcore.events.smachine.SMachineAddEvent
 import io.github.sunshinewzy.sunstcore.events.smachine.SMachineRemoveEvent
 import io.github.sunshinewzy.sunstcore.events.smachine.SMachineUpgradeEvent
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
-import io.github.sunshinewzy.sunstcore.modules.data.sunst.SMachineData
+import io.github.sunshinewzy.sunstcore.modules.data.internal.SMachineData
 import io.github.sunshinewzy.sunstcore.modules.machine.custom.SMachineRecipe
 import io.github.sunshinewzy.sunstcore.modules.machine.custom.SMachineRecipes
 import io.github.sunshinewzy.sunstcore.objects.SItem

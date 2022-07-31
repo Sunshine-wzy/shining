@@ -5,7 +5,7 @@ import io.github.sunshinewzy.sunstcore.events.smachine.SSingleMachineAddEvent
 import io.github.sunshinewzy.sunstcore.events.smachine.SSingleMachineRemoveEvent
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.interfaces.Registrable
-import io.github.sunshinewzy.sunstcore.modules.data.sunst.SSingleMachineData
+import io.github.sunshinewzy.sunstcore.modules.data.internal.SSingleMachineData
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.sunstcore.objects.SLocation
 import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.toSLocation

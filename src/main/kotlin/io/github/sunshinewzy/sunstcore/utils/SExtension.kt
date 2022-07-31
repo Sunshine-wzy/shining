@@ -4,7 +4,7 @@ import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.interfaces.Itemable
 import io.github.sunshinewzy.sunstcore.interfaces.Materialsable
 import io.github.sunshinewzy.sunstcore.listeners.BlockListener
-import io.github.sunshinewzy.sunstcore.modules.data.sunst.SunSTPlayerData
+import io.github.sunshinewzy.sunstcore.modules.data.internal.SunSTPlayerData
 import io.github.sunshinewzy.sunstcore.modules.task.TaskBase
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProject

@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.sunstcore.modules.data.sunst
+package io.github.sunshinewzy.sunstcore.modules.data.internal
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.events.slocationdata.SLocationDataAddEvent
