@@ -1,8 +1,7 @@
 package io.github.sunshinewzy.sunstcore.modules.guide
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
-import io.github.sunshinewzy.sunstcore.modules.data.KeySerializable
-import io.github.sunshinewzy.sunstcore.modules.data.SerialDataContainer
+import io.github.sunshinewzy.sunstcore.modules.data.container.LazySerialDataContainer
 import io.github.sunshinewzy.sunstcore.modules.data.serializer.UUIDSerializer
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setLore
@@ -19,6 +18,7 @@ import taboolib.common.util.sync
 import taboolib.expansion.getDataContainer
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Linked
 import java.util.*
 
 @Serializable
@@ -27,11 +27,8 @@ class GuideGroup(
     var name: String,
     @Serializable(UUIDSerializer::class)
     var owner: UUID
-) : KeySerializable {
+) {
     private val members: MutableList<@Serializable(UUIDSerializer::class)UUID> = arrayListOf()
-
-
-    override fun key(): String = id
 
     
     fun join(player: Player) {
@@ -58,7 +55,7 @@ class GuideGroup(
         const val GUIDE_GROUP = "guide_group"
         
         
-        private val groupData = SerialDataContainer(serializer(), GUIDE_GROUP)
+        private val groupData = LazySerialDataContainer(serializer(), GUIDE_GROUP)
         
         private val createGroupItem = SItem(Material.SLIME_BALL, "&f创建队伍")
         private val joinGroupItem = SItem(Material.ENDER_PEARL, "&f加入队伍")
@@ -181,7 +178,9 @@ class GuideGroup(
         }
         
         fun Player.joinGuideGroup() {
-            
+            openMenu<Linked<GuideGroup>> { 
+                
+            }
         }
     }
     

@@ -13,3 +13,6 @@ database:
   database: root
   # 玩家数据库表名
   player_table: player
+
+# 自动保存时间间隔[单位: tick] (默认为6000tick,即5分钟)
+auto_save_period: 6000

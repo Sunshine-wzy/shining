@@ -1,7 +1,6 @@
 package io.github.sunshinewzy.sunstcore.utils
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
-import io.github.sunshinewzy.sunstcore.modules.guide.SGuide
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getLore
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getMeta
@@ -67,9 +66,8 @@ object ItemEditor {
     
     fun editLore(item: ItemStack, player: Player) {
         player.openMenu<Linked<String>>("编辑 Lore") {
-            rows(6)
-            slots(SGuide.slotOrders)
-
+            buildMultiPage()
+            
             elements { item.getLore() }
 
             var iterator = wools.iterator()
@@ -77,21 +75,6 @@ object ItemEditor {
                 if(!iterator.hasNext()) iterator = wools.iterator()
                 SItem(iterator.next(), "&f${page * 36 + index}", element)
             }
-
-            onBuild(onBuild = SGuide.onBuildEdge)
-
-            setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
-                if(hasPreviousPage) {
-                    SunSTIcon.PAGE_PRE_GLASS_PANE.item
-                } else SunSTIcon.EDGE.item
-            }
-
-            setNextPage(8 orderWith 6) { page, hasNextPage ->
-                if(hasNextPage) {
-                    SunSTIcon.PAGE_NEXT_GLASS_PANE.item
-                } else SunSTIcon.EDGE.item
-            }
-            
             
             var status = Status.EDIT
             onClick onClickLore@{ event, element ->

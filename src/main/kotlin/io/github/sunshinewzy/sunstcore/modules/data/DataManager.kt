@@ -7,13 +7,11 @@ import io.github.sunshinewzy.sunstcore.modules.data.database.DatabaseSQLite
 import io.github.sunshinewzy.sunstcore.modules.data.database.SDatabase
 import io.github.sunshinewzy.sunstcore.modules.data.internal.SunSTPlayerData
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
-import io.github.sunshinewzy.sunstcore.utils.giveItem
-import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.getDataFolder
+import taboolib.common.platform.function.submit
 import taboolib.expansion.setupPlayerDatabase
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.database.HostSQL
@@ -22,7 +20,8 @@ import java.io.File
 object DataManager : Initable {
     private val dir = getDataFolder()
     private val allReloadData = ArrayList<SAutoSaveData>()
-
+    private val lazyOperations = arrayListOf<LazyOperational>()
+    
 
     val databaseConfig: ConfigurationSection by lazy { SunSTCore.config.getConfigurationSection("database") ?: throw RuntimeException("Config 'database' does not exist.") }
     
@@ -35,6 +34,8 @@ object DataManager : Initable {
     val sPlayerData = HashMap<String, SunSTPlayerData>()
     val firstJoinGiveOpenItems = HashMap<String, ItemStack>()
     
+    val autoSavePeriod: Long by lazy { SunSTCore.config.getLong("auto_save_period", 6000L) }
+    
     
     override fun init() {
 
@@ -46,19 +47,12 @@ object DataManager : Initable {
             setupPlayerDatabase(File(getDataFolder(), "data/player.db"))
         }
         
-        subscribeEvent<PlayerJoinEvent> { 
-            val uid = player.uniqueId.toString()
-            
-            val data = player.getSunSTData()
-            val isFirstJoinGive = data.isFirstJoinGive
-            firstJoinGiveOpenItems.forEach { (projectId, openItem) -> 
-                if(!isFirstJoinGive.containsKey(projectId) || isFirstJoinGive[projectId] != true){
-                    player.giveItem(openItem)
-                    isFirstJoinGive[projectId] = true
-                }
+        submit(async = true, delay = autoSavePeriod, period = autoSavePeriod) { 
+            lazyOperations.forEach { 
+                it.saveLazy()
             }
         }
-
+        
     }
     
     fun saveData() {
@@ -99,6 +93,10 @@ object DataManager : Initable {
 //                loadFolderData()
 //            }
         }
+    }
+    
+    fun registerLazy(lazy: LazyOperational) {
+        lazyOperations += lazy
     }
     
     
