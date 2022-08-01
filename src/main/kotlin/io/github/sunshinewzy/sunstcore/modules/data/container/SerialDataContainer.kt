@@ -89,6 +89,12 @@ open class SerialDataContainer<T>(
     fun containsKey(key: String): Boolean =
         dataMap.containsKey(key)
     
+    fun getValues() =
+        dataMap.values
+    
+    fun getValueList() =
+        getValues().toList()
+    
     // CRUD
     fun retrieve(): MutableMap<String, T> {
         return table.select(database.dataSource) {

@@ -58,6 +58,8 @@ dependencies {
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.3.3")
 
+    compileOnly("org.yaml:snakeyaml:1.28")
+
     compileOnly(fileTree("libs"))
 }
 

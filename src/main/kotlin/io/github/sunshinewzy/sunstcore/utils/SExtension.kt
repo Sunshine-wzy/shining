@@ -5,14 +5,12 @@ import io.github.sunshinewzy.sunstcore.interfaces.Itemable
 import io.github.sunshinewzy.sunstcore.interfaces.Materialsable
 import io.github.sunshinewzy.sunstcore.listeners.BlockListener
 import io.github.sunshinewzy.sunstcore.modules.data.internal.SunSTPlayerData
-import io.github.sunshinewzy.sunstcore.modules.guide.SGuide
 import io.github.sunshinewzy.sunstcore.modules.task.TaskBase
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.modules.task.TaskProject
 import io.github.sunshinewzy.sunstcore.modules.task.TaskStage
 import io.github.sunshinewzy.sunstcore.objects.*
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
-import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.utils.SReflect.damage
 import org.bukkit.*
 import org.bukkit.block.Block
@@ -31,7 +29,6 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.BoundingBox
 import taboolib.common.platform.ProxyCommandSender
 import taboolib.module.chat.colored
-import taboolib.module.ui.type.Linked
 import java.io.File
 import java.util.*
 import kotlin.math.min
@@ -275,6 +272,9 @@ fun Player.getData(key: String): String? =
 
 fun Player.getDataOrFail(key: String): String =
     SunSTPlayerData.getDataOrFail(this, key)
+
+fun UUID.findPlayer(): Player? =
+    Bukkit.getPlayer(this)
 
 //endregion
 
@@ -1103,28 +1103,5 @@ fun String.isLetterOrDigitOrChinese(): Boolean =
 
 fun String.isLetterOrDigitOrUnderline(): Boolean =
     matches("^\\w+$".toRegex())
-
-//endregion
-
-//region Menu
-
-inline fun <reified T> Linked<T>.buildMultiPage() {
-    rows(6)
-    slots(SGuide.slotOrders)
-
-    onBuild(onBuild = SGuide.onBuildEdge)
-
-    setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
-        if(hasPreviousPage) {
-            SunSTIcon.PAGE_PRE_GLASS_PANE.item
-        } else SunSTIcon.EDGE.item
-    }
-
-    setNextPage(8 orderWith 6) { page, hasNextPage ->
-        if(hasNextPage) {
-            SunSTIcon.PAGE_NEXT_GLASS_PANE.item
-        } else SunSTIcon.EDGE.item
-    }
-}
 
 //endregion

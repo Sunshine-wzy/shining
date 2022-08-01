@@ -2,23 +2,28 @@ package io.github.sunshinewzy.sunstcore.modules.guide
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.modules.data.container.LazySerialDataContainer
+import io.github.sunshinewzy.sunstcore.modules.data.serializer.ItemStackSerializer
 import io.github.sunshinewzy.sunstcore.modules.data.serializer.UUIDSerializer
+import io.github.sunshinewzy.sunstcore.modules.menu.MenuBuilder.buildBack
+import io.github.sunshinewzy.sunstcore.modules.menu.MenuBuilder.openSelectMenu
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setLore
 import io.github.sunshinewzy.sunstcore.utils.PlayerChatSubscriber
+import io.github.sunshinewzy.sunstcore.utils.findPlayer
 import io.github.sunshinewzy.sunstcore.utils.isLetterOrDigitOrUnderline
 import io.github.sunshinewzy.sunstcore.utils.sendMsg
 import kotlinx.serialization.Serializable
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import taboolib.common.LifeCycle
 import taboolib.common.platform.SkipTo
 import taboolib.common.util.sync
 import taboolib.expansion.getDataContainer
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
-import taboolib.module.ui.type.Linked
+import taboolib.platform.util.buildItem
 import java.util.*
 
 @Serializable
@@ -26,7 +31,9 @@ class GuideGroup(
     val id: String,
     var name: String,
     @Serializable(UUIDSerializer::class)
-    var owner: UUID
+    var owner: UUID,
+    @Serializable(ItemStackSerializer::class)
+    var symbol: ItemStack
 ) {
     private val members: MutableList<@Serializable(UUIDSerializer::class)UUID> = arrayListOf()
 
@@ -63,10 +70,10 @@ class GuideGroup(
         private val editGroupNameItem = SItem(Material.NAME_TAG, "&f编辑队伍名称")
         
         
-        private fun create(id: String, name: String, owner: Player): Boolean {
+        private fun create(id: String, name: String, owner: Player, symbol: ItemStack): Boolean {
             if(groupData.containsKey(id)) return false
             
-            groupData[id] = GuideGroup(id, name, owner.uniqueId)
+            groupData[id] = GuideGroup(id, name, owner.uniqueId, symbol)
             owner.getDataContainer()[GUIDE_GROUP] = id
             return true
         }
@@ -113,18 +120,20 @@ class GuideGroup(
             }
         }
         
-        fun Player.createGuideGroup(id: String = "", name: String = "") {
+        
+        private fun Player.createGuideGroup(id: String = "", name: String = "", symbol: ItemStack = ItemStack(Material.GRASS_BLOCK)) {
             openMenu<Basic>("SGuide - 创建队伍") {
                 rows(3)
 
                 map(
                     "",
-                    "ooaboocoo"
+                    "oabcoodoo"
                 )
                 
                 set('a', editGroupIdItem.clone().setLore("&c队伍一经创建ID即不可修改！", "", "&a> 当前队伍ID", "", "&e$id"))
                 set('b', editGroupNameItem.clone().setLore("", "&a> 当前队伍名称", "", "&e$name"))
-                set('c', createGroupItem)
+                set('c', createGroupItem.clone().setLore("", "&a> 当前队伍信息", "", "&f$name($id)"))
+                set('d', createGroupItem.clone().setLore("", "&a> 当前队伍信息", "", "&f$name($id)"))
 
                 onClick('a') {
                     sendMsg(SunSTCore.prefixName, "请输入队伍ID (只允许英文/下划线/数字)")
@@ -133,7 +142,11 @@ class GuideGroup(
                         val groupId = message.replace(" ", "")
                         if(groupId.isLetterOrDigitOrUnderline()) {
                             sync {
-                                createGuideGroup(groupId, name)
+                                createGuideGroup(
+                                    groupId,
+                                    if(name == "") groupId else name,
+                                    symbol
+                                )
                             }
                             return@PlayerChatSubscriber true
                         }
@@ -150,17 +163,24 @@ class GuideGroup(
 
                     PlayerChatSubscriber(this@createGuideGroup, "队伍ID编辑") {
                         sync {
-                            createGuideGroup(id, message.replace(" ", ""))
+                            createGuideGroup(id, message.replace(" ", ""), symbol)
                         }
                         true
                     }.register()
-
+    
                     closeInventory()
                 }
                 
                 onClick('c') {
+                    openSelectMenu<GuideGroup>("SGuide - 选择队伍图标") {
+                        
+                        
+                    }
+                }
+                
+                onClick('d') {
                     if(id != "" && name != "") {
-                        if(create(id, name, this@createGuideGroup)) {
+                        if(create(id, name, this@createGuideGroup, symbol)) {
                             sendMsg(SunSTCore.prefixName, "&a队伍 &f$name($id) &a创建成功，SGuide功能已开启！")
                             closeInventory()
                         } else {
@@ -177,8 +197,24 @@ class GuideGroup(
             }
         }
         
-        fun Player.joinGuideGroup() {
-            openMenu<Linked<GuideGroup>> { 
+        private fun Player.joinGuideGroup() {
+            openSelectMenu<GuideGroup> {
+                elements { groupData.getValueList() }
+
+                onGenerate { _, element, index, slot ->
+                    buildItem(element.symbol) {
+                        this.name = "§f${element.name}"
+                        lore += listOf("§7ID: ${element.id}", "", "§e> 队长", "§f${element.owner.findPlayer()?.name ?: element.owner.toString()}", "", "§a> 队员")
+                        element.members.forEach { 
+                            lore += "§f${it.findPlayer()?.name ?: it.toString()}"
+                        }
+                    }
+                }
+                
+                buildBack {
+                    setupGuideGroup()
+                }
+                
                 
             }
         }
