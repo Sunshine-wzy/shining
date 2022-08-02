@@ -7,7 +7,11 @@ import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachine.Companion.getSMachine
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachine.Companion.hasSMachine
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachine.Companion.judgeSMachineStructure
-import io.github.sunshinewzy.sunstcore.objects.*
+import io.github.sunshinewzy.sunstcore.modules.menu.SMenu
+import io.github.sunshinewzy.sunstcore.objects.SBlock
+import io.github.sunshinewzy.sunstcore.objects.SItem
+import io.github.sunshinewzy.sunstcore.objects.SLocation
+import io.github.sunshinewzy.sunstcore.objects.STurnPageType
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SPartProtectInventoryHolder
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.utils.getPlayer

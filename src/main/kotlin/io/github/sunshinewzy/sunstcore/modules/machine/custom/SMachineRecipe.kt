@@ -2,11 +2,15 @@ package io.github.sunshinewzy.sunstcore.modules.machine.custom
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.modules.machine.SMachine
-import io.github.sunshinewzy.sunstcore.objects.*
+import io.github.sunshinewzy.sunstcore.modules.menu.SMenu
+import io.github.sunshinewzy.sunstcore.objects.SBlock
+import io.github.sunshinewzy.sunstcore.objects.SCoordinate
+import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setNameAndLore
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SInventoryHolder.Companion.getSHolder
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
+import io.github.sunshinewzy.sunstcore.objects.orderWith
 import io.github.sunshinewzy.sunstcore.utils.*
 import org.bukkit.Location
 import org.bukkit.Material

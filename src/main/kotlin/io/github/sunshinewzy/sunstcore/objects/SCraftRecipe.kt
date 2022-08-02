@@ -76,7 +76,7 @@ sealed class SCraftRecipe(
     
     
     companion object Manager {
-        private val recipes = HashMap<Int, ArrayList<SCraftRecipe>>()
+        private val recipes = HashMap<Int, MutableList<SCraftRecipe>>()
         
         
         @JvmStatic

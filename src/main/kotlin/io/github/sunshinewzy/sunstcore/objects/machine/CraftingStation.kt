@@ -2,9 +2,13 @@ package io.github.sunshinewzy.sunstcore.objects.machine
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.modules.machine.SSingleMachine
-import io.github.sunshinewzy.sunstcore.objects.*
+import io.github.sunshinewzy.sunstcore.modules.menu.SMenu
+import io.github.sunshinewzy.sunstcore.objects.SCraftRecipe
+import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.addShapelessRecipe
+import io.github.sunshinewzy.sunstcore.objects.SLocation
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SCraftInventoryHolder
+import io.github.sunshinewzy.sunstcore.objects.orderWith
 import io.github.sunshinewzy.sunstcore.utils.getPlayer
 import io.github.sunshinewzy.sunstcore.utils.giveItem
 import io.github.sunshinewzy.sunstcore.utils.removeSquareItems

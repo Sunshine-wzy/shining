@@ -4,8 +4,8 @@ import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.modules.data.container.LazySerialDataContainer
 import io.github.sunshinewzy.sunstcore.modules.data.serializer.ItemStackSerializer
 import io.github.sunshinewzy.sunstcore.modules.data.serializer.UUIDSerializer
-import io.github.sunshinewzy.sunstcore.modules.menu.MenuBuilder.buildBack
-import io.github.sunshinewzy.sunstcore.modules.menu.MenuBuilder.openSelectMenu
+import io.github.sunshinewzy.sunstcore.modules.menu.MenuBuilder.onBack
+import io.github.sunshinewzy.sunstcore.modules.menu.MenuBuilder.openMultiPageMenu
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setLore
 import io.github.sunshinewzy.sunstcore.utils.PlayerChatSubscriber
@@ -13,6 +13,7 @@ import io.github.sunshinewzy.sunstcore.utils.findPlayer
 import io.github.sunshinewzy.sunstcore.utils.isLetterOrDigitOrUnderline
 import io.github.sunshinewzy.sunstcore.utils.sendMsg
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -37,6 +38,9 @@ class GuideGroup(
 ) {
     private val members: MutableList<@Serializable(UUIDSerializer::class)UUID> = arrayListOf()
 
+    @Transient
+    private val applicants = hashSetOf<UUID>()
+    
     
     fun join(player: Player) {
         join(player.uniqueId)
@@ -54,6 +58,15 @@ class GuideGroup(
     
     private fun leave(uuid: UUID) {
         members -= uuid
+    }
+    
+    fun apply(player: Player) {
+        apply(player.uniqueId)
+        player.getDataContainer()["guide_group_apply"] = id
+    }
+    
+    private fun apply(uuid: UUID) {
+        applicants += uuid
     }
     
     
@@ -172,8 +185,7 @@ class GuideGroup(
                 }
                 
                 onClick('c') {
-                    openSelectMenu<GuideGroup>("SGuide - 选择队伍图标") {
-                        
+                    openMultiPageMenu<GuideGroup>("SGuide - 选择队伍图标") {
                         
                     }
                 }
@@ -198,7 +210,7 @@ class GuideGroup(
         }
         
         private fun Player.joinGuideGroup() {
-            openSelectMenu<GuideGroup> {
+            openMultiPageMenu<GuideGroup>("SGuide - 加入队伍") {
                 elements { groupData.getValueList() }
 
                 onGenerate { _, element, index, slot ->
@@ -210,11 +222,14 @@ class GuideGroup(
                         }
                     }
                 }
-                
-                buildBack {
+            
+                onBack {
                     setupGuideGroup()
                 }
                 
+                onClick { event, element ->  
+                    element.apply(this@joinGuideGroup)
+                }
                 
             }
         }

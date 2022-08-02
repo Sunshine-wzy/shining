@@ -24,6 +24,7 @@ enum class SunSTIcon(val item: ItemStack) : Itemable {
     REMOVE_MODE_SHINY(buildItem(SItem(Material.BARRIER, "&c删除模式", "&7已开启", "", "&a> 点击关闭")) { shiny() }),
     ADD_MODE(SItem(Material.SLIME_BALL, "&e增添模式", "&7已关闭", "", "&a> 点击开启")),
     ADD_MODE_SHINY(buildItem(SItem(Material.SLIME_BALL, "&e增添模式", "&7已开启", "", "&a> 点击关闭")) { shiny() }),
+    SEARCH(SItem(Material.COMPASS, "&a搜索"))
     
     ;
 

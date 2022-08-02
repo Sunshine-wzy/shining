@@ -3,6 +3,7 @@ package io.github.sunshinewzy.sunstcore.modules.menu
 import io.github.sunshinewzy.sunstcore.modules.guide.SGuide
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.objects.orderWith
+import io.github.sunshinewzy.sunstcore.utils.PlayerChatSubscriber
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.module.ui.ClickEvent
@@ -11,13 +12,23 @@ import taboolib.module.ui.type.Linked
 
 object MenuBuilder {
 
-    inline fun <reified T> Player.openSelectMenu(title: String = "chest", builder: Linked<T>.() -> Unit) {
+    inline fun <reified T> Player.openMultiPageMenu(title: String = "chest", builder: Linked<T>.() -> Unit) {
         openMenu<Linked<T>>(title) { 
             buildMultiPage()
             
-            
-            
             builder(this)
+        }
+    }
+    
+    inline fun <reified T> Player.openSelectMenu(title: String = "chest", builder: Linked<T>.() -> Unit) {
+        openMultiPageMenu<T>(title) { 
+            set(8 orderWith 1, SunSTIcon.SEARCH.item) {
+                PlayerChatSubscriber(this@openSelectMenu, "搜索") {
+                    
+                    
+                    false
+                }.register()
+            }
         }
     }
 
@@ -41,7 +52,7 @@ object MenuBuilder {
         }
     }
     
-    fun <T> Linked<T>.buildBack(
+    fun <T> Linked<T>.onBack(
         slot: Int = 2 orderWith 1,
         item: ItemStack = SunSTIcon.BACK_LAST_PAGE.item,
         onClick: ClickEvent.() -> Unit

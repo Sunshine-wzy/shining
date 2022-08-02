@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.sunstcore.events.smenu
 
-import io.github.sunshinewzy.sunstcore.objects.SMenu
+import io.github.sunshinewzy.sunstcore.modules.menu.SMenu
 import org.bukkit.entity.Player
 import org.bukkit.event.HandlerList
 import org.bukkit.inventory.ItemStack
