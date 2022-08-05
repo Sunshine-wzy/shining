@@ -10,6 +10,8 @@ import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
 import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.submit
 import taboolib.expansion.setupPlayerDatabase
@@ -55,9 +57,14 @@ object DataManager : Initable {
         
     }
     
+    @Awake(LifeCycle.DISABLE)
     fun saveData() {
         allAutoSaveData.forEach { 
             it.save()
+        }
+        
+        lazyOperations.forEach { 
+            it.saveLazy()
         }
     }
     

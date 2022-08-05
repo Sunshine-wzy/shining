@@ -6,8 +6,6 @@ import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
-import taboolib.common.LifeCycle
-import taboolib.common.platform.SkipTo
 
 class SingleListener<T : Event>(
     private val clazz: Class<T>,
@@ -27,7 +25,6 @@ class SingleListener<T : Event>(
         }
     }
 
-    @SkipTo(LifeCycle.ENABLE)
     companion object {
         
         @JvmStatic

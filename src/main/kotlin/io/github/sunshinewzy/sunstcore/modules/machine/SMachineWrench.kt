@@ -197,6 +197,6 @@ class SMachineWrench(
         }
         
         fun Player.getLastAddMachine(): Pair<String, Short> =
-            playerLastAddMachine[uniqueId] ?: "" to 0
+            playerLastAddMachine[uniqueId] ?: ("" to 0)
     }
 }

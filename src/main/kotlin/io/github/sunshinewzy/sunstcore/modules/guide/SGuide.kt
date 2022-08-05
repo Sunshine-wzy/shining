@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.sunstcore.modules.guide
 
-import io.github.sunshinewzy.sunstcore.modules.guide.GuideGroup.GuideGroupManager.getGuideGroup
-import io.github.sunshinewzy.sunstcore.modules.guide.GuideGroup.GuideGroupManager.setupGuideGroup
+import io.github.sunshinewzy.sunstcore.modules.guide.GuideGroup.Companion.getGuideGroup
+import io.github.sunshinewzy.sunstcore.modules.guide.GuideGroup.Companion.setupGuideGroup
 import io.github.sunshinewzy.sunstcore.objects.SCollection
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.objects.orderWith

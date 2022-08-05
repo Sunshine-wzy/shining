@@ -108,7 +108,6 @@ open class SItem(item: ItemStack) : ItemStack(item) {
         
         val items = HashMap<String, ItemStack>()
 
-
         fun createTaskSymbol(type: Material, vararg lore: String = arrayOf()): SItem {
             val loreList = arrayListOf("§a>点我查看任务<")
             if(lore.isNotEmpty())

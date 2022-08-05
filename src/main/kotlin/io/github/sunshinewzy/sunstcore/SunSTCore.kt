@@ -25,7 +25,6 @@ import org.bukkit.Material
 import org.bukkit.configuration.serialization.ConfigurationSerialization
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.plugin.PluginManager
 import taboolib.common.env.RuntimeDependencies
@@ -34,13 +33,12 @@ import taboolib.common.platform.Platform
 import taboolib.common.platform.Plugin
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.pluginVersion
-import taboolib.expansion.getDataContainer
 import taboolib.module.chat.colored
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.Configuration
 import taboolib.module.metrics.Metrics
+import taboolib.module.nms.nmsGeneric
 import taboolib.platform.BukkitPlugin
-import taboolib.platform.util.buildItem
 
 
 @RuntimeDependencies(
@@ -50,10 +48,6 @@ import taboolib.platform.util.buildItem
     ),
     RuntimeDependency(
         value = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3",
-        relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]
-    ),
-    RuntimeDependency(
-        value = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.3.3",
         relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]
     )
 )
@@ -85,7 +79,7 @@ object SunSTCore : Plugin(), SPlugin {
     }
 
     override fun onDisable() {
-        DataManager.saveData()
+        
     }
 
 
@@ -104,6 +98,8 @@ object SunSTCore : Plugin(), SPlugin {
         SSingleMachine.init()
         SFlatMachine.init()
         SunSTMachineManager.register()
+        
+        nmsGeneric
         
     }
     
@@ -160,24 +156,24 @@ object SunSTCore : Plugin(), SPlugin {
             if(hand != EquipmentSlot.HAND) return@subscribeEvent
             
             if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-                val type = player.inventory.itemInMainHand.type
-                if(type == Material.DIAMOND) {
-                    SGuide.openLastElement(player)
-                } else if(type == Material.EMERALD) {
-                    SGuide.fireworkCongratulate(player)
+                val item = player.inventory.itemInMainHand
+                when(item.type) {
+                    Material.DIAMOND -> {
+                        SGuide.openLastElement(player)
+                    }
+                    
+                    Material.EMERALD -> {
+                        SGuide.fireworkCongratulate(player)
+                    }
+                    
+                    Material.AIR -> {}
+                    
+                    else -> {
+                        
+                    }
                 }
+                
             }
-        }
-        
-        subscribeEvent<PlayerJoinEvent> { 
-            player.getDataContainer()["test"] = 1
-            player.getDataContainer()["awa"] = "emm"
-        }
-        
-        val item = buildItem(Material.BARRIER) {
-            customModelData = 1
-            name = "awa"
-            lore += listOf("a", "b", "c")
         }
     }
     

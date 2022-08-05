@@ -3,10 +3,7 @@ package io.github.sunshinewzy.sunstcore.utils
 import io.github.sunshinewzy.sunstcore.objects.SingleListener
 import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
-import taboolib.common.LifeCycle
-import taboolib.common.platform.SkipTo
 
-@SkipTo(LifeCycle.ENABLE)
 object SEventSubscriber {
     
     private val subscribers = HashMap<Triple<String, EventPriority, Boolean>, ArrayList<SEventSubscriberWrapper<out Event>>>()

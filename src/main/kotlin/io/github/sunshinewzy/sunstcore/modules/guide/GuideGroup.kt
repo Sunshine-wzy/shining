@@ -3,13 +3,16 @@ package io.github.sunshinewzy.sunstcore.modules.guide
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.modules.data.container.LazySerialDataContainer
 import io.github.sunshinewzy.sunstcore.modules.data.serializer.ItemStackSerializer
-import io.github.sunshinewzy.sunstcore.modules.data.serializer.UUIDSerializer
 import io.github.sunshinewzy.sunstcore.modules.menu.MenuBuilder.onBack
 import io.github.sunshinewzy.sunstcore.modules.menu.MenuBuilder.openMultiPageMenu
+import io.github.sunshinewzy.sunstcore.modules.menu.MenuBuilder.openSearchMenu
+import io.github.sunshinewzy.sunstcore.modules.menu.Search
+import io.github.sunshinewzy.sunstcore.objects.Identification
+import io.github.sunshinewzy.sunstcore.objects.Identification.Companion.getIdentification
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setLore
+import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setName
 import io.github.sunshinewzy.sunstcore.utils.PlayerChatSubscriber
-import io.github.sunshinewzy.sunstcore.utils.findPlayer
 import io.github.sunshinewzy.sunstcore.utils.isLetterOrDigitOrUnderline
 import io.github.sunshinewzy.sunstcore.utils.sendMsg
 import kotlinx.serialization.Serializable
@@ -31,33 +34,32 @@ import java.util.*
 class GuideGroup(
     val id: String,
     var name: String,
-    @Serializable(UUIDSerializer::class)
-    var owner: UUID,
+    var owner: Identification,
     @Serializable(ItemStackSerializer::class)
     var symbol: ItemStack
 ) {
-    private val members: MutableList<@Serializable(UUIDSerializer::class)UUID> = arrayListOf()
+    private val members: HashSet<Identification> = hashSetOf()
 
     @Transient
     private val applicants = hashSetOf<UUID>()
     
     
     fun join(player: Player) {
-        join(player.uniqueId)
+        join(player.getIdentification())
         player.getDataContainer()["guide_group"] = id
     }
     
-    private fun join(uuid: UUID) {
-        members += uuid
+    private fun join(identification: Identification) {
+        members += identification
     }
     
     fun leave(player: Player) {
-        leave(player.uniqueId)
+        leave(player.getIdentification())
         player.getDataContainer()["guide_group"] = ""
     }
     
-    private fun leave(uuid: UUID) {
-        members -= uuid
+    private fun leave(identification: Identification) {
+        members -= identification
     }
     
     fun apply(player: Player) {
@@ -70,8 +72,8 @@ class GuideGroup(
     }
     
     
-    @SkipTo(LifeCycle.ENABLE)
-    companion object GuideGroupManager {
+    @SkipTo(LifeCycle.ACTIVE)
+    companion object {
         const val GUIDE_GROUP = "guide_group"
         
         
@@ -86,7 +88,7 @@ class GuideGroup(
         private fun create(id: String, name: String, owner: Player, symbol: ItemStack): Boolean {
             if(groupData.containsKey(id)) return false
             
-            groupData[id] = GuideGroup(id, name, owner.uniqueId, symbol)
+            groupData[id] = GuideGroup(id, name, owner.getIdentification(), symbol)
             owner.getDataContainer()[GUIDE_GROUP] = id
             return true
         }
@@ -145,7 +147,7 @@ class GuideGroup(
                 
                 set('a', editGroupIdItem.clone().setLore("&c队伍一经创建ID即不可修改！", "", "&a> 当前队伍ID", "", "&e$id"))
                 set('b', editGroupNameItem.clone().setLore("", "&a> 当前队伍名称", "", "&e$name"))
-                set('c', createGroupItem.clone().setLore("", "&a> 当前队伍信息", "", "&f$name($id)"))
+                set('c', symbol.clone().setName("&f编辑队伍图标"))
                 set('d', createGroupItem.clone().setLore("", "&a> 当前队伍信息", "", "&f$name($id)"))
 
                 onClick('a') {
@@ -185,8 +187,20 @@ class GuideGroup(
                 }
                 
                 onClick('c') {
-                    openMultiPageMenu<GuideGroup>("SGuide - 选择队伍图标") {
+                    openSearchMenu<ItemStack>("SGuide - 选择队伍图标") {
+                        searchMap { Search.allItemMap }
                         
+                        onClick { event, item -> 
+                            createGuideGroup(id, name, item)
+                        }
+                        
+                        onGenerate { _, element, _, _ -> 
+                            element
+                        }
+                        
+                        onBack { 
+                            createGuideGroup(id, name, symbol)
+                        }
                     }
                 }
                 
@@ -216,9 +230,9 @@ class GuideGroup(
                 onGenerate { _, element, index, slot ->
                     buildItem(element.symbol) {
                         this.name = "§f${element.name}"
-                        lore += listOf("§7ID: ${element.id}", "", "§e> 队长", "§f${element.owner.findPlayer()?.name ?: element.owner.toString()}", "", "§a> 队员")
+                        lore += listOf("§7ID: ${element.id}", "", "§e> 队长", "§f${element.owner.name}", "", "§a> 队员")
                         element.members.forEach { 
-                            lore += "§f${it.findPlayer()?.name ?: it.toString()}"
+                            lore += "§f${it.name}"
                         }
                     }
                 }
@@ -229,6 +243,8 @@ class GuideGroup(
                 
                 onClick { event, element ->  
                     element.apply(this@joinGuideGroup)
+                    sendMsg(SunSTCore.prefixName, "&a申请加入队伍 &f${element.name}(${element.id}) &a成功，等待队长同意")
+                    closeInventory()
                 }
                 
             }

@@ -4,7 +4,7 @@ import io.github.sunshinewzy.sunstcore.modules.data.DataManager
 import io.github.sunshinewzy.sunstcore.modules.data.database.SDatabase
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.protobuf.ProtoBuf
+import kotlinx.serialization.json.Json
 import taboolib.common.platform.function.submit
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -30,7 +30,7 @@ open class OptionalLazySerialDataContainer<T>(
     fun init(key: String) {
         if(!initCompleteSet.contains(key)) {
             submit(async = true) {
-                retrieve(key)?.let { dataMap[key] = ProtoBuf.decodeFromByteArray(serializer, it) }
+                retrieve(key)?.let { dataMap[key] = Json.decodeFromString(serializer, it) }
             }
             initCompleteSet += key
         }

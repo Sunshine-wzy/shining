@@ -1,11 +1,14 @@
 package io.github.sunshinewzy.sunstcore.modules.menu
 
+import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.modules.guide.SGuide
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.objects.orderWith
 import io.github.sunshinewzy.sunstcore.utils.PlayerChatSubscriber
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.common.util.sync
+import taboolib.module.chat.uncolored
 import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Linked
@@ -20,15 +23,28 @@ object MenuBuilder {
         }
     }
     
-    inline fun <reified T> Player.openSelectMenu(title: String = "chest", builder: Linked<T>.() -> Unit) {
-        openMultiPageMenu<T>(title) { 
+    inline fun <reified T> Player.openSearchMenu(title: String = "chest", searchText: String = "", builder: Search<T>.() -> Unit) {
+        openMenu<Search<T>>(title) { 
+            buildMultiPage()
+            
             set(8 orderWith 1, SunSTIcon.SEARCH.item) {
-                PlayerChatSubscriber(this@openSelectMenu, "搜索") {
+                PlayerChatSubscriber(this@openSearchMenu, "搜索") {
+                    search(message.uncolored())
                     
-                    
-                    false
+                    sync {
+                        open(player)
+                    }
+
+                    true
                 }.register()
+
+                sendMessage("§f[${SunSTCore.prefixName}§f] 请输入要搜索的物品名 (输入'§c.§f'以取消)")
+                closeInventory()
             }
+
+            search(searchText)
+            
+            builder(this)
         }
     }
 
