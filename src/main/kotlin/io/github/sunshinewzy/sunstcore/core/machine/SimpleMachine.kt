@@ -1,9 +1,9 @@
 package io.github.sunshinewzy.sunstcore.core.machine
 
-open class SimpleMachine : IMachine {
-
-    override val property: MachineProperty
-        get() = TODO("Not yet implemented")
+/**
+ * Represent a single block machine.
+ */
+open class SimpleMachine(property: MachineProperty) : AbstractMachine(property) {
 
     override fun run() {
         TODO("Not yet implemented")
@@ -12,4 +12,5 @@ open class SimpleMachine : IMachine {
     override fun edit() {
         TODO("Not yet implemented")
     }
+    
 }

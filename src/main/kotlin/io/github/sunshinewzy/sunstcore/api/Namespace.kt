@@ -1,7 +1,9 @@
 package io.github.sunshinewzy.sunstcore.api
 
+import kotlinx.serialization.Serializable
 import java.util.concurrent.ConcurrentHashMap
 
+@Serializable
 class Namespace private constructor(val name: String) {
 
     override fun equals(other: Any?): Boolean {

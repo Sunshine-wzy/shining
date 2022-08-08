@@ -11,6 +11,8 @@ import io.github.sunshinewzy.sunstcore.core.guide.lock.LockItem
 import io.github.sunshinewzy.sunstcore.core.machine.legacy.*
 import io.github.sunshinewzy.sunstcore.core.machine.legacy.custom.SMachineRecipe
 import io.github.sunshinewzy.sunstcore.core.machine.legacy.custom.SMachineRecipes
+import io.github.sunshinewzy.sunstcore.core.machine.manager.IMachineManager
+import io.github.sunshinewzy.sunstcore.core.machine.manager.MachineManager
 import io.github.sunshinewzy.sunstcore.core.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.listeners.SunSTSubscriber
 import io.github.sunshinewzy.sunstcore.objects.SBlock
@@ -62,6 +64,7 @@ object SunSTCore : Plugin(), SPlugin {
     val plugin: BukkitPlugin by lazy { BukkitPlugin.getInstance() }
     val pluginManager: PluginManager by lazy { Bukkit.getPluginManager() }
     val prefixName: String by lazy { config.getString("prefix_name")?.colored() ?: colorName }
+    val machineManager: IMachineManager by lazy { MachineManager }
     
     
     override fun onEnable() {
