@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.sunstcore.utils
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
-import io.github.sunshinewzy.sunstcore.modules.menu.MenuBuilder.buildMultiPage
+import io.github.sunshinewzy.sunstcore.core.menu.MenuBuilder.buildMultiPage
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getLore
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getMeta

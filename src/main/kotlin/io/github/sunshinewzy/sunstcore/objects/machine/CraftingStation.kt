@@ -1,8 +1,8 @@
 package io.github.sunshinewzy.sunstcore.objects.machine
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
-import io.github.sunshinewzy.sunstcore.modules.machine.SSingleMachine
-import io.github.sunshinewzy.sunstcore.modules.menu.SMenu
+import io.github.sunshinewzy.sunstcore.core.machine.legacy.SSingleMachine
+import io.github.sunshinewzy.sunstcore.core.menu.SMenu
 import io.github.sunshinewzy.sunstcore.objects.SCraftRecipe
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.addShapelessRecipe

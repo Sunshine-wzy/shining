@@ -1,10 +1,10 @@
 package io.github.sunshinewzy.sunstcore.listeners
 
-import io.github.sunshinewzy.sunstcore.modules.data.internal.SLocationData
-import io.github.sunshinewzy.sunstcore.modules.energy.SEnergyCell
-import io.github.sunshinewzy.sunstcore.modules.energy.SEnergyCell.Companion.getEnergyCell
-import io.github.sunshinewzy.sunstcore.modules.energy.SEnergyCell.Companion.isEnergyBlock
-import io.github.sunshinewzy.sunstcore.modules.energy.SEnergyCell.Companion.removeEnergyBlock
+import io.github.sunshinewzy.sunstcore.core.data.internal.SLocationData
+import io.github.sunshinewzy.sunstcore.core.energy.SEnergyCell
+import io.github.sunshinewzy.sunstcore.core.energy.SEnergyCell.Companion.getEnergyCell
+import io.github.sunshinewzy.sunstcore.core.energy.SEnergyCell.Companion.isEnergyBlock
+import io.github.sunshinewzy.sunstcore.core.energy.SEnergyCell.Companion.removeEnergyBlock
 import io.github.sunshinewzy.sunstcore.objects.SBlock
 import io.github.sunshinewzy.sunstcore.objects.SBlock.Companion.toSBlock
 import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.getSLocation

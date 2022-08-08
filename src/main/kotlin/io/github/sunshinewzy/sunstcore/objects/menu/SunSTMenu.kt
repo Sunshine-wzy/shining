@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.sunstcore.objects.menu
 
 import io.github.sunshinewzy.sunstcore.SunSTCore.colorName
-import io.github.sunshinewzy.sunstcore.modules.menu.SMenu
+import io.github.sunshinewzy.sunstcore.core.menu.SMenu
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setName
 import io.github.sunshinewzy.sunstcore.utils.getPlayer

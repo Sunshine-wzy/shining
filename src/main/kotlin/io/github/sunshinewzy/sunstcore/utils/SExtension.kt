@@ -1,14 +1,14 @@
 package io.github.sunshinewzy.sunstcore.utils
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
+import io.github.sunshinewzy.sunstcore.core.data.internal.SunSTPlayerData
+import io.github.sunshinewzy.sunstcore.core.task.TaskBase
+import io.github.sunshinewzy.sunstcore.core.task.TaskProgress
+import io.github.sunshinewzy.sunstcore.core.task.TaskProject
+import io.github.sunshinewzy.sunstcore.core.task.TaskStage
 import io.github.sunshinewzy.sunstcore.interfaces.Itemable
 import io.github.sunshinewzy.sunstcore.interfaces.Materialsable
 import io.github.sunshinewzy.sunstcore.listeners.BlockListener
-import io.github.sunshinewzy.sunstcore.modules.data.internal.SunSTPlayerData
-import io.github.sunshinewzy.sunstcore.modules.task.TaskBase
-import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
-import io.github.sunshinewzy.sunstcore.modules.task.TaskProject
-import io.github.sunshinewzy.sunstcore.modules.task.TaskStage
 import io.github.sunshinewzy.sunstcore.objects.*
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.sunstcore.utils.SReflect.damage

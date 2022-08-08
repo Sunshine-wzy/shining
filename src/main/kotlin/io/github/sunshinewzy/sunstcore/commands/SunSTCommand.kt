@@ -2,8 +2,8 @@ package io.github.sunshinewzy.sunstcore.commands
 
 import io.github.sunshinewzy.sunstcore.SunSTCore.colorName
 import io.github.sunshinewzy.sunstcore.SunSTCore.prefixName
-import io.github.sunshinewzy.sunstcore.modules.data.DataManager
-import io.github.sunshinewzy.sunstcore.modules.machine.SMachineWrench
+import io.github.sunshinewzy.sunstcore.core.data.DataManager
+import io.github.sunshinewzy.sunstcore.core.machine.legacy.SMachineWrench
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.sunstcore.objects.menu.SunSTMenu

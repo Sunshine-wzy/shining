@@ -1,6 +1,8 @@
 package io.github.sunshinewzy.sunstcore.objects
 
-import io.github.sunshinewzy.sunstcore.modules.data.internal.SLocationData
+import io.github.sunshinewzy.sunstcore.core.data.internal.SLocationData
+import io.github.sunshinewzy.sunstcore.core.data.serializer.SLocationSerializer
+import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -8,6 +10,7 @@ import org.bukkit.World
 import org.bukkit.block.Block
 import org.bukkit.util.NumberConversions
 
+@Serializable(SLocationSerializer::class)
 class SLocation {
     val world: String
     val x: Int

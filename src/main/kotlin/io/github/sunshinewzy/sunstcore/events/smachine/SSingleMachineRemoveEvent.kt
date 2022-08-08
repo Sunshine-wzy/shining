@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.sunstcore.events.smachine
 
-import io.github.sunshinewzy.sunstcore.modules.machine.SSingleMachine
+import io.github.sunshinewzy.sunstcore.core.machine.legacy.SSingleMachine
 import org.bukkit.Location
 import org.bukkit.event.HandlerList
 

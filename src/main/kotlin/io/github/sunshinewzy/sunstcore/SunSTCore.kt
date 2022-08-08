@@ -1,18 +1,18 @@
 package io.github.sunshinewzy.sunstcore
 
-import io.github.sunshinewzy.sunstcore.interfaces.SPlugin
+import io.github.sunshinewzy.sunstcore.api.SPlugin
+import io.github.sunshinewzy.sunstcore.core.data.DataManager
+import io.github.sunshinewzy.sunstcore.core.data.internal.SLocationData
+import io.github.sunshinewzy.sunstcore.core.guide.SGuide
+import io.github.sunshinewzy.sunstcore.core.guide.element.GuideCategory
+import io.github.sunshinewzy.sunstcore.core.guide.element.GuideItem
+import io.github.sunshinewzy.sunstcore.core.guide.lock.LockExperience
+import io.github.sunshinewzy.sunstcore.core.guide.lock.LockItem
+import io.github.sunshinewzy.sunstcore.core.machine.legacy.*
+import io.github.sunshinewzy.sunstcore.core.machine.legacy.custom.SMachineRecipe
+import io.github.sunshinewzy.sunstcore.core.machine.legacy.custom.SMachineRecipes
+import io.github.sunshinewzy.sunstcore.core.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.listeners.SunSTSubscriber
-import io.github.sunshinewzy.sunstcore.modules.data.DataManager
-import io.github.sunshinewzy.sunstcore.modules.data.internal.SLocationData
-import io.github.sunshinewzy.sunstcore.modules.guide.SGuide
-import io.github.sunshinewzy.sunstcore.modules.guide.element.GuideCategory
-import io.github.sunshinewzy.sunstcore.modules.guide.element.GuideItem
-import io.github.sunshinewzy.sunstcore.modules.guide.lock.LockExperience
-import io.github.sunshinewzy.sunstcore.modules.guide.lock.LockItem
-import io.github.sunshinewzy.sunstcore.modules.machine.*
-import io.github.sunshinewzy.sunstcore.modules.machine.custom.SMachineRecipe
-import io.github.sunshinewzy.sunstcore.modules.machine.custom.SMachineRecipes
-import io.github.sunshinewzy.sunstcore.modules.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.objects.SBlock
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTItem
@@ -82,6 +82,9 @@ object SunSTCore : Plugin(), SPlugin {
         
     }
 
+    override fun getName(): String {
+        return name
+    }
 
     private fun init() {
         try {
