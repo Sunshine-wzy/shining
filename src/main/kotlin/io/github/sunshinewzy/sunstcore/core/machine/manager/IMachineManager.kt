@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.sunstcore.core.machine.manager
 
 import io.github.sunshinewzy.sunstcore.core.machine.IMachine
-import io.github.sunshinewzy.sunstcore.core.machine.IMachineRegistrationProcessor
+import io.github.sunshinewzy.sunstcore.core.machine.processor.IMachineRegistrationProcessor
 import io.github.sunshinewzy.sunstcore.objects.SLocation
 
 /**
@@ -13,6 +13,8 @@ interface IMachineManager {
      * Register a [machine].
      * 
      * It means SunSTCore starts to judge whether the [machine] is created.
+     * 
+     * Invoke [IMachineRegistrationProcessor.onRegister]
      */
     fun register(machine: IMachine)
 

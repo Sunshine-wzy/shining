@@ -7,9 +7,7 @@ import kotlinx.serialization.Serializable
 abstract class AbstractMachine(override val property: MachineProperty) : IMachine {
 
     open fun register() {
-        if(!SunSTCore.machineManager.isRegistered(this))
-            SunSTCore.machineManager.register(this)
-        else throw RuntimeException("The machine '$property' has already been registered.")
+        SunSTCore.machineManager.register(this)
     }
 
 }

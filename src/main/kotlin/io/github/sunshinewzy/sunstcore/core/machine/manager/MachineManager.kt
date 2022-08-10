@@ -1,11 +1,8 @@
 package io.github.sunshinewzy.sunstcore.core.machine.manager
 
 import io.github.sunshinewzy.sunstcore.core.machine.IMachine
-import io.github.sunshinewzy.sunstcore.core.machine.IMachineRegistrationProcessor
+import io.github.sunshinewzy.sunstcore.core.machine.processor.IMachineRegistrationProcessor
 import io.github.sunshinewzy.sunstcore.objects.SLocation
-import org.bukkit.event.player.PlayerInteractEvent
-import taboolib.common.platform.event.EventPriority
-import taboolib.common.platform.event.SubscribeEvent
 import java.util.concurrent.ConcurrentHashMap
 
 object MachineManager : IMachineManager {
@@ -15,7 +12,10 @@ object MachineManager : IMachineManager {
     
     
     override fun register(machine: IMachine) {
+        if(isRegistered(machine)) throw RuntimeException("The machine '${machine.property}' has already been registered.")
+        
         registeredMachines += machine
+        registeredProcessors.forEach { it.onRegister(machine) }
     }
 
     override fun unregister(machine: IMachine) {
@@ -50,9 +50,4 @@ object MachineManager : IMachineManager {
         return registeredProcessors.contains(processor)
     }
 
-    @SubscribeEvent(EventPriority.HIGHEST)
-    fun onInteract(event: PlayerInteractEvent) {
-        
-    }
-    
 }
