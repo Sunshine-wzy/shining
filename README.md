@@ -1,6 +1,4 @@
 # SunSTCore
-* A Bukkit core lib plugin made by SunShine Technology.
-* [MCBBS发布帖](https://www.mcbbs.net/thread-1170416-1-1.html)
-
-# [模块 - modules](https://github.com/Sunshine-wzy/SunSTCore/tree/master/src/main/kotlin/io/github/sunshinewzy/sunstcore/modules)
-SunSTCore的核心功能
+* Pursue convenient and fast
+* Customize and create your own machines and tasks simply by clicking.
+* Extend and complexify your machines with code.
