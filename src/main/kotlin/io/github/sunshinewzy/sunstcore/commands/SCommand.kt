@@ -81,7 +81,7 @@ open class SCommand(val name: String, val alias: String = name) : CommandExecuto
         if(commands.containsKey(first)){
             val scWrapper = commands[first] ?: return false
             if(scWrapper.second && !sender.isOp) {
-                sender.sendMsg(SunSTCore.colorName, "&c您没有使用该命令的权限！")
+                sender.sendMsg(SunSTCore.COLOR_NAME, "&c您没有使用该命令的权限！")
                 return false
             }
             

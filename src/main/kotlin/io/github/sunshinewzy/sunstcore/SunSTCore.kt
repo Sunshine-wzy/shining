@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.sunstcore
 
+import io.github.sunshinewzy.sunstcore.api.Namespace
 import io.github.sunshinewzy.sunstcore.api.SPlugin
 import io.github.sunshinewzy.sunstcore.core.data.DataManager
 import io.github.sunshinewzy.sunstcore.core.data.internal.SLocationData
@@ -54,8 +55,8 @@ import taboolib.platform.BukkitPlugin
     )
 )
 object SunSTCore : Plugin(), SPlugin {
-    const val name = "SunSTCore"
-    const val colorName = "§eSunSTCore"
+    const val NAME = "SunSTCore"
+    const val COLOR_NAME = "§eSunSTCore"
     
     @Config
     lateinit var config: Configuration
@@ -63,8 +64,10 @@ object SunSTCore : Plugin(), SPlugin {
     
     val plugin: BukkitPlugin by lazy { BukkitPlugin.getInstance() }
     val pluginManager: PluginManager by lazy { Bukkit.getPluginManager() }
-    val prefixName: String by lazy { config.getString("prefix_name")?.colored() ?: colorName }
+    val prefixName: String by lazy { config.getString("prefix_name")?.colored() ?: COLOR_NAME }
     val machineManager: IMachineManager by lazy { MachineManager }
+    
+    private val namespace = Namespace.get(NAME.lowercase())
     
     
     override fun onEnable() {
@@ -86,8 +89,13 @@ object SunSTCore : Plugin(), SPlugin {
     }
 
     override fun getName(): String {
-        return name
+        return NAME
     }
+
+    override fun getNamespace(): Namespace {
+        return namespace
+    }
+    
 
     private fun init() {
         try {

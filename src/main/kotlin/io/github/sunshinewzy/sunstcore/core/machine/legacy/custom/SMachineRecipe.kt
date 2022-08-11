@@ -37,7 +37,7 @@ sealed class SMachineRecipe(
     abstract fun getDisplayItem(): ItemStack
     
     open fun edit(player: Player, sMachine: SMachine, recipes: SMachineRecipes) {
-        player.sendMsg(SunSTCore.colorName, "&c该配方类型的操作对象无法编辑")
+        player.sendMsg(SunSTCore.COLOR_NAME, "&c该配方类型的操作对象无法编辑")
     }
     
     

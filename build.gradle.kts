@@ -51,8 +51,8 @@ repositories {
 
 dependencies {
     compileOnly("ink.ptms:nms-all:1.0.0")
-    compileOnly("ink.ptms.core:v11800:11800-minimize:api")
-    compileOnly("ink.ptms.core:v11800:11800-minimize:mapped")
+    compileOnly("ink.ptms.core:v11800:11800:api")
+    compileOnly("ink.ptms.core:v11800:11800:mapped")
     compileOnly(kotlin("stdlib"))
 
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
