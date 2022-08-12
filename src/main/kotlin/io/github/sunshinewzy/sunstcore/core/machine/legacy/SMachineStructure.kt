@@ -2,9 +2,9 @@ package io.github.sunshinewzy.sunstcore.core.machine.legacy
 
 import io.github.sunshinewzy.sunstcore.exceptions.MachineStructureException
 import io.github.sunshinewzy.sunstcore.exceptions.NoIngredientException
-import io.github.sunshinewzy.sunstcore.objects.SBlock
 import io.github.sunshinewzy.sunstcore.objects.SCoordinate
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getMeta
+import io.github.sunshinewzy.sunstcore.objects.legacy.SBlock
 import io.github.sunshinewzy.sunstcore.utils.addClone
 import io.github.sunshinewzy.sunstcore.utils.setItem
 import org.bukkit.Location

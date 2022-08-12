@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.sunstcore.core.machine
 
-import io.github.sunshinewzy.sunstcore.api.NamespacedKey
+import io.github.sunshinewzy.sunstcore.api.NamespacedId
 import kotlinx.serialization.Serializable
 
 /**
@@ -8,5 +8,5 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class MachineProperty(
-    val id: NamespacedKey
+    val id: NamespacedId
 )

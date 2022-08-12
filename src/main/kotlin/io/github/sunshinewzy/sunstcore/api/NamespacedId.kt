@@ -1,99 +1,99 @@
 package io.github.sunshinewzy.sunstcore.api
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
-import io.github.sunshinewzy.sunstcore.core.data.serializer.NamespacedKeySerializer
+import io.github.sunshinewzy.sunstcore.core.data.serializer.NamespacedIdSerializer
 import kotlinx.serialization.Serializable
 import java.util.regex.Pattern
 
 
 /**
- * Represent a String based key which consists of two components - a namespace
- * and a key.
+ * Represent a String based id which consists of two components - a namespace
+ * and an id.
  *
- * Namespaces may only contain lowercase alphanumeric characters, periods,
+ * Namespace may only contain lowercase alphanumeric characters, periods,
  * underscores, and hyphens.
  *
  *
- * Keys may only contain lowercase alphanumeric characters, periods,
+ * ID may only contain lowercase alphanumeric characters, periods,
  * underscores, hyphens, and forward slashes.
  *
- * @constructor Create a key in a specific namespace.
+ * @constructor Create a id in a specific namespace.
  * @param namespace namespace
- * @param key key
+ * @param id id
  */
-@Serializable(NamespacedKeySerializer::class)
-class NamespacedKey(val namespace: Namespace, val key: String) {
+@Serializable(NamespacedIdSerializer::class)
+class NamespacedId(val namespace: Namespace, val id: String) {
 
     init {
-        check(VALID_KEY.matcher(key).matches()) {
-            "Invalid key. Must be [a-z0-9/._-]: $key"
+        check(VALID_ID.matcher(id).matches()) {
+            "Invalid id. Must be [a-z0-9/._-]: $id"
         }
         
         val string = toString()
         check(string.length < 256) {
-            "NamespacedKey must be less than 256 characters: $string"
+            "NamespacedId must be less than 256 characters: $string"
         }
     }
     
     
     /**
-     * Create a key in the plugin's namespace.
+     * Create an id in the plugin's namespace.
      *
      *
-     * Namespaces may only contain lowercase alphanumeric characters, periods,
+     * Namespace may only contain lowercase alphanumeric characters, periods,
      * underscores, and hyphens.
      *
      *
-     * Keys may only contain lowercase alphanumeric characters, periods,
+     * ID may only contain lowercase alphanumeric characters, periods,
      * underscores, hyphens, and forward slashes.
      *
      * @param plugin the plugin to use for the namespace
-     * @param key the key to create
+     * @param id the id to create
      */
-    constructor(plugin: SPlugin, key: String) : this(plugin.getNamespace(), key.lowercase())
+    constructor(plugin: SPlugin, id: String) : this(plugin.getNamespace(), id.lowercase())
     
 
     override fun hashCode(): Int {
         var hash = 5
         hash = 47 * hash + namespace.hashCode()
-        hash = 47 * hash + key.hashCode()
+        hash = 47 * hash + id.hashCode()
         return hash
     }
 
     override fun equals(other: Any?): Boolean {
         if(this === other) return true
-        if(other !is NamespacedKey) return false
+        if(other !is NamespacedId) return false
 
         if(namespace != other.namespace) return false
-        if(key != other.key) return false
+        if(id != other.id) return false
 
         return true
     }
 
     override fun toString(): String {
-        return "${namespace.name}:$key"
+        return "${namespace.name}:$id"
     }
     
 
     companion object {
-        val VALID_KEY = Pattern.compile("[a-z0-9/._-]+")
+        val VALID_ID = Pattern.compile("[a-z0-9/._-]+")
         val NULL = sunstcore("null")
         
 
         /**
-         * Get a key in the sunstcore namespace.
+         * Get an id in the sunstcore namespace.
          *
-         * @param key the key to use
-         * @return new key in the sunstcore namespace
+         * @param id the id to use
+         * @return new id in the sunstcore namespace
          */
-        fun sunstcore(key: String): NamespacedKey {
-            return NamespacedKey(SunSTCore, key)
+        fun sunstcore(id: String): NamespacedId {
+            return NamespacedId(SunSTCore, id)
         }
 
         /**
-         * Get a NamespacedKey from the supplied string with a default namespace if
+         * Get a NamespacedId from the supplied string with a default namespace if
          * a namespace is not defined. This is a utility method meant to fetch a
-         * NamespacedKey from user input. Please note that casing does matter and
+         * NamespacedId from user input. Please note that casing does matter and
          * any instance of uppercase characters will be considered invalid. The
          * input contract is as follows:
          * <pre>
@@ -107,14 +107,14 @@ class NamespacedKey(val namespace: Namespace, val key: String) {
          * fromString("", plugin) -{@literal >} null
          * </pre>
          *
-         * @param string the string to convert to a NamespacedKey
+         * @param string the string to convert to a NamespacedId
          * @param defaultNamespace the default namespace to use if none was
          * supplied. If null, the `sunstcore` namespace will be used
          * 
-         * @return the created NamespacedKey. null if invalid key
+         * @return the created NamespacedId. null if invalid id
          * @see .fromString
          */
-        fun fromString(string: String, defaultNamespace: SPlugin?): NamespacedKey? {
+        fun fromString(string: String, defaultNamespace: SPlugin?): NamespacedId? {
             check(string.isNotEmpty()) {
                 "Input string must not be empty"
             }
@@ -124,36 +124,36 @@ class NamespacedKey(val namespace: Namespace, val key: String) {
                 return null
             }
             
-            val key = if(components.size == 2) components[1] else ""
+            val id = if(components.size == 2) components[1] else ""
             if(components.size == 1) {
                 val value = components[0]
-                return if(value.isEmpty() || !VALID_KEY.matcher(value).matches()) {
+                return if(value.isEmpty() || !VALID_ID.matcher(value).matches()) {
                     null
-                } else defaultNamespace?.let { NamespacedKey(it, value) } ?: sunstcore(value)
-            } else if(components.size == 2 && !VALID_KEY.matcher(key).matches()) {
+                } else defaultNamespace?.let { NamespacedId(it, value) } ?: sunstcore(value)
+            } else if(components.size == 2 && !VALID_ID.matcher(id).matches()) {
                 return null
             }
             
             val namespace = components[0]
             if(namespace.isEmpty()) {
-                return defaultNamespace?.let { NamespacedKey(it, key) } ?: sunstcore(key)
+                return defaultNamespace?.let { NamespacedId(it, id) } ?: sunstcore(id)
             }
             return if(!Namespace.VALID_NAMESPACE.matcher(namespace).matches()) {
                 null
-            } else NamespacedKey(Namespace.get(namespace), key)
+            } else NamespacedId(Namespace.get(namespace), id)
         }
 
         /**
-         * Get a NamespacedKey from the supplied string.
+         * Get a NamespacedId from the supplied string.
          *
          * The default namespace will be sunstcore.
          *
-         * @param key the key to convert to a NamespacedKey
-         * @return the created NamespacedKey. null if invalid
+         * @param id the id to convert to a NamespacedId
+         * @return the created NamespacedId. null if invalid
          * @see .fromString
          */
-        fun fromString(key: String): NamespacedKey? {
-            return fromString(key, null)
+        fun fromString(id: String): NamespacedId? {
+            return fromString(id, null)
         }
     }
 }

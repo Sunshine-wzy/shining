@@ -5,9 +5,9 @@ import io.github.sunshinewzy.sunstcore.core.energy.SEnergyCell
 import io.github.sunshinewzy.sunstcore.core.energy.SEnergyCell.Companion.getEnergyCell
 import io.github.sunshinewzy.sunstcore.core.energy.SEnergyCell.Companion.isEnergyBlock
 import io.github.sunshinewzy.sunstcore.core.energy.SEnergyCell.Companion.removeEnergyBlock
-import io.github.sunshinewzy.sunstcore.objects.SBlock
-import io.github.sunshinewzy.sunstcore.objects.SBlock.Companion.toSBlock
 import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.getSLocation
+import io.github.sunshinewzy.sunstcore.objects.legacy.SBlock
+import io.github.sunshinewzy.sunstcore.objects.legacy.SBlock.Companion.toSBlock
 import io.github.sunshinewzy.sunstcore.utils.BlockOperator.Companion.operate
 import org.bukkit.Location
 import org.bukkit.Material

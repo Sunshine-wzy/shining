@@ -3,13 +3,13 @@ package io.github.sunshinewzy.sunstcore.core.machine.legacy.custom
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.core.machine.legacy.SMachine
 import io.github.sunshinewzy.sunstcore.core.menu.SMenu
-import io.github.sunshinewzy.sunstcore.objects.SBlock
 import io.github.sunshinewzy.sunstcore.objects.SCoordinate
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setNameAndLore
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SInventoryHolder.Companion.getSHolder
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
+import io.github.sunshinewzy.sunstcore.objects.legacy.SBlock
 import io.github.sunshinewzy.sunstcore.objects.orderWith
 import io.github.sunshinewzy.sunstcore.utils.*
 import org.bukkit.Location
@@ -116,7 +116,9 @@ sealed class SMachineRecipe(
             menu.openInventory(player)
         }
 
-        constructor(map: Map<String, Any>) : this(map["coord"] as? SCoordinate ?: SCoordinate(0, 0, 0), map["sBlock"] as? SBlock ?: SBlock(Material.AIR))
+        constructor(map: Map<String, Any>) : this(map["coord"] as? SCoordinate ?: SCoordinate(0, 0, 0), map["sBlock"] as? SBlock
+            ?: SBlock(Material.AIR)
+        )
         
         override fun execute(loc: Location) {
             sBlock.setLocation(loc)
@@ -190,7 +192,9 @@ sealed class SMachineRecipe(
             menu.openInventory(player)
         }
 
-        constructor(map: Map<String, Any>) : this(map["coord"] as? SCoordinate ?: SCoordinate(0, 0, 0), map["sBlock"] as? SBlock ?: SBlock(Material.AIR))
+        constructor(map: Map<String, Any>) : this(map["coord"] as? SCoordinate ?: SCoordinate(0, 0, 0), map["sBlock"] as? SBlock
+            ?: SBlock(Material.AIR)
+        )
 
         override fun execute(loc: Location) {
             val block = loc.block

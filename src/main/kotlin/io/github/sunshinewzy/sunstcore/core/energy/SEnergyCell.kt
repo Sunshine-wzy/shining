@@ -1,10 +1,10 @@
 package io.github.sunshinewzy.sunstcore.core.energy
 
 import io.github.sunshinewzy.sunstcore.exceptions.NoEnergyUnitException
-import io.github.sunshinewzy.sunstcore.objects.SBlock
 import io.github.sunshinewzy.sunstcore.objects.SLocation
 import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.getSLocation
 import io.github.sunshinewzy.sunstcore.objects.SLocation.Companion.toSLocation
+import io.github.sunshinewzy.sunstcore.objects.legacy.SBlock
 import org.bukkit.Location
 import org.bukkit.block.Block
 

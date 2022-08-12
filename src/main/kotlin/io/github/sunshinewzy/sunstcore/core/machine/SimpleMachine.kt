@@ -10,7 +10,10 @@ open class SimpleMachine(
     item: DictionaryItem
 ) : AbstractMachine(property) {
     var item: DictionaryItem = item
-        private set
+        private set(value) {
+            
+            field = value
+        }
     
 
     override fun run() {

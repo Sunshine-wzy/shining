@@ -16,9 +16,9 @@ import io.github.sunshinewzy.sunstcore.core.machine.manager.IMachineManager
 import io.github.sunshinewzy.sunstcore.core.machine.manager.MachineManager
 import io.github.sunshinewzy.sunstcore.core.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.listeners.SunSTSubscriber
-import io.github.sunshinewzy.sunstcore.objects.SBlock
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTItem
+import io.github.sunshinewzy.sunstcore.objects.legacy.SBlock
 import io.github.sunshinewzy.sunstcore.objects.machine.SunSTMachineManager
 import io.github.sunshinewzy.sunstcore.utils.SReflect
 import io.github.sunshinewzy.sunstcore.utils.SunSTTestApi
@@ -40,7 +40,6 @@ import taboolib.module.chat.colored
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.Configuration
 import taboolib.module.metrics.Metrics
-import taboolib.module.nms.nmsGeneric
 import taboolib.platform.BukkitPlugin
 
 
@@ -112,9 +111,6 @@ object SunSTCore : Plugin(), SPlugin {
         SSingleMachine.init()
         SFlatMachine.init()
         SunSTMachineManager.register()
-        
-        nmsGeneric
-        
     }
     
     private fun registerListeners() {
@@ -178,6 +174,17 @@ object SunSTCore : Plugin(), SPlugin {
                     
                     Material.EMERALD -> {
                         SGuide.fireworkCongratulate(player)
+                    }
+                    
+                    Material.STICK -> {
+                        clickedBlock?.let { block ->
+                            player.sendMessage("""
+                                > Block
+                                ${block.type}
+                                ${block.data}
+                                ${block.blockData.asString}
+                            """.trimIndent())
+                        }
                     }
                     
                     Material.AIR -> {}

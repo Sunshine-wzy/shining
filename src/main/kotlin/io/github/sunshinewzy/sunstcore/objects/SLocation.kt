@@ -2,6 +2,7 @@ package io.github.sunshinewzy.sunstcore.objects
 
 import io.github.sunshinewzy.sunstcore.core.data.internal.SLocationData
 import io.github.sunshinewzy.sunstcore.core.data.serializer.SLocationSerializer
+import io.github.sunshinewzy.sunstcore.objects.legacy.SBlock
 import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit
 import org.bukkit.Location

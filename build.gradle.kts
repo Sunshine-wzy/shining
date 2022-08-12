@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     `java-library`
     `maven-publish`
-    id("io.izzel.taboolib") version "1.41"
+    id("io.izzel.taboolib") version "1.42"
     id("org.jetbrains.kotlin.jvm") version "1.5.10"
     kotlin("plugin.serialization") version "1.5.10"
 }
@@ -29,7 +29,7 @@ taboolib {
     
     install("platform-bukkit")
     classifier = null
-    version = "6.0.9-33"
+    version = "6.0.9-58"
     
     description { 
         desc("A core lib made by SunShine Technology.")
@@ -46,13 +46,14 @@ taboolib {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
     compileOnly("ink.ptms:nms-all:1.0.0")
-    compileOnly("ink.ptms.core:v11800:11800:api")
-    compileOnly("ink.ptms.core:v11800:11800:mapped")
+    compileOnly("ink.ptms.core:v11900:11900:universal")
+    compileOnly("ink.ptms.core:v11900:11900:mapped")
     compileOnly(kotlin("stdlib"))
 
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
@@ -74,8 +75,8 @@ tasks.withType<JavaCompile> {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = "1.8"
-
-        freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
+        
+        freeCompilerArgs = listOf("-Xopt-in=kotlin.RequiresOptIn")
     }
 }
 
