@@ -25,7 +25,6 @@ taboolib {
     install("module-ui-receptacle")
     install("expansion-command-helper")
     install("expansion-player-database")
-    install("expansion-persistent-container")
     
     install("platform-bukkit")
     classifier = null
@@ -62,10 +61,19 @@ dependencies {
     compileOnly("com.google.code.gson:gson:2.8.7")
 
     compileOnly(fileTree("libs"))
+
+
+    testImplementation(platform("org.junit:junit-bom:5.9.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 tasks {
-    
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
+    }
 }
 
 tasks.withType<JavaCompile> {

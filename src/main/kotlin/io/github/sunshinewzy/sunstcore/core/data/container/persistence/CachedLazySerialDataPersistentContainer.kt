@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.sunstcore.core.data.container
+package io.github.sunshinewzy.sunstcore.core.data.container.persistence
 
 import io.github.sunshinewzy.sunstcore.core.data.DataManager
 import io.github.sunshinewzy.sunstcore.core.data.database.Database
@@ -6,11 +6,11 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import taboolib.common.platform.function.submit
 
-open class OptionalLazySerialDataContainer<T>(
+open class CachedLazySerialDataPersistentContainer<T>(
     serializer: KSerializer<T>,
     tableName: String,
     database: Database<*> = DataManager.database
-) : LazySerialDataContainer<T>(serializer, tableName, database) {
+) : LazySerialDataPersistentContainer<T>(serializer, tableName, database) {
     private val initCompleteSet = hashSetOf<String>()
     
     

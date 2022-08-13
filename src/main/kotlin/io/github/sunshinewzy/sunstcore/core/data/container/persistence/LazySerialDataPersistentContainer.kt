@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.sunstcore.core.data.container
+package io.github.sunshinewzy.sunstcore.core.data.container.persistence
 
 import io.github.sunshinewzy.sunstcore.core.data.DataManager
 import io.github.sunshinewzy.sunstcore.core.data.LazyOperation
@@ -7,11 +7,11 @@ import io.github.sunshinewzy.sunstcore.core.data.database.Database
 import kotlinx.serialization.KSerializer
 import java.util.concurrent.ConcurrentHashMap
 
-open class LazySerialDataContainer<T>(
+open class LazySerialDataPersistentContainer<T>(
     serializer: KSerializer<T>,
     tableName: String,
     database: Database<*> = DataManager.database
-) : SerialDataContainer<T>(serializer, tableName, database), LazyOperational {
+) : SerialDataPersistentContainer<T>(serializer, tableName, database), LazyOperational {
     private val lazyOperationMap: ConcurrentHashMap<String, LazyOperation> = ConcurrentHashMap()
 
     

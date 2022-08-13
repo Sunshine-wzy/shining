@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.sunstcore.core.guide
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
-import io.github.sunshinewzy.sunstcore.core.data.container.LazySerialDataContainer
+import io.github.sunshinewzy.sunstcore.core.data.container.persistence.LazySerialDataPersistentContainer
 import io.github.sunshinewzy.sunstcore.core.data.serializer.ItemStackSerializer
 import io.github.sunshinewzy.sunstcore.core.menu.MenuBuilder.onBack
 import io.github.sunshinewzy.sunstcore.core.menu.MenuBuilder.openMultiPageMenu
@@ -77,7 +77,7 @@ class GuideGroup(
         const val GUIDE_GROUP = "guide_group"
         
         
-        private val groupData = LazySerialDataContainer(serializer(), GUIDE_GROUP)
+        private val groupData = LazySerialDataPersistentContainer(serializer(), GUIDE_GROUP)
         
         private val createGroupItem = SItem(Material.SLIME_BALL, "&f创建队伍")
         private val joinGroupItem = SItem(Material.ENDER_PEARL, "&f加入队伍")

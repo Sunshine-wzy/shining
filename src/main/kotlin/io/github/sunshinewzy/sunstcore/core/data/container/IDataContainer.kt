@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.sunstcore.core.data.container
 
-class SerialDataContainer {
+interface IDataContainer {
     
-    
+    val options: DataContainerOptions
     
 }
