@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.sunstcore.core.data.container
 
-import io.github.sunshinewzy.sunstcore.core.data.IData
+import io.github.sunshinewzy.sunstcore.api.data.IData
 
 /**
  * Various settings for controlling the input and output of [IDataContainer]

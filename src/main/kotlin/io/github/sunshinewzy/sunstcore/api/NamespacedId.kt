@@ -77,7 +77,7 @@ class NamespacedId(val namespace: Namespace, val id: String) {
 
     companion object {
         val VALID_ID = Pattern.compile("[a-z0-9/._-]+")
-        val NULL = sunstcore("null")
+        val NULL: NamespacedId by lazy { sunstcore("null") }
         
 
         /**

@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.sunstcore.core.data.container
+package io.github.sunshinewzy.sunstcore.api.data.container
 
 interface ISerialDataContainer : IDataContainer {
     

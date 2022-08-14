@@ -3,13 +3,14 @@ package io.github.sunshinewzy.sunstcore.core.data.database
 import taboolib.module.database.ColumnBuilder
 import taboolib.module.database.Host
 import taboolib.module.database.Table
+import io.github.sunshinewzy.sunstcore.core.data.database.Table as STable
 
 @Suppress("LeakingThis")
 open class Table<T: Host<E>, E: ColumnBuilder>(
     name: String,
     host: Host<E>,
     val type: DatabaseType,
-    func: io.github.sunshinewzy.sunstcore.core.data.database.Table<T, E>.() -> Unit = {}
+    func: STable<T, E>.() -> Unit = {}
 ) : Table<T, E>(name, host) {
     
     init {

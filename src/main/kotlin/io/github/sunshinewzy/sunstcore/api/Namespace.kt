@@ -42,6 +42,7 @@ class Namespace private constructor(val name: String) {
         val VALID_NAMESPACE = Pattern.compile("[a-z0-9._-]+")
 
         
+        @JvmStatic
         fun get(name: String): Namespace {
             cache[name]?.let { 
                 return it
