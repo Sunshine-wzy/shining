@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.sunstcore.core.dictionary
 
-import io.github.sunshinewzy.sunstcore.api.NamespacedId
+import io.github.sunshinewzy.sunstcore.api.namespace.NamespacedId
 import io.github.sunshinewzy.sunstcore.objects.SBlock
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent

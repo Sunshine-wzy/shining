@@ -1,5 +1,7 @@
 package io.github.sunshinewzy.sunstcore.api
 
+import io.github.sunshinewzy.sunstcore.api.namespace.Namespace
+
 interface SPlugin {
 
     /**

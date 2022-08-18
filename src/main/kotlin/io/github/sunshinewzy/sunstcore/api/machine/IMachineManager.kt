@@ -1,7 +1,5 @@
-package io.github.sunshinewzy.sunstcore.core.machine.manager
+package io.github.sunshinewzy.sunstcore.api.machine
 
-import io.github.sunshinewzy.sunstcore.core.machine.IMachine
-import io.github.sunshinewzy.sunstcore.core.machine.processor.IMachineRegistrationProcessor
 import io.github.sunshinewzy.sunstcore.objects.SLocation
 
 /**

@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.sunstcore.core.machine
 
-import io.github.sunshinewzy.sunstcore.api.NamespacedId
+import io.github.sunshinewzy.sunstcore.api.namespace.NamespacedId
 import kotlinx.serialization.Serializable
 
 /**

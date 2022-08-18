@@ -1,7 +1,8 @@
 package io.github.sunshinewzy.sunstcore
 
-import io.github.sunshinewzy.sunstcore.api.Namespace
 import io.github.sunshinewzy.sunstcore.api.SPlugin
+import io.github.sunshinewzy.sunstcore.api.machine.IMachineManager
+import io.github.sunshinewzy.sunstcore.api.namespace.Namespace
 import io.github.sunshinewzy.sunstcore.core.data.DataManager
 import io.github.sunshinewzy.sunstcore.core.data.internal.SLocationData
 import io.github.sunshinewzy.sunstcore.core.guide.SGuide
@@ -9,11 +10,10 @@ import io.github.sunshinewzy.sunstcore.core.guide.element.GuideCategory
 import io.github.sunshinewzy.sunstcore.core.guide.element.GuideItem
 import io.github.sunshinewzy.sunstcore.core.guide.lock.LockExperience
 import io.github.sunshinewzy.sunstcore.core.guide.lock.LockItem
+import io.github.sunshinewzy.sunstcore.core.machine.internal.MachineManager
 import io.github.sunshinewzy.sunstcore.core.machine.legacy.*
 import io.github.sunshinewzy.sunstcore.core.machine.legacy.custom.SMachineRecipe
 import io.github.sunshinewzy.sunstcore.core.machine.legacy.custom.SMachineRecipes
-import io.github.sunshinewzy.sunstcore.core.machine.manager.IMachineManager
-import io.github.sunshinewzy.sunstcore.core.machine.manager.MachineManager
 import io.github.sunshinewzy.sunstcore.core.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.listeners.SunSTSubscriber
 import io.github.sunshinewzy.sunstcore.objects.SItem

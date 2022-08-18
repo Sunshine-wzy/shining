@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.sunstcore.api.data.container
 
-import io.github.sunshinewzy.sunstcore.api.NamespacedId
 import io.github.sunshinewzy.sunstcore.api.data.IData
+import io.github.sunshinewzy.sunstcore.api.namespace.NamespacedId
 import io.github.sunshinewzy.sunstcore.core.data.container.DataContainerOptions
 
 /**

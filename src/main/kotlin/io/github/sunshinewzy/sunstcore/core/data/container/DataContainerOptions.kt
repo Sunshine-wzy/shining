@@ -22,6 +22,9 @@ import io.github.sunshinewzy.sunstcore.api.data.IData
  * Place the char at the beginning of path, and it will work.
  * The default value is '!'.
  * 
+ * Make sure the actual key does not contain [ignorePathSeparator],
+ * or it will cause unpredictable consequences.
+ * 
  * For example, to get the value of key "sunstcore:a.b.c",
  * use "!sunstcore:a.b.c" instead of "sunstcore:a.b.c".
  * 
@@ -29,6 +32,9 @@ import io.github.sunshinewzy.sunstcore.api.data.IData
  * 该字符用于忽略 path 参数中的 [分隔符][pathSeparator]
  * 
  * 将该字符放在 path 的首位就能起作用。默认为 '!'。
+ * 
+ * 确保真正的键中不包含 [ignorePathSeparator]，
+ * 否则将会导致无法预测的后果。
  * 
  * 例如，使用 "!sunstcore:a.b.c" 而非 "sunstcore:a.b.c" 来获得键
  * "sunstcore:a.b.c" 的值。

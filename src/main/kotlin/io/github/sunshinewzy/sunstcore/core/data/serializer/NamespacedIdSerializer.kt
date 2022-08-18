@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.sunstcore.core.data.serializer
 
-import io.github.sunshinewzy.sunstcore.api.NamespacedId
+import io.github.sunshinewzy.sunstcore.api.namespace.NamespacedId
 
 object NamespacedIdSerializer : StringSerializer<NamespacedId>("NamespacedId") {
     override fun toString(value: NamespacedId): String {

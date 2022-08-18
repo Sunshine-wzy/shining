@@ -1,7 +1,8 @@
-package io.github.sunshinewzy.sunstcore.core.machine.processor
+package io.github.sunshinewzy.sunstcore.core.machine.internal
 
+import io.github.sunshinewzy.sunstcore.api.machine.IMachine
+import io.github.sunshinewzy.sunstcore.api.machine.IMachineRegistrationProcessor
 import io.github.sunshinewzy.sunstcore.core.dictionary.DictionaryItem.Companion.toDictionaryItem
-import io.github.sunshinewzy.sunstcore.core.machine.IMachine
 import io.github.sunshinewzy.sunstcore.core.machine.MultiblockMachine
 import io.github.sunshinewzy.sunstcore.core.machine.PlaneMachine
 import io.github.sunshinewzy.sunstcore.core.machine.SimpleMachine

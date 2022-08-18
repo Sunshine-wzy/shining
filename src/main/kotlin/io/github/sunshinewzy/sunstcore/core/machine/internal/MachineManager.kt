@@ -1,7 +1,8 @@
-package io.github.sunshinewzy.sunstcore.core.machine.manager
+package io.github.sunshinewzy.sunstcore.core.machine.internal
 
-import io.github.sunshinewzy.sunstcore.core.machine.IMachine
-import io.github.sunshinewzy.sunstcore.core.machine.processor.IMachineRegistrationProcessor
+import io.github.sunshinewzy.sunstcore.api.machine.IMachine
+import io.github.sunshinewzy.sunstcore.api.machine.IMachineManager
+import io.github.sunshinewzy.sunstcore.api.machine.IMachineRegistrationProcessor
 import io.github.sunshinewzy.sunstcore.objects.SLocation
 import java.util.concurrent.ConcurrentHashMap
 

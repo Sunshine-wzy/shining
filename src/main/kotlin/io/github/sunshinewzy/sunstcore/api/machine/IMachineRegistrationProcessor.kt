@@ -1,6 +1,4 @@
-package io.github.sunshinewzy.sunstcore.core.machine.processor
-
-import io.github.sunshinewzy.sunstcore.core.machine.IMachine
+package io.github.sunshinewzy.sunstcore.api.machine
 
 /**
  * Manage how to activate machines.

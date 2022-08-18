@@ -4,23 +4,50 @@ import io.github.sunshinewzy.sunstcore.api.data.IData
 import io.github.sunshinewzy.sunstcore.api.data.container.IDataContainer
 import java.util.concurrent.ConcurrentHashMap
 
-class Data(override val container: IDataContainer) : IData {
-    private val map = ConcurrentHashMap<String, Any>()
-    
+open class Data(
+    override val name: String,
+    override val container: IDataContainer,
     override val parent: IData? = null
-    
-    
+) : IData {
+    protected val map = ConcurrentHashMap<String, Any>()
+
+
+    constructor(name: String, parent: IData) : this(name, parent.container, parent)
+
+
     override fun set(path: String, value: Any) {
+        if(path.isEmpty()) return
+
+        if(path.startsWith(container.options.ignorePathSeparator)) {
+            map[path.substring(1)] = value
+        }
+
+        val separator = container.options.pathSeparator
+        // `i` is the leading (higher) index
+        // `j` is the trailing (lower) index
+        var i = -1
+        var j: Int
+
+        var data: IData = this
+        while(path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
+            val currentPath = path.substring(j, i)
+            data = data.getData(currentPath) ?: data.createData(currentPath)
+        }
         
+        val key = path.substring(j)
+        if(data === this) {
+            map[key] = value
+            return
+        }
         
-        map[path] = value
+        data[key] = value
     }
 
     override fun get(path: String): Any? {
         if(path.isEmpty()) return this
         
         if(path.startsWith(container.options.ignorePathSeparator)) {
-            return map[path]
+            return map[path.substring(1)]
         }
         
         val separator = container.options.pathSeparator
@@ -65,4 +92,93 @@ class Data(override val container: IDataContainer) : IData {
     override fun getData(path: String): IData? {
         return getWithType(path, IData::class.java)
     }
+
+    override fun createData(path: String): IData {
+        if(path.isEmpty()) return this
+
+        if(path.startsWith(container.options.ignorePathSeparator)) {
+            val key = path.substring(1)
+            return Data(key, this).also { map[key] = it }
+        }
+
+        val separator = container.options.pathSeparator
+        // `i` is the leading (higher) index
+        // `j` is the trailing (lower) index
+        var i = -1
+        var j: Int
+
+        var data: IData = this
+        while(path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
+            val currentPath = path.substring(j, i)
+            data = data.getData(currentPath) ?: data.createData(currentPath)
+        }
+
+        val key = path.substring(j)
+        if(data === this) {
+            return Data(key, this).also { map[key] = it }
+        }
+
+        return data.createData(key)
+    }
+
+    override fun remove(path: String) {
+        if(path.isEmpty()) return
+
+        if(path.startsWith(container.options.ignorePathSeparator)) {
+            map -= path.substring(1)
+        }
+
+        val separator = container.options.pathSeparator
+        // `i` is the leading (higher) index
+        // `j` is the trailing (lower) index
+        var i = -1
+        var j: Int
+
+        var data: IData = this
+        while(path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
+            val currentPath = path.substring(j, i)
+            data = data.getData(currentPath) ?: return
+        }
+
+        val key = path.substring(j)
+        if(data === this) {
+            map -= key
+            return
+        }
+
+        data.remove(key)
+    }
+
+    override fun getKeys(deep: Boolean): Set<String> {
+        val result = LinkedHashSet<String>()
+        
+        mapChildrenKeys(result, this, deep)
+        
+        return result
+    }
+
+    override fun getValues(deep: Boolean): Map<String?, Any?> {
+        TODO("Not yet implemented")
+    }
+
+    override fun contains(path: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun contains(path: String, ignoreDefault: Boolean): Boolean {
+        TODO("Not yet implemented")
+    }
+    
+    
+    fun mapChildrenKeys(output: MutableSet<String>, data: Any, deep: Boolean) {
+        if(data is IData) {
+            if(data === this) {
+                output += map.keys
+            }
+        }
+        
+        
+    }
+    
+    
 }

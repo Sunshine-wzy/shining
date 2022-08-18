@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.sunstcore.api
+package io.github.sunshinewzy.sunstcore.api.namespace
 
 import kotlinx.serialization.Serializable
 import java.util.concurrent.ConcurrentHashMap

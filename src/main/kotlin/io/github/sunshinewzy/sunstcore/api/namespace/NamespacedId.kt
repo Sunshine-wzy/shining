@@ -1,6 +1,7 @@
-package io.github.sunshinewzy.sunstcore.api
+package io.github.sunshinewzy.sunstcore.api.namespace
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
+import io.github.sunshinewzy.sunstcore.api.SPlugin
 import io.github.sunshinewzy.sunstcore.core.data.serializer.NamespacedIdSerializer
 import kotlinx.serialization.Serializable
 import java.util.regex.Pattern
