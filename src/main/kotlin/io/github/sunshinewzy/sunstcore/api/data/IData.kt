@@ -213,6 +213,7 @@ interface IData {
          * @return Full path of the section from its root.
          * Empty when the containers of [data] and [relativeTo] are different.
          */
+        @JvmStatic
         fun createPath(data: IData, key: String, relativeTo: IData): String {
             val container = data.container
             if(container !== relativeTo.container)

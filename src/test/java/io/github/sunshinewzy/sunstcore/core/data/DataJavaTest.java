@@ -13,7 +13,7 @@ public class DataJavaTest {
 	
 	@Test
 	public void setAndGet() {
-		IData data = new Data(new DataContainer());
+		IData data = new Data("qwq", new DataContainer());
 		data.set("awa", 123);
 		Object value = data.get("awa");
 		

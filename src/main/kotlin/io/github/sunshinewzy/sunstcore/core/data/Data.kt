@@ -4,7 +4,7 @@ import io.github.sunshinewzy.sunstcore.api.data.IData
 import io.github.sunshinewzy.sunstcore.api.data.container.IDataContainer
 import java.util.concurrent.ConcurrentHashMap
 
-open class Data(
+open class Data @JvmOverloads constructor(
     override val name: String,
     override val container: IDataContainer,
     override val parent: IData? = null

@@ -13,7 +13,7 @@ class DataTest {
     
     @Test
     fun setAndGet() {
-        val data: IData = Data(DataContainer())
+        val data: IData = Data("qwq", DataContainer())
         data["awa"] = 123
         
         assertEquals(data.getWithType<Int>("awa"), 123)

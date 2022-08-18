@@ -16,7 +16,7 @@ class DataContainer : IDataContainer {
     override fun get(key: NamespacedId): IData {
         map[key]?.let { return it }
         
-        return Data(this).also { map[key] = it }
+        return Data(key.toString(), this).also { map[key] = it }
     }
     
 }
