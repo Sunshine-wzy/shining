@@ -1,6 +1,5 @@
 package io.github.sunshinewzy.sunstcore.core.data
 
-import io.github.sunshinewzy.sunstcore.api.data.IData
 import io.github.sunshinewzy.sunstcore.api.data.IData.Companion.getWithType
 import io.github.sunshinewzy.sunstcore.api.data.container.IDataContainer
 import io.github.sunshinewzy.sunstcore.api.namespace.Namespace
@@ -10,14 +9,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class DataTest {
-    
-    @Test
-    fun setAndGet() {
-        val data: IData = Data("qwq", DataContainer())
-        data["awa"] = 123
-        
-        assertEquals(data.getWithType<Int>("awa"), 123)
-    }
     
     @Test
     fun container() {

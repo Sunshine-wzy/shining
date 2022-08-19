@@ -1,8 +1,7 @@
 package io.github.sunshinewzy.sunstcore.api.data.container
 
-import io.github.sunshinewzy.sunstcore.api.data.IData
+import io.github.sunshinewzy.sunstcore.api.data.IDataRoot
 import io.github.sunshinewzy.sunstcore.api.namespace.NamespacedId
-import io.github.sunshinewzy.sunstcore.core.data.container.DataContainerOptions
 
 /**
  * Represent a container of data
@@ -12,19 +11,15 @@ import io.github.sunshinewzy.sunstcore.core.data.container.DataContainerOptions
  */
 interface IDataContainer {
     
-    val options: DataContainerOptions
-
-
     /**
-     * Get the requested [IData] by [key].
+     * Get the requested [IDataRoot] by [key].
      *
      * 
-     * 通过 [key] 获取一个 [IData]。
+     * 通过 [key] 获取一个 [IDataRoot]。
      * 
-     * @param key Key of the [IData] to get.
-     * @return Requested [IData].
+     * @param key Key of the [IDataRoot] to get.
+     * @return Requested [IDataRoot].
      */
-    operator fun get(key: NamespacedId): IData
-
+    operator fun get(key: NamespacedId): IDataRoot
     
 }

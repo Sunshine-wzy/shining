@@ -1,8 +1,5 @@
 package io.github.sunshinewzy.sunstcore.api.data
 
-import io.github.sunshinewzy.sunstcore.api.data.container.IDataContainer
-import org.bukkit.configuration.ConfigurationSection
-
 /**
  * Represent a [Map] like object, capable of storing custom data in it.
  * 
@@ -13,7 +10,7 @@ interface IData {
     
     val name: String
     
-    val container: IDataContainer
+    val root: IDataRoot
     
     val parent: IData?
 
@@ -123,57 +120,382 @@ interface IData {
     fun getKeys(deep: Boolean): Set<String>
 
     /**
-     * Gets a Map containing all keys and their values for this section.
+     * Get a Map containing all keys and their values for this [IData].
      *
      *
      * If deep is set to true, then this will contain all the keys and values
-     * within any child [ConfigurationSection]s (and their children,
-     * etc). These keys will be in a valid path notation for you to use.
+     * within any child [IData]s (and their children, etc.).
+     * These keys will be in a valid path notation for you to use.
      *
      *
      * If deep is set to false, then this will contain only the keys and
      * values of any direct children, and not their own children.
      *
-     * @param deep Whether to get a deep list, as opposed to a shallow
-     * list.
-     * @return Map of keys and values of this section.
+     * @param deep Whether to get a deep list, as opposed to a shallow list.
+     * @return Map of keys and values of this [IData].
      */
-    fun getValues(deep: Boolean): Map<String?, Any?>
+    fun getValues(deep: Boolean): Map<String, Any>
 
     /**
-     * Checks if this [ConfigurationSection] contains the given path.
-     *
-     *
-     * If the value for the requested path does not exist but a default value
-     * has been specified, this will return true.
+     * Check if this [IData] contains the given path.
      *
      * @param path Path to check for existence.
-     * @return True if this section contains the requested path, either via
-     * default or being set.
-     * @throws IllegalArgumentException Thrown when path is null.
+     * @return True if this [IData] contains the requested path.
      */
     operator fun contains(path: String): Boolean
 
     /**
-     * Checks if this [ConfigurationSection] contains the given path.
+     * Get the requested String by path.
      *
      *
-     * If the value for the requested path does not exist, the boolean parameter
-     * of true has been specified, a default value for the path exists, this
-     * will return true.
+     * If the String does not exist, this will return null.
      *
-     *
-     * If a boolean parameter of false has been specified, true will only be
-     * returned if there is a set value for the specified path.
-     *
-     * @param path Path to check for existence.
-     * @param ignoreDefault Whether to ignore if a default value for the
-     * specified path exists.
-     * @return True if this section contains the requested path, or if a default
-     * value exist and the boolean parameter for this method is true.
-     * @throws IllegalArgumentException Thrown when path is null.
+     * @param path Path of the String to get.
+     * @return Requested String.
      */
-    fun contains(path: String, ignoreDefault: Boolean): Boolean
+    fun getString(path: String): String?
+
+    /**
+     * Get the requested String by path, returning a default value if not
+     * found.
+     *
+     * @param path Path of the String to get.
+     * @param default The default value to return if the path is not found or is
+     * not a String.
+     * @return Requested String.
+     */
+    fun getString(path: String, default: String): String
+
+    /**
+     * Check if the specified path is a String.
+     *
+     *
+     * If the path exists but is not a String, this will return false. If the
+     * path does not exist, this will return false.
+     *
+     * @param path Path of the String to check.
+     * @return Whether the specified path is a String.
+     */
+    fun isString(path: String): Boolean
+
+    /**
+     * Get the requested int by path.
+     *
+     *
+     * If the int does not exist, this will return 0.
+     *
+     * @param path Path of the int to get.
+     * @return Requested int.
+     */
+    fun getInt(path: String): Int
+
+    /**
+     * Get the requested int by path, returning a default value if not found.
+     *
+     * @param path Path of the int to get.
+     * @param default The default value to return if the path is not found or is
+     * not an int.
+     * @return Requested int.
+     */
+    fun getInt(path: String, default: Int): Int
+
+    /**
+     * Check if the specified path is an int.
+     *
+     *
+     * If the path exists but is not an int, this will return false. If the
+     * path does not exist, this will return false.
+     *
+     * @param path Path of the int to check.
+     * @return Whether the specified path is an int.
+     */
+    fun isInt(path: String): Boolean
+
+    /**
+     * Get the requested boolean by path.
+     *
+     *
+     * If the boolean does not exist, this will return false.
+     *
+     * @param path Path of the boolean to get.
+     * @return Requested boolean.
+     */
+    fun getBoolean(path: String): Boolean
+
+    /**
+     * Get the requested boolean by path, returning a default value if not
+     * found.
+     *
+     * @param path Path of the boolean to get.
+     * @param default The default value to return if the path is not found or is
+     * not a boolean.
+     * @return Requested boolean.
+     */
+    fun getBoolean(path: String, default: Boolean): Boolean
+
+    /**
+     * Check if the specified path is a boolean.
+     *
+     *
+     * If the path exists but is not a boolean, this will return false. If the
+     * path does not exist, this will return false.
+     *
+     * @param path Path of the boolean to check.
+     * @return Whether the specified path is a boolean.
+     */
+    fun isBoolean(path: String): Boolean
+
+    /**
+     * Get the requested double by path.
+     *
+     *
+     * If the double does not exist, this will return 0.
+     *
+     * @param path Path of the double to get.
+     * @return Requested double.
+     */
+    fun getDouble(path: String): Double
+
+    /**
+     * Get the requested double by path, returning a default value if not
+     * found.
+     *
+     * @param path Path of the double to get.
+     * @param default The default value to return if the path is not found or is
+     * not a double.
+     * @return Requested double.
+     */
+    fun getDouble(path: String, default: Double): Double
+
+    /**
+     * Check if the specified path is a double.
+     *
+     *
+     * If the path exists but is not a double, this will return false. If the
+     * path does not exist, this will return false.
+     *
+     * @param path Path of the double to check.
+     * @return Whether the specified path is a double.
+     */
+    fun isDouble(path: String): Boolean
+
+    /**
+     * Get the requested long by path.
+     *
+     *
+     * If the long does not exist, this will return 0.
+     *
+     * @param path Path of the long to get.
+     * @return Requested long.
+     */
+    fun getLong(path: String): Long
+
+    /**
+     * Get the requested long by path, returning a default value if not
+     * found.
+     *
+     * @param path Path of the long to get.
+     * @param default The default value to return if the path is not found or is
+     * not a long.
+     * @return Requested long.
+     */
+    fun getLong(path: String, default: Long): Long
+
+    /**
+     * Check if the specified path is a long.
+     *
+     *
+     * If the path exists but is not a long, this will return false. If the
+     * path does not exist, this will return false.
+     *
+     * @param path Path of the long to check.
+     * @return Whether the specified path is a long.
+     */
+    fun isLong(path: String): Boolean
+
+    /**
+     * Get the requested List by path.
+     *
+     *
+     * If the List does not exist, this will return an empty list.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List.
+     */
+    fun getList(path: String): List<*>
+
+    /**
+     * Get the requested List by path, returning a default value if not
+     * found.
+     *
+     * @param path Path of the List to get.
+     * @param default The default value to return if the path is not found or is
+     * not a List.
+     * @return Requested List.
+     */
+    fun getList(path: String, default: List<*>): List<*>
+
+    /**
+     * Check if the specified path is a List.
+     *
+     *
+     * If the path exists but is not a List, this will return false. If the
+     * path does not exist, this will return false.
+     *
+     * @param path Path of the List to check.
+     * @return Whether the specified path is a List.
+     */
+    fun isList(path: String): Boolean
+
+    /**
+     * Get the requested List of String by path.
+     *
+     *
+     * If the List does not exist, this will return an empty List.
+     *
+     *
+     * This method will attempt to cast any values into a String if possible,
+     * but may miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of String.
+     */
+    fun getStringList(path: String): List<String>
+
+    /**
+     * Get the requested List of Int by path.
+     *
+     *
+     * If the List does not exist, this will return an empty List.
+     *
+     *
+     * This method will attempt to cast any values into an Int if possible,
+     * but may miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of Integer.
+     */
+    fun getIntList(path: String): List<Int>
+
+    /**
+     * Get the requested List of Boolean by path.
+     *
+     *
+     * If the List does not exist, this will return an empty List.
+     *
+     *
+     * This method will attempt to cast any values into a Boolean if possible,
+     * but may miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of Boolean.
+     */
+    fun getBooleanList(path: String): List<Boolean>
+
+    /**
+     * Get the requested List of Double by path.
+     *
+     *
+     * If the List does not exist, this will return an empty List.
+     *
+     *
+     * This method will attempt to cast any values into a Double if possible,
+     * but may miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of Double.
+     */
+    fun getDoubleList(path: String): List<Double>
+
+    /**
+     * Get the requested List of Float by path.
+     *
+     *
+     * If the List does not exist, this will return an empty List.
+     *
+     *
+     * This method will attempt to cast any values into a Float if possible,
+     * but may miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of Float.
+     */
+    fun getFloatList(path: String): List<Float>
+
+    /**
+     * Get the requested List of Long by path.
+     *
+     *
+     * If the List does not exist, this will return an empty List.
+     *
+     *
+     * This method will attempt to cast any values into a Long if possible,
+     * but may miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of Long.
+     */
+    fun getLongList(path: String): List<Long>
+
+    /**
+     * Get the requested List of Byte by path.
+     *
+     *
+     * If the List does not exist, this will return an empty List.
+     *
+     *
+     * This method will attempt to cast any values into a Byte if possible,
+     * but may miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of Byte.
+     */
+    fun getByteList(path: String): List<Byte>
+
+    /**
+     * Get the requested List of Char by path.
+     *
+     *
+     * If the List does not exist, this will return an empty List.
+     *
+     *
+     * This method will attempt to cast any values into a Char if
+     * possible, but may miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of Character.
+     */
+    fun getCharList(path: String): List<Char>
+
+    /**
+     * Get the requested List of Short by path.
+     *
+     *
+     * If the List does not exist, this will return an empty List.
+     *
+     *
+     * This method will attempt to cast any values into a Short if possible,
+     * but may miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of Short.
+     */
+    fun getShortList(path: String): List<Short>
+
+    /**
+     * Get the requested List of Maps by path.
+     *
+     *
+     * If the List does not exist, this will return an empty List.
+     *
+     *
+     * This method will attempt to cast any values into a Map if possible, but
+     * may miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of Maps.
+     */
+    fun getMapList(path: String): List<Map<*, *>>
     
     
     companion object {
@@ -205,21 +527,23 @@ interface IData {
         
         /**
          * Create a relative path to the given [IData] from
-         * the given relative [IData].
+         * the given relative [IData], or from its
+         * [IData.root] when [relativeTo] is null.
          * 
          * @param data [IData] to create a path for.
          * @param key Name of the specified [IData].
          * @param relativeTo [IData] to create the path relative to.
-         * @return Full path of the section from its root.
-         * Empty when the containers of [data] and [relativeTo] are different.
+         * @return Full path of the [data] from its root.
+         * Empty when the roots of [data] and [relativeTo] are different.
          */
         @JvmStatic
-        fun createPath(data: IData, key: String, relativeTo: IData): String {
-            val container = data.container
-            if(container !== relativeTo.container)
+        @JvmOverloads
+        fun createPath(data: IData, key: String, relativeTo: IData? = null): String {
+            val root = data.root
+            if(relativeTo != null && root !== relativeTo.root)
                 return ""
             
-            val separator = container.options.pathSeparator
+            val separator = root.options.pathSeparator
             
             val builder = StringBuilder()
             var parent: IData? = data

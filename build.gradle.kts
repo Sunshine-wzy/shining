@@ -6,6 +6,7 @@ plugins {
     id("io.izzel.taboolib") version "1.42"
     id("org.jetbrains.kotlin.jvm") version "1.5.10"
     kotlin("plugin.serialization") version "1.5.10"
+    id("org.jetbrains.dokka") version "1.7.10"
 }
 
 taboolib {
