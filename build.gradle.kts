@@ -60,6 +60,7 @@ dependencies {
 
     compileOnly("org.yaml:snakeyaml:1.28")
     compileOnly("com.google.code.gson:gson:2.8.7")
+    compileOnly("com.google.guava:guava:21.0")
 
     compileOnly(fileTree("libs"))
 

@@ -2,6 +2,7 @@ package io.github.sunshinewzy.sunstcore.core.data
 
 import io.github.sunshinewzy.sunstcore.api.data.IData
 import io.github.sunshinewzy.sunstcore.api.data.IDataRoot
+import io.github.sunshinewzy.sunstcore.utils.Coerce
 import java.util.concurrent.ConcurrentHashMap
 
 open class Data : IData {
@@ -147,6 +148,10 @@ open class Data : IData {
         data.remove(key)
     }
 
+    override fun clear() {
+        map.clear()
+    }
+
     override fun getKeys(deep: Boolean): Set<String> {
         return LinkedHashSet<String>().also {
             mapChildrenKeys(it, this, deep)
@@ -164,115 +169,119 @@ open class Data : IData {
     }
 
     override fun getString(path: String): String? {
-        TODO("Not yet implemented")
+        return get(path)?.toString()
     }
 
     override fun getString(path: String, default: String): String {
-        TODO("Not yet implemented")
+        return getString(path) ?: default
     }
 
     override fun isString(path: String): Boolean {
-        TODO("Not yet implemented")
+        return get(path) is String
     }
 
     override fun getInt(path: String): Int {
-        TODO("Not yet implemented")
+        return Coerce.toInteger(get(path))
     }
 
     override fun getInt(path: String, default: Int): Int {
-        TODO("Not yet implemented")
+        val value = get(path) ?: return default
+        return Coerce.toInteger(value)
     }
 
     override fun isInt(path: String): Boolean {
-        TODO("Not yet implemented")
+        return get(path) is Int
     }
 
     override fun getBoolean(path: String): Boolean {
-        TODO("Not yet implemented")
+        return Coerce.toBoolean(get(path))
     }
 
     override fun getBoolean(path: String, default: Boolean): Boolean {
-        TODO("Not yet implemented")
+        val value = get(path) ?: return default
+        return Coerce.toBoolean(value)
     }
 
     override fun isBoolean(path: String): Boolean {
-        TODO("Not yet implemented")
+        return get(path) is Boolean
     }
 
     override fun getDouble(path: String): Double {
-        TODO("Not yet implemented")
+        return Coerce.toDouble(get(path))
     }
 
     override fun getDouble(path: String, default: Double): Double {
-        TODO("Not yet implemented")
+        val value = get(path) ?: return default
+        return Coerce.toDouble(value)
     }
 
     override fun isDouble(path: String): Boolean {
-        TODO("Not yet implemented")
+        return get(path) is Double
     }
 
     override fun getLong(path: String): Long {
-        TODO("Not yet implemented")
+        return Coerce.toLong(get(path))
     }
 
     override fun getLong(path: String, default: Long): Long {
-        TODO("Not yet implemented")
+        val value = get(path) ?: return default
+        return Coerce.toLong(value)
     }
 
     override fun isLong(path: String): Boolean {
-        TODO("Not yet implemented")
+        return get(path) is Long
     }
 
-    override fun getList(path: String): List<*> {
-        TODO("Not yet implemented")
+    override fun getList(path: String): List<*>? {
+        return get(path) as? List<*>
     }
 
     override fun getList(path: String, default: List<*>): List<*> {
-        TODO("Not yet implemented")
+        return getList(path) ?: default
     }
 
     override fun isList(path: String): Boolean {
-        TODO("Not yet implemented")
+        return get(path) is List<*>
     }
 
     override fun getStringList(path: String): List<String> {
-        TODO("Not yet implemented")
+        return getList(path)?.map { it.toString() } ?: emptyList()
     }
 
     override fun getIntList(path: String): List<Int> {
-        TODO("Not yet implemented")
+        return getList(path)?.map { Coerce.toInteger(it) } ?: emptyList()
     }
 
     override fun getBooleanList(path: String): List<Boolean> {
-        TODO("Not yet implemented")
+        return getList(path)?.map { Coerce.toBoolean(it) } ?: emptyList()
     }
 
     override fun getDoubleList(path: String): List<Double> {
-        TODO("Not yet implemented")
+        return getList(path)?.map { Coerce.toDouble(it) } ?: emptyList()
     }
 
     override fun getFloatList(path: String): List<Float> {
-        TODO("Not yet implemented")
+        return getList(path)?.map { Coerce.toFloat(it) } ?: emptyList()
     }
 
     override fun getLongList(path: String): List<Long> {
-        TODO("Not yet implemented")
+        return getList(path)?.map { Coerce.toLong(it) } ?: emptyList()
     }
 
     override fun getByteList(path: String): List<Byte> {
-        TODO("Not yet implemented")
+        return getList(path)?.map { Coerce.toByte(it) } ?: emptyList()
     }
 
     override fun getCharList(path: String): List<Char> {
-        TODO("Not yet implemented")
+        return getList(path)?.map { Coerce.toChar(it) } ?: emptyList()
     }
 
     override fun getShortList(path: String): List<Short> {
-        TODO("Not yet implemented")
+        return getList(path)?.map { Coerce.toShort(it) } ?: emptyList()
     }
 
     override fun getMapList(path: String): List<Map<*, *>> {
-        TODO("Not yet implemented")
+        return getList(path)?.filterIsInstance<Map<*, *>>() ?: emptyList()
     }
     
 

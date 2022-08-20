@@ -103,6 +103,11 @@ interface IData {
     fun remove(path: String)
 
     /**
+     * Clear the [IData]
+     */
+    fun clear()
+
+    /**
      * Get a set containing all keys in this [IData].
      *
      *
@@ -317,12 +322,12 @@ interface IData {
      * Get the requested List by path.
      *
      *
-     * If the List does not exist, this will return an empty list.
+     * If the List does not exist, this will return null.
      *
      * @param path Path of the List to get.
      * @return Requested List.
      */
-    fun getList(path: String): List<*>
+    fun getList(path: String): List<*>?
 
     /**
      * Get the requested List by path, returning a default value if not
