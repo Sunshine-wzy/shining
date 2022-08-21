@@ -1,8 +1,8 @@
-package io.github.sunshinewzy.sunstcore.core.data.internal
+package io.github.sunshinewzy.sunstcore.core.data.legacy.internal
 
 import io.github.sunshinewzy.sunstcore.core.data.DataManager
 import io.github.sunshinewzy.sunstcore.core.data.DataManager.getMap
-import io.github.sunshinewzy.sunstcore.core.data.SPlayerData
+import io.github.sunshinewzy.sunstcore.core.data.legacy.SPlayerData
 import io.github.sunshinewzy.sunstcore.core.task.TaskProgress
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player

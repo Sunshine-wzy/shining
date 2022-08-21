@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.sunstcore.core.data
+package io.github.sunshinewzy.sunstcore.core.data.legacy
 
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin

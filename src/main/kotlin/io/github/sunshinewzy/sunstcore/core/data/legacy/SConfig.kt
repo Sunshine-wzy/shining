@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.sunstcore.core.data
+package io.github.sunshinewzy.sunstcore.core.data.legacy
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.interfaces.Initable

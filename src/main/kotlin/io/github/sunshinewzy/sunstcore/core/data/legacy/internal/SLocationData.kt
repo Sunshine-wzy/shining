@@ -1,8 +1,8 @@
-package io.github.sunshinewzy.sunstcore.core.data.internal
+package io.github.sunshinewzy.sunstcore.core.data.legacy.internal
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.core.data.DataManager.getMap
-import io.github.sunshinewzy.sunstcore.core.data.SAutoCoverSaveData
+import io.github.sunshinewzy.sunstcore.core.data.legacy.SAutoCoverSaveData
 import io.github.sunshinewzy.sunstcore.events.slocationdata.SLocationDataAddEvent
 import io.github.sunshinewzy.sunstcore.events.slocationdata.SLocationDataClearEvent
 import io.github.sunshinewzy.sunstcore.events.slocationdata.SLocationDataRemoveEvent

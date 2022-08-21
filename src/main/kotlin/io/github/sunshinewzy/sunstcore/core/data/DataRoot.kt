@@ -8,7 +8,7 @@ class DataRoot(
     name: String,
     override val container: IDataContainer
 ) : Data(name), IDataRoot {
-    override val options: DataRootOptions = DataRootOptions()
     
+    override val options: DataRootOptions = DataRootOptions()
     
 }

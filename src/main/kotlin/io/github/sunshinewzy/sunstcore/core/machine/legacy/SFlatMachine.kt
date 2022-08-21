@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.sunstcore.core.machine.legacy
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
-import io.github.sunshinewzy.sunstcore.core.data.internal.SFlatMachineData
+import io.github.sunshinewzy.sunstcore.core.data.legacy.internal.SFlatMachineData
 import io.github.sunshinewzy.sunstcore.events.smachine.SFlatMachineAddEvent
 import io.github.sunshinewzy.sunstcore.events.smachine.SFlatMachineRemoveEvent
 import io.github.sunshinewzy.sunstcore.events.smachine.SFlatMachineUseEvent

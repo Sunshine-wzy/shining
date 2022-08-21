@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.sunstcore.utils
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
-import io.github.sunshinewzy.sunstcore.core.data.internal.SunSTPlayerData
+import io.github.sunshinewzy.sunstcore.core.data.legacy.internal.SunSTPlayerData
 import io.github.sunshinewzy.sunstcore.core.task.TaskBase
 import io.github.sunshinewzy.sunstcore.core.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.core.task.TaskProject

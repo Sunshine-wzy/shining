@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.sunstcore.core.machine.legacy
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
-import io.github.sunshinewzy.sunstcore.core.data.internal.SMachineData
+import io.github.sunshinewzy.sunstcore.core.data.legacy.internal.SMachineData
 import io.github.sunshinewzy.sunstcore.core.machine.legacy.custom.SMachineRecipe
 import io.github.sunshinewzy.sunstcore.core.machine.legacy.custom.SMachineRecipes
 import io.github.sunshinewzy.sunstcore.core.menu.SMenu

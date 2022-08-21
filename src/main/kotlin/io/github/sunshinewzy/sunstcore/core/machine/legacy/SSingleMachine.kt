@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.sunstcore.core.machine.legacy
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
-import io.github.sunshinewzy.sunstcore.core.data.internal.SSingleMachineData
+import io.github.sunshinewzy.sunstcore.core.data.legacy.internal.SSingleMachineData
 import io.github.sunshinewzy.sunstcore.events.smachine.SSingleMachineAddEvent
 import io.github.sunshinewzy.sunstcore.events.smachine.SSingleMachineRemoveEvent
 import io.github.sunshinewzy.sunstcore.interfaces.Initable

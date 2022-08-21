@@ -4,7 +4,7 @@ import io.github.sunshinewzy.sunstcore.api.SPlugin
 import io.github.sunshinewzy.sunstcore.api.machine.IMachineManager
 import io.github.sunshinewzy.sunstcore.api.namespace.Namespace
 import io.github.sunshinewzy.sunstcore.core.data.DataManager
-import io.github.sunshinewzy.sunstcore.core.data.internal.SLocationData
+import io.github.sunshinewzy.sunstcore.core.data.legacy.internal.SLocationData
 import io.github.sunshinewzy.sunstcore.core.guide.SGuide
 import io.github.sunshinewzy.sunstcore.core.guide.element.GuideCategory
 import io.github.sunshinewzy.sunstcore.core.guide.element.GuideItem

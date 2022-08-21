@@ -1,6 +1,7 @@
-package io.github.sunshinewzy.sunstcore.core.data
+package io.github.sunshinewzy.sunstcore.core.data.legacy
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
+import io.github.sunshinewzy.sunstcore.core.data.DataManager
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import io.github.sunshinewzy.sunstcore.utils.getDataPath
 import org.bukkit.Bukkit

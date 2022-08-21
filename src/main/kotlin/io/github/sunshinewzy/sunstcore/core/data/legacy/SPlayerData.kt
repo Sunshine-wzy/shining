@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.sunstcore.core.data
+package io.github.sunshinewzy.sunstcore.core.data.legacy
 
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin

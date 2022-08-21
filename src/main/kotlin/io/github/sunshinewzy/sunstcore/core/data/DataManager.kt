@@ -4,7 +4,8 @@ import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.core.data.database.Database
 import io.github.sunshinewzy.sunstcore.core.data.database.DatabaseSQL
 import io.github.sunshinewzy.sunstcore.core.data.database.DatabaseSQLite
-import io.github.sunshinewzy.sunstcore.core.data.internal.SunSTPlayerData
+import io.github.sunshinewzy.sunstcore.core.data.legacy.SAutoSaveData
+import io.github.sunshinewzy.sunstcore.core.data.legacy.internal.SunSTPlayerData
 import io.github.sunshinewzy.sunstcore.core.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import org.bukkit.configuration.file.YamlConfiguration

@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.sunstcore.listeners
 
-import io.github.sunshinewzy.sunstcore.core.data.internal.SLocationData
+import io.github.sunshinewzy.sunstcore.core.data.legacy.internal.SLocationData
 import io.github.sunshinewzy.sunstcore.core.energy.SEnergyCell
 import io.github.sunshinewzy.sunstcore.core.energy.SEnergyCell.Companion.getEnergyCell
 import io.github.sunshinewzy.sunstcore.core.energy.SEnergyCell.Companion.isEnergyBlock
