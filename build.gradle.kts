@@ -56,17 +56,23 @@ dependencies {
     compileOnly("ink.ptms.core:v11900:11900:mapped")
     compileOnly(kotlin("stdlib"))
 
+    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.3")
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
 
-    compileOnly("org.yaml:snakeyaml:1.28")
     compileOnly("com.google.code.gson:gson:2.8.7")
     compileOnly("com.google.guava:guava:21.0")
+    compileOnly("org.yaml:snakeyaml:1.28")
 
     compileOnly(fileTree("libs"))
 
 
     testImplementation(platform("org.junit:junit-bom:5.9.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.3")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+    
+    testImplementation("com.google.code.gson:gson:2.8.7")
 }
 
 tasks {

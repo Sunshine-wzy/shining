@@ -1,8 +1,8 @@
 package io.github.sunshinewzy.sunstcore.core.data
 
 import io.github.sunshinewzy.sunstcore.api.data.IData
-import io.github.sunshinewzy.sunstcore.api.data.IDataRoot
 import io.github.sunshinewzy.sunstcore.api.data.ISerialData
+import io.github.sunshinewzy.sunstcore.api.data.ISerialDataRoot
 import io.github.sunshinewzy.sunstcore.utils.Coerce
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -13,6 +13,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.modules.SerializersModule
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -23,18 +24,22 @@ import java.util.concurrent.ConcurrentHashMap
  */
 open class SerialData : ISerialData {
     final override val name: String
-    final override val root: IDataRoot
+    final override val root: ISerialDataRoot
     final override val parent: ISerialData?
+    
+    override val serializersModule = SerializersModule {  }
 
 
-    protected val map = ConcurrentHashMap<String, Any>()
+    protected val map = ConcurrentHashMap<String, SerialDataWrapper<*>>()
     
+    private val json = Json {
+        serializersModule = this@SerialData.serializersModule
+    }
     
-    private val serialMap = ConcurrentHashMap<Class<*>, KSerializer<*>>()
     
     
     @JvmOverloads
-    constructor(name: String, root: IDataRoot, parent: ISerialData? = null) {
+    constructor(name: String, root: ISerialDataRoot, parent: ISerialData? = null) {
         this.name = name
         this.root = root
         this.parent = parent
@@ -45,7 +50,7 @@ open class SerialData : ISerialData {
     internal constructor(name: String) {
         this.name = name
         @Suppress("LeakingThis")
-        this.root = this as IDataRoot
+        this.root = this as ISerialDataRoot
         this.parent = null
     }
 
@@ -59,7 +64,7 @@ open class SerialData : ISerialData {
         var i = -1
         var j: Int
 
-        var data: IData = this
+        var data: ISerialData = this
         while(path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
             val currentPath = path.substring(j, i)
             data = data.getData(currentPath) ?: data.createData(currentPath)
@@ -67,11 +72,37 @@ open class SerialData : ISerialData {
 
         val key = path.substring(j)
         if(data === this) {
-            map[key] = value
+            map[key] = SerialDataWrapper(value)
             return
         }
 
         data[key] = value
+    }
+
+    override fun <T> set(path: String, value: T, serializer: KSerializer<T>) {
+        if(path.isEmpty()) return
+
+        val separator = root.options.pathSeparator
+        // `i` is the leading (higher) index
+        // `j` is the trailing (lower) index
+        var i = -1
+        var j: Int
+
+        var data: ISerialData = this
+        while(path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
+            val currentPath = path.substring(j, i)
+            data = data.getData(currentPath) ?: data.createData(currentPath)
+        }
+
+        val key = path.substring(j)
+        if(data === this) {
+            map[key] = SerialDataWrapper(value) {
+                kSerializer = serializer
+            }
+            return
+        }
+
+        data.set(key, value, serializer)
     }
 
     override fun get(path: String): Any? {
@@ -83,7 +114,7 @@ open class SerialData : ISerialData {
         var i = -1
         var j: Int
 
-        var data: IData = this
+        var data: ISerialData = this
         while(path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
             val currentPath = path.substring(j, i)
             data = data.getData(currentPath) ?: return null
@@ -91,7 +122,7 @@ open class SerialData : ISerialData {
 
         val key = path.substring(j)
         if(data === this) {
-            return map[key]
+            return map[key]?.data
         }
 
         return data[key]
@@ -116,11 +147,11 @@ open class SerialData : ISerialData {
         return getWithType(path, type) ?: default
     }
 
-    override fun getData(path: String): IData? {
-        return getWithType(path, IData::class.java)
+    override fun getData(path: String): ISerialData? {
+        return getWithType(path, ISerialData::class.java)
     }
 
-    override fun createData(path: String): IData {
+    override fun createData(path: String): ISerialData {
         if(path.isEmpty()) return this
 
         val separator = root.options.pathSeparator
@@ -129,7 +160,7 @@ open class SerialData : ISerialData {
         var i = -1
         var j: Int
 
-        var data: IData = this
+        var data: ISerialData = this
         while(path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
             val currentPath = path.substring(j, i)
             data = data.getData(currentPath) ?: data.createData(currentPath)
@@ -137,7 +168,7 @@ open class SerialData : ISerialData {
 
         val key = path.substring(j)
         if(data === this) {
-            return Data(key, this).also { map[key] = it }
+            return SerialData(key, this).also { map[key] = SerialDataWrapper(it) }
         }
 
         return data.createData(key)
@@ -152,7 +183,7 @@ open class SerialData : ISerialData {
         var i = -1
         var j: Int
 
-        var data: IData = this
+        var data: ISerialData = this
         while(path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
             val currentPath = path.substring(j, i)
             data = data.getData(currentPath) ?: return
@@ -304,21 +335,23 @@ open class SerialData : ISerialData {
     }
 
 
-    fun mapChildrenKeys(output: MutableSet<String>, relativeTo: IData, deep: Boolean) {
-        map.forEach { (key, value) ->
+    fun mapChildrenKeys(output: MutableSet<String>, relativeTo: ISerialData, deep: Boolean) {
+        map.forEach { (key, wrapper) ->
             output += IData.createPath(this, key, relativeTo)
-
-            if(deep && value is Data) {
+            
+            val value = wrapper.data ?: return@forEach
+            if(deep && value is SerialData) {
                 value.mapChildrenKeys(output, relativeTo, true)
             }
         }
     }
 
-    fun mapChildrenValues(output: MutableMap<String, Any>, relativeTo: IData, deep: Boolean) {
-        map.forEach { (key, value) ->
+    fun mapChildrenValues(output: MutableMap<String, Any>, relativeTo: ISerialData, deep: Boolean) {
+        map.forEach { (key, wrapper) ->
+            val value = wrapper.data ?: return@forEach
             output[IData.createPath(this, key, relativeTo)] = value
 
-            if(deep && value is Data) {
+            if(deep && value is SerialData) {
                 value.mapChildrenValues(output, relativeTo, true)
             }
         }
@@ -345,13 +378,18 @@ open class SerialData : ISerialData {
             
             override fun serialize(encoder: Encoder, value: SerialData) {
                 val json = buildJsonObject {
-                    value.map.forEach { (key, obj) ->
+                    value.map.forEach { (key, wrapper) ->
+                        val obj = wrapper.data ?: return@forEach
+                        
                         if(obj is ISerialData) {
                             put(key, obj.serializeToJsonElement())
                             return@forEach
                         }
                         
-                        
+                        wrapper.kSerializer?.let { 
+//                            put(key, value.json.encodeToJsonElement(it, obj))
+                            return@forEach
+                        }
                     }
                 }
                 
