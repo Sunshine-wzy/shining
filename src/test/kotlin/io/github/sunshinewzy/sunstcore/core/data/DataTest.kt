@@ -2,7 +2,6 @@ package io.github.sunshinewzy.sunstcore.core.data
 
 import io.github.sunshinewzy.sunstcore.api.data.IData.Companion.getWithType
 import io.github.sunshinewzy.sunstcore.api.data.IDataRoot
-import io.github.sunshinewzy.sunstcore.api.data.ISerialData.Companion.setSerializable
 import io.github.sunshinewzy.sunstcore.api.data.ISerialDataRoot
 import io.github.sunshinewzy.sunstcore.api.data.container.IDataContainer
 import io.github.sunshinewzy.sunstcore.api.data.container.ISerialDataContainer
@@ -52,11 +51,16 @@ class DataTest {
     fun serialContainer() {
         val root = getSerialDataRoot("a")
         
-        val project1 = Project1("Steve", 123456L)
-        root.setSerializable("a.b.c", project1)
-        root.set("a.b.d", project1, Project1.serializer())
+        root["a.b.c"] = Project1("Steve", 12345L)
+        root["a.b.d"] = Project2("Mike", 67890L)
+        root["a.e"] = 123
 
-        println(root.getValues(true))
+        val string = root.serializeToJsonNode().toPrettyString()
+        println(string)
+        
+        val data = getSerialDataRoot("b")
+        data.deserialize(string)
+        println(data.getValues(true))
     }
     
     

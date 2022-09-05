@@ -1,41 +1,28 @@
 package io.github.sunshinewzy.sunstcore.core.data
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.github.sunshinewzy.sunstcore.api.data.IData
 import io.github.sunshinewzy.sunstcore.api.data.ISerialData
 import io.github.sunshinewzy.sunstcore.api.data.ISerialDataRoot
 import io.github.sunshinewzy.sunstcore.utils.Coerce
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.modules.SerializersModule
+import io.github.sunshinewzy.sunstcore.utils.asPrimitiveOrNull
+import io.github.sunshinewzy.sunstcore.utils.putPrimitive
 import java.util.concurrent.ConcurrentHashMap
 
-/**
- * ## 序列化优先级
- * 
- * 类注解提供的kotlinx.serialization序列化器 > ISerialData中提供的kotlinx.serialization序列化器 >
- * ISerialData中提供的gson序列化器 > 默认的kotlinx.serialization序列化器 > gson反射自动序列化
- */
+
 open class SerialData : ISerialData {
     final override val name: String
     final override val root: ISerialDataRoot
     final override val parent: ISerialData?
-    
-    override val serializersModule = SerializersModule {  }
 
+    override val objectMapper: ObjectMapper = jacksonObjectMapper()
 
-    protected val map = ConcurrentHashMap<String, SerialDataWrapper<*>>()
-    
-    private val json = Json {
-        serializersModule = this@SerialData.serializersModule
-    }
-    
+    @JsonProperty("data")
+    protected val map: MutableMap<String, SerialDataWrapper<*>> = ConcurrentHashMap()
     
     
     @JvmOverloads
@@ -77,32 +64,6 @@ open class SerialData : ISerialData {
         }
 
         data[key] = value
-    }
-
-    override fun <T> set(path: String, value: T, serializer: KSerializer<T>) {
-        if(path.isEmpty()) return
-
-        val separator = root.options.pathSeparator
-        // `i` is the leading (higher) index
-        // `j` is the trailing (lower) index
-        var i = -1
-        var j: Int
-
-        var data: ISerialData = this
-        while(path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
-            val currentPath = path.substring(j, i)
-            data = data.getData(currentPath) ?: data.createData(currentPath)
-        }
-
-        val key = path.substring(j)
-        if(data === this) {
-            map[key] = SerialDataWrapper(value) {
-                kSerializer = serializer
-            }
-            return
-        }
-
-        data.set(key, value, serializer)
     }
 
     override fun get(path: String): Any? {
@@ -358,52 +319,73 @@ open class SerialData : ISerialData {
     }
 
 
-    override fun serializeToString(): String {
-        return Json.encodeToString(serializer, this)
+    override fun serializeToJsonNode(): JsonNode {
+        val node = objectMapper.createObjectNode()
+        map.forEach { (key, wrapper) -> 
+            val obj = wrapper.data ?: return@forEach
+            
+            if(obj is ISerialData) {
+                val newNode = node.putObject(key)
+                newNode.put(KEY_TYPE, SERIAL_DATA)
+                newNode.replace(KEY_DATA, obj.serializeToJsonNode())
+                return@forEach
+            }
+            
+            if(node.putPrimitive(key, obj)) {
+                return@forEach
+            }
+            
+            val newNode = node.putObject(key)
+            newNode.put(KEY_TYPE, obj::class.java.name)
+            newNode.putPOJO(KEY_DATA, obj)
+        }
+        
+        return node
     }
 
-    override fun serializeToJsonElement(): JsonElement {
-        return Json.encodeToJsonElement(serializer, this)
+    override fun serializeToString(): String {
+        return serializeToJsonNode().toString()
+    }
+
+    override fun deserialize(source: JsonNode) {
+        if(source is ObjectNode) {
+            source.fields().forEach { (key, node) ->
+                if(node is ObjectNode) {
+                    val type = node.get(KEY_TYPE)
+                        ?.takeIf { it.isTextual }?.textValue()
+                        ?.takeIf { it.isNotBlank() } ?: return@forEach
+
+                    if(type == SERIAL_DATA) {
+                        val data = node.get(KEY_DATA) ?: return@forEach
+                        createData(key).deserialize(data)
+                        
+                        return@forEach
+                    }
+
+                    kotlin.runCatching {
+                        Class.forName(type)
+                    }.onSuccess { clazz ->
+                        val data = node.get(KEY_DATA) ?: return@forEach
+                        map[key] = SerialDataWrapper(objectMapper.treeToValue(data, clazz))
+                    }
+                } else {
+                    node.asPrimitiveOrNull()?.let {
+                        map[key] = SerialDataWrapper(it)
+                    }
+                }
+            }
+        }
     }
 
     override fun deserialize(source: String) {
-        Json.decodeFromString(serializer, source)
+        deserialize(objectMapper.readTree(source))
     }
     
     
     companion object {
-        val serializer = object : KSerializer<SerialData> {
-            override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("SerialData", PrimitiveKind.STRING)
-
-            
-            override fun serialize(encoder: Encoder, value: SerialData) {
-                val json = buildJsonObject {
-                    value.map.forEach { (key, wrapper) ->
-                        val obj = wrapper.data ?: return@forEach
-                        
-                        if(obj is ISerialData) {
-                            put(key, obj.serializeToJsonElement())
-                            return@forEach
-                        }
-                        
-                        wrapper.kSerializer?.let { 
-//                            put(key, value.json.encodeToJsonElement(it, obj))
-                            return@forEach
-                        }
-                    }
-                }
-                
-                encoder.encodeString(json.toString())
-                TODO()
-            }
-
-            override fun deserialize(decoder: Decoder): SerialData {
-                
-//                decoder.decodeString()
-                TODO()
-            }
-            
-        }
+        const val KEY_TYPE = "s_type"
+        const val KEY_DATA = "s_data"
+        const val SERIAL_DATA = "SerialData"
     }
     
 }

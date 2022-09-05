@@ -42,16 +42,22 @@ import taboolib.module.configuration.Configuration
 import taboolib.module.metrics.Metrics
 import taboolib.platform.BukkitPlugin
 
-
 @RuntimeDependencies(
     RuntimeDependency(
-        value = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.3",
+        value = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.0",
         relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]
     ),
     RuntimeDependency(
-        value = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3",
+        value = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0",
         relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]
-    )
+    ),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-core:0.39.2"),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-dao:0.39.2"),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-jdbc:0.39.2"),
+    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-core:2.13.3"),
+    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-annotations:2.13.3"),
+    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-databind:2.13.3"),
+    RuntimeDependency(value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3")
 )
 object SunSTCore : Plugin(), SPlugin {
     const val NAME = "SunSTCore"

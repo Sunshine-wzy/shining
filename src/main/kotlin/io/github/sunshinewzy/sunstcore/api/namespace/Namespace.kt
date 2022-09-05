@@ -1,6 +1,5 @@
 package io.github.sunshinewzy.sunstcore.api.namespace
 
-import kotlinx.serialization.Serializable
 import java.util.concurrent.ConcurrentHashMap
 import java.util.regex.Pattern
 
@@ -8,7 +7,6 @@ import java.util.regex.Pattern
  * The [name] of namespace may only contain lowercase alphanumeric characters, periods,
  * underscores, and hyphens.
  */
-@Serializable
 class Namespace private constructor(val name: String) {
 
     init {

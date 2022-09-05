@@ -1,12 +1,15 @@
 package io.github.sunshinewzy.sunstcore.core.data.container
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter
 import io.github.sunshinewzy.sunstcore.api.data.ISerialDataRoot
 import io.github.sunshinewzy.sunstcore.api.data.container.ISerialDataContainer
 import io.github.sunshinewzy.sunstcore.api.namespace.NamespacedId
 import io.github.sunshinewzy.sunstcore.core.data.SerialDataRoot
 import java.util.concurrent.ConcurrentHashMap
 
+
 class SerialDataContainer : ISerialDataContainer {
+    @JsonAnyGetter
     private val map = ConcurrentHashMap<NamespacedId, ISerialDataRoot>()
 
 

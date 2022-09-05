@@ -1,38 +1,30 @@
 package io.github.sunshinewzy.sunstcore.api.data
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.serializer
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 
 interface ISerialData : IData {
+    @get:JsonIgnore
     override val root: ISerialDataRoot
-    
+    @get:JsonIgnore
     override val parent: ISerialData?
 
-
-    val serializersModule: SerializersModule
+    @get:JsonIgnore
+    val objectMapper: ObjectMapper
 
 
     override fun getData(path: String): ISerialData?
 
     override fun createData(path: String): ISerialData
 
-    
-    fun <T> set(path: String, value: T, serializer: KSerializer<T>)
-    
+
+    fun serializeToJsonNode(): JsonNode
     
     fun serializeToString(): String
-    
-    fun serializeToJsonElement(): JsonElement
+
+    fun deserialize(source: JsonNode)
     
     fun deserialize(source: String)
-    
-    
-    companion object {
-        inline fun <reified T> ISerialData.setSerializable(path: String, value: T) {
-            set(path, value, serializersModule.serializer())
-        }
-    }
     
 }

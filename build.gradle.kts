@@ -4,8 +4,8 @@ plugins {
     `java-library`
     `maven-publish`
     id("io.izzel.taboolib") version "1.42"
-    id("org.jetbrains.kotlin.jvm") version "1.5.10"
-    kotlin("plugin.serialization") version "1.5.10"
+    id("org.jetbrains.kotlin.jvm") version "1.7.10"
+    kotlin("plugin.serialization") version "1.7.10"
     id("org.jetbrains.dokka") version "1.7.10"
 }
 
@@ -29,7 +29,7 @@ taboolib {
     
     install("platform-bukkit")
     classifier = null
-    version = "6.0.9-58"
+    version = "6.0.9-79"
     
     description { 
         desc("A core lib made by SunShine Technology.")
@@ -50,18 +50,28 @@ repositories {
     mavenCentral()
 }
 
+val exposedVersion: String by project
+val jacksonVersion: String by project
 dependencies {
     compileOnly("ink.ptms:nms-all:1.0.0")
     compileOnly("ink.ptms.core:v11900:11900:universal")
     compileOnly("ink.ptms.core:v11900:11900:mapped")
     compileOnly(kotlin("stdlib"))
 
-    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.3")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.0")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
 
-    compileOnly("com.google.code.gson:gson:2.8.7")
     compileOnly("com.google.guava:guava:21.0")
     compileOnly("org.yaml:snakeyaml:1.28")
+
+    compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    compileOnly("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+
+    compileOnly("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
+    compileOnly("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
+    compileOnly("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+    compileOnly("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
 
     compileOnly(fileTree("libs"))
 
@@ -69,8 +79,10 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.3")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+    testImplementation("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
+    testImplementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
+    testImplementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     
     testImplementation("com.google.code.gson:gson:2.8.7")
 }

@@ -2,8 +2,6 @@ package io.github.sunshinewzy.sunstcore.api.namespace
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.api.SPlugin
-import io.github.sunshinewzy.sunstcore.core.data.serializer.NamespacedIdSerializer
-import kotlinx.serialization.Serializable
 import java.util.regex.Pattern
 
 
@@ -22,7 +20,6 @@ import java.util.regex.Pattern
  * @param namespace namespace
  * @param id id
  */
-@Serializable(NamespacedIdSerializer::class)
 class NamespacedId(val namespace: Namespace, val id: String) {
 
     init {

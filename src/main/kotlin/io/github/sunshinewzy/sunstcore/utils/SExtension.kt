@@ -1,5 +1,7 @@
 package io.github.sunshinewzy.sunstcore.utils
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.core.data.legacy.internal.SunSTPlayerData
 import io.github.sunshinewzy.sunstcore.core.task.TaskBase
@@ -30,6 +32,8 @@ import org.bukkit.util.BoundingBox
 import taboolib.common.platform.ProxyCommandSender
 import taboolib.module.chat.colored
 import java.io.File
+import java.math.BigDecimal
+import java.math.BigInteger
 import java.util.*
 import kotlin.math.min
 import kotlin.random.Random
@@ -1103,5 +1107,78 @@ fun String.isLetterOrDigitOrChinese(): Boolean =
 
 fun String.isLetterOrDigitOrUnderline(): Boolean =
     matches("^\\w+$".toRegex())
+
+//endregion
+
+//region Json
+
+fun ObjectNode.putPrimitive(fieldName: String, v: Any): Boolean {
+    if(v is Int) {
+        put(fieldName, v)
+        return true
+    }
+
+    if(v is Long) {
+        put(fieldName, v)
+        return true
+    }
+
+    if(v is Float) {
+        put(fieldName, v)
+        return true
+    }
+
+    if(v is Double) {
+        put(fieldName, v)
+        return true
+    }
+
+    if(v is Short) {
+        put(fieldName, v)
+        return true
+    }
+
+    if(v is Boolean) {
+        put(fieldName, v)
+        return true
+    }
+
+    if(v is String) {
+        put(fieldName, v)
+        return true
+    }
+
+    if(v is ByteArray) {
+        put(fieldName, v)
+        return true
+    }
+
+    if(v is BigDecimal) {
+        put(fieldName, v)
+        return true
+    }
+
+    if(v is BigInteger) {
+        put(fieldName, v)
+        return true
+    }
+    
+    return false
+}
+
+fun JsonNode.asPrimitiveOrNull(): Any? {
+    if(isInt) return intValue()
+    if(isLong) return longValue()
+    if(isFloat) return floatValue()
+    if(isDouble) return doubleValue()
+    if(isShort) return shortValue()
+    if(isBoolean) return booleanValue()
+    if(isTextual) return textValue()
+    if(isBinary) return binaryValue()
+    if(isBigDecimal) return decimalValue()
+    if(isBigInteger) return bigIntegerValue()
+    
+    return null
+}
 
 //endregion
