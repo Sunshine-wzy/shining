@@ -1,9 +1,10 @@
 package io.github.sunshinewzy.sunstcore.objects
 
+import io.github.sunshinewzy.sunstcore.api.data.SerialDatable
+import io.github.sunshinewzy.sunstcore.api.data.container.ISerialDataContainer
+import io.github.sunshinewzy.sunstcore.core.data.container.SerialDataContainer
 import io.github.sunshinewzy.sunstcore.core.data.legacy.internal.SLocationData
-import io.github.sunshinewzy.sunstcore.core.data.serializer.SLocationSerializer
 import io.github.sunshinewzy.sunstcore.objects.legacy.SBlock
-import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -11,13 +12,12 @@ import org.bukkit.World
 import org.bukkit.block.Block
 import org.bukkit.util.NumberConversions
 
-@Serializable(SLocationSerializer::class)
-class SLocation {
+class SLocation : SerialDatable {
     val world: String
     val x: Int
     val y: Int
     val z: Int
-    
+
     
     constructor(world: String, x: Int, y: Int, z: Int) {
         this.world = world
@@ -43,7 +43,10 @@ class SLocation {
             } else throw formatException
         } else throw formatException
     }
-    
+
+
+    override val serialDataContainer: ISerialDataContainer = SerialDataContainer()
+
     
     fun isSimilar(loc: Location): Boolean =
         world == loc.world?.name && x == loc.blockX && y == loc.blockY && z == loc.blockZ

@@ -1,9 +1,15 @@
 package io.github.sunshinewzy.sunstcore.api.data.container
 
+import com.fasterxml.jackson.annotation.JsonValue
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.sunshinewzy.sunstcore.api.data.ISerialDataRoot
 import io.github.sunshinewzy.sunstcore.api.namespace.NamespacedId
 
 interface ISerialDataContainer : IDataContainer {
+    
+    val objectMapper: ObjectMapper
+    
 
     /**
      * Get the requested [ISerialDataRoot] by [key].
@@ -15,5 +21,10 @@ interface ISerialDataContainer : IDataContainer {
      * @return Requested [ISerialDataRoot].
      */
     override operator fun get(key: NamespacedId): ISerialDataRoot
+
+    @JsonValue
+    fun serializeToJsonNode(): JsonNode
+
+    fun serializeToString(): String
     
 }

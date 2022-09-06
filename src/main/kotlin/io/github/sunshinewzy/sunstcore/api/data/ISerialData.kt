@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.sunstcore.api.data
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 
@@ -18,7 +19,7 @@ interface ISerialData : IData {
 
     override fun createData(path: String): ISerialData
 
-
+    @JsonValue
     fun serializeToJsonNode(): JsonNode
     
     fun serializeToString(): String

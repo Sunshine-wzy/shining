@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.sunstcore.core.data
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.github.sunshinewzy.sunstcore.api.data.IData.Companion.getWithType
 import io.github.sunshinewzy.sunstcore.api.data.IDataRoot
 import io.github.sunshinewzy.sunstcore.api.data.ISerialDataRoot
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test
 class DataTest {
     private val container: IDataContainer = DataContainer()
     private val serialContainer: ISerialDataContainer = SerialDataContainer()
+    private val mapper = jacksonObjectMapper()
     
     
     @Test
@@ -52,15 +54,33 @@ class DataTest {
         val root = getSerialDataRoot("a")
         
         root["a.b.c"] = Project1("Steve", 12345L)
-        root["a.b.d"] = Project2("Mike", 67890L)
+        root["a.b.d"] = Project1("Mike", 67890L)
         root["a.e"] = 123
-
-        val string = root.serializeToJsonNode().toPrettyString()
-        println(string)
+        root["awa"] = 114.514
         
-        val data = getSerialDataRoot("b")
-        data.deserialize(string)
-        println(data.getValues(true))
+        val string = serialContainer.serializeToJsonNode().toPrettyString()
+        println(string)
+//        
+//        val data = getSerialDataRoot("b")
+//        data.deserialize(string)
+//        println(data.getValues(true))
+    }
+    
+    @Test
+    fun propertyContainer() {
+        val project = Project2("Alice", 54321, serialContainer)
+        val root = getSerialDataRoot("b")
+
+        root["a.b.c"] = Project1("Steve", 12345L)
+        root["a.b.d"] = Project1("Mike", 67890L)
+        root["a.e"] = 123
+        root["awa"] = 114.514
+        
+        val str = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(project)
+        println(str)
+        
+//        val newProject = mapper.readValue(str, Project2::class.java)
+//        println(newProject)
     }
     
     

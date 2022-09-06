@@ -1,6 +1,5 @@
 package io.github.sunshinewzy.sunstcore.core.data
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -21,7 +20,6 @@ open class SerialData : ISerialData {
 
     override val objectMapper: ObjectMapper = jacksonObjectMapper()
 
-    @JsonProperty("data")
     protected val map: MutableMap<String, SerialDataWrapper<*>> = ConcurrentHashMap()
     
     
