@@ -67,7 +67,7 @@ class DataTest {
     }
     
     @Test
-    fun propertyContainer() {
+    fun serializeProperty() {
         val project = Project2("Alice", 54321, serialContainer)
         val root = getSerialDataRoot("b")
 
@@ -79,8 +79,8 @@ class DataTest {
         val str = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(project)
         println(str)
         
-//        val newProject = mapper.readValue(str, Project2::class.java)
-//        println(newProject)
+        val newProject = mapper.readValue(str, Project2::class.java)
+        println(newProject)
     }
     
     

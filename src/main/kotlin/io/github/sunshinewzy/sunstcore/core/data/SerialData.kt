@@ -1,9 +1,7 @@
 package io.github.sunshinewzy.sunstcore.core.data
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.github.sunshinewzy.sunstcore.api.data.IData
 import io.github.sunshinewzy.sunstcore.api.data.ISerialData
 import io.github.sunshinewzy.sunstcore.api.data.ISerialDataRoot
@@ -18,7 +16,6 @@ open class SerialData : ISerialData {
     final override val root: ISerialDataRoot
     final override val parent: ISerialData?
 
-    override val objectMapper: ObjectMapper = jacksonObjectMapper()
 
     protected val map: MutableMap<String, SerialDataWrapper<*>> = ConcurrentHashMap()
     
@@ -318,7 +315,7 @@ open class SerialData : ISerialData {
 
 
     override fun serializeToJsonNode(): JsonNode {
-        val node = objectMapper.createObjectNode()
+        val node = root.objectMapper.createObjectNode()
         map.forEach { (key, wrapper) -> 
             val obj = wrapper.data ?: return@forEach
             
@@ -345,38 +342,39 @@ open class SerialData : ISerialData {
         return serializeToJsonNode().toString()
     }
 
-    override fun deserialize(source: JsonNode) {
-        if(source is ObjectNode) {
-            source.fields().forEach { (key, node) ->
-                if(node is ObjectNode) {
-                    val type = node.get(KEY_TYPE)
-                        ?.takeIf { it.isTextual }?.textValue()
-                        ?.takeIf { it.isNotBlank() } ?: return@forEach
+    override fun deserialize(source: JsonNode): Boolean {
+        if(source !is ObjectNode) return false
 
-                    if(type == SERIAL_DATA) {
-                        val data = node.get(KEY_DATA) ?: return@forEach
-                        createData(key).deserialize(data)
-                        
-                        return@forEach
-                    }
+        source.fields().forEach { (key, node) ->
+            if(node is ObjectNode) {
+                val type = node.get(KEY_TYPE)
+                    ?.takeIf { it.isTextual }?.textValue()
+                    ?.takeIf { it.isNotBlank() } ?: return false
 
-                    kotlin.runCatching {
-                        Class.forName(type)
-                    }.onSuccess { clazz ->
-                        val data = node.get(KEY_DATA) ?: return@forEach
-                        map[key] = SerialDataWrapper(objectMapper.treeToValue(data, clazz))
-                    }
-                } else {
-                    node.asPrimitiveOrNull()?.let {
-                        map[key] = SerialDataWrapper(it)
-                    }
+                if(type == SERIAL_DATA) {
+                    val data = node.get(KEY_DATA) ?: return false
+                    createData(key).deserialize(data)
+                    return@forEach
+                }
+
+                kotlin.runCatching {
+                    Class.forName(type)
+                }.onSuccess { clazz ->
+                    val data = node.get(KEY_DATA) ?: return false
+                    map[key] = SerialDataWrapper(root.objectMapper.treeToValue(data, clazz))
+                }.onFailure { return false }
+            } else {
+                node.asPrimitiveOrNull()?.let {
+                    map[key] = SerialDataWrapper(it)
                 }
             }
         }
+        
+        return true
     }
 
-    override fun deserialize(source: String) {
-        deserialize(objectMapper.readTree(source))
+    override fun deserialize(source: String): Boolean {
+        return deserialize(root.objectMapper.readTree(source))
     }
     
     

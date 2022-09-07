@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.sunstcore.core.data.container
+package io.github.sunshinewzy.sunstcore.core.data
 
 import io.github.sunshinewzy.sunstcore.api.data.IData
 import io.github.sunshinewzy.sunstcore.api.data.IDataRoot
@@ -17,6 +17,6 @@ import io.github.sunshinewzy.sunstcore.api.data.IDataRoot
  * 
  * 该字符并不会影响 [IData] 数据的储存, 它只是路径的分隔符，只会影响你在程序中怎样读取数据。默认为 '.'。
  */
-class DataRootOptions(
+data class DataRootOptions(
     var pathSeparator: Char = '.',
 )
