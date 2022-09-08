@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.sunstcore.core.data.serializer
+package io.github.sunshinewzy.sunstcore.core.data.serializer.kotlinx
 
 import java.util.*
 

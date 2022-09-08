@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.sunstcore.objects
 
-import io.github.sunshinewzy.sunstcore.core.data.serializer.UUIDSerializer
+import io.github.sunshinewzy.sunstcore.core.data.serializer.kotlinx.UUIDSerializer
 import io.github.sunshinewzy.sunstcore.utils.findPlayer
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player

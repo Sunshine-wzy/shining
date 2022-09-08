@@ -1,9 +1,11 @@
 package io.github.sunshinewzy.sunstcore
 
+import com.fasterxml.jackson.module.kotlin.jsonMapper
 import io.github.sunshinewzy.sunstcore.api.SPlugin
 import io.github.sunshinewzy.sunstcore.api.machine.IMachineManager
 import io.github.sunshinewzy.sunstcore.api.namespace.Namespace
 import io.github.sunshinewzy.sunstcore.core.data.DataManager
+import io.github.sunshinewzy.sunstcore.core.data.SerializationModules
 import io.github.sunshinewzy.sunstcore.core.data.legacy.internal.SLocationData
 import io.github.sunshinewzy.sunstcore.core.guide.SGuide
 import io.github.sunshinewzy.sunstcore.core.guide.element.GuideCategory
@@ -44,6 +46,10 @@ import taboolib.platform.BukkitPlugin
 
 @RuntimeDependencies(
     RuntimeDependency(
+        value = "org.jetbrains.kotlin:kotlin-reflect:1.7.10",
+        relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]
+    ),
+    RuntimeDependency(
         value = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.0",
         relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]
     ),
@@ -51,13 +57,16 @@ import taboolib.platform.BukkitPlugin
         value = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0",
         relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]
     ),
-    RuntimeDependency(value = "org.jetbrains.exposed:exposed-core:0.39.2"),
-    RuntimeDependency(value = "org.jetbrains.exposed:exposed-dao:0.39.2"),
-    RuntimeDependency(value = "org.jetbrains.exposed:exposed-jdbc:0.39.2"),
-    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-core:2.13.3"),
-    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-annotations:2.13.3"),
-    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-databind:2.13.3"),
-    RuntimeDependency(value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3")
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-core:0.39.2", transitive = false),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-dao:0.39.2", transitive = false),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-jdbc:0.39.2", transitive = false),
+    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-core:2.13.3", transitive = false),
+    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-annotations:2.13.3", transitive = false),
+    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-databind:2.13.3", transitive = false),
+    RuntimeDependency(
+        value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3", transitive = false,
+        relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]
+    )
 )
 object SunSTCore : Plugin(), SPlugin {
     const val NAME = "SunSTCore"
@@ -168,6 +177,11 @@ object SunSTCore : Plugin(), SPlugin {
         SGuide.registerElement(steamCategory, 11)
         
         
+        val mapper = jsonMapper { 
+//            addModule(kotlinModule())
+            addModule(SerializationModules.bukkit)
+        }
+        
         subscribeEvent<PlayerInteractEvent>(ignoreCancelled = false) {
             if(hand != EquipmentSlot.HAND) return@subscribeEvent
             
@@ -196,7 +210,7 @@ object SunSTCore : Plugin(), SPlugin {
                     Material.AIR -> {}
                     
                     else -> {
-                        
+                        player.sendMessage(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item))
                     }
                 }
                 

@@ -1,12 +1,14 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+
 plugins {
+    val kotlinVersion = "1.7.10"
     `java-library`
     `maven-publish`
     id("io.izzel.taboolib") version "1.42"
-    id("org.jetbrains.kotlin.jvm") version "1.7.10"
-    kotlin("plugin.serialization") version "1.7.10"
-    id("org.jetbrains.dokka") version "1.7.10"
+    id("org.jetbrains.kotlin.jvm") version kotlinVersion
+    kotlin("plugin.serialization") version kotlinVersion
+    id("org.jetbrains.dokka") version kotlinVersion
 }
 
 taboolib {
@@ -50,6 +52,7 @@ repositories {
     mavenCentral()
 }
 
+val kotlinVersion: String by project
 val exposedVersion: String by project
 val jacksonVersion: String by project
 dependencies {
@@ -58,6 +61,7 @@ dependencies {
     compileOnly("ink.ptms.core:v11900:11900:mapped")
     compileOnly(kotlin("stdlib"))
 
+    compileOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.0")
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
 

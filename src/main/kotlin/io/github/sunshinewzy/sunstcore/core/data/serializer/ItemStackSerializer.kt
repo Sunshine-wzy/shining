@@ -1,28 +1,26 @@
 package io.github.sunshinewzy.sunstcore.core.data.serializer
 
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.SerializerProvider
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer
+import com.fasterxml.jackson.databind.ser.std.StdSerializer
 import org.bukkit.inventory.ItemStack
 
-object ItemStackSerializer : StringSerializer<ItemStack>("ItemStack") {
+object ItemStackSerializer : StdSerializer<ItemStack>(ItemStack::class.java) {
 
-    override fun toString(value: ItemStack): String {
-//        val json = JsonObject()
-//        json.addProperty("type", value.type.name)
-//        json.addProperty("amount", value.amount)
-//        json.add("nbt", ItemTagSerializer.serializeData(value.getItemTag()))
-//        return json.toString()
-        TODO()
+    override fun serialize(value: ItemStack, gen: JsonGenerator, provider: SerializerProvider) {
+        provider.defaultSerializeValue(value.serialize(), gen)
     }
+    
+}
 
-    override fun fromString(source: String): ItemStack {
-//        val item = ItemStack(Material.AIR)
-//        val json = JsonParser.parseString(source)
-//        if(json is JsonObject) {
-//            item.type = Material.valueOf(json["type"].asString)
-//            item.amount = json["amount"].asInt
-//            item.setItemTag(ItemTag.fromJson(json["nbt"]).asCompound())
-//        }
-        
-//        return item
-        TODO()
+object ItemStackDeserializer : StdDeserializer<ItemStack>(ItemStack::class.java) {
+
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): ItemStack {
+        val type = ctxt.typeFactory.constructMapType(LinkedHashMap::class.java, String::class.java, Any::class.java)
+        return ItemStack.deserialize(ctxt.readValue(p, type))
     }
+    
 }

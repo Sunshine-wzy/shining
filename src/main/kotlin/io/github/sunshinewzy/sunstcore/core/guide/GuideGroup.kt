@@ -2,7 +2,7 @@ package io.github.sunshinewzy.sunstcore.core.guide
 
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.core.data.container.persistence.LazySerialDataPersistentContainer
-import io.github.sunshinewzy.sunstcore.core.data.serializer.ItemStackSerializer
+import io.github.sunshinewzy.sunstcore.core.data.serializer.kotlinx.ItemStackSerializer
 import io.github.sunshinewzy.sunstcore.core.menu.MenuBuilder.onBack
 import io.github.sunshinewzy.sunstcore.core.menu.MenuBuilder.openMultiPageMenu
 import io.github.sunshinewzy.sunstcore.core.menu.MenuBuilder.openSearchMenu
