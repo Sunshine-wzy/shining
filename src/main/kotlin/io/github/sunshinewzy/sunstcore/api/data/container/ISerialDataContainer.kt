@@ -1,12 +1,13 @@
 package io.github.sunshinewzy.sunstcore.api.data.container
 
-import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
+import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.sunshinewzy.sunstcore.api.data.ISerialDataRoot
 import io.github.sunshinewzy.sunstcore.api.namespace.NamespacedId
 import io.github.sunshinewzy.sunstcore.core.data.container.SerialDataContainer
+import java.io.OutputStream
 
 interface ISerialDataContainer : IDataContainer {
     
@@ -24,6 +25,11 @@ interface ISerialDataContainer : IDataContainer {
      */
     override operator fun get(key: NamespacedId): ISerialDataRoot
 
+    
+    fun serialize(generator: JsonGenerator): JsonGenerator
+    
+    fun <T: OutputStream> serialize(stream: T): T
+    
     @JsonValue
     fun serializeToJsonNode(): JsonNode
 
@@ -36,13 +42,23 @@ interface ISerialDataContainer : IDataContainer {
     
     companion object {
         @JvmStatic
-        @JsonCreator
-        fun deserialize(source: JsonNode): ISerialDataContainer {
-            return SerialDataContainer().also {
+        fun deserialize(
+            source: JsonNode,
+            objectMapper: ObjectMapper = ObjectMapper()
+        ): ISerialDataContainer {
+            return SerialDataContainer(objectMapper).also {
                 if(!it.deserialize(source)) {
                     throw RuntimeException("Deserialization failed.")
                 }
             }
+        }
+        
+        @JvmStatic
+        fun deserialize(
+            source: String,
+            objectMapper: ObjectMapper = ObjectMapper()
+        ): ISerialDataContainer {
+            return deserialize(objectMapper.readTree(source), objectMapper)
         }
     }
 }

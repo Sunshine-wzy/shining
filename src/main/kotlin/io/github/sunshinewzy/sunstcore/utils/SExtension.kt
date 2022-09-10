@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.sunstcore.utils
 
+import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import io.github.sunshinewzy.sunstcore.SunSTCore
@@ -1179,6 +1180,60 @@ fun JsonNode.asPrimitiveOrNull(): Any? {
     if(isBigInteger) return bigIntegerValue()
     
     return null
+}
+
+fun JsonGenerator.writePrimitiveField(fieldName: String, v: Any): Boolean {
+    if(v is Int) {
+        writeNumberField(fieldName, v)
+        return true
+    }
+
+    if(v is Long) {
+        writeNumberField(fieldName, v)
+        return true
+    }
+
+    if(v is Float) {
+        writeNumberField(fieldName, v)
+        return true
+    }
+
+    if(v is Double) {
+        writeNumberField(fieldName, v)
+        return true
+    }
+
+    if(v is Short) {
+        writeNumberField(fieldName, v)
+        return true
+    }
+
+    if(v is Boolean) {
+        writeBooleanField(fieldName, v)
+        return true
+    }
+
+    if(v is String) {
+        writeStringField(fieldName, v)
+        return true
+    }
+
+    if(v is ByteArray) {
+        writeBinaryField(fieldName, v)
+        return true
+    }
+
+    if(v is BigDecimal) {
+        writeNumberField(fieldName, v)
+        return true
+    }
+
+    if(v is BigInteger) {
+        writeNumberField(fieldName, v)
+        return true
+    }
+    
+    return false
 }
 
 //endregion

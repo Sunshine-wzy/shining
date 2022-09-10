@@ -1,27 +1,47 @@
 package io.github.sunshinewzy.sunstcore.core.data.container
 
+import com.fasterxml.jackson.core.JsonEncoding
+import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.github.sunshinewzy.sunstcore.api.data.ISerialDataRoot
 import io.github.sunshinewzy.sunstcore.api.data.container.ISerialDataContainer
 import io.github.sunshinewzy.sunstcore.api.namespace.NamespacedId
 import io.github.sunshinewzy.sunstcore.core.data.SerialDataRoot
+import java.io.ByteArrayOutputStream
+import java.io.OutputStream
 import java.util.concurrent.ConcurrentHashMap
 
 
-class SerialDataContainer : ISerialDataContainer {
+class SerialDataContainer(
+    override val objectMapper: ObjectMapper = ObjectMapper()
+) : ISerialDataContainer {
     private val map: ConcurrentHashMap<NamespacedId, ISerialDataRoot> = ConcurrentHashMap()
-    
-    
-    override val objectMapper: ObjectMapper = jacksonObjectMapper()
     
     
     override fun get(key: NamespacedId): ISerialDataRoot {
         map[key]?.let { return it }
 
         return SerialDataRoot(key.id, this).also { map[key] = it }
+    }
+
+    override fun serialize(generator: JsonGenerator): JsonGenerator {
+        generator.writeStartObject()
+        map.forEach { (key, data) -> 
+            generator.writeFieldName(key.toString())
+            data.serialize(generator)
+        }
+        generator.writeEndObject()
+        return generator
+    }
+
+    override fun <T : OutputStream> serialize(stream: T): T {
+        objectMapper.createGenerator(stream, JsonEncoding.UTF8).use { generator ->
+            serialize(generator)
+        }
+
+        return stream
     }
 
     override fun serializeToJsonNode(): JsonNode {
@@ -33,7 +53,9 @@ class SerialDataContainer : ISerialDataContainer {
     }
 
     override fun serializeToString(): String {
-        return serializeToJsonNode().toString()
+        return ByteArrayOutputStream().use { stream ->
+            serialize(stream).toString(Charsets.UTF_8.name())
+        }
     }
 
     override fun deserialize(source: JsonNode): Boolean {

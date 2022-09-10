@@ -22,6 +22,7 @@ import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTItem
 import io.github.sunshinewzy.sunstcore.objects.legacy.SBlock
 import io.github.sunshinewzy.sunstcore.objects.machine.SunSTMachineManager
+import io.github.sunshinewzy.sunstcore.objects.orderWith
 import io.github.sunshinewzy.sunstcore.utils.SReflect
 import io.github.sunshinewzy.sunstcore.utils.SunSTTestApi
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
@@ -31,6 +32,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.PluginManager
 import taboolib.common.env.RuntimeDependencies
 import taboolib.common.env.RuntimeDependency
@@ -42,6 +44,8 @@ import taboolib.module.chat.colored
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.Configuration
 import taboolib.module.metrics.Metrics
+import taboolib.module.ui.openMenu
+import taboolib.module.ui.type.Basic
 import taboolib.platform.BukkitPlugin
 
 @RuntimeDependencies(
@@ -178,7 +182,6 @@ object SunSTCore : Plugin(), SPlugin {
         
         
         val mapper = jsonMapper { 
-//            addModule(kotlinModule())
             addModule(SerializationModules.bukkit)
         }
         
@@ -210,7 +213,12 @@ object SunSTCore : Plugin(), SPlugin {
                     Material.AIR -> {}
                     
                     else -> {
-                        player.sendMessage(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item))
+                        val json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item)
+                        player.sendMessage(json)
+                        player.openMenu<Basic> { 
+                            rows(3)
+                            set(5 orderWith 2, mapper.readValue(json, ItemStack::class.java))
+                        }
                     }
                 }
                 

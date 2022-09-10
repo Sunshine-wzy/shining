@@ -50,6 +50,7 @@ taboolib {
 repositories {
     mavenLocal()
     mavenCentral()
+    maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 val kotlinVersion: String by project
@@ -88,7 +89,7 @@ dependencies {
     testImplementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     
-    testImplementation("com.google.code.gson:gson:2.8.7")
+//    testImplementation("com.google.code.gson:gson:2.8.7")
 }
 
 tasks {

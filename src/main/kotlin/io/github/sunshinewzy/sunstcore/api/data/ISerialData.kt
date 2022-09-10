@@ -2,8 +2,10 @@ package io.github.sunshinewzy.sunstcore.api.data
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonValue
+import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import io.github.sunshinewzy.sunstcore.core.data.SerialData
+import java.io.OutputStream
 
 interface ISerialData : IData {
     @get:JsonIgnore
@@ -16,9 +18,14 @@ interface ISerialData : IData {
 
     override fun createData(path: String): ISerialData
 
+    
+    fun serialize(generator: JsonGenerator): JsonGenerator
+
+    fun <T: OutputStream> serialize(stream: T): T
+    
     @JsonValue
     fun serializeToJsonNode(): JsonNode
-    
+
     fun serializeToString(): String
 
     fun deserialize(source: JsonNode): Boolean

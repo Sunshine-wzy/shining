@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.sunstcore.core.data
 
+import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -14,7 +15,18 @@ class SerialDataRoot(
     override var options: DataRootOptions = DataRootOptions()
 
     override val objectMapper: ObjectMapper = container.objectMapper
-    
+
+
+    override fun serialize(generator: JsonGenerator): JsonGenerator {
+        generator.writeStartObject()
+        
+        generator.writeObjectField(KEY_OPTIONS, options)
+        generator.writeFieldName(KEY_DATA)
+        super.serialize(generator)
+        
+        generator.writeEndObject()
+        return generator
+    }
 
     override fun serializeToJsonNode(): JsonNode {
         val rootNode = objectMapper.createObjectNode()

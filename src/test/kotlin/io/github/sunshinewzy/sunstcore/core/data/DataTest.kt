@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Test
 
 class DataTest {
     private val container: IDataContainer = DataContainer()
-    private val serialContainer: ISerialDataContainer = SerialDataContainer()
-    private val mapper = jacksonObjectMapper()
+    private val serialContainer: ISerialDataContainer = SerialDataContainer(jacksonObjectMapper())
+    private val mapper = serialContainer.objectMapper
     
     
     @Test
@@ -58,29 +58,11 @@ class DataTest {
         root["a.e"] = 123
         root["awa"] = 114.514
         
-        val string = serialContainer.serializeToJsonNode().toPrettyString()
+        val string = serialContainer.serializeToString()
         println(string)
-//        
-//        val data = getSerialDataRoot("b")
-//        data.deserialize(string)
-//        println(data.getValues(true))
-    }
-    
-    @Test
-    fun serializeProperty() {
-        val project = Project2("Alice", 54321, serialContainer)
-        val root = getSerialDataRoot("b")
 
-        root["a.b.c"] = Project1("Steve", 12345L)
-        root["a.b.d"] = Project1("Mike", 67890L)
-        root["a.e"] = 123
-        root["awa"] = 114.514
-        
-        val str = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(project)
-        println(str)
-        
-        val newProject = mapper.readValue(str, Project2::class.java)
-        println(newProject)
+        val container = ISerialDataContainer.deserialize(string, mapper)
+        println(container)
     }
     
     

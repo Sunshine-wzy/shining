@@ -1,5 +1,7 @@
 package io.github.sunshinewzy.sunstcore.core.data
 
+import com.fasterxml.jackson.core.JsonEncoding
+import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import io.github.sunshinewzy.sunstcore.api.data.IData
@@ -8,6 +10,9 @@ import io.github.sunshinewzy.sunstcore.api.data.ISerialDataRoot
 import io.github.sunshinewzy.sunstcore.utils.Coerce
 import io.github.sunshinewzy.sunstcore.utils.asPrimitiveOrNull
 import io.github.sunshinewzy.sunstcore.utils.putPrimitive
+import io.github.sunshinewzy.sunstcore.utils.writePrimitiveField
+import java.io.ByteArrayOutputStream
+import java.io.OutputStream
 import java.util.concurrent.ConcurrentHashMap
 
 
@@ -314,6 +319,41 @@ open class SerialData : ISerialData {
     }
 
 
+    override fun serialize(generator: JsonGenerator): JsonGenerator {
+        generator.writeStartObject()
+        map.forEach { (key, wrapper) ->
+            val obj = wrapper.data ?: return@forEach
+
+            if(obj is ISerialData) {
+                generator.writeObjectFieldStart(key)
+                generator.writeStringField(KEY_TYPE, SERIAL_DATA)
+                generator.writeFieldName(KEY_DATA)
+                obj.serialize(generator)
+                generator.writeEndObject()
+                return@forEach
+            }
+            
+            if(generator.writePrimitiveField(key, obj)) {
+                return@forEach
+            }
+
+            generator.writeObjectFieldStart(key)
+            generator.writeStringField(KEY_TYPE, obj::class.java.name)
+            generator.writeObjectField(KEY_DATA, obj)
+            generator.writeEndObject()
+        }
+        generator.writeEndObject()
+        
+        return generator
+    }
+
+    override fun <T : OutputStream> serialize(stream: T): T {
+        root.container.objectMapper.createGenerator(stream, JsonEncoding.UTF8).use { generator ->
+            serialize(generator)
+        }
+        return stream
+    }
+
     override fun serializeToJsonNode(): JsonNode {
         val node = root.objectMapper.createObjectNode()
         map.forEach { (key, wrapper) -> 
@@ -339,7 +379,9 @@ open class SerialData : ISerialData {
     }
 
     override fun serializeToString(): String {
-        return serializeToJsonNode().toString()
+        return ByteArrayOutputStream().use { stream ->
+            serialize(stream).toString(Charsets.UTF_8.name())
+        }
     }
 
     override fun deserialize(source: JsonNode): Boolean {
