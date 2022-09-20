@@ -13,27 +13,37 @@ import taboolib.module.nms.getItemTag
 import taboolib.module.nms.setItemTag
 import java.util.concurrent.ConcurrentHashMap
 
-class DictionaryItem(val item: ItemStack) {
-    var name: NamespacedId? = null
-    var type: String = ""
+open class DictionaryItem {
+    val name: NamespacedId
+    val item: ItemStack
     
-    init {
+    
+    constructor(name: NamespacedId, item: ItemStack) {
+        this.name = name
+        this.item = item
+    }
+    
+    constructor(item: ItemStack) {
+        var theName = NamespacedId.NULL
         item.getDictionary { tag ->
-            tag[NAME]?.asString()?.let { 
-                name = NamespacedId.fromString(it)
-            }
-            
-            tag[TYPE]?.asString()?.let { 
-                type = it
+            tag[NAME]?.asString()?.let { tagName ->
+                NamespacedId.fromString(tagName)?.let {
+                    theName = it
+                }
             }
         }
+        
+        this.name = theName
+        this.item = item
     }
+    
+    
+    fun hasName(): Boolean = name != NamespacedId.NULL
 
 
     companion object {
         const val DICTIONARY = "dictionary"
         const val NAME = "name"
-        const val TYPE = "type"
         
         private val blockItemMap = ConcurrentHashMap<NamespacedId, SBlock>()
         
@@ -49,10 +59,14 @@ class DictionaryItem(val item: ItemStack) {
         }
         
         
-        fun ItemStack.toDictionaryItem(): DictionaryItem =
-            DictionaryItem(this)
+        fun ItemStack.dictionaryItem(): DictionaryItem? {
+            return getDictionaryName()?.let { 
+                DictionaryRegistry.getOrNull(it)
+            }
+        }
         
-        private fun ItemStack.setDictionary(key: String, value: Any) {
+        
+        private fun ItemStack.setDictionary(key: String, value: Any): ItemStack {
             val tag = getItemTag()
             val compound = tag[DICTIONARY]?.let { 
                 if(it is ItemTag) it
@@ -60,7 +74,7 @@ class DictionaryItem(val item: ItemStack) {
             } ?: ItemTag()
             compound.put(key, value)
             tag[DICTIONARY] = compound
-            setItemTag(tag)
+            return setItemTag(tag)
         }
         
         private fun ItemStack.getDictionary(key: String): ItemTagData? {
@@ -82,14 +96,14 @@ class DictionaryItem(val item: ItemStack) {
         }
         
         
-        fun ItemStack.setDictionaryName(name: NamespacedId) {
-            setDictionary(NAME, name.toString())
+        fun ItemStack.setDictionaryName(name: NamespacedId): ItemStack {
+            return setDictionary(NAME, name.toString())
         }
         
         fun ItemStack.getDictionaryName(): NamespacedId? {
-            getDictionary(NAME)?.asString()?.let { return NamespacedId.fromString(it) }
-            
-            return null
+            return getDictionary(NAME)?.asString()?.let {
+                NamespacedId.fromString(it)
+            }
         }
         
     }

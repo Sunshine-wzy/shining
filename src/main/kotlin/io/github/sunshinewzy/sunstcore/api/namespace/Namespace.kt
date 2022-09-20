@@ -41,7 +41,7 @@ class Namespace private constructor(val name: String) {
 
         
         @JvmStatic
-        fun get(name: String): Namespace {
+        operator fun get(name: String): Namespace {
             cache[name]?.let { 
                 return it
             }

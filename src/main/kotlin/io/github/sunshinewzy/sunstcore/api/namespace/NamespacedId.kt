@@ -138,7 +138,7 @@ class NamespacedId(val namespace: Namespace, val id: String) {
             }
             return if(!Namespace.VALID_NAMESPACE.matcher(namespace).matches()) {
                 null
-            } else NamespacedId(Namespace.get(namespace), id)
+            } else NamespacedId(Namespace[namespace], id)
         }
 
         /**

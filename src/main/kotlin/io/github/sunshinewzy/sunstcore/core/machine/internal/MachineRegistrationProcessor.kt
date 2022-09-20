@@ -2,7 +2,7 @@ package io.github.sunshinewzy.sunstcore.core.machine.internal
 
 import io.github.sunshinewzy.sunstcore.api.machine.IMachine
 import io.github.sunshinewzy.sunstcore.api.machine.IMachineRegistrationProcessor
-import io.github.sunshinewzy.sunstcore.core.dictionary.DictionaryItem.Companion.toDictionaryItem
+import io.github.sunshinewzy.sunstcore.core.dictionary.DictionaryItem.Companion.dictionaryItem
 import io.github.sunshinewzy.sunstcore.core.machine.MultiblockMachine
 import io.github.sunshinewzy.sunstcore.core.machine.PlaneMachine
 import io.github.sunshinewzy.sunstcore.core.machine.SimpleMachine
@@ -40,7 +40,7 @@ object MachineRegistrationProcessor : IMachineRegistrationProcessor {
     
     @SubscribeEvent(EventPriority.HIGHEST)
     fun onBlockPlace(event: BlockPlaceEvent) {
-        val item = event.itemInHand.toDictionaryItem()
+        val item = event.itemInHand.dictionaryItem()
         
     }
     

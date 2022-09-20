@@ -85,7 +85,7 @@ object SunSTCore : Plugin(), SPlugin {
     val prefixName: String by lazy { config.getString("prefix_name")?.colored() ?: COLOR_NAME }
     val machineManager: IMachineManager by lazy { MachineManager }
     
-    private val namespace = Namespace.get(NAME.lowercase())
+    private val namespace = Namespace[NAME.lowercase()]
     
     
     override fun onEnable() {

@@ -15,7 +15,7 @@ interface SPlugin {
      * underscores, and hyphens.
      */
     fun getNamespace(): Namespace {
-        return Namespace.get(getName().lowercase())
+        return Namespace[getName().lowercase()]
     }
     
 }
