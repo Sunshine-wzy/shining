@@ -1,29 +1,28 @@
 package io.github.sunshinewzy.sunstcore.core.dictionary
 
 import io.github.sunshinewzy.sunstcore.api.namespace.NamespacedId
-import io.github.sunshinewzy.sunstcore.objects.SBlock
-import org.bukkit.event.block.BlockBreakEvent
-import org.bukkit.event.block.BlockPlaceEvent
+import io.github.sunshinewzy.sunstcore.core.dictionary.item.behavior.ItemBehavior
 import org.bukkit.inventory.ItemStack
-import taboolib.common.platform.event.EventPriority
-import taboolib.common.platform.event.SubscribeEvent
 import taboolib.module.nms.ItemTag
 import taboolib.module.nms.ItemTagData
 import taboolib.module.nms.getItemTag
 import taboolib.module.nms.setItemTag
-import java.util.concurrent.ConcurrentHashMap
 
 open class DictionaryItem {
     val name: NamespacedId
     val item: ItemStack
+    val behaviors: List<ItemBehavior>
     
     
-    constructor(name: NamespacedId, item: ItemStack) {
+    constructor(name: NamespacedId, item: ItemStack, behaviors: List<ItemBehavior>) {
         this.name = name
         this.item = item
+        this.behaviors = behaviors
     }
     
-    constructor(item: ItemStack) {
+    constructor(name: NamespacedId, item: ItemStack, vararg behaviors: ItemBehavior) : this(name, item, behaviors.toList())
+    
+    constructor(item: ItemStack, behaviors: List<ItemBehavior>) {
         var theName = NamespacedId.NULL
         item.getDictionary { tag ->
             tag[NAME]?.asString()?.let { tagName ->
@@ -35,7 +34,10 @@ open class DictionaryItem {
         
         this.name = theName
         this.item = item
+        this.behaviors = behaviors
     }
+    
+    constructor(item: ItemStack, vararg behaviors: ItemBehavior) : this(item, behaviors.toList())
     
     
     fun hasName(): Boolean = name != NamespacedId.NULL
@@ -45,23 +47,19 @@ open class DictionaryItem {
         const val DICTIONARY = "dictionary"
         const val NAME = "name"
         
-        private val blockItemMap = ConcurrentHashMap<NamespacedId, SBlock>()
         
-        
-        @SubscribeEvent(EventPriority.HIGHEST)
-        fun onBlockPlace(event: BlockPlaceEvent) {
-            
-        }
-        
-        @SubscribeEvent(EventPriority.HIGHEST)
-        fun onBlockBreak(event: BlockBreakEvent) {
-            
-        }
-        
-        
-        fun ItemStack.dictionaryItem(): DictionaryItem? {
-            return getDictionaryName()?.let { 
+        val ItemStack.dictionaryItem: DictionaryItem?
+            get() = getDictionaryName()?.let {
                 DictionaryRegistry.getOrNull(it)
+            }
+
+        fun ItemStack.setDictionaryName(name: NamespacedId): ItemStack {
+            return setDictionary(NAME, name.toString())
+        }
+
+        fun ItemStack.getDictionaryName(): NamespacedId? {
+            return getDictionary(NAME)?.asString()?.let {
+                NamespacedId.fromString(it)
             }
         }
         
@@ -94,22 +92,6 @@ open class DictionaryItem {
                 }
             }
         }
-        
-        
-        fun ItemStack.setDictionaryName(name: NamespacedId): ItemStack {
-            return setDictionary(NAME, name.toString())
-        }
-        
-        fun ItemStack.getDictionaryName(): NamespacedId? {
-            return getDictionary(NAME)?.asString()?.let {
-                NamespacedId.fromString(it)
-            }
-        }
-        
-    }
-    
-    
-    enum class Type(val type: String) {
         
     }
     

@@ -2,6 +2,7 @@ package io.github.sunshinewzy.sunstcore.api.dictionary
 
 import io.github.sunshinewzy.sunstcore.api.namespace.NamespacedId
 import io.github.sunshinewzy.sunstcore.core.dictionary.DictionaryItem
+import io.github.sunshinewzy.sunstcore.core.dictionary.item.behavior.ItemBehavior
 import org.bukkit.inventory.ItemStack
 
 interface IDictionaryRegistry {
@@ -17,7 +18,7 @@ interface IDictionaryRegistry {
     fun getById(id: String): List<DictionaryItem>
     
     
-    fun registerItem(name: NamespacedId, item: ItemStack): DictionaryItem
+    fun registerItem(name: NamespacedId, item: ItemStack, vararg behaviors: ItemBehavior): DictionaryItem
     
     fun hasItem(name: NamespacedId): Boolean
     

@@ -7,13 +7,8 @@ import io.github.sunshinewzy.sunstcore.core.dictionary.DictionaryItem
  */
 open class SimpleMachine(
     property: MachineProperty,
-    item: DictionaryItem
+    val item: DictionaryItem
 ) : AbstractMachine(property) {
-    var item: DictionaryItem = item
-        private set(value) {
-            
-            field = value
-        }
     
 
     override fun run() {
