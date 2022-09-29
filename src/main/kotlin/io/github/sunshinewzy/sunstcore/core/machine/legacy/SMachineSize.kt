@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.sunstcore.core.machine.legacy
 
-import io.github.sunshinewzy.sunstcore.objects.SCoordinate
+import io.github.sunshinewzy.sunstcore.objects.SPosition
 
 enum class SMachineSize(val size: Int) {
     SIZE3(3),
@@ -9,7 +9,7 @@ enum class SMachineSize(val size: Int) {
     ;
     
     
-    fun isCoordInSize(coord: SCoordinate): Boolean {
+    fun isCoordInSize(coord: SPosition): Boolean {
         val (x, y, z) = coord
         val max = size / 2
         

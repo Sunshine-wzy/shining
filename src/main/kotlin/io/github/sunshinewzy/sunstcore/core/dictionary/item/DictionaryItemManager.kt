@@ -20,7 +20,7 @@ internal object DictionaryItemManager {
         if(event.hand != EquipmentSlot.HAND) return
         
         findBehaviors(event.item)?.forEach { 
-            it.handleInteract(event, event.player, event.item!!, event.action)
+            it.onInteract(event, event.player, event.item!!, event.action)
         }
     }
     
@@ -28,14 +28,14 @@ internal object DictionaryItemManager {
     fun onPlayerInteractAtEntity(event: PlayerInteractAtEntityEvent) {
         val item = event.player.inventory.getItem(event.hand)
         findBehaviors(item)?.forEach { 
-            it.handleEntityInteract(event, event.player, item!!, event.rightClicked)
+            it.onEntityInteract(event, event.player, item!!, event.rightClicked)
         }
     }
     
     @SubscribeEvent(EventPriority.HIGHEST, ignoreCancelled = true)
     fun onPlayerItemBreak(event: PlayerItemBreakEvent) {
         findBehaviors(event.brokenItem)?.forEach { 
-            it.handleBreak(event, event.player, event.brokenItem)
+            it.onBreak(event, event.player, event.brokenItem)
         }
     }
     
@@ -45,12 +45,12 @@ internal object DictionaryItemManager {
         val clickedItem = event.currentItem
         val cursorItem = event.cursor
 
-        findBehaviors(clickedItem)?.forEach { it.handleInventoryClick(event, player, clickedItem!!) }
-        findBehaviors(cursorItem)?.forEach { it.handleInventoryClickOnCursor(event, player, cursorItem!!) }
+        findBehaviors(clickedItem)?.forEach { it.onInventoryClick(event, player, clickedItem!!) }
+        findBehaviors(cursorItem)?.forEach { it.onInventoryClickOnCursor(event, player, cursorItem!!) }
 
         if(event.click == ClickType.NUMBER_KEY) {
             val hotbarItem = player.inventory.getItem(event.hotbarButton)
-            findBehaviors(hotbarItem)?.forEach { it.handleInventoryHotbarSwap(event, player, hotbarItem!!) }
+            findBehaviors(hotbarItem)?.forEach { it.onInventoryHotbarSwap(event, player, hotbarItem!!) }
         }
     }
     

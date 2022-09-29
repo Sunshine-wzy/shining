@@ -8,5 +8,10 @@ abstract class AbstractMachine(override val property: MachineProperty) : IMachin
     open fun register() {
         SunSTCore.machineManager.register(this)
     }
+    
 
+    override fun onTick() {}
+
+    override fun onAsyncTick() {}
+    
 }

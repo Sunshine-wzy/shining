@@ -11,11 +11,11 @@ import org.bukkit.inventory.ItemStack
 
 abstract class ItemBehavior {
 
-    open fun handleInteract(event: PlayerInteractEvent, player: Player, item: ItemStack, action: Action) {}
-    open fun handleEntityInteract(event: PlayerInteractAtEntityEvent, player: Player, item: ItemStack, clicked: Entity) {}
-    open fun handleBreak(event: PlayerItemBreakEvent, player: Player, item: ItemStack) {}
-    open fun handleInventoryClick(event: InventoryClickEvent, player: Player, item: ItemStack) {}
-    open fun handleInventoryClickOnCursor(event: InventoryClickEvent, player: Player, item: ItemStack) {}
-    open fun handleInventoryHotbarSwap(event: InventoryClickEvent, player: Player, item: ItemStack) {}
+    open fun onInteract(event: PlayerInteractEvent, player: Player, item: ItemStack, action: Action) {}
+    open fun onEntityInteract(event: PlayerInteractAtEntityEvent, player: Player, item: ItemStack, clicked: Entity) {}
+    open fun onBreak(event: PlayerItemBreakEvent, player: Player, item: ItemStack) {}
+    open fun onInventoryClick(event: InventoryClickEvent, player: Player, item: ItemStack) {}
+    open fun onInventoryClickOnCursor(event: InventoryClickEvent, player: Player, item: ItemStack) {}
+    open fun onInventoryHotbarSwap(event: InventoryClickEvent, player: Player, item: ItemStack) {}
     
 }
