@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.sunstcore
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import io.github.sunshinewzy.sunstcore.api.SPlugin
 import io.github.sunshinewzy.sunstcore.api.machine.IMachineManager
@@ -34,6 +35,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.PluginManager
+import org.jetbrains.exposed.sql.Database
 import taboolib.common.env.RuntimeDependencies
 import taboolib.common.env.RuntimeDependency
 import taboolib.common.platform.Platform
@@ -49,28 +51,16 @@ import taboolib.module.ui.type.Basic
 import taboolib.platform.BukkitPlugin
 
 @RuntimeDependencies(
-    RuntimeDependency(
-        value = "org.jetbrains.kotlin:kotlin-reflect:1.7.10",
-        relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]
-    ),
-    RuntimeDependency(
-        value = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.0",
-        relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]
-    ),
-    RuntimeDependency(
-        value = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0",
-        relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]
-    ),
-    RuntimeDependency(value = "org.jetbrains.exposed:exposed-core:0.39.2", transitive = false),
-    RuntimeDependency(value = "org.jetbrains.exposed:exposed-dao:0.39.2", transitive = false),
-    RuntimeDependency(value = "org.jetbrains.exposed:exposed-jdbc:0.39.2", transitive = false),
+    RuntimeDependency(value = "org.jetbrains.kotlin:kotlin-reflect:1.7.10", relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]),
+    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.0", relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]),
+    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0", relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-core:0.39.2", transitive = false, relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-dao:0.39.2", transitive = false, relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-jdbc:0.39.2", transitive = false, relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]),
     RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-core:2.13.3", transitive = false),
     RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-annotations:2.13.3", transitive = false),
     RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-databind:2.13.3", transitive = false),
-    RuntimeDependency(
-        value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3", transitive = false,
-        relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]
-    )
+    RuntimeDependency(value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3", transitive = false, relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."])
 )
 object SunSTCore : Plugin(), SPlugin {
     const val NAME = "SunSTCore"
@@ -79,11 +69,16 @@ object SunSTCore : Plugin(), SPlugin {
     @Config
     lateinit var config: Configuration
         private set
+    lateinit var database: Database
+        private set
     
     val plugin: BukkitPlugin by lazy { BukkitPlugin.getInstance() }
     val pluginManager: PluginManager by lazy { Bukkit.getPluginManager() }
     val prefixName: String by lazy { config.getString("prefix_name")?.colored() ?: COLOR_NAME }
     val machineManager: IMachineManager by lazy { MachineManager }
+    val objectMapper: ObjectMapper = jsonMapper { 
+        addModule(SerializationModules.bukkit)
+    }
     
     private val namespace = Namespace[NAME.lowercase()]
     

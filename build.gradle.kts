@@ -88,8 +88,6 @@ dependencies {
     testImplementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
     testImplementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    
-//    testImplementation("com.google.code.gson:gson:2.8.7")
 }
 
 tasks {

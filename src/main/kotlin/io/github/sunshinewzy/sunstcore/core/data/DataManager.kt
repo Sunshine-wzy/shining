@@ -6,11 +6,15 @@ import io.github.sunshinewzy.sunstcore.core.data.database.DatabaseSQL
 import io.github.sunshinewzy.sunstcore.core.data.database.DatabaseSQLite
 import io.github.sunshinewzy.sunstcore.core.data.legacy.SAutoSaveData
 import io.github.sunshinewzy.sunstcore.core.data.legacy.internal.SunSTPlayerData
+import io.github.sunshinewzy.sunstcore.core.guide.GuideGroups
 import io.github.sunshinewzy.sunstcore.core.task.TaskProgress
 import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.TransactionManager
+import org.jetbrains.exposed.sql.transactions.transaction
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.function.getDataFolder
@@ -19,6 +23,7 @@ import taboolib.expansion.setupPlayerDatabase
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.database.HostSQL
 import java.io.File
+import java.sql.Connection
 
 object DataManager : Initable {
     private val dir = getDataFolder()
@@ -55,7 +60,17 @@ object DataManager : Initable {
                 it.saveLazy()
             }
         }
+
         
+        TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
+
+        transaction {
+            SchemaUtils.createMissingTablesAndColumns(
+                GuideGroups
+            )
+        }
+
+        TODO()
     }
     
     @Awake(LifeCycle.DISABLE)

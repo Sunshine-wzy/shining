@@ -40,7 +40,7 @@ object MachineRegistrationProcessor : IMachineRegistrationProcessor {
     
     @SubscribeEvent(EventPriority.HIGHEST)
     fun onBlockPlace(event: BlockPlaceEvent) {
-        val item = event.itemInHand.dictionaryItem()
+        val item = event.itemInHand.dictionaryItem
         
     }
     
