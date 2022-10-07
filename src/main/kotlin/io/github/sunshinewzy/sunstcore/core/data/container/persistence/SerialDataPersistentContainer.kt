@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap
 open class SerialDataPersistentContainer<T>(
     val serializer: KSerializer<T>,
     val tableName: String,
-    val database: Database<*> = DataManager.database
+    val database: Database<*> = DataManager.sDatabase
 ) {
     protected val table = database.get(tableName) {
         build("key") { 

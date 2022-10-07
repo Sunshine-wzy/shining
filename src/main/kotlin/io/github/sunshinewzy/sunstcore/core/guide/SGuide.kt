@@ -68,7 +68,7 @@ object SGuide {
                 element.getSymbolByCondition(player, condition)
             }
 
-            onBuild(onBuild = onBuildEdge)
+            onBuild(true, onBuildEdge)
 
             setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
                 if(hasPreviousPage) {

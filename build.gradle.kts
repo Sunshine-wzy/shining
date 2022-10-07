@@ -31,7 +31,9 @@ taboolib {
     
     install("platform-bukkit")
     classifier = null
-    version = "6.0.9-79"
+    version = "6.0.9-111"
+    
+    relocate("com.zaxxer.hikari.", "com.zaxxer.hikari_5_0_1.")
     
     description { 
         desc("A core lib made by SunShine Technology.")
@@ -77,6 +79,8 @@ dependencies {
     compileOnly("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
     compileOnly("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     compileOnly("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+
+    compileOnly("com.zaxxer:HikariCP:5.0.1")
 
     compileOnly(fileTree("libs"))
 

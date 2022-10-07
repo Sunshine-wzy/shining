@@ -40,7 +40,7 @@ class GuideCategory(id: String, symbol: ItemStack, var tier: Int = 0) : GuideEle
                 element.getSymbolByCondition(player, condition)
             }
 
-            onBuild(onBuild = SGuide.onBuildEdge)
+            onBuild(true, SGuide.onBuildEdge)
 
             setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
                 if(hasPreviousPage) {

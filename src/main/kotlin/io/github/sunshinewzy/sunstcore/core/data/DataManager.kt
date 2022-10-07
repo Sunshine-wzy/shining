@@ -1,7 +1,8 @@
 package io.github.sunshinewzy.sunstcore.core.data
 
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import io.github.sunshinewzy.sunstcore.SunSTCore
-import io.github.sunshinewzy.sunstcore.core.data.database.Database
 import io.github.sunshinewzy.sunstcore.core.data.database.DatabaseSQL
 import io.github.sunshinewzy.sunstcore.core.data.database.DatabaseSQLite
 import io.github.sunshinewzy.sunstcore.core.data.legacy.SAutoSaveData
@@ -12,6 +13,7 @@ import io.github.sunshinewzy.sunstcore.interfaces.Initable
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -21,9 +23,15 @@ import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.submit
 import taboolib.expansion.setupPlayerDatabase
 import taboolib.library.configuration.ConfigurationSection
+import taboolib.module.database.Database.settingsFile
+import taboolib.module.database.Host
 import taboolib.module.database.HostSQL
+import taboolib.module.database.HostSQLite
 import java.io.File
 import java.sql.Connection
+import javax.sql.DataSource
+import io.github.sunshinewzy.sunstcore.core.data.database.Database as SDatabase
+
 
 object DataManager : Initable {
     private val dir = getDataFolder()
@@ -34,7 +42,9 @@ object DataManager : Initable {
     val databaseConfig: ConfigurationSection by lazy { SunSTCore.config.getConfigurationSection("database") ?: throw RuntimeException("Config 'database' does not exist.") }
     
     
-    lateinit var database: Database<*>
+    lateinit var database: Database
+        private set
+    lateinit var sDatabase: SDatabase<*>
         private set
     
     
@@ -46,12 +56,15 @@ object DataManager : Initable {
     
     
     override fun init() {
-
+        
         if(SunSTCore.config.getBoolean("database.enable")) {
-            database = DatabaseSQL(HostSQL(databaseConfig))
+            val hostSQL = HostSQL(databaseConfig)
+            database = Database.connect(createDataSource(hostSQL))
+            sDatabase = DatabaseSQL(hostSQL)
             setupPlayerDatabase(databaseConfig, SunSTCore.config.getString("player_table").toString())
         } else {
-            database = DatabaseSQLite(File(getDataFolder(), "data/data.db"))
+            database = Database.connect(createDataSource(HostSQLite(File(getDataFolder(), "data/data.db"))))
+            sDatabase = DatabaseSQLite(File(getDataFolder(), "data/sdata.db"))
             setupPlayerDatabase(File(getDataFolder(), "data/player.db"))
         }
         
@@ -69,9 +82,48 @@ object DataManager : Initable {
                 GuideGroups
             )
         }
-
-        TODO()
+        
     }
+
+
+    fun createDataSource(host: Host<*>, hikariConfig: HikariConfig? = null): DataSource {
+        return HikariDataSource(hikariConfig ?: createHikariConfig(host))
+    }
+
+    fun createHikariConfig(host: Host<*>): HikariConfig {
+        val config = HikariConfig()
+        config.jdbcUrl = host.connectionUrl
+        when (host) {
+            is HostSQL -> {
+                config.driverClassName = settingsFile.getString("DefaultSettings.DriverClassName", "com.mysql.jdbc.Driver")
+                config.username = host.user
+                config.password = host.password
+            }
+            is HostSQLite -> {
+                config.driverClassName = "org.sqlite.JDBC"
+            }
+            else -> {
+                error("Unsupported host: $host")
+            }
+        }
+        config.isAutoCommit = settingsFile.getBoolean("DefaultSettings.AutoCommit", true)
+        config.minimumIdle = settingsFile.getInt("DefaultSettings.MinimumIdle", 1)
+        config.maximumPoolSize = settingsFile.getInt("DefaultSettings.MaximumPoolSize", 10)
+        config.validationTimeout = settingsFile.getLong("DefaultSettings.ValidationTimeout", 5000)
+        config.connectionTimeout = settingsFile.getLong("DefaultSettings.ConnectionTimeout", 30000)
+        config.idleTimeout = settingsFile.getLong("DefaultSettings.IdleTimeout", 600000)
+        config.maxLifetime = settingsFile.getLong("DefaultSettings.MaxLifetime", 1800000)
+        if (settingsFile.contains("DefaultSettings.ConnectionTestQuery")) {
+            config.connectionTestQuery = settingsFile.getString("DefaultSettings.ConnectionTestQuery")
+        }
+        if (settingsFile.contains("DefaultSettings.DataSourceProperty")) {
+            settingsFile.getConfigurationSection("DefaultSettings.DataSourceProperty")?.getKeys(false)?.forEach { key ->
+                config.addDataSourceProperty(key, settingsFile.getString("DefaultSettings.DataSourceProperty.$key"))
+            }
+        }
+        return config
+    }
+    
     
     @Awake(LifeCycle.DISABLE)
     fun saveData() {

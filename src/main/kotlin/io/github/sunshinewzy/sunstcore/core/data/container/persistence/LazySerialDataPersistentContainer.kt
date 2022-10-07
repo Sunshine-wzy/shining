@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap
 open class LazySerialDataPersistentContainer<T>(
     serializer: KSerializer<T>,
     tableName: String,
-    database: Database<*> = DataManager.database
+    database: Database<*> = DataManager.sDatabase
 ) : SerialDataPersistentContainer<T>(serializer, tableName, database), LazyOperational {
     private val lazyOperationMap: ConcurrentHashMap<String, LazyOperation> = ConcurrentHashMap()
 

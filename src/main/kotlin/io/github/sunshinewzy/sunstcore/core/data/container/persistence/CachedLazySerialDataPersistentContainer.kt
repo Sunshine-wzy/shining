@@ -9,7 +9,7 @@ import taboolib.common.platform.function.submit
 open class CachedLazySerialDataPersistentContainer<T>(
     serializer: KSerializer<T>,
     tableName: String,
-    database: Database<*> = DataManager.database
+    database: Database<*> = DataManager.sDatabase
 ) : LazySerialDataPersistentContainer<T>(serializer, tableName, database) {
     private val initCompleteSet = hashSetOf<String>()
     

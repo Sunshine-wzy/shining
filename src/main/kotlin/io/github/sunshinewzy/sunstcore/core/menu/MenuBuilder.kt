@@ -53,7 +53,7 @@ object MenuBuilder {
         rows(6)
         slots(SGuide.slotOrders)
 
-        onBuild(onBuild = SGuide.onBuildEdge)
+        onBuild(true, SGuide.onBuildEdge)
 
         setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
             if(hasPreviousPage) {
