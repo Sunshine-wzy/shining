@@ -739,7 +739,7 @@ fun Location.addClone(x: Int, y: Int, z: Int): Location =
 fun Location.addClone(coord: Triple<Int, Int, Int>): Location =
     clone().add(coord.first.toDouble(), coord.second.toDouble(), coord.third.toDouble())
 
-fun Location.addClone(coord: SPosition): Location =
+fun Location.addClone(coord: SCoordinate): Location =
     clone().add(coord.x.toDouble(), coord.y.toDouble(), coord.z.toDouble())
 
 fun Location.addClone(y: Int): Location =
@@ -755,7 +755,7 @@ fun Location.subtractClone(x: Int, y: Int, z: Int): Location =
 fun Location.subtractClone(coord: Triple<Int, Int, Int>): Location =
     clone().add(-coord.first.toDouble(), -coord.second.toDouble(), -coord.third.toDouble())
 
-fun Location.subtractClone(coord: SPosition): Location =
+fun Location.subtractClone(coord: SCoordinate): Location =
     clone().add(-coord.x.toDouble(), -coord.y.toDouble(), -coord.z.toDouble())
 
 fun Location.subtractClone(y: Int): Location =

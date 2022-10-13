@@ -3,10 +3,10 @@ package io.github.sunshinewzy.sunstcore.core.machine.legacy.custom
 import io.github.sunshinewzy.sunstcore.SunSTCore
 import io.github.sunshinewzy.sunstcore.core.machine.legacy.SMachine
 import io.github.sunshinewzy.sunstcore.core.menu.SMenu
+import io.github.sunshinewzy.sunstcore.objects.SCoordinate
 import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.setNameAndLore
-import io.github.sunshinewzy.sunstcore.objects.SPosition
 import io.github.sunshinewzy.sunstcore.objects.inventoryholder.SInventoryHolder.Companion.getSHolder
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.objects.legacy.SBlock
@@ -30,7 +30,7 @@ import taboolib.common.platform.SkipTo
  */
 sealed class SMachineRecipe(
     val name: String,
-    var coord: SPosition
+    var coord: SCoordinate
 ) : ConfigurationSerializable {
     abstract fun getSymbol(): ItemStack
     
@@ -78,7 +78,7 @@ sealed class SMachineRecipe(
     }
     
     
-    class BlockPlace(coord: SPosition = SPosition(0, 0, 0), var sBlock: SBlock = SBlock.AIR) : SMachineRecipe(
+    class BlockPlace(coord: SCoordinate = SCoordinate(0, 0, 0), var sBlock: SBlock = SBlock.AIR) : SMachineRecipe(
         NAME,
         coord
     ) {
@@ -116,7 +116,7 @@ sealed class SMachineRecipe(
             menu.openInventory(player)
         }
 
-        constructor(map: Map<String, Any>) : this(map["coord"] as? SPosition ?: SPosition(0, 0, 0), map["sBlock"] as? SBlock
+        constructor(map: Map<String, Any>) : this(map["coord"] as? SCoordinate ?: SCoordinate(0, 0, 0), map["sBlock"] as? SBlock
             ?: SBlock(Material.AIR)
         )
         
@@ -154,7 +154,7 @@ sealed class SMachineRecipe(
         }
     }
     
-    class BlockBreak(coord: SPosition = SPosition(0, 0, 0), var sBlock: SBlock = SBlock.AIR) : SMachineRecipe(
+    class BlockBreak(coord: SCoordinate = SCoordinate(0, 0, 0), var sBlock: SBlock = SBlock.AIR) : SMachineRecipe(
         NAME,
         coord
     ) {
@@ -192,7 +192,7 @@ sealed class SMachineRecipe(
             menu.openInventory(player)
         }
 
-        constructor(map: Map<String, Any>) : this(map["coord"] as? SPosition ?: SPosition(0, 0, 0), map["sBlock"] as? SBlock
+        constructor(map: Map<String, Any>) : this(map["coord"] as? SCoordinate ?: SCoordinate(0, 0, 0), map["sBlock"] as? SBlock
             ?: SBlock(Material.AIR)
         )
 
@@ -233,7 +233,7 @@ sealed class SMachineRecipe(
         }
     }
     
-    class ItemAddPlayer(coord: SPosition = SPosition(0, 0, 0), val items: MutableList<ItemStack> = mutableListOf()) : SMachineRecipe(
+    class ItemAddPlayer(coord: SCoordinate = SCoordinate(0, 0, 0), val items: MutableList<ItemStack> = mutableListOf()) : SMachineRecipe(
         NAME,
         coord
     ) {
@@ -246,10 +246,10 @@ sealed class SMachineRecipe(
         }
 
         
-        constructor(coord: SPosition, vararg item: ItemStack) : this(coord, item.toMutableList())
+        constructor(coord: SCoordinate, vararg item: ItemStack) : this(coord, item.toMutableList())
 
         constructor(map: Map<String, Any>) : this(
-            map["coord"] as? SPosition ?: SPosition(0, 0, 0),
+            map["coord"] as? SCoordinate ?: SCoordinate(0, 0, 0),
             map["items"]?.castList<ItemStack>() ?: mutableListOf()
         )
 
@@ -269,7 +269,7 @@ sealed class SMachineRecipe(
         }
     }
     
-    class ItemRemovePlayer(coord: SPosition = SPosition(0, 0, 0), var type: Type = Type.HAND, val items: MutableList<ItemStack> = mutableListOf()) : SMachineRecipe(
+    class ItemRemovePlayer(coord: SCoordinate = SCoordinate(0, 0, 0), var type: Type = Type.HAND, val items: MutableList<ItemStack> = mutableListOf()) : SMachineRecipe(
         NAME,
         coord
     ) {
@@ -282,10 +282,10 @@ sealed class SMachineRecipe(
         }
 
 
-        constructor(coord: SPosition, type: Type, vararg item: ItemStack) : this(coord, type, item.toMutableList())
+        constructor(coord: SCoordinate, type: Type, vararg item: ItemStack) : this(coord, type, item.toMutableList())
 
         constructor(map: Map<String, Any>) : this(
-            map["coord"] as? SPosition ?: SPosition(0, 0, 0),
+            map["coord"] as? SCoordinate ?: SCoordinate(0, 0, 0),
             (map["type"] as? String)?.let { Type.valueOf(it) } ?: Type.HAND,
             map["items"]?.castList<ItemStack>() ?: mutableListOf()
         )
@@ -329,7 +329,7 @@ sealed class SMachineRecipe(
         }
     }
     
-    class ItemAddGround(coord: SPosition = SPosition(0, 0, 0), val items: MutableList<ItemStack> = mutableListOf()) : SMachineRecipe(
+    class ItemAddGround(coord: SCoordinate = SCoordinate(0, 0, 0), val items: MutableList<ItemStack> = mutableListOf()) : SMachineRecipe(
         NAME,
         coord
     ) {
@@ -342,10 +342,10 @@ sealed class SMachineRecipe(
         }
 
         
-        constructor(coord: SPosition, vararg item: ItemStack) : this(coord, item.toMutableList())
+        constructor(coord: SCoordinate, vararg item: ItemStack) : this(coord, item.toMutableList())
 
         constructor(map: Map<String, Any>) : this(
-            map["coord"] as? SPosition ?: SPosition(0, 0, 0),
+            map["coord"] as? SCoordinate ?: SCoordinate(0, 0, 0),
             map["items"]?.castList<ItemStack>() ?: mutableListOf()
         )
         
@@ -369,7 +369,7 @@ sealed class SMachineRecipe(
         }
     }
     
-    class ItemRemoveGround(coord: SPosition = SPosition(0, 0, 0), var x: Double = 1.0, var y: Double = 1.0, var z: Double = 1.0, val items: MutableList<ItemStack> = mutableListOf()) : SMachineRecipe(
+    class ItemRemoveGround(coord: SCoordinate = SCoordinate(0, 0, 0), var x: Double = 1.0, var y: Double = 1.0, var z: Double = 1.0, val items: MutableList<ItemStack> = mutableListOf()) : SMachineRecipe(
         NAME,
         coord
     ) {
@@ -382,7 +382,7 @@ sealed class SMachineRecipe(
         }
         
 
-        constructor(coord: SPosition, x: Double, y: Double, z: Double, vararg item: ItemStack) : this(coord, x, y, z, item.toMutableList())
+        constructor(coord: SCoordinate, x: Double, y: Double, z: Double, vararg item: ItemStack) : this(coord, x, y, z, item.toMutableList())
 
         override fun execute(loc: Location) {
             val world = loc.world ?: return
@@ -399,7 +399,7 @@ sealed class SMachineRecipe(
         }
     }
     
-    class Other(coord: SPosition = SPosition(0, 0, 0)) : SMachineRecipe(NAME, coord) {
+    class Other(coord: SCoordinate = SCoordinate(0, 0, 0)) : SMachineRecipe(NAME, coord) {
         override fun getSymbol(): ItemStack = SYMBOL.clone()
         
         override fun getDisplayItem(): ItemStack = SYMBOL.clone()
@@ -411,7 +411,7 @@ sealed class SMachineRecipe(
         }
     }
     
-    object Empty : SMachineRecipe("§7空", SPosition(0, 0, 0)) {
+    object Empty : SMachineRecipe("§7空", SCoordinate(0, 0, 0)) {
         override fun getSymbol(): ItemStack = SYMBOL.clone()
         
         override fun getDisplayItem(): ItemStack = SYMBOL.clone()

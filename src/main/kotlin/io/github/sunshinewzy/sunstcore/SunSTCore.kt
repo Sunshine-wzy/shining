@@ -13,7 +13,7 @@ import io.github.sunshinewzy.sunstcore.core.guide.element.GuideCategory
 import io.github.sunshinewzy.sunstcore.core.guide.element.GuideItem
 import io.github.sunshinewzy.sunstcore.core.guide.lock.LockExperience
 import io.github.sunshinewzy.sunstcore.core.guide.lock.LockItem
-import io.github.sunshinewzy.sunstcore.core.machine.internal.MachineManager
+import io.github.sunshinewzy.sunstcore.core.machine.MachineManager
 import io.github.sunshinewzy.sunstcore.core.machine.legacy.*
 import io.github.sunshinewzy.sunstcore.core.machine.legacy.custom.SMachineRecipe
 import io.github.sunshinewzy.sunstcore.core.machine.legacy.custom.SMachineRecipes

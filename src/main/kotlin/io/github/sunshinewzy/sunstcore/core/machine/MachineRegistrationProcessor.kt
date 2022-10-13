@@ -1,11 +1,8 @@
-package io.github.sunshinewzy.sunstcore.core.machine.internal
+package io.github.sunshinewzy.sunstcore.core.machine
 
 import io.github.sunshinewzy.sunstcore.api.machine.IMachine
 import io.github.sunshinewzy.sunstcore.api.machine.IMachineRegistrationProcessor
 import io.github.sunshinewzy.sunstcore.core.dictionary.DictionaryItem.Companion.dictionaryItem
-import io.github.sunshinewzy.sunstcore.core.machine.MultiblockMachine
-import io.github.sunshinewzy.sunstcore.core.machine.PlaneMachine
-import io.github.sunshinewzy.sunstcore.core.machine.SimpleMachine
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerInteractEvent

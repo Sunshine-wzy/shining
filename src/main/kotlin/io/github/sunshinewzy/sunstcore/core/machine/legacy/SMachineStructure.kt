@@ -2,8 +2,8 @@ package io.github.sunshinewzy.sunstcore.core.machine.legacy
 
 import io.github.sunshinewzy.sunstcore.exceptions.MachineStructureException
 import io.github.sunshinewzy.sunstcore.exceptions.NoIngredientException
+import io.github.sunshinewzy.sunstcore.objects.SCoordinate
 import io.github.sunshinewzy.sunstcore.objects.SItem.Companion.getMeta
-import io.github.sunshinewzy.sunstcore.objects.SPosition
 import io.github.sunshinewzy.sunstcore.objects.legacy.SBlock
 import io.github.sunshinewzy.sunstcore.utils.addClone
 import io.github.sunshinewzy.sunstcore.utils.setItem
@@ -23,7 +23,7 @@ abstract class SMachineStructure(
     val size: SMachineSize,
     val shape: String,
     val ingredients: Map<Char, SBlock>,
-    val center: SPosition
+    val center: SCoordinate
 ) {
     protected val upgrade = ArrayList<CoordSBlockMap>()
     
@@ -80,7 +80,7 @@ abstract class SMachineStructure(
         size: SMachineSize,
         shape: String,
         ingredients: Map<Char, SBlock>,
-        center: SPosition
+        center: SCoordinate
     ) : SMachineStructure(size, shape, ingredients, center) {
         
         override fun specialStructure(structure: CoordSBlockMap, x: Int, y: Int, z: Int, sBlock: SBlock) {
@@ -90,13 +90,13 @@ abstract class SMachineStructure(
                     "The first line of CentralSymmetry's layer is the central block, which cannot have more than one char."
                 )
                 
-                structure[SPosition(0, y, 0)] = sBlock
+                structure[SCoordinate(0, y, 0)] = sBlock
             }
             else{
-                structure[SPosition(x, y, z)] = sBlock
-                structure[SPosition(-z, y, x)] = sBlock
-                structure[SPosition(z, y, -x)] = sBlock
-                structure[SPosition(-x, y, -z)] = sBlock
+                structure[SCoordinate(x, y, z)] = sBlock
+                structure[SCoordinate(-z, y, x)] = sBlock
+                structure[SCoordinate(z, y, -x)] = sBlock
+                structure[SCoordinate(-x, y, -z)] = sBlock
             }
         }
 
@@ -120,7 +120,7 @@ abstract class SMachineStructure(
         size: SMachineSize,
         shape: String,
         ingredients: Map<Char, SBlock>,
-        center: SPosition
+        center: SCoordinate
     ) : SMachineStructure(size, shape, ingredients, center) {
         
         override fun specialStructure(structure: CoordSBlockMap, x: Int, y: Int, z: Int, sBlock: SBlock) {
@@ -270,7 +270,7 @@ abstract class SMachineStructure(
     
 }
 
-typealias CoordSBlockMap = HashMap<SPosition, SBlock>
+typealias CoordSBlockMap = HashMap<SCoordinate, SBlock>
 
 fun CoordSBlockMap.displayInInventory(inv: Inventory, page: Int, firstLayer: Boolean = true, layer: Int = 0) {
     val theY = if(firstLayer) keys.first().y else layer - 1
@@ -285,6 +285,6 @@ fun CoordSBlockMap.displayInInventory(inv: Inventory, page: Int, firstLayer: Boo
 }
 
 fun CoordSBlockMap.put(x: Int, y:Int, z: Int, sBlock: SBlock): CoordSBlockMap {
-    put(SPosition(x, y, z), sBlock)
+    put(SCoordinate(x, y, z), sBlock)
     return this
 }

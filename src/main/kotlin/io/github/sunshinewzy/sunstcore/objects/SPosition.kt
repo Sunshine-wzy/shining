@@ -1,27 +1,53 @@
 package io.github.sunshinewzy.sunstcore.objects
 
+import org.bukkit.Bukkit
+import org.bukkit.Location
+import org.bukkit.Particle
+import org.bukkit.entity.Player
 import org.bukkit.util.NumberConversions
 
-data class SPosition(var x: Int, var y: Int, var z: Int) {
+data class SPosition @JvmOverloads constructor(val x: Int, val y: Int, val z: Int, val world: String? = null) {
 
-    constructor(y: Int) : this(0, y, 0)
+    @JvmOverloads
+    constructor(y: Int, world: String? = null) : this(0, y, 0, world)
     
-    constructor(str: String) : this(0, 0, 0) {
-        val pos = str.split(",")
-        if(pos.size == 3){
-            this.x = NumberConversions.toInt(pos[0])
-            this.y = NumberConversions.toInt(pos[1])
-            this.z = NumberConversions.toInt(pos[2])
-        } else throw formatException
+    override fun toString(): String = "$x,$y,$z;$world"
+    
+    fun toLocation(): Location? {
+        if(world == null) return null
+        return Location(Bukkit.getWorld(world), OFFSET + x, OFFSET + y, OFFSET + z)
     }
     
-    override fun toString(): String = "$x,$y,$z"
+    fun spawnParticle(player: Player, particle: Particle, count: Int, offsetX: Double, offsetY: Double, offsetZ: Double) {
+        player.spawnParticle(Particle.VILLAGER_HAPPY, x.toDouble(), y.toDouble(), z.toDouble(), count, offsetX, offsetY, offsetZ)
+    }
     
     
     companion object {
-        private val formatException = IllegalArgumentException("The format of SPosition must be 'x,y,z'.")
+        const val OFFSET: Double = 0.5
+    
+        @JvmStatic
+        fun fromString(source: String): SPosition? {
+            val posAndWorld = source.split(';')
+            if(posAndWorld.size != 2) return null
+            
+            val pos = posAndWorld[0].split(",")
+            if(pos.size != 3) return null
+            val (x, y, z) = pos.map { 
+                NumberConversions.toInt(it)
+            }
+            
+            val world = posAndWorld[1]
+            if(world.isEmpty())
+                return SPosition(x, y, z)
+            
+            return SPosition(x, y, z, world)
+        }
+        
+        
+        val Location.position: SPosition
+            get() = SPosition(blockX, blockY, blockZ)
+        
     }
     
 }
-
-data class SFlatCoord(var x: Int, var y: Int)
