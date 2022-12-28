@@ -5,7 +5,7 @@ plugins {
     val kotlinVersion = "1.7.10"
     `java-library`
     `maven-publish`
-    id("io.izzel.taboolib") version "1.42"
+    id("io.izzel.taboolib") version "1.51"
     id("org.jetbrains.kotlin.jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
     id("org.jetbrains.dokka") version kotlinVersion
@@ -25,13 +25,14 @@ taboolib {
     install("module-nms")
     install("module-nms-util")
     install("module-ui")
-    install("module-ui-receptacle")
     install("expansion-command-helper")
     install("expansion-player-database")
     
     install("platform-bukkit")
     classifier = null
-    version = "6.0.9-111"
+    version = "6.0.10-37"
+
+    options("skip-kotlin-relocate")
     
     relocate("com.zaxxer.hikari.", "com.zaxxer.hikari_5_0_1.")
     
@@ -80,7 +81,7 @@ dependencies {
     compileOnly("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     compileOnly("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
 
-    compileOnly("com.zaxxer:HikariCP:5.0.1")
+    implementation("com.zaxxer:HikariCP:5.0.1")
 
     compileOnly(fileTree("libs"))
 
@@ -95,6 +96,14 @@ dependencies {
 }
 
 tasks {
+    jar {
+        configurations.compileClasspath.get().filter { 
+            it.name.contains("HikariCP-5.0.1")
+        }.forEach { 
+            from(zipTree(it))
+        }
+    }
+    
     test {
         useJUnitPlatform()
         testLogging {

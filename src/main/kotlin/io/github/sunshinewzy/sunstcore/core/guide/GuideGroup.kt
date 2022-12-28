@@ -211,7 +211,11 @@ class GuideGroup(id: EntityID<Int>) : IntEntity(id) {
 
         private fun Player.joinGuideGroup() {
             openMultiPageMenu<GuideGroup>("SGuide - 加入队伍") {
-                elements { all().toList() }
+                elements { 
+                    transaction {
+                        all().toList()
+                    }
+                }
 
                 onGenerate { _, element, index, slot ->
                     buildItem(element.symbol) {

@@ -2,23 +2,21 @@ package io.github.sunshinewzy.sunstcore.core.dictionary.item
 
 import io.github.sunshinewzy.sunstcore.core.dictionary.DictionaryItem.Companion.dictionaryItem
 import io.github.sunshinewzy.sunstcore.core.dictionary.item.behavior.ItemBehavior
+import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerItemBreakEvent
-import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 
 internal object DictionaryItemManager {
     
-    @SubscribeEvent(EventPriority.HIGHEST)
+    @SubscribeEvent(EventPriority.HIGHEST, ignoreCancelled = false)
     fun onPlayerInteract(event: PlayerInteractEvent) {
-        if(event.hand != EquipmentSlot.HAND) return
-        
         findBehaviors(event.item)?.forEach { 
             it.onInteract(event, event.player, event.item!!, event.action)
         }
@@ -42,6 +40,8 @@ internal object DictionaryItemManager {
     @SubscribeEvent(EventPriority.HIGHEST, ignoreCancelled = true)
     fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked as Player
+        if(player.gameMode == GameMode.CREATIVE) return
+        
         val clickedItem = event.currentItem
         val cursorItem = event.cursor
 

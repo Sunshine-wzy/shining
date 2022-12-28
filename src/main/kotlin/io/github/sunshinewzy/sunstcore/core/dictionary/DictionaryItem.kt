@@ -50,7 +50,7 @@ open class DictionaryItem {
         
         val ItemStack.dictionaryItem: DictionaryItem?
             get() = getDictionaryName()?.let {
-                DictionaryRegistry.getOrNull(it)
+                DictionaryRegistry.get(it)
             }
 
         fun ItemStack.setDictionaryName(name: NamespacedId): ItemStack {

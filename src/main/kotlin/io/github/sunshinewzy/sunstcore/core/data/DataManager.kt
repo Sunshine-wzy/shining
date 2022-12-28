@@ -18,6 +18,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import taboolib.common.LifeCycle
+import taboolib.common.io.newFile
 import taboolib.common.platform.Awake
 import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.submit
@@ -63,9 +64,9 @@ object DataManager : Initable {
             sDatabase = DatabaseSQL(hostSQL)
             setupPlayerDatabase(databaseConfig, SunSTCore.config.getString("player_table").toString())
         } else {
-            database = Database.connect(createDataSource(HostSQLite(File(getDataFolder(), "data/data.db"))))
-            sDatabase = DatabaseSQLite(File(getDataFolder(), "data/sdata.db"))
-            setupPlayerDatabase(File(getDataFolder(), "data/player.db"))
+            database = Database.connect(createDataSource(HostSQLite(newFile(getDataFolder(), "data/data.db"))))
+            sDatabase = DatabaseSQLite(newFile(getDataFolder(), "data/sdata.db"))
+            setupPlayerDatabase(newFile(getDataFolder(), "data/player.db"))
         }
         
         submit(async = true, delay = autoSavePeriod, period = autoSavePeriod) { 

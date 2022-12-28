@@ -7,13 +7,13 @@ import org.bukkit.inventory.ItemStack
 
 interface IDictionaryRegistry {
 
-    fun get(name: NamespacedId): DictionaryItem
+    fun get(name: NamespacedId): DictionaryItem?
 
-    fun get(item: ItemStack): DictionaryItem
+    fun get(item: ItemStack): DictionaryItem?
 
-    fun getOrNull(name: NamespacedId): DictionaryItem?
-    
-    fun getOrNull(item: ItemStack): DictionaryItem?
+    fun getOrFail(name: NamespacedId): DictionaryItem
+
+    fun getOrFail(item: ItemStack): DictionaryItem
     
     fun getById(id: String): List<DictionaryItem>
     

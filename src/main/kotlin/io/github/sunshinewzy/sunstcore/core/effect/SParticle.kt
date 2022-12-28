@@ -1,10 +1,39 @@
-package io.github.sunshinewzy.sunstcore.utils
+package io.github.sunshinewzy.sunstcore.core.effect
 
 import io.github.sunshinewzy.sunstcore.objects.SPosition
 import org.bukkit.Particle
 import org.bukkit.entity.Player
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
+import taboolib.common.platform.function.submit
+import taboolib.module.effect.ParticleObj
+import java.util.*
 
 object SParticle {
+    const val PERIOD = 20L
+    
+    private val particles: MutableList<ParticleObj> = LinkedList()
+    
+    
+    @Awake(LifeCycle.ENABLE)
+    fun scheduler() {
+        submit(delay = PERIOD, period = PERIOD) {
+            particles.forEach { 
+                
+            }
+        }
+    }
+    
+    fun addTask(task: ParticleObj) {
+        task.turnOffTask()
+        
+        submit(delay = 2) { 
+            
+        }
+        particles += task
+    }
+    
+    
     
     fun aroundBlock(player: Player, particle: Particle, position: SPosition, count: Int = 1, step: Double = 0.5) {
         var i = 0.0

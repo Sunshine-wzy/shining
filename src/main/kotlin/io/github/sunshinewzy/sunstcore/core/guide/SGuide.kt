@@ -1,15 +1,26 @@
 package io.github.sunshinewzy.sunstcore.core.guide
 
+import io.github.sunshinewzy.sunstcore.SunSTCore
+import io.github.sunshinewzy.sunstcore.api.namespace.NamespacedId
+import io.github.sunshinewzy.sunstcore.core.dictionary.DictionaryItem
+import io.github.sunshinewzy.sunstcore.core.dictionary.DictionaryRegistry
+import io.github.sunshinewzy.sunstcore.core.dictionary.item.behavior.ItemBehavior
 import io.github.sunshinewzy.sunstcore.core.guide.GuideGroup.Companion.getGuideGroup
 import io.github.sunshinewzy.sunstcore.core.guide.GuideGroup.Companion.setupGuideGroup
 import io.github.sunshinewzy.sunstcore.objects.SCollection
+import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTIcon
 import io.github.sunshinewzy.sunstcore.objects.orderWith
 import org.bukkit.FireworkEffect
+import org.bukkit.Material
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Firework
 import org.bukkit.entity.Player
+import org.bukkit.event.block.Action
+import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
 import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Linked
@@ -18,6 +29,23 @@ import java.util.*
 
 object SGuide {
     private val elementMap = TreeMap<Int, MutableList<GuideElement>>()
+    private val guideItem: DictionaryItem = DictionaryRegistry.registerItem(
+        NamespacedId(SunSTCore, "SGUIDE"),
+        SItem(Material.ENCHANTED_BOOK, "&aSGuide"),
+        object : ItemBehavior() {
+            override fun onInteract(event: PlayerInteractEvent, player: Player, item: ItemStack, action: Action) {
+                if(event.hand != EquipmentSlot.HAND) return
+                
+                if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+                    event.isCancelled = true
+                    openLastElement(player)
+                } else if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
+                    event.isCancelled = true
+                    open(player)
+                }
+            }
+        }
+    )
     
     
     val onBuildEdge: (Inventory) -> Unit = { inv ->
@@ -116,6 +144,10 @@ object SGuide {
         meta.addEffect(FireworkEffect.builder().with(SCollection.fireworkEffectTypes.random()).withColor(SCollection.colors.random()).build())
         meta.power = 1
         firework.fireworkMeta = meta
+    }
+    
+    fun getItem(): ItemStack {
+        return guideItem.item.clone()
     }
     
     

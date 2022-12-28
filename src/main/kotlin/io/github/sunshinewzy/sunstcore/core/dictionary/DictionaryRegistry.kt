@@ -3,6 +3,7 @@ package io.github.sunshinewzy.sunstcore.core.dictionary
 import io.github.sunshinewzy.sunstcore.api.dictionary.IDictionaryRegistry
 import io.github.sunshinewzy.sunstcore.api.namespace.NamespacedId
 import io.github.sunshinewzy.sunstcore.core.dictionary.DictionaryItem.Companion.dictionaryItem
+import io.github.sunshinewzy.sunstcore.core.dictionary.DictionaryItem.Companion.setDictionaryName
 import io.github.sunshinewzy.sunstcore.core.dictionary.item.behavior.ItemBehavior
 import io.github.sunshinewzy.sunstcore.utils.putElement
 import org.bukkit.inventory.ItemStack
@@ -12,22 +13,22 @@ object DictionaryRegistry : IDictionaryRegistry {
     
     private val itemsByName: MutableMap<NamespacedId, DictionaryItem> = ConcurrentHashMap()
     private val itemsById: MutableMap<String, MutableList<DictionaryItem>> = ConcurrentHashMap()
-    
 
-    override fun get(name: NamespacedId): DictionaryItem {
-        return getOrNull(name)!!
-    }
 
-    override fun get(item: ItemStack): DictionaryItem {
-        return getOrNull(item)!!
-    }
-
-    override fun getOrNull(name: NamespacedId): DictionaryItem? {
+    override fun get(name: NamespacedId): DictionaryItem? {
         return itemsByName[name]
     }
 
-    override fun getOrNull(item: ItemStack): DictionaryItem? {
+    override fun get(item: ItemStack): DictionaryItem? {
         return item.dictionaryItem
+    }
+
+    override fun getOrFail(name: NamespacedId): DictionaryItem {
+        return get(name)!!
+    }
+
+    override fun getOrFail(item: ItemStack): DictionaryItem {
+        return get(item)!!
     }
 
     override fun getById(id: String): List<DictionaryItem> {
@@ -36,7 +37,7 @@ object DictionaryRegistry : IDictionaryRegistry {
     
 
     override fun registerItem(name: NamespacedId, item: ItemStack, vararg behaviors: ItemBehavior): DictionaryItem {
-        return register(DictionaryItem(name, item, *behaviors))
+        return register(DictionaryItem(name, item.setDictionaryName(name), *behaviors))
     }
 
     override fun hasItem(name: NamespacedId): Boolean {

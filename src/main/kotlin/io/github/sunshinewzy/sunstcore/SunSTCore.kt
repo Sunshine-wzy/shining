@@ -23,7 +23,6 @@ import io.github.sunshinewzy.sunstcore.objects.SItem
 import io.github.sunshinewzy.sunstcore.objects.item.SunSTItem
 import io.github.sunshinewzy.sunstcore.objects.legacy.SBlock
 import io.github.sunshinewzy.sunstcore.objects.machine.SunSTMachineManager
-import io.github.sunshinewzy.sunstcore.objects.orderWith
 import io.github.sunshinewzy.sunstcore.utils.SReflect
 import io.github.sunshinewzy.sunstcore.utils.SunSTTestApi
 import io.github.sunshinewzy.sunstcore.utils.subscribeEvent
@@ -33,7 +32,6 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.PluginManager
 import org.jetbrains.exposed.sql.Database
 import taboolib.common.env.RuntimeDependencies
@@ -46,22 +44,20 @@ import taboolib.module.chat.colored
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.Configuration
 import taboolib.module.metrics.Metrics
-import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
 import taboolib.platform.BukkitPlugin
 
 @RuntimeDependencies(
-    RuntimeDependency(value = "org.jetbrains.kotlin:kotlin-reflect:1.7.10", relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]),
-    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.0", relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]),
-    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0", relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]),
-    RuntimeDependency(value = "org.jetbrains.exposed:exposed-core:0.39.2", transitive = false, relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]),
-    RuntimeDependency(value = "org.jetbrains.exposed:exposed-dao:0.39.2", transitive = false, relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]),
-    RuntimeDependency(value = "org.jetbrains.exposed:exposed-jdbc:0.39.2", transitive = false, relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]),
+    RuntimeDependency(value = "org.jetbrains.kotlin:kotlin-reflect:1.7.10"),
+    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.0"),
+    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0"),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-core:0.39.2"),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-dao:0.39.2"),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-jdbc:0.39.2"),
     RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-core:2.13.3", transitive = false),
     RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-annotations:2.13.3", transitive = false),
     RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-databind:2.13.3", transitive = false),
-    RuntimeDependency(value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3", transitive = false, relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]),
-    RuntimeDependency(value = "!com.zaxxer:HikariCP:5.0.1", test = "!com.zaxxer.hikari_5_0_1.HikariDataSource", relocate = ["!com.zaxxer.hikari.", "!com.zaxxer.hikari_5_0_1."])
+    RuntimeDependency(value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3", transitive = false),
+//    RuntimeDependency(value = "!com.zaxxer:HikariCP:5.0.1", test = "!com.zaxxer.hikari_5_0_1.HikariDataSource", relocate = ["!com.zaxxer.hikari.", "!com.zaxxer.hikari_5_0_1."])
 )
 object SunSTCore : Plugin(), SPlugin {
     const val NAME = "SunSTCore"
@@ -211,10 +207,10 @@ object SunSTCore : Plugin(), SPlugin {
                     else -> {
                         val json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item)
                         player.sendMessage(json)
-                        player.openMenu<Basic> { 
-                            rows(3)
-                            set(5 orderWith 2, mapper.readValue(json, ItemStack::class.java))
-                        }
+//                        player.openMenu<Basic> { 
+//                            rows(3)
+//                            set(5 orderWith 2, mapper.readValue(json, ItemStack::class.java))
+//                        }
                     }
                 }
                 

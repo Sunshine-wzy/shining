@@ -1,5 +1,7 @@
 package io.github.sunshinewzy.sunstcore.listeners
 
+import io.github.sunshinewzy.sunstcore.core.guide.SGuide
+import io.github.sunshinewzy.sunstcore.utils.giveItem
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.SubscribeEvent
@@ -10,7 +12,13 @@ object PlayerListener {
     
     @SubscribeEvent
     fun onPlayerJoin(e: PlayerJoinEvent) {
-        e.player.setupDataContainer()
+        val player = e.player
+        
+        player.setupDataContainer()
+        
+        if(!player.hasPlayedBefore()) {
+            player.giveItem(SGuide.getItem())
+        }
     }
     
     @SubscribeEvent
