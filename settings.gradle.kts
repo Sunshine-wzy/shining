@@ -1,1 +1,1 @@
-rootProject.name="SunSTCore"
+rootProject.name="Shining"
