@@ -8,7 +8,7 @@ import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.core.data.DataManager
 import io.github.sunshinewzy.shining.core.data.SerializationModules
 import io.github.sunshinewzy.shining.core.data.legacy.internal.SLocationData
-import io.github.sunshinewzy.shining.core.guide.SGuide
+import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.guide.element.GuideItem
 import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
@@ -24,8 +24,11 @@ import io.github.sunshinewzy.shining.objects.item.SunSTItem
 import io.github.sunshinewzy.shining.objects.legacy.SBlock
 import io.github.sunshinewzy.shining.objects.machine.SunSTMachineManager
 import io.github.sunshinewzy.shining.utils.SReflect
-import io.github.sunshinewzy.shining.utils.SunSTTestApi
+import io.github.sunshinewzy.shining.utils.ShiningTestApi
 import io.github.sunshinewzy.shining.utils.subscribeEvent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.configuration.serialization.ConfigurationSerialization
@@ -47,17 +50,19 @@ import taboolib.module.metrics.Metrics
 import taboolib.platform.BukkitPlugin
 
 @RuntimeDependencies(
-    RuntimeDependency(value = "org.jetbrains.kotlin:kotlin-reflect:1.7.10"),
-    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.0"),
-    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0"),
-    RuntimeDependency(value = "org.jetbrains.exposed:exposed-core:0.39.2"),
-    RuntimeDependency(value = "org.jetbrains.exposed:exposed-dao:0.39.2"),
-    RuntimeDependency(value = "org.jetbrains.exposed:exposed-jdbc:0.39.2"),
-    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-core:2.13.3", transitive = false),
-    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-annotations:2.13.3", transitive = false),
-    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-databind:2.13.3", transitive = false),
-    RuntimeDependency(value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3", transitive = false),
-//    RuntimeDependency(value = "!com.zaxxer:HikariCP:5.0.1", test = "!com.zaxxer.hikari_5_0_1.HikariDataSource", relocate = ["!com.zaxxer.hikari.", "!com.zaxxer.hikari_5_0_1."])
+    RuntimeDependency(value = "org.jetbrains.kotlin:kotlin-reflect:1.7.21", isolated = true),
+    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.0", isolated = true),
+    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0", isolated = true),
+    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4", isolated = true),
+    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4", isolated = true),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-core:0.41.1", isolated = true),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-dao:0.41.1", isolated = true),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-jdbc:0.41.1", isolated = true),
+    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-core:2.14.1", transitive = false, isolated = true),
+    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-annotations:2.14.1", transitive = false, isolated = true),
+    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-databind:2.14.1", transitive = false, isolated = true),
+    RuntimeDependency(value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.14.1", transitive = false, isolated = true),
+    RuntimeDependency(value = "!com.zaxxer:HikariCP:4.0.3", isolated = true)
 )
 object Shining : Plugin(), SPlugin {
     const val NAME = "Shining"
@@ -76,12 +81,12 @@ object Shining : Plugin(), SPlugin {
     val objectMapper: ObjectMapper = jsonMapper { 
         addModule(SerializationModules.bukkit)
     }
+    val scope: CoroutineScope by lazy { CoroutineScope(SupervisorJob()) }
     
     private val namespace = Namespace[NAME.lowercase()]
     
     
     override fun onEnable() {
-        
         registerSerialization()
         registerListeners()
         init()
@@ -90,12 +95,12 @@ object Shining : Plugin(), SPlugin {
         
         info("Shining 加载成功！")
         
-        if(System.getProperty("SunSTDebug") == "true")
+        if(System.getProperty("ShiningDebug") == "true")
             test()
     }
 
     override fun onDisable() {
-        
+        scope.cancel()
     }
 
     override fun getName(): String {
@@ -140,7 +145,7 @@ object Shining : Plugin(), SPlugin {
     }
     
     
-    @SunSTTestApi
+    @ShiningTestApi
     private fun test() {
         
         val stoneCategory = GuideCategory("STONE_AGE", SItem(Material.STONE, "&f石器时代", "&d一切的起源"))
@@ -167,10 +172,10 @@ object Shining : Plugin(), SPlugin {
         newStoneCategory.registerLock(LockItem(SItem(Material.SNOWBALL, 3)))
         oldStoneCategory.registerLock(LockExperience(10, false))
         
-        SGuide.registerElement(electricalCategory, 12)
-        SGuide.registerElement(stoneCategory)
-        SGuide.registerElement(informationCateGory, 13)
-        SGuide.registerElement(steamCategory, 11)
+        ShiningGuide.registerElement(electricalCategory, 12)
+        ShiningGuide.registerElement(stoneCategory)
+        ShiningGuide.registerElement(informationCateGory, 13)
+        ShiningGuide.registerElement(steamCategory, 11)
         
         
         val mapper = jsonMapper { 
@@ -184,11 +189,11 @@ object Shining : Plugin(), SPlugin {
                 val item = player.inventory.itemInMainHand
                 when(item.type) {
                     Material.DIAMOND -> {
-                        SGuide.openLastElement(player)
+                        ShiningGuide.openLastElement(player)
                     }
                     
                     Material.EMERALD -> {
-                        SGuide.fireworkCongratulate(player)
+                        ShiningGuide.fireworkCongratulate(player)
                     }
                     
                     Material.STICK -> {

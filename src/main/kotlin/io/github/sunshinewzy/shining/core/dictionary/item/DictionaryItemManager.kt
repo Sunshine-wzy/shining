@@ -2,7 +2,6 @@ package io.github.sunshinewzy.shining.core.dictionary.item
 
 import io.github.sunshinewzy.shining.core.dictionary.DictionaryItem.Companion.dictionaryItem
 import io.github.sunshinewzy.shining.core.dictionary.item.behavior.ItemBehavior
-import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -12,21 +11,25 @@ import org.bukkit.event.player.PlayerItemBreakEvent
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.platform.util.isAir
 
 internal object DictionaryItemManager {
     
     @SubscribeEvent(EventPriority.HIGHEST, ignoreCancelled = false)
     fun onPlayerInteract(event: PlayerInteractEvent) {
-        findBehaviors(event.item)?.forEach { 
-            it.onInteract(event, event.player, event.item!!, event.action)
+        val item = event.item ?: return
+        
+        findBehaviors(item)?.forEach { 
+            it.onInteract(event, event.player, item, event.action)
         }
     }
     
     @SubscribeEvent(EventPriority.HIGHEST, ignoreCancelled = true)
     fun onPlayerInteractAtEntity(event: PlayerInteractAtEntityEvent) {
-        val item = event.player.inventory.getItem(event.hand)
+        val item = event.player.inventory.getItem(event.hand) ?: return
+        
         findBehaviors(item)?.forEach { 
-            it.onEntityInteract(event, event.player, item!!, event.rightClicked)
+            it.onEntityInteract(event, event.player, item, event.rightClicked)
         }
     }
     
@@ -40,22 +43,25 @@ internal object DictionaryItemManager {
     @SubscribeEvent(EventPriority.HIGHEST, ignoreCancelled = true)
     fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked as Player
-        if(player.gameMode == GameMode.CREATIVE) return
         
-        val clickedItem = event.currentItem
-        val cursorItem = event.cursor
-
-        findBehaviors(clickedItem)?.forEach { it.onInventoryClick(event, player, clickedItem!!) }
-        findBehaviors(cursorItem)?.forEach { it.onInventoryClickOnCursor(event, player, cursorItem!!) }
+        event.currentItem?.let { clickedItem ->
+            findBehaviors(clickedItem)?.forEach { it.onInventoryClick(event, player, clickedItem) }
+        }
+        event.cursor?.let { cursorItem ->
+            findBehaviors(cursorItem)?.forEach { it.onInventoryClickOnCursor(event, player, cursorItem) }
+        }
 
         if(event.click == ClickType.NUMBER_KEY) {
-            val hotbarItem = player.inventory.getItem(event.hotbarButton)
-            findBehaviors(hotbarItem)?.forEach { it.onInventoryHotbarSwap(event, player, hotbarItem!!) }
+            player.inventory.getItem(event.hotbarButton)?.let { hotbarItem ->
+                findBehaviors(hotbarItem)?.forEach { it.onInventoryHotbarSwap(event, player, hotbarItem) }
+            }
         }
     }
     
     
-    private fun findBehaviors(item: ItemStack?): List<ItemBehavior>? =
-        item?.dictionaryItem?.behaviors
+    private fun findBehaviors(item: ItemStack?): List<ItemBehavior>? {
+        if(item.isAir()) return null
+        return item?.dictionaryItem?.behaviors
+    }
     
 }

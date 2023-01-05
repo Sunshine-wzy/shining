@@ -5,12 +5,14 @@ import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.dictionary.DictionaryItem
 import io.github.sunshinewzy.shining.core.dictionary.DictionaryRegistry
 import io.github.sunshinewzy.shining.core.dictionary.item.behavior.ItemBehavior
-import io.github.sunshinewzy.shining.core.guide.GuideGroup.Companion.getGuideGroup
-import io.github.sunshinewzy.shining.core.guide.GuideGroup.Companion.setupGuideGroup
+import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.getGuideTeam
+import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.setupGuideTeam
 import io.github.sunshinewzy.shining.objects.SCollection
 import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.item.SunSTIcon
 import io.github.sunshinewzy.shining.objects.orderWith
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.bukkit.FireworkEffect
 import org.bukkit.Material
 import org.bukkit.entity.EntityType
@@ -21,17 +23,18 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.function.submit
 import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Linked
 import taboolib.platform.util.isAir
 import java.util.*
 
-object SGuide {
+object ShiningGuide {
     private val elementMap = TreeMap<Int, MutableList<GuideElement>>()
     private val guideItem: DictionaryItem = DictionaryRegistry.registerItem(
-        NamespacedId(Shining, "SGUIDE"),
-        SItem(Material.ENCHANTED_BOOK, "&aSGuide"),
+        NamespacedId(Shining, "shining_guide"),
+        SItem(Material.ENCHANTED_BOOK, "&aShining Guide"),
         object : ItemBehavior() {
             override fun onInteract(event: PlayerInteractEvent, player: Player, item: ItemStack, action: Action) {
                 if(event.hand != EquipmentSlot.HAND) return
@@ -77,43 +80,49 @@ object SGuide {
     fun open(player: Player) {
         playerLastOpenElementMap -= player.uniqueId
         
-        val group = player.getGuideGroup() ?: kotlin.run { 
-            player.setupGuideGroup()
-            return
-        }
-        
-        player.openMenu<Linked<GuideElement>>(TITLE) {
-            rows(6)
-            slots(slotOrders)
-
-            elements { getElements() }
-
-            val lockedElements = LinkedList<GuideElement>()
-            onGenerate { player, element, index, slot ->
-                val condition = element.getCondition(player)
-                if(condition == ElementCondition.LOCKED_DEPENDENCY || condition == ElementCondition.LOCKED_LOCK)
-                    lockedElements += element
-                element.getSymbolByCondition(player, condition)
+        Shining.scope.launch(Dispatchers.IO) {
+            val team = player.getGuideTeam() ?: kotlin.run {
+                submit {
+                    player.setupGuideTeam()
+                }
+                return@launch
             }
 
-            onBuild(true, onBuildEdge)
+            submit {
+                player.openMenu<Linked<GuideElement>>(TITLE) {
+                    rows(6)
+                    slots(slotOrders)
 
-            setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
-                if(hasPreviousPage) {
-                    SunSTIcon.PAGE_PRE_GLASS_PANE.item
-                } else SunSTIcon.EDGE.item
-            }
+                    elements { getElements() }
 
-            setNextPage(8 orderWith 6) { page, hasNextPage ->
-                if(hasNextPage) {
-                    SunSTIcon.PAGE_NEXT_GLASS_PANE.item
-                } else SunSTIcon.EDGE.item
-            }
+                    val lockedElements = LinkedList<GuideElement>()
+                    onGenerate { player, element, index, slot ->
+                        val condition = element.getCondition(player)
+                        if(condition == ElementCondition.LOCKED_DEPENDENCY || condition == ElementCondition.LOCKED_LOCK)
+                            lockedElements += element
+                        element.getSymbolByCondition(player, condition)
+                    }
 
-            onClick { event, element ->
-                if(element in lockedElements) return@onClick
+                    onBuild(true, onBuildEdge)
 
-                element.open(event.clicker, null)
+                    setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
+                        if(hasPreviousPage) {
+                            SunSTIcon.PAGE_PRE_GLASS_PANE.item
+                        } else SunSTIcon.EDGE.item
+                    }
+
+                    setNextPage(8 orderWith 6) { page, hasNextPage ->
+                        if(hasNextPage) {
+                            SunSTIcon.PAGE_NEXT_GLASS_PANE.item
+                        } else SunSTIcon.EDGE.item
+                    }
+
+                    onClick { event, element ->
+                        if(element in lockedElements) return@onClick
+
+                        element.open(event.clicker, null)
+                    }
+                }
             }
         }
     }

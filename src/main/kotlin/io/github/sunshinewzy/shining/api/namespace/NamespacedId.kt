@@ -75,16 +75,16 @@ class NamespacedId(val namespace: Namespace, val id: String) {
 
     companion object {
         val VALID_ID = Pattern.compile("[a-z0-9/._-]+")
-        val NULL: NamespacedId by lazy { sunstcore("null") }
+        val NULL: NamespacedId by lazy { shining("null") }
         
 
         /**
-         * Get an id in the sunstcore namespace.
+         * Get an id in the shining namespace.
          *
          * @param id the id to use
-         * @return new id in the sunstcore namespace
+         * @return new id in the shining namespace
          */
-        fun sunstcore(id: String): NamespacedId {
+        fun shining(id: String): NamespacedId {
             return NamespacedId(Shining, id)
         }
 
@@ -97,8 +97,8 @@ class NamespacedId(val namespace: Namespace, val id: String) {
          * <pre>
          * fromString("foo", plugin) -{@literal >} "plugin:foo"
          * fromString("foo:bar", plugin) -{@literal >} "foo:bar"
-         * fromString(":foo", null) -{@literal >} "sunstcore:foo"
-         * fromString("foo", null) -{@literal >} "sunstcore:foo"
+         * fromString(":foo", null) -{@literal >} "shining:foo"
+         * fromString("foo", null) -{@literal >} "shining:foo"
          * fromString("Foo", plugin) -{@literal >} null
          * fromString(":Foo", plugin) -{@literal >} null
          * fromString("foo:bar:bazz", plugin) -{@literal >} null
@@ -107,7 +107,7 @@ class NamespacedId(val namespace: Namespace, val id: String) {
          *
          * @param string the string to convert to a NamespacedId
          * @param defaultNamespace the default namespace to use if none was
-         * supplied. If null, the `sunstcore` namespace will be used
+         * supplied. If null, the `shining` namespace will be used
          * 
          * @return the created NamespacedId. null if invalid id
          * @see .fromString
@@ -127,14 +127,14 @@ class NamespacedId(val namespace: Namespace, val id: String) {
                 val value = components[0]
                 return if(value.isEmpty() || !VALID_ID.matcher(value).matches()) {
                     null
-                } else defaultNamespace?.let { NamespacedId(it, value) } ?: sunstcore(value)
+                } else defaultNamespace?.let { NamespacedId(it, value) } ?: shining(value)
             } else if(components.size == 2 && !VALID_ID.matcher(id).matches()) {
                 return null
             }
             
             val namespace = components[0]
             if(namespace.isEmpty()) {
-                return defaultNamespace?.let { NamespacedId(it, id) } ?: sunstcore(id)
+                return defaultNamespace?.let { NamespacedId(it, id) } ?: shining(id)
             }
             return if(!Namespace.VALID_NAMESPACE.matcher(namespace).matches()) {
                 null
@@ -144,7 +144,7 @@ class NamespacedId(val namespace: Namespace, val id: String) {
         /**
          * Get a NamespacedId from the supplied string.
          *
-         * The default namespace will be sunstcore.
+         * The default namespace will be shining.
          *
          * @param id the id to convert to a NamespacedId
          * @return the created NamespacedId. null if invalid

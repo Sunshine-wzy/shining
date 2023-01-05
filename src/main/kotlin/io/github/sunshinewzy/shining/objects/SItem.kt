@@ -342,20 +342,6 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             return default
         }
         
-        fun ItemStack.getName(): String {
-            itemMeta?.run {
-                if(hasDisplayName()) {
-                    return displayName
-                }
-                
-                if(hasLocalizedName()) {
-                    return localizedName
-                }
-            }
-            
-            return type.name
-        }
-        
         fun ItemStack.addUseCount(player: Player, maxCnt: Int): Boolean {
             var itemGive: ItemStack? = null
             if(amount > 1) {

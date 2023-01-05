@@ -6,7 +6,7 @@ import org.bukkit.entity.Player
 class LockExperience(
     var level: Int,
     isConsume: Boolean = true
-) : ElementLock("$level 级经验", isConsume) {
+) : ElementLock({ "&b$level 级经验" }, isConsume) {
     
     
     override fun check(player: Player): Boolean =

@@ -2,13 +2,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
 plugins {
-    val kotlinVersion = "1.7.10"
+    val kotlinVersion = "1.7.21"
     `java-library`
     `maven-publish`
-    id("io.izzel.taboolib") version "1.51"
+    id("io.izzel.taboolib") version "1.53"
     id("org.jetbrains.kotlin.jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
-    id("org.jetbrains.dokka") version kotlinVersion
+    id("org.jetbrains.dokka") version "1.7.20"
 }
 
 taboolib {
@@ -26,15 +26,14 @@ taboolib {
     install("module-nms-util")
     install("module-ui")
     install("expansion-command-helper")
-    install("expansion-player-database")
     
     install("platform-bukkit")
     classifier = null
-    version = "6.0.10-37"
-
-    options("skip-kotlin-relocate")
+    version = "6.0.10-42"
     
-    relocate("com.zaxxer.hikari.", "com.zaxxer.hikari_5_0_1.")
+    options("skip-kotlin-relocate", "enable-isolated-classloader")
+    
+//    relocate("com.zaxxer.hikari.", "com.zaxxer.hikari_4_0_3.")
     
     description { 
         desc("A core lib made by SunShine Technology.")
@@ -61,13 +60,15 @@ val exposedVersion: String by project
 val jacksonVersion: String by project
 dependencies {
     compileOnly("ink.ptms:nms-all:1.0.0")
-    compileOnly("ink.ptms.core:v11900:11900:universal")
-    compileOnly("ink.ptms.core:v11900:11900:mapped")
+    compileOnly("ink.ptms.core:v11902:11902:universal")
+    compileOnly("ink.ptms.core:v11902:11902:mapped")
     compileOnly(kotlin("stdlib"))
 
     compileOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.0")
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
 
     compileOnly("com.google.guava:guava:21.0")
     compileOnly("org.yaml:snakeyaml:1.28")
@@ -81,7 +82,7 @@ dependencies {
     compileOnly("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     compileOnly("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
 
-    implementation("com.zaxxer:HikariCP:5.0.1")
+    compileOnly("com.zaxxer:HikariCP:4.0.3")
 
     compileOnly(fileTree("libs"))
 
@@ -97,11 +98,11 @@ dependencies {
 
 tasks {
     jar {
-        configurations.compileClasspath.get().filter { 
-            it.name.contains("HikariCP-5.0.1")
-        }.forEach { 
-            from(zipTree(it))
-        }
+//        configurations.compileClasspath.get().filter { 
+//            it.name.contains("HikariCP-4.0.3")
+//        }.forEach { 
+//            from(zipTree(it))
+//        }
     }
     
     test {

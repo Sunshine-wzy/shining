@@ -2,7 +2,7 @@ package io.github.sunshinewzy.shining.core.guide.element
 
 import io.github.sunshinewzy.shining.core.guide.ElementCondition
 import io.github.sunshinewzy.shining.core.guide.GuideElement
-import io.github.sunshinewzy.shining.core.guide.SGuide
+import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.objects.item.SunSTIcon
 import io.github.sunshinewzy.shining.objects.orderWith
 import org.bukkit.entity.Player
@@ -23,9 +23,9 @@ class GuideCategory(id: String, symbol: ItemStack, var tier: Int = 0) : GuideEle
     
     
     override fun openAction(player: Player) {
-        player.openMenu<Linked<GuideElement>>(SGuide.TITLE) {
+        player.openMenu<Linked<GuideElement>>(ShiningGuide.TITLE) {
             rows(6)
-            slots(SGuide.slotOrders)
+            slots(ShiningGuide.slotOrders)
 
             elements { elements }
 
@@ -40,7 +40,7 @@ class GuideCategory(id: String, symbol: ItemStack, var tier: Int = 0) : GuideEle
                 element.getSymbolByCondition(player, condition)
             }
 
-            onBuild(true, SGuide.onBuildEdge)
+            onBuild(true, ShiningGuide.onBuildEdge)
 
             setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
                 if(hasPreviousPage) {
@@ -59,7 +59,7 @@ class GuideCategory(id: String, symbol: ItemStack, var tier: Int = 0) : GuideEle
                 
                 if(element in lockLockedElements) {
                     if(element.unlock(player)) {
-                        SGuide.fireworkCongratulate(player)
+                        ShiningGuide.fireworkCongratulate(player)
                         open(player)
                     }
                     
@@ -71,7 +71,7 @@ class GuideCategory(id: String, symbol: ItemStack, var tier: Int = 0) : GuideEle
 
             set(2 orderWith 1, SunSTIcon.BACK.item) {
                 if(clickEvent().isShiftClick) {
-                    SGuide.open(clicker)
+                    ShiningGuide.open(clicker)
                 } else {
                     back(clicker)
                 }

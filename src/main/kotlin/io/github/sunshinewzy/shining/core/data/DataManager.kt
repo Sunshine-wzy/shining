@@ -5,9 +5,10 @@ import com.zaxxer.hikari.HikariDataSource
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.core.data.database.DatabaseSQL
 import io.github.sunshinewzy.shining.core.data.database.DatabaseSQLite
+import io.github.sunshinewzy.shining.core.data.database.player.PlayerData
 import io.github.sunshinewzy.shining.core.data.legacy.SAutoSaveData
 import io.github.sunshinewzy.shining.core.data.legacy.internal.SunSTPlayerData
-import io.github.sunshinewzy.shining.core.guide.GuideGroups
+import io.github.sunshinewzy.shining.core.guide.GuideTeams
 import io.github.sunshinewzy.shining.core.task.TaskProgress
 import io.github.sunshinewzy.shining.interfaces.Initable
 import org.bukkit.configuration.file.YamlConfiguration
@@ -22,7 +23,6 @@ import taboolib.common.io.newFile
 import taboolib.common.platform.Awake
 import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.submit
-import taboolib.expansion.setupPlayerDatabase
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.database.Database.settingsFile
 import taboolib.module.database.Host
@@ -62,11 +62,9 @@ object DataManager : Initable {
             val hostSQL = HostSQL(databaseConfig)
             database = Database.connect(createDataSource(hostSQL))
             sDatabase = DatabaseSQL(hostSQL)
-            setupPlayerDatabase(databaseConfig, Shining.config.getString("player_table").toString())
         } else {
             database = Database.connect(createDataSource(HostSQLite(newFile(getDataFolder(), "data/data.db"))))
             sDatabase = DatabaseSQLite(newFile(getDataFolder(), "data/sdata.db"))
-            setupPlayerDatabase(newFile(getDataFolder(), "data/player.db"))
         }
         
         submit(async = true, delay = autoSavePeriod, period = autoSavePeriod) { 
@@ -80,7 +78,7 @@ object DataManager : Initable {
 
         transaction {
             SchemaUtils.createMissingTablesAndColumns(
-                GuideGroups
+                GuideTeams, PlayerData
             )
         }
         

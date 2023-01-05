@@ -1,12 +1,12 @@
 package io.github.sunshinewzy.shining.listeners
 
-import io.github.sunshinewzy.shining.core.guide.SGuide
+import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.releaseDataContainer
+import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.setupDataContainer
+import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.utils.giveItem
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.expansion.releaseDataContainer
-import taboolib.expansion.setupDataContainer
 
 object PlayerListener {
     
@@ -17,7 +17,7 @@ object PlayerListener {
         player.setupDataContainer()
         
         if(!player.hasPlayedBefore()) {
-            player.giveItem(SGuide.getItem())
+            player.giveItem(ShiningGuide.getItem())
         }
     }
     

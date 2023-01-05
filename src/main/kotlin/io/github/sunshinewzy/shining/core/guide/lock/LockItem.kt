@@ -1,20 +1,20 @@
 package io.github.sunshinewzy.shining.core.guide.lock
 
 import io.github.sunshinewzy.shining.core.guide.ElementLock
-import io.github.sunshinewzy.shining.core.guide.SGuide
-import io.github.sunshinewzy.shining.objects.SItem.Companion.getName
+import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.objects.item.SunSTIcon
 import io.github.sunshinewzy.shining.utils.containsItem
 import io.github.sunshinewzy.shining.utils.removeSItem
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.module.nms.getName
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 
 class LockItem(
     var item: ItemStack,
     isConsume: Boolean = true
-) : ElementLock("物品 ${item.getName()}", isConsume) {
+) : ElementLock({ player -> "&e物品 ${item.getName(player)} x${item.amount}" }, isConsume) {
 
     override fun check(player: Player): Boolean =
         player.inventory.containsItem(item)
@@ -24,7 +24,7 @@ class LockItem(
     }
 
     override fun tip(player: Player) {
-        player.openMenu<Basic>(SGuide.TITLE) { 
+        player.openMenu<Basic>(ShiningGuide.TITLE) { 
             rows(3)
             
             map(
@@ -35,7 +35,7 @@ class LockItem(
             set('#', SunSTIcon.BACK.item)
             set('a', item)
             
-            onClick('#', SGuide.onClickBack)
+            onClick('#', ShiningGuide.onClickBack)
             
             onClick(lock = true)
         }

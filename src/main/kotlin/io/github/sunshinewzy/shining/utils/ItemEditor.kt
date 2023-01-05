@@ -11,7 +11,7 @@ import io.github.sunshinewzy.shining.objects.orderWith
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import taboolib.common.util.sync
+import taboolib.common.platform.function.submit
 import taboolib.module.chat.colored
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
@@ -47,7 +47,7 @@ object ItemEditor {
                     item.setName(message)
                     player.sendMsg(Shining.prefixName, "&a物品名称编辑成功")
 
-                    sync {
+                    submit {
                         editItem(item, player)
                     }
                     true
@@ -91,7 +91,7 @@ object ItemEditor {
                                         item.itemMeta = meta
                                         player.sendMsg(Shining.prefixName, "&a物品Lore编辑成功")
 
-                                        sync {
+                                        submit {
                                             editLore(item, player)
                                         }
                                     }
@@ -116,7 +116,7 @@ object ItemEditor {
                                         item.itemMeta = meta
                                         player.sendMsg(Shining.prefixName, "&a物品Lore添加成功")
 
-                                        sync {
+                                        submit {
                                             editLore(item, player)
                                         }
                                     }
@@ -161,7 +161,7 @@ object ItemEditor {
                             item.itemMeta = meta
                             player.sendMsg(Shining.prefixName, "&a物品Lore添加成功")
 
-                            sync {
+                            submit {
                                 editLore(item, player)
                             }
                             

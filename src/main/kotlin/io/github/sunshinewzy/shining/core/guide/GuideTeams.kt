@@ -7,7 +7,8 @@ import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.dao.id.IntIdTable
 import java.util.*
 
-object GuideGroups : IntIdTable() {
+object GuideTeams : IntIdTable() {
+    
     val name = varchar("name", 50)
     val owner = uuid("owner").uniqueIndex()
     val symbol = jackson("symbol", Shining.objectMapper, ItemStack::class.java)

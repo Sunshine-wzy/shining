@@ -1,13 +1,13 @@
 package io.github.sunshinewzy.shining.core.menu
 
 import io.github.sunshinewzy.shining.Shining
-import io.github.sunshinewzy.shining.core.guide.SGuide
+import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.objects.item.SunSTIcon
 import io.github.sunshinewzy.shining.objects.orderWith
 import io.github.sunshinewzy.shining.utils.PlayerChatSubscriber
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import taboolib.common.util.sync
+import taboolib.common.platform.function.submit
 import taboolib.module.chat.uncolored
 import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
@@ -31,7 +31,7 @@ object MenuBuilder {
                 PlayerChatSubscriber(this@openSearchMenu, "搜索") {
                     search(message.uncolored())
                     
-                    sync {
+                    submit {
                         open(player)
                     }
 
@@ -51,9 +51,9 @@ object MenuBuilder {
 
     inline fun <reified T> Linked<T>.buildMultiPage() {
         rows(6)
-        slots(SGuide.slotOrders)
+        slots(ShiningGuide.slotOrders)
 
-        onBuild(true, SGuide.onBuildEdge)
+        onBuild(true, ShiningGuide.onBuildEdge)
 
         setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
             if(hasPreviousPage) {

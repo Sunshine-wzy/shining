@@ -10,4 +10,4 @@ import kotlin.annotation.AnnotationTarget.*
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, TYPEALIAS, FUNCTION, PROPERTY, FIELD, CONSTRUCTOR)
-annotation class SunSTTestApi(val message: String = "")
+annotation class ShiningTestApi(val message: String = "")

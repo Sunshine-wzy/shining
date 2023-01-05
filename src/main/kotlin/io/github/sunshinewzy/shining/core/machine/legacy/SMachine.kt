@@ -309,7 +309,7 @@ abstract class SMachine(
     /**
      * 在 [loc] 位置生成该机器的结构 (不会构建机器)
      */
-    @SunSTTestApi
+    @ShiningTestApi
     fun buildMachine(loc: Location) {
         var theLoc: Location
         structure.structure.forEach { (coord, sBlock) -> 

@@ -7,7 +7,7 @@ import org.bukkit.entity.Player
  * @param isConsume If it is true, the lock will run [consume] when the player is unlocking the element.
  */
 abstract class ElementLock(
-    var description: String,
+    var description: (Player) -> String,
     var isConsume: Boolean = true
 ) {
     /**

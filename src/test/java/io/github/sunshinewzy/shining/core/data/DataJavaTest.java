@@ -18,7 +18,7 @@ public class DataJavaTest {
 	@Test
 	public void container() {
 		IDataContainer container = new DataContainer();
-		IData data = container.get(new NamespacedId(Namespace.get("sunstcore"), "awa_container"));
+		IData data = container.get(new NamespacedId(Namespace.get("shining"), "awa_container"));
 		data.set("awa", 233);
 		
 		HashMap<String, Integer> map = new HashMap<>();
