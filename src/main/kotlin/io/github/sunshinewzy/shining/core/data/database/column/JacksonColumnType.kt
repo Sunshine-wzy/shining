@@ -11,6 +11,7 @@ class JacksonColumnType(
     private val objectMapper: ObjectMapper,
     typeConstructor: ObjectMapper.() -> JavaType
 ) : TextColumnType() {
+    
     val type: JavaType = typeConstructor(objectMapper)
     
 
@@ -19,8 +20,8 @@ class JacksonColumnType(
             if(it is String) {
                 return objectMapper.readValue(it, type)
             }
+            return it
         }
-        return value
     }
 
     override fun notNullValueToDB(value: Any): Any {
@@ -38,6 +39,7 @@ class JacksonColumnType(
         }
         return value
     }
+    
 }
 
 

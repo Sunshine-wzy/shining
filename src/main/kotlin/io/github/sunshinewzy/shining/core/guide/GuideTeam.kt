@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.core.guide
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.core.data.JacksonWrapper
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.executePlayerDataContainer
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.getDataContainer
 import io.github.sunshinewzy.shining.core.menu.MenuBuilder.onBack
@@ -10,6 +11,7 @@ import io.github.sunshinewzy.shining.core.menu.Search
 import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.SItem.Companion.setLore
 import io.github.sunshinewzy.shining.objects.SItem.Companion.setName
+import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,6 +23,7 @@ import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
 import taboolib.common.LifeCycle
 import taboolib.common.platform.SkipTo
 import taboolib.common.platform.function.submit
@@ -34,8 +37,8 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
     var owner: UUID by GuideTeams.owner
     var symbol: ItemStack by GuideTeams.symbol
     
-    private var members: HashSet<UUID> by GuideTeams.members
-    private var applicants: HashSet<UUID> by GuideTeams.applicants
+    private var members: JacksonWrapper<HashSet<UUID>> by GuideTeams.members
+    private var applicants: JacksonWrapper<HashSet<UUID>> by GuideTeams.applicants
 
 
     fun join(player: Player) {
@@ -44,21 +47,25 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
     }
 
     private fun join(uuid: UUID) {
-        members.let { 
-            it += uuid
-            members = it
+        transaction {
+            members.value.let {
+                it += uuid
+                members = JacksonWrapper(it)
+            }
         }
     }
 
     fun leave(player: Player) {
         leave(player.uniqueId)
-        player.getDataContainer()
+        player.getDataContainer().delete(player.uniqueId.toString())
     }
 
     private fun leave(uuid: UUID) {
-        members.let { 
-            it -= uuid
-            members = it
+        transaction {
+            members.value.let {
+                it -= uuid
+                members = JacksonWrapper(it)
+            }
         }
     }
 
@@ -68,23 +75,29 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
     }
 
     private fun apply(uuid: UUID) {
-        applicants.let { 
-            it += uuid
-            applicants = it
+        transaction {
+            applicants.value.let {
+                it += uuid
+                applicants = JacksonWrapper(it)
+            }
         }
     }
     
     fun accept(uuid: UUID): Boolean {
-        if(!applicants.contains(uuid))
+        if(!applicants.value.contains(uuid))
             return false
         
         join(uuid)
         uuid.executePlayerDataContainer { 
             it["guide_team"] = id
+            it.delete("guide_team_apply")
         }
-        applicants.let { 
-            it -= uuid
-            applicants = it
+        
+        transaction {
+            applicants.value.let {
+                it -= uuid
+                applicants = JacksonWrapper(it)
+            }
         }
         return true
     }
@@ -116,8 +129,8 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                     this.owner = owner.uniqueId
                     this.name = name
                     this.symbol = symbol
-                    this.members = hashSetOf()
-                    this.applicants = hashSetOf()
+                    this.members = JacksonWrapper(hashSetOf())
+                    this.applicants = JacksonWrapper(hashSetOf())
                 }
                 container[GUIDE_TEAM] = guideTeam.id
                 true
@@ -189,10 +202,10 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                 
                 onClick('b') {
                     sendMsg(Shining.prefixName, "请输入队伍名称")
-
+                    
                     PlayerChatSubscriber(this@createGuideTeam, "队伍ID编辑") {
                         submit {
-                            createGuideTeam(message.replace(" ", ""), symbol)
+                            createGuideTeam(message, symbol)
                         }
                         true
                     }.register()
@@ -244,20 +257,47 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
         private fun Player.joinGuideTeam() {
             Shining.scope.launch(Dispatchers.IO) {
-                val list = newSuspendedTransaction {
-                    all().toList()
+                val applyTeam = getDataContainer()["guide_team_apply"]
+                val teams = newSuspendedTransaction {
+                    val allTeam = all().limit(100)
+                    if(applyTeam == null) {
+                        allTeam.toList()
+                    } else {
+                        val applyTeamId = applyTeam.toInt()
+                        val list = LinkedList<GuideTeam>()
+                        for(theTeam in allTeam) {
+                            if(theTeam.id.value == applyTeamId) {
+                                list.addFirst(theTeam)
+                            } else {
+                                list += theTeam
+                            }
+                        }
+                        list
+                    }
                 }
-                val s = getDataContainer()["guide_team_apply"]
                 
                 submit {
                     openMultiPageMenu<GuideTeam>("SGuide - 加入队伍") {
-                        elements { list }
+                        elements { teams }
 
+                        var applyTeamElement: GuideTeam? = null
                         onGenerate(async = true) { _, element, index, slot ->
+                            if(index == 0 && applyTeam != null && element.id.value == applyTeam.toInt()) {
+                                applyTeamElement = element
+                                return@onGenerate buildItem(element.symbol) {
+                                    this.name = "§f${element.name}"
+                                    lore += listOf("§b您已申请加入该队伍，请等待队长同意申请", "", "§e> 队长", "§f${element.owner.offlinePlayer.name}", "", "§a> 队员")
+                                    element.members.value.forEach {
+                                        lore += "§f${it.offlinePlayer.name}"
+                                    }
+                                    shiny()
+                                }
+                            }
+                            
                             buildItem(element.symbol) {
                                 this.name = "§f${element.name}"
                                 lore += listOf("", "§e> 队长", "§f${element.owner.offlinePlayer.name}", "", "§a> 队员")
-                                element.members.forEach {
+                                element.members.value.forEach {
                                     lore += "§f${it.offlinePlayer.name}"
                                 }
                             }
@@ -268,11 +308,40 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                         }
 
                         onClick { event, element ->
-                            element.apply(this@joinGuideTeam)
-                            sendMsg(Shining.prefixName, "&a申请加入队伍 &f${element.name} &a成功，等待队长同意")
-                            closeInventory()
+                            if(applyTeam == null) {
+                                element.apply(this@joinGuideTeam)
+                                sendMsg(Shining.prefixName, "&a申请加入队伍 '&f${element.name}&a' 成功，等待队长 '&f${element.owner.playerName}&a' 同意")
+                                closeInventory()
+                            } else {
+                                openMenu<Basic>("Shining Guide - 队伍重复申请") { 
+                                    rows(1)
+                                    
+                                    map("oooaobooo")
+                                    
+                                    set('a', buildItem(ShiningIcon.CONFIRM) {
+                                        val theApplyTeamElement = applyTeamElement
+                                        lore += if(theApplyTeamElement != null) {
+                                            "§e您已经申请加入队伍 §f${theApplyTeamElement.name}"
+                                        } else {
+                                            "§e您已经申请加入ID为 §f$applyTeam §e的队伍"
+                                        }
+                                        lore += "§c要取消原有申请并申请加入"
+                                        lore += "§c新的队伍 '§f${element.name}§c' 吗?"
+                                    }) {
+                                        element.apply(this@joinGuideTeam)
+                                        sendMsg(Shining.prefixName, "&a申请加入队伍 '&f${element.name}&a' 成功，等待队长 '&f${element.owner.playerName}&a' 同意")
+                                        closeInventory()
+                                    }
+                                    
+                                    set('b', ShiningIcon.CANCEL.item) {
+                                        joinGuideTeam()
+                                    }
+                                    
+                                    onClick(lock = true)
+                                }
+                            }
                         }
-
+                        
                     }
                 }
             }

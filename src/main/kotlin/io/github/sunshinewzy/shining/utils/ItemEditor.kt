@@ -6,8 +6,7 @@ import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.SItem.Companion.getLore
 import io.github.sunshinewzy.shining.objects.SItem.Companion.getMeta
 import io.github.sunshinewzy.shining.objects.SItem.Companion.setName
-import io.github.sunshinewzy.shining.objects.item.SunSTIcon
-import io.github.sunshinewzy.shining.objects.orderWith
+import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -33,10 +32,10 @@ object ItemEditor {
                 "oooxxxxxx"
             )
 
-            set('o', SunSTIcon.EDGE.item)
-            set('x', SunSTIcon.EDGE_GLASS_PANE.item)
-            set('a', SunSTIcon.RENAME.item)
-            set('b', SunSTIcon.EDIT_LORE.item)
+            set('o', ShiningIcon.EDGE.item)
+            set('x', ShiningIcon.EDGE_GLASS_PANE.item)
+            set('a', ShiningIcon.RENAME.item)
+            set('b', ShiningIcon.EDIT_LORE.item)
 
             onBuild { _, inventory ->
                 inventory.setItem(editItemOrder, item)
@@ -174,32 +173,32 @@ object ItemEditor {
                 }
             }
             
-            set(2 orderWith 1, SunSTIcon.BACK_LAST_PAGE.item) {
+            set(2 orderWith 1, ShiningIcon.BACK_LAST_PAGE.item) {
                 editItem(item, player)
             }
             
-            set(5 orderWith 1, SunSTIcon.REMOVE_MODE.item) {
+            set(5 orderWith 1, ShiningIcon.REMOVE_MODE.item) {
                 currentItem?.let {
                     if(status == Status.REMOVE) {
                         status = Status.EDIT
-                        currentItem = SunSTIcon.REMOVE_MODE.item
+                        currentItem = ShiningIcon.REMOVE_MODE.item
                     } else if(status == Status.EDIT) {
                         status = Status.REMOVE
-                        currentItem = SunSTIcon.REMOVE_MODE_SHINY.item
+                        currentItem = ShiningIcon.REMOVE_MODE_SHINY.item
                     }
                     
                     player.updateInventory()
                 }
             }
             
-            set(8 orderWith 1, SunSTIcon.ADD_MODE.item) {
+            set(8 orderWith 1, ShiningIcon.ADD_MODE.item) {
                 currentItem?.let {
                     if(status == Status.ADD) {
                         status = Status.EDIT
-                        currentItem = SunSTIcon.ADD_MODE.item
+                        currentItem = ShiningIcon.ADD_MODE.item
                     } else if(status == Status.EDIT) {
                         status = Status.ADD
-                        currentItem = SunSTIcon.ADD_MODE_SHINY.item
+                        currentItem = ShiningIcon.ADD_MODE_SHINY.item
                     }
 
                     player.updateInventory()

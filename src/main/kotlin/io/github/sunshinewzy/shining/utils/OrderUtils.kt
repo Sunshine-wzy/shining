@@ -1,4 +1,6 @@
-package io.github.sunshinewzy.shining.objects
+package io.github.sunshinewzy.shining.utils
+
+import io.github.sunshinewzy.shining.objects.SFlatCoord
 
 /**
  * x, y坐标 均从1开始

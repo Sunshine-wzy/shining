@@ -9,8 +9,8 @@ import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.getGuideTeam
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.setupGuideTeam
 import io.github.sunshinewzy.shining.objects.SCollection
 import io.github.sunshinewzy.shining.objects.SItem
-import io.github.sunshinewzy.shining.objects.item.SunSTIcon
-import io.github.sunshinewzy.shining.objects.orderWith
+import io.github.sunshinewzy.shining.objects.item.ShiningIcon
+import io.github.sunshinewzy.shining.utils.orderWith
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.FireworkEffect
@@ -57,7 +57,7 @@ object ShiningGuide {
                 if(!it.isAir()) return@forEach
             }
             
-            inv.setItem(index, SunSTIcon.EDGE.item)
+            inv.setItem(index, ShiningIcon.EDGE.item)
         }
     }
     val onClickBack: (ClickEvent) -> Unit = {
@@ -107,14 +107,14 @@ object ShiningGuide {
 
                     setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
                         if(hasPreviousPage) {
-                            SunSTIcon.PAGE_PRE_GLASS_PANE.item
-                        } else SunSTIcon.EDGE.item
+                            ShiningIcon.PAGE_PRE_GLASS_PANE.item
+                        } else ShiningIcon.EDGE.item
                     }
 
                     setNextPage(8 orderWith 6) { page, hasNextPage ->
                         if(hasNextPage) {
-                            SunSTIcon.PAGE_NEXT_GLASS_PANE.item
-                        } else SunSTIcon.EDGE.item
+                            ShiningIcon.PAGE_NEXT_GLASS_PANE.item
+                        } else ShiningIcon.EDGE.item
                     }
 
                     onClick { event, element ->

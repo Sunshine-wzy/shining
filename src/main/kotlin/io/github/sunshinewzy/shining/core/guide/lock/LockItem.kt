@@ -2,7 +2,7 @@ package io.github.sunshinewzy.shining.core.guide.lock
 
 import io.github.sunshinewzy.shining.core.guide.ElementLock
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
-import io.github.sunshinewzy.shining.objects.item.SunSTIcon
+import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.containsItem
 import io.github.sunshinewzy.shining.utils.removeSItem
 import org.bukkit.entity.Player
@@ -32,10 +32,8 @@ class LockItem(
                 "ooooa"
             )
             
-            set('#', SunSTIcon.BACK.item)
+            set('#', ShiningIcon.BACK.item, ShiningGuide.onClickBack)
             set('a', item)
-            
-            onClick('#', ShiningGuide.onClickBack)
             
             onClick(lock = true)
         }

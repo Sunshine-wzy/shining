@@ -5,10 +5,11 @@ import io.github.sunshinewzy.shining.core.task.TaskInventoryHolder
 import io.github.sunshinewzy.shining.core.task.TaskProject.Companion.lastTaskProject
 import io.github.sunshinewzy.shining.core.task.TaskStage
 import io.github.sunshinewzy.shining.exceptions.NoRecipeException
-import io.github.sunshinewzy.shining.objects.*
+import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.SItem.Companion.isItemSimilar
+import io.github.sunshinewzy.shining.objects.SPageValue
 import io.github.sunshinewzy.shining.objects.inventoryholder.SProtectInventoryHolder
-import io.github.sunshinewzy.shining.objects.item.SunSTIcon
+import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.*
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -41,7 +42,7 @@ class ItemCraftTask(
         setSubmitItemOrder(9, 1)
         setBackItemOrder(9, 5)
         setSlotItem(6, 3, craftItem)
-        setSlotItem(8, 3, SunSTIcon.WORKBENCH)
+        setSlotItem(8, 3, ShiningIcon.WORKBENCH)
         
         for(i in 1..4){
             setSlotItem(i, 1, whiteGlass)
@@ -93,7 +94,7 @@ class ItemCraftTask(
             hasMultiPages = true
             if(pages.isNotEmpty()){
                 setCraftSlotItem(pages.first())
-                setSlotItem(nextPageOrder, SunSTIcon.PAGE_NEXT)
+                setSlotItem(nextPageOrder, ShiningIcon.PAGE_NEXT)
             }
             holder.page = 1
         }
@@ -116,7 +117,7 @@ class ItemCraftTask(
                             val inv = getTaskInv(player)
                             if(value == size - 1)
                                 inv.setItem(nextPageOrder, whiteGlass)
-                            inv.setItem(prePageOrder, SunSTIcon.PAGE_PRE.item)
+                            inv.setItem(prePageOrder, ShiningIcon.PAGE_PRE.item)
 
                             inv.setCraftSlotItem(pages[value])
                             invHolder.page = value + 1
@@ -135,8 +136,8 @@ class ItemCraftTask(
                         if(value > 1){
                             val inv = getTaskInv(player)
                             if(value > 2)
-                                inv.setItem(prePageOrder, SunSTIcon.PAGE_PRE.item)
-                            inv.setItem(nextPageOrder, SunSTIcon.PAGE_NEXT.item)
+                                inv.setItem(prePageOrder, ShiningIcon.PAGE_PRE.item)
+                            inv.setItem(nextPageOrder, ShiningIcon.PAGE_NEXT.item)
 
                             inv.setCraftSlotItem(pages[value - 2])
                             invHolder.page = value - 1
@@ -212,7 +213,7 @@ class ItemCraftTask(
                             if(value < size){
                                 if(value == size - 1)
                                     inv.setItem(nextPageOrder, whiteGlass)
-                                inv.setItem(prePageOrder, SunSTIcon.PAGE_PRE.item)
+                                inv.setItem(prePageOrder, ShiningIcon.PAGE_PRE.item)
 
                                 inv.setCraftSlotItem(pages[value])
                                 
@@ -228,8 +229,8 @@ class ItemCraftTask(
                         if(value in 1..size){
                             if(value > 1){
                                 if(value > 2)
-                                    inv.setItem(prePageOrder, SunSTIcon.PAGE_PRE.item)
-                                inv.setItem(nextPageOrder, SunSTIcon.PAGE_NEXT.item)
+                                    inv.setItem(prePageOrder, ShiningIcon.PAGE_PRE.item)
+                                inv.setItem(nextPageOrder, ShiningIcon.PAGE_NEXT.item)
 
                                 inv.setCraftSlotItem(pages[value - 2])
                                 second.page = value - 1
@@ -277,7 +278,7 @@ class ItemCraftTask(
                 Triple(holderName to player.uniqueId, SPageValue(1), pages)
             )
             val inv = Bukkit.createInventory(holder, 5 * 9, "合成表")
-            inv.setItem(9, 5, SunSTIcon.BACK)
+            inv.setItem(9, 5, ShiningIcon.BACK)
 
             val recipes = Bukkit.getServer().getRecipesFor(this)
             if(recipes.isEmpty()){
@@ -305,7 +306,7 @@ class ItemCraftTask(
             }
             
             inv.setItem(6, 3, this)
-            inv.setItem(8, 3, SunSTIcon.WORKBENCH)
+            inv.setItem(8, 3, ShiningIcon.WORKBENCH)
 
             for(i in 1..4){
                 inv.setItem(i, 1, whiteGlass)
@@ -338,7 +339,7 @@ class ItemCraftTask(
 
                 if(pages.isNotEmpty()){
                     inv.setCraftSlotItem(pages.first())
-                    inv.setItem(nextPageOrder, SunSTIcon.PAGE_NEXT)
+                    inv.setItem(nextPageOrder, ShiningIcon.PAGE_NEXT)
                 }
             }
             

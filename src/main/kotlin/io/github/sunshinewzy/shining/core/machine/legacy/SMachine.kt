@@ -13,7 +13,7 @@ import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.SItem.Companion.setNameAndLore
 import io.github.sunshinewzy.shining.objects.SLocation
 import io.github.sunshinewzy.shining.objects.SLocation.Companion.toSLocation
-import io.github.sunshinewzy.shining.objects.item.SunSTIcon
+import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.*
 import org.bukkit.Location
 import org.bukkit.Material
@@ -53,7 +53,7 @@ abstract class SMachine(
             createEdge(SItem(Material.WHITE_STAINED_GLASS_PANE))
             setItem(3, 3, displayItem)
 
-            setButton(5, 5, SunSTIcon.HOME.item, "HOME") {
+            setButton(5, 5, ShiningIcon.HOME.item, "HOME") {
                 wrench.openIllustratedBook(view.asPlayer())
             }
         }
@@ -62,7 +62,7 @@ abstract class SMachine(
             createEdge(SItem(Material.WHITE_STAINED_GLASS_PANE))
             setDefaultTurnPageButton()
             
-            setButton(5, 6, SunSTIcon.HOME.item, "HOME") {
+            setButton(5, 6, ShiningIcon.HOME.item, "HOME") {
                 edit(view.asPlayer())
             }
         }

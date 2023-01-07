@@ -3,8 +3,8 @@ package io.github.sunshinewzy.shining.core.guide.element
 import io.github.sunshinewzy.shining.core.guide.ElementCondition
 import io.github.sunshinewzy.shining.core.guide.GuideElement
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
-import io.github.sunshinewzy.shining.objects.item.SunSTIcon
-import io.github.sunshinewzy.shining.objects.orderWith
+import io.github.sunshinewzy.shining.objects.item.ShiningIcon
+import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.module.ui.openMenu
@@ -44,14 +44,14 @@ class GuideCategory(id: String, symbol: ItemStack, var tier: Int = 0) : GuideEle
 
             setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
                 if(hasPreviousPage) {
-                    SunSTIcon.PAGE_PRE_GLASS_PANE.item
-                } else SunSTIcon.EDGE.item
+                    ShiningIcon.PAGE_PRE_GLASS_PANE.item
+                } else ShiningIcon.EDGE.item
             }
 
             setNextPage(8 orderWith 6) { page, hasNextPage ->
                 if(hasNextPage) {
-                    SunSTIcon.PAGE_NEXT_GLASS_PANE.item
-                } else SunSTIcon.EDGE.item
+                    ShiningIcon.PAGE_NEXT_GLASS_PANE.item
+                } else ShiningIcon.EDGE.item
             }
 
             onClick { event, element ->
@@ -69,7 +69,7 @@ class GuideCategory(id: String, symbol: ItemStack, var tier: Int = 0) : GuideEle
                 element.open(event.clicker, this@GuideCategory)
             }
 
-            set(2 orderWith 1, SunSTIcon.BACK.item) {
+            set(2 orderWith 1, ShiningIcon.BACK.item) {
                 if(clickEvent().isShiftClick) {
                     ShiningGuide.open(clicker)
                 } else {

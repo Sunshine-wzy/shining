@@ -4,6 +4,7 @@ import io.github.sunshinewzy.shining.exceptions.IllegalRecipeException
 import io.github.sunshinewzy.shining.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.shining.utils.getSquareItems
 import io.github.sunshinewzy.shining.utils.putElement
+import io.github.sunshinewzy.shining.utils.toCoordinate
 import io.github.sunshinewzy.shining.utils.typeHash
 import org.bukkit.Material
 import org.bukkit.inventory.Inventory

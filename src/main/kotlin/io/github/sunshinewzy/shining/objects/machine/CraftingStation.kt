@@ -8,11 +8,7 @@ import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.SItem.Companion.addShapelessRecipe
 import io.github.sunshinewzy.shining.objects.SLocation
 import io.github.sunshinewzy.shining.objects.inventoryholder.SCraftInventoryHolder
-import io.github.sunshinewzy.shining.objects.orderWith
-import io.github.sunshinewzy.shining.utils.getPlayer
-import io.github.sunshinewzy.shining.utils.giveItem
-import io.github.sunshinewzy.shining.utils.removeSquareItems
-import io.github.sunshinewzy.shining.utils.setItem
+import io.github.sunshinewzy.shining.utils.*
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound

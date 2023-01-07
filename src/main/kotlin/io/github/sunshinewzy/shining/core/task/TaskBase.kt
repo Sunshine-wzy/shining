@@ -1,9 +1,8 @@
 package io.github.sunshinewzy.shining.core.task
 
-import io.github.sunshinewzy.shining.interfaces.Itemable
+import io.github.sunshinewzy.shining.api.Itemable
 import io.github.sunshinewzy.shining.objects.SItem.Companion.setLore
-import io.github.sunshinewzy.shining.objects.item.SunSTIcon
-import io.github.sunshinewzy.shining.objects.orderWith
+import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.*
 import org.bukkit.Bukkit
 import org.bukkit.Sound
@@ -34,7 +33,7 @@ abstract class TaskBase(
     var openSound = taskStage.openSound
     var volume = taskStage.volume
     var pitch = taskStage.pitch
-    var submitItem = SunSTIcon.SUBMIT.item.clone().setLore(*descriptionLore)
+    var submitItem = ShiningIcon.SUBMIT.item.clone().setLore(*descriptionLore)
     var isCreateEdge = true
     var edgeItem = taskStage.edgeItem
     
@@ -123,11 +122,11 @@ abstract class TaskBase(
         return true
     }
     
-    fun setSlotItem(order: Int, item: Itemable): Boolean = setSlotItem(order, item.getSItem())
+    fun setSlotItem(order: Int, item: Itemable): Boolean = setSlotItem(order, item.getItemStack())
     
     fun setSlotItem(x: Int, y: Int, item: ItemStack): Boolean = setSlotItem(x orderWith y, item)
 
-    fun setSlotItem(x: Int, y: Int, item: Itemable): Boolean = setSlotItem(x orderWith y, item.getSItem())
+    fun setSlotItem(x: Int, y: Int, item: Itemable): Boolean = setSlotItem(x orderWith y, item.getItemStack())
 
     fun setSubmitItemOrder(x: Int, y: Int) {
         submitItemOrder = x orderWith y
@@ -136,7 +135,7 @@ abstract class TaskBase(
     
     fun setBackItemOrder(x: Int, y: Int) {
         backItemOrder = x orderWith y
-        setSlotItem(backItemOrder, SunSTIcon.BACK)
+        setSlotItem(backItemOrder, ShiningIcon.BACK)
     }
     
     

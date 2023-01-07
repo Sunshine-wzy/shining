@@ -10,10 +10,10 @@ import io.github.sunshinewzy.shining.objects.STurnPageType.NEXT_PAGE
 import io.github.sunshinewzy.shining.objects.STurnPageType.PRE_PAGE
 import io.github.sunshinewzy.shining.objects.inventoryholder.SInventoryHolder
 import io.github.sunshinewzy.shining.objects.inventoryholder.SProtectInventoryHolder
-import io.github.sunshinewzy.shining.objects.item.SunSTIcon
-import io.github.sunshinewzy.shining.objects.orderWith
+import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.actionList
 import io.github.sunshinewzy.shining.utils.asPlayer
+import io.github.sunshinewzy.shining.utils.orderWith
 import io.github.sunshinewzy.shining.utils.subscribeEvent
 import org.bukkit.Bukkit
 import org.bukkit.Sound
@@ -245,8 +245,8 @@ class SMenu(
         setAllTurnPageButton(x orderWith y, buttonType, item)
     
     fun setDefaultTurnPageButton(): SMenu {
-        setAllTurnPageButton(9, size, NEXT_PAGE, SunSTIcon.PAGE_NEXT.item)
-        setAllTurnPageButton(1, size, PRE_PAGE, SunSTIcon.PAGE_PRE.item)
+        setAllTurnPageButton(9, size, NEXT_PAGE, ShiningIcon.PAGE_NEXT.item)
+        setAllTurnPageButton(1, size, PRE_PAGE, ShiningIcon.PAGE_PRE.item)
         return this
     }
 

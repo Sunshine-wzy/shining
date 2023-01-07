@@ -4,16 +4,19 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.Itemable
 import io.github.sunshinewzy.shining.core.data.legacy.internal.SunSTPlayerData
 import io.github.sunshinewzy.shining.core.task.TaskBase
 import io.github.sunshinewzy.shining.core.task.TaskProgress
 import io.github.sunshinewzy.shining.core.task.TaskProject
 import io.github.sunshinewzy.shining.core.task.TaskStage
-import io.github.sunshinewzy.shining.interfaces.Itemable
 import io.github.sunshinewzy.shining.interfaces.Materialsable
 import io.github.sunshinewzy.shining.listeners.BlockListener
-import io.github.sunshinewzy.shining.objects.*
+import io.github.sunshinewzy.shining.objects.SCoordinate
+import io.github.sunshinewzy.shining.objects.SFlatCoord
+import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.SItem.Companion.isItemSimilar
+import io.github.sunshinewzy.shining.objects.SMetadataValue
 import io.github.sunshinewzy.shining.utils.SReflect.damage
 import org.bukkit.*
 import org.bukkit.block.Block
@@ -174,7 +177,7 @@ fun Player.giveItem(items: List<ItemStack>) {
 }
 
 fun Player.giveItem(item: Itemable, amount: Int = 0) {
-    giveItem(item.getSItem(), amount)
+    giveItem(item.getItemStack(), amount)
 }
 
 fun Player.giveItemInMainHand(item: ItemStack) {
@@ -187,7 +190,7 @@ fun Player.giveItemInMainHand(item: ItemStack) {
 }
 
 fun Player.giveItemInMainHand(item: Itemable) {
-    giveItemInMainHand(item.getSItem())
+    giveItemInMainHand(item.getItemStack())
 }
 
 /**
@@ -466,7 +469,7 @@ fun PlayerInventory.removeOffHandItem(item: ItemStack, amount: Int = 1): Boolean
 fun Inventory.isFull(): Boolean = firstEmpty() == -1 || firstEmpty() > size
 
 fun Inventory.setItem(order: Int, item: Itemable) {
-    setItem(order, item.getSItem())
+    setItem(order, item.getItemStack())
 }
 
 fun Inventory.setItem(x: Int, y: Int, item: ItemStack) {
@@ -474,7 +477,7 @@ fun Inventory.setItem(x: Int, y: Int, item: ItemStack) {
 }
 
 fun Inventory.setItem(x: Int, y: Int, item: Itemable) {
-    setItem(x orderWith y, item.getSItem())
+    setItem(x orderWith y, item.getItemStack())
 }
 
 fun Inventory.setItems(start: Int, end: Int, width: Int, items: List<ItemStack>): ArrayList<ItemStack> {

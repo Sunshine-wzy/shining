@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.objects
 
-import io.github.sunshinewzy.shining.interfaces.Itemable
+import io.github.sunshinewzy.shining.api.Itemable
 import io.github.sunshinewzy.shining.objects.SItem.Companion.cloneRandomAmount
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
@@ -89,7 +89,7 @@ class SRandomItem(val percent: Int, val items: List<ItemStack>) {
     
     constructor(percent: Int, item: ItemStack) : this(percent, listOf(item))
     
-    constructor(percent: Int, item: Itemable) : this(percent, item.getSItem())
+    constructor(percent: Int, item: Itemable) : this(percent, item.getItemStack())
     
     
     fun getItemByRandom(): ItemStack {

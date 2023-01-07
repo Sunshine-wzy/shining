@@ -1,8 +1,8 @@
 package io.github.sunshinewzy.shining.objects.item
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.Itemable
 import io.github.sunshinewzy.shining.interfaces.Initable
-import io.github.sunshinewzy.shining.interfaces.Itemable
 import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.SItem.Companion.addRecipe
 import io.github.sunshinewzy.shining.objects.SItem.Companion.addToSunSTItem
@@ -49,7 +49,7 @@ enum class SunSTItem(val item: ItemStack) : Itemable {
     }
 
 
-    override fun getSItem(): ItemStack = item
+    override fun getItemStack(): ItemStack = item
 
     companion object : Initable {
         override fun init() {}

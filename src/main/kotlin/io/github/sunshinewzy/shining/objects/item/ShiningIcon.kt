@@ -1,12 +1,12 @@
 package io.github.sunshinewzy.shining.objects.item
 
-import io.github.sunshinewzy.shining.interfaces.Itemable
+import io.github.sunshinewzy.shining.api.Itemable
 import io.github.sunshinewzy.shining.objects.SItem
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import taboolib.platform.util.buildItem
 
-enum class SunSTIcon(val item: ItemStack) : Itemable {
+enum class ShiningIcon(val item: ItemStack) : Itemable {
     BACK(SItem(Material.ENCHANTED_BOOK, "&c⇦ 返回", "", "&f左键：&7返回上一页", "&fShift + 左键：&7返回主菜单")),
     BACK_LAST_PAGE(SItem(Material.ENCHANTED_BOOK, "&b⇦ 返回")),
     SUBMIT(SItem(Material.SLIME_BALL, "&a>> 点击以提交任务 <<")),
@@ -24,11 +24,13 @@ enum class SunSTIcon(val item: ItemStack) : Itemable {
     REMOVE_MODE_SHINY(buildItem(SItem(Material.BARRIER, "&c删除模式", "&7已开启", "", "&a> 点击关闭")) { shiny() }),
     ADD_MODE(SItem(Material.SLIME_BALL, "&e增添模式", "&7已关闭", "", "&a> 点击开启")),
     ADD_MODE_SHINY(buildItem(SItem(Material.SLIME_BALL, "&e增添模式", "&7已开启", "", "&a> 点击关闭")) { shiny() }),
-    SEARCH(SItem(Material.COMPASS, "&a搜索"))
+    SEARCH(SItem(Material.COMPASS, "&a搜索")),
+    CONFIRM(SItem(Material.SLIME_BALL, "&a确认")),
+    CANCEL(SItem(Material.BARRIER, "&c取消"))
     
     ;
 
 
-    override fun getSItem(): ItemStack = item
+    override fun getItemStack(): ItemStack = item
     
 }

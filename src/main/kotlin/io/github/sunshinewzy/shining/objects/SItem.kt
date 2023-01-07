@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.objects
 
-import io.github.sunshinewzy.shining.interfaces.Itemable
+import io.github.sunshinewzy.shining.api.Itemable
 import io.github.sunshinewzy.shining.utils.getInt
 import io.github.sunshinewzy.shining.utils.giveItem
 import io.github.sunshinewzy.shining.utils.subscribeEvent
@@ -234,7 +234,7 @@ open class SItem(item: ItemStack) : ItemStack(item) {
             checkAmount: Boolean = true,
             checkDurability: Boolean = false,
             ignoreLastTwoLine: Boolean = false
-        ): Boolean = isItemSimilar(item.getSItem(), checkLore, checkAmount, checkDurability, ignoreLastTwoLine)
+        ): Boolean = isItemSimilar(item.getItemStack(), checkLore, checkAmount, checkDurability, ignoreLastTwoLine)
         
         @JvmStatic
         fun ItemStack?.isItemSimilar(item: ItemStack): Boolean = isItemSimilar(item, true)

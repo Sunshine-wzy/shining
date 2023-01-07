@@ -79,6 +79,7 @@ object Shining : Plugin(), SPlugin {
     val prefixName: String by lazy { config.getString("prefix_name")?.colored() ?: COLOR_NAME }
     val machineManager: IMachineManager by lazy { MachineManager }
     val objectMapper: ObjectMapper = jsonMapper { 
+        addModule(SerializationModules.shining)
         addModule(SerializationModules.bukkit)
     }
     val scope: CoroutineScope by lazy { CoroutineScope(SupervisorJob()) }
