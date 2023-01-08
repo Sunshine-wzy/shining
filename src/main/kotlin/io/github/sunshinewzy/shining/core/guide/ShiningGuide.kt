@@ -26,6 +26,7 @@ import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.submit
 import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
+import taboolib.module.ui.type.Basic
 import taboolib.module.ui.type.Linked
 import taboolib.platform.util.isAir
 import java.util.*
@@ -66,6 +67,9 @@ object ShiningGuide {
         } else {
             openLastElement(it.clicker)
         }
+    }
+    val onClickSettings: (ClickEvent) -> Unit = {
+        
     }
 
     
@@ -122,6 +126,8 @@ object ShiningGuide {
 
                         element.open(event.clicker, null)
                     }
+                    
+                    set(5 orderWith 1, ShiningIcon.SETTINGS.item, onClickSettings)
                 }
             }
         }
@@ -135,6 +141,13 @@ object ShiningGuide {
         
         open(player)
     }
+    
+    fun openSettings(player: Player) {
+        player.openMenu<Basic>("Shining Guide - 设置") {
+            
+        }
+    }
+    
     
     fun registerElement(element: GuideElement, priority: Int = 10) {
         elementMap[priority]?.let { 

@@ -1,10 +1,17 @@
-# 前缀名称
-prefix_name: &eShining
+options:
+  # 前缀名称
+  prefix_name: &eShining
+  language: zh_CN
 
 # SQL数据库
+#
+# SQL database
 database:
-  # enable 为 false 时使用 SQLite 存储数据
+  # 'enable' 为 false 时使用 SQLite 存储数据
   # 若要使用自定义的数据库请将 enable 改为 true
+  #
+  # If 'enable' is false, SQLite will be used.
+  # Change 'enable' to true to use a custom database.
   enable: false
   host: localhost
   port: 3306

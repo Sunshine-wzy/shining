@@ -26,7 +26,8 @@ enum class ShiningIcon(val item: ItemStack) : Itemable {
     ADD_MODE_SHINY(buildItem(SItem(Material.SLIME_BALL, "&e增添模式", "&7已开启", "", "&a> 点击关闭")) { shiny() }),
     SEARCH(SItem(Material.COMPASS, "&a搜索")),
     CONFIRM(SItem(Material.SLIME_BALL, "&a确认")),
-    CANCEL(SItem(Material.BARRIER, "&c取消"))
+    CANCEL(SItem(Material.BARRIER, "&c取消")),
+    SETTINGS(SItem(Material.ENDER_EYE, "&e设置"))
     
     ;
 
