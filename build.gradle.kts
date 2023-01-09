@@ -19,7 +19,6 @@ taboolib {
     install("module-configuration")
     install("module-database")
     install("module-effect")
-    install("module-lang")
     install("module-metrics")
     install("module-navigation")
     install("module-nms")
@@ -29,7 +28,7 @@ taboolib {
     
     install("platform-bukkit")
     classifier = null
-    version = "6.0.10-51"
+    version = "6.0.10-53"
     
     options("skip-kotlin-relocate", "enable-isolated-classloader")
     
