@@ -58,8 +58,7 @@ object LanguageFileLoader {
                 }
                 nodes += exists
                 
-                fileMap[code] = LanguageFile(file, nodes).also {
-                    fileMap[code] = it
+                fileMap[code.lowercase()] = LanguageFile(file, nodes).also {
                     // Watch the file change
                     if (isFileWatcherHook) {
                         FileWatcher.INSTANCE.addSimpleListener(file) {

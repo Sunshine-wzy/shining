@@ -14,6 +14,7 @@ import org.bukkit.inventory.Recipe
 import org.bukkit.inventory.ShapelessRecipe
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.plugin.java.JavaPlugin
+import taboolib.module.chat.colored
 import kotlin.random.Random
 
 open class SItem(item: ItemStack) : ItemStack(item) {
@@ -154,7 +155,7 @@ open class SItem(item: ItemStack) : ItemStack(item) {
         fun ItemStack.setName(name: String): ItemStack {
             val meta = if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type) 
             
-            meta?.setDisplayName(name.replace("&", "§"))
+            meta?.setDisplayName(name.colored())
             itemMeta = meta
             return this
         }
@@ -166,7 +167,7 @@ open class SItem(item: ItemStack) : ItemStack(item) {
 
         fun ItemStack.setLore(lore: List<String>): ItemStack {
             val meta = if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type)
-            meta?.lore = lore.map { it.replace("&", "§") }
+            meta?.lore = lore.map { it.colored() }
             itemMeta = meta
             return this
         }
@@ -179,7 +180,7 @@ open class SItem(item: ItemStack) : ItemStack(item) {
         fun ItemStack.addLore(lore: List<String>): ItemStack {
             (if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type))?.let { meta ->
                 val existLore = meta.lore ?: mutableListOf()
-                existLore += lore.map { it.replace("&", "§") }
+                existLore += lore.map { it.colored() }
                 meta.lore = existLore
                 itemMeta = meta
             }
@@ -193,8 +194,8 @@ open class SItem(item: ItemStack) : ItemStack(item) {
 
         fun ItemStack.setNameAndLore(name: String, lore: List<String>): ItemStack {
             val meta = if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type)
-            meta?.lore = lore.map { it.replace("&", "§") }
-            meta?.setDisplayName(name.replace("&", "§"))
+            meta?.lore = lore.map { it.colored() }
+            meta?.setDisplayName(name.colored())
             itemMeta = meta
             return this
         }

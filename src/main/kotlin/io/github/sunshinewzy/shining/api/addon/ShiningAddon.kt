@@ -1,9 +1,10 @@
 package io.github.sunshinewzy.shining.api.addon
 
+import io.github.sunshinewzy.shining.api.ShiningPlugin
 import java.io.File
 import java.util.logging.Logger
 
-abstract class ShiningAddon {
+abstract class ShiningAddon : ShiningPlugin {
     
     lateinit var logger: Logger
         private set

@@ -11,7 +11,7 @@ class Namespace private constructor(val name: String) {
 
     init {
         check(VALID_NAMESPACE.matcher(name).matches()) {
-            "Invalid namespace. Must be [a-z0-9._-]: $name"
+            "Invalid namespace. Must be [a-z0-9_-]: $name"
         }
     }
     
@@ -37,7 +37,7 @@ class Namespace private constructor(val name: String) {
     companion object {
         private val cache = ConcurrentHashMap<String, Namespace>()
         
-        val VALID_NAMESPACE = Pattern.compile("[a-z0-9._-]+")
+        val VALID_NAMESPACE = Pattern.compile("[a-z0-9_-]+")
 
         
         @JvmStatic

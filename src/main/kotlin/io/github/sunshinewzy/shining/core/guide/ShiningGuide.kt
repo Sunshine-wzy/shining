@@ -7,8 +7,8 @@ import io.github.sunshinewzy.shining.core.dictionary.DictionaryRegistry
 import io.github.sunshinewzy.shining.core.dictionary.item.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.getGuideTeam
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.setupGuideTeam
+import io.github.sunshinewzy.shining.core.lang.LocalizedItem
 import io.github.sunshinewzy.shining.objects.SCollection
-import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
 import kotlinx.coroutines.Dispatchers
@@ -33,23 +33,24 @@ import java.util.*
 
 object ShiningGuide {
     private val elementMap = TreeMap<Int, MutableList<GuideElement>>()
-    private val guideItem: DictionaryItem = DictionaryRegistry.registerItem(
-        NamespacedId(Shining, "shining_guide"),
-        SItem(Material.ENCHANTED_BOOK, "&aShining Guide"),
-        object : ItemBehavior() {
-            override fun onInteract(event: PlayerInteractEvent, player: Player, item: ItemStack, action: Action) {
-                if(event.hand != EquipmentSlot.HAND) return
-                
-                if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-                    event.isCancelled = true
-                    openLastElement(player)
-                } else if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-                    event.isCancelled = true
-                    open(player)
+    private val guideItem: DictionaryItem = NamespacedId(Shining, "shining_guide").let { id ->
+        DictionaryRegistry.registerItem(
+            id, LocalizedItem(Material.ENCHANTED_BOOK, id),
+            object : ItemBehavior() {
+                override fun onInteract(event: PlayerInteractEvent, player: Player, item: ItemStack, action: Action) {
+                    if(event.hand != EquipmentSlot.HAND) return
+
+                    if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+                        event.isCancelled = true
+                        openLastElement(player)
+                    } else if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
+                        event.isCancelled = true
+                        open(player)
+                    }
                 }
             }
-        }
-    )
+        )
+    }
     
     
     val onBuildEdge: (Inventory) -> Unit = { inv ->

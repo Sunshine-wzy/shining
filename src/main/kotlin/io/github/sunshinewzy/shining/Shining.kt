@@ -2,7 +2,7 @@ package io.github.sunshinewzy.shining
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jsonMapper
-import io.github.sunshinewzy.shining.api.SPlugin
+import io.github.sunshinewzy.shining.api.ShiningPlugin
 import io.github.sunshinewzy.shining.api.machine.IMachineManager
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.core.data.DataManager
@@ -25,6 +25,7 @@ import io.github.sunshinewzy.shining.objects.legacy.SBlock
 import io.github.sunshinewzy.shining.objects.machine.SunSTMachineManager
 import io.github.sunshinewzy.shining.utils.SReflect
 import io.github.sunshinewzy.shining.utils.ShiningTestApi
+import io.github.sunshinewzy.shining.utils.giveItem
 import io.github.sunshinewzy.shining.utils.subscribeEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -64,7 +65,7 @@ import taboolib.platform.BukkitPlugin
     RuntimeDependency(value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.14.1", transitive = false, isolated = true),
     RuntimeDependency(value = "!com.zaxxer:HikariCP:4.0.3", isolated = true)
 )
-object Shining : Plugin(), SPlugin {
+object Shining : Plugin(), ShiningPlugin {
     const val NAME = "Shining"
     const val COLOR_NAME = "§eShining"
     
@@ -189,7 +190,7 @@ object Shining : Plugin(), SPlugin {
                 val item = player.inventory.itemInMainHand
                 when(item.type) {
                     Material.DIAMOND -> {
-                        ShiningGuide.openLastElement(player)
+                        player.giveItem(ShiningGuide.getItem())
                     }
                     
                     Material.EMERALD -> {

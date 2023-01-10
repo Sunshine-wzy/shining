@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.shining.api.namespace
 
 import io.github.sunshinewzy.shining.Shining
-import io.github.sunshinewzy.shining.api.SPlugin
+import io.github.sunshinewzy.shining.api.ShiningPlugin
 import java.util.regex.Pattern
 
 
@@ -24,7 +24,7 @@ class NamespacedId(val namespace: Namespace, val id: String) {
 
     init {
         check(VALID_ID.matcher(id).matches()) {
-            "Invalid id. Must be [a-z0-9/._-]: $id"
+            "Invalid id. Must be [a-z0-9/_-]: $id"
         }
         
         val string = toString()
@@ -48,7 +48,7 @@ class NamespacedId(val namespace: Namespace, val id: String) {
      * @param plugin the plugin to use for the namespace
      * @param id the id to create
      */
-    constructor(plugin: SPlugin, id: String) : this(plugin.getNamespace(), id.lowercase())
+    constructor(plugin: ShiningPlugin, id: String) : this(plugin.getNamespace(), id.lowercase())
     
 
     override fun hashCode(): Int {
@@ -74,7 +74,7 @@ class NamespacedId(val namespace: Namespace, val id: String) {
     
 
     companion object {
-        val VALID_ID = Pattern.compile("[a-z0-9/._-]+")
+        val VALID_ID = Pattern.compile("[a-z0-9/_-]+")
         val NULL: NamespacedId by lazy { shining("null") }
         
 
@@ -112,7 +112,7 @@ class NamespacedId(val namespace: Namespace, val id: String) {
          * @return the created NamespacedId. null if invalid id
          * @see .fromString
          */
-        fun fromString(string: String, defaultNamespace: SPlugin?): NamespacedId? {
+        fun fromString(string: String, defaultNamespace: ShiningPlugin?): NamespacedId? {
             check(string.isNotEmpty()) {
                 "Input string must not be empty"
             }

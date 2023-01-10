@@ -2,7 +2,7 @@ package io.github.sunshinewzy.shining.api
 
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 
-interface SPlugin {
+interface ShiningPlugin {
 
     /**
      * Name of the plugin.
