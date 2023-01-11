@@ -2,6 +2,7 @@ package io.github.sunshinewzy.shining.core.lang
 
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.ShiningConfig
+import io.github.sunshinewzy.shining.api.addon.ShiningAddon
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.lang.node.LanguageNode
@@ -20,7 +21,6 @@ object ShiningLanguageManager : LanguageManager(getJarFile()) {
         languageFileMap.putAll(LanguageFileLoader.loadLanguageFiles(getLanguageCode(), Shining.javaClass.classLoader))
     }
     
-    
     fun registerAddonLanguageManager(manager: AddonLanguageManager) {
         addonLanguageManagerMap[manager.addon.getNamespace()] = manager
     }
@@ -32,5 +32,8 @@ object ShiningLanguageManager : LanguageManager(getJarFile()) {
         }
         return addonLanguageManagerMap[namespacedId.namespace]?.getLanguageNode(locale, namespacedId.toNodeString(prefix))
     }
+    
+    fun getAddonLanguageManager(addon: ShiningAddon): AddonLanguageManager? =
+        addonLanguageManagerMap[addon.getNamespace()]
 
 }

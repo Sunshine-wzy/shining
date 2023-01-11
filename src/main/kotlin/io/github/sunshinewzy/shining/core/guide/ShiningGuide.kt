@@ -8,6 +8,7 @@ import io.github.sunshinewzy.shining.core.dictionary.item.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.getGuideTeam
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.setupGuideTeam
 import io.github.sunshinewzy.shining.core.lang.LocalizedItem
+import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.SCollection
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
@@ -74,7 +75,7 @@ object ShiningGuide {
     }
 
     
-    const val TITLE = "Shining Guide"
+    const val TITLE = "menu-shining_guide-title"
     
     
     val edgeOrders = (((1 orderWith 1)..(9 orderWith 1)) + ((1 orderWith 6)..(9 orderWith 6)))
@@ -94,7 +95,7 @@ object ShiningGuide {
             }
 
             submit {
-                player.openMenu<Linked<GuideElement>>(TITLE) {
+                player.openMenu<Linked<GuideElement>>(player.getLangText(TITLE)) {
                     rows(6)
                     slots(slotOrders)
 
@@ -144,7 +145,7 @@ object ShiningGuide {
     }
     
     fun openSettings(player: Player) {
-        player.openMenu<Basic>("Shining Guide - 设置") {
+        player.openMenu<Basic>(player.getLangText("menu-shining_guide-settings-title")) {
             
         }
     }

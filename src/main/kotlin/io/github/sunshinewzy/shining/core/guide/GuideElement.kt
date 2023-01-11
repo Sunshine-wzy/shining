@@ -3,6 +3,8 @@ package io.github.sunshinewzy.shining.core.guide
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.core.guide.ElementCondition.*
 import io.github.sunshinewzy.shining.core.guide.data.ElementPlayerData
+import io.github.sunshinewzy.shining.core.lang.getDefaultLangText
+import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.interfaces.Updatable
 import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.SItem.Companion.getDisplayName
@@ -38,7 +40,7 @@ abstract class GuideElement(
     private val completedSymbol: ItemStack by SymbolItemDelegate {
         val symbolItem = symbol.clone()
         val loreList = LinkedList<String>()
-        loreList += COMPLETE_TEXT
+        loreList += getDefaultLangText(COMPLETE_TEXT)
         loreList += ""
         loreList += symbolItem.getLore()
         symbolItem.setLore(loreList)
@@ -47,9 +49,7 @@ abstract class GuideElement(
         SItem(
             Material.BARRIER,
             symbol.getMeta().displayName,
-            "&7$id",
-            LOCKED_TEXT,
-            ""
+            "&7$id"
         )
     }
     
@@ -76,7 +76,7 @@ abstract class GuideElement(
     fun unlock(player: Player): Boolean {
         for(lock in locks) {
             if(!lock.check(player)) {
-                player.sendMsg(Shining.prefixName, "&c您未达成解锁该元素的条件: ${lock.description(player)}")
+                player.sendMsg(Shining.prefixName, "${player.getLangText("menu-shining_guide-element-unlock-fail")}: ${lock.description(player)}")
                 lock.tip(player)
                 return false
             }
@@ -139,33 +139,35 @@ abstract class GuideElement(
             
             LOCKED_DEPENDENCY -> {
                 val theSymbol = lockedSymbol.clone()
-                val meta = theSymbol.getMeta()
+                val lore = theSymbol.getLore()
+                lore += player.getLangText(LOCKED_TEXT)
+                lore += ""
                 
-                val lore = meta.lore ?: mutableListOf()
-                lore += "§a> 请先完成下列元素"
+                lore += player.getLangText("menu-shining_guide-element-symbol-locked_dependency")
                 lore += ""
                 dependencies.forEach { 
                     if(!it.isPlayerCompleted(player)) {
                         lore += it.name
                     }
                 }
-                meta.lore = lore
                 
-                theSymbol.itemMeta = meta
-                theSymbol
+                theSymbol.setLore(lore)
             }
             
             LOCKED_LOCK -> {
                 val theSymbol = lockedSymbol.clone()
                 val lore = theSymbol.getLore()
-                lore += "&a> 点击解锁"
+                lore += player.getLangText(LOCKED_TEXT)
+                lore += ""
+                
+                lore += player.getLangText("menu-shining_guide-element-symbol-locked_lock")
                 lore += ""
 
                 locks.forEach {
                     lore += if(it.isConsume) {
-                        "&7需要消耗 ${it.description(player)}"
+                        "${player.getLangText("menu-shining_guide-element-symbol-locked_lock-need_consume")} ${it.description(player)}"
                     } else {
-                        "&7需要 ${it.description(player)}"
+                        "${player.getLangText("menu-shining_guide-element-symbol-locked_lock-need")} ${it.description(player)}"
                     }
                 }
 
@@ -191,8 +193,8 @@ abstract class GuideElement(
     
     
     companion object {
-        const val LOCKED_TEXT = "&4&l已锁定"
-        const val COMPLETE_TEXT = "&a&l已完成"
+        const val LOCKED_TEXT = "menu-shining_guide-element-text-locked"
+        const val COMPLETE_TEXT = "menu-shining_guide-element-text-complete"
     }
     
     

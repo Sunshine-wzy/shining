@@ -3,6 +3,7 @@ package io.github.sunshinewzy.shining.core.guide.element
 import io.github.sunshinewzy.shining.core.guide.ElementCondition
 import io.github.sunshinewzy.shining.core.guide.GuideElement
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
+import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.entity.Player
@@ -23,7 +24,7 @@ class GuideCategory(id: String, symbol: ItemStack, var tier: Int = 0) : GuideEle
     
     
     override fun openAction(player: Player) {
-        player.openMenu<Linked<GuideElement>>(ShiningGuide.TITLE) {
+        player.openMenu<Linked<GuideElement>>(player.getLangText(ShiningGuide.TITLE)) {
             rows(6)
             slots(ShiningGuide.slotOrders)
 

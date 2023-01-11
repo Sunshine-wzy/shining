@@ -2,6 +2,7 @@ package io.github.sunshinewzy.shining.core.guide.lock
 
 import io.github.sunshinewzy.shining.core.guide.ElementLock
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
+import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.containsItem
 import io.github.sunshinewzy.shining.utils.removeSItem
@@ -24,7 +25,7 @@ class LockItem(
     }
 
     override fun tip(player: Player) {
-        player.openMenu<Basic>(ShiningGuide.TITLE) { 
+        player.openMenu<Basic>(player.getLangText(ShiningGuide.TITLE)) { 
             rows(3)
             
             map(
