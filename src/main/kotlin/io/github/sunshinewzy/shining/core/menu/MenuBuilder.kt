@@ -39,7 +39,7 @@ object MenuBuilder {
                     true
                 }.register()
 
-                sendMessage("§f[${Shining.prefixName}§f] 请输入要搜索的物品名 (输入'§c.§f'以取消)")
+                sendMessage("§f[${Shining.prefix}§f] 请输入要搜索的物品名 (输入'§c.§f'以取消)")
                 closeInventory()
             }
 

@@ -9,13 +9,12 @@ interface ShiningPlugin {
      */
     fun getName(): String
 
-
     /**
      * The namespace may only contain lowercase alphanumeric characters, periods,
      * underscores, and hyphens.
      */
-    fun getNamespace(): Namespace {
-        return Namespace[getName().lowercase()]
-    }
+    fun getNamespace(): Namespace = Namespace[getName().lowercase()]
+    
+    fun getPrefix(): String = getName()
     
 }

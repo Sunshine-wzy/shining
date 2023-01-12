@@ -76,7 +76,7 @@ abstract class GuideElement(
     fun unlock(player: Player): Boolean {
         for(lock in locks) {
             if(!lock.check(player)) {
-                player.sendMsg(Shining.prefixName, "${player.getLangText("menu-shining_guide-element-unlock-fail")}: ${lock.description(player)}")
+                player.sendMsg(Shining.prefix, "${player.getLangText("menu-shining_guide-element-unlock-fail")}: ${lock.description(player)}")
                 lock.tip(player)
                 return false
             }

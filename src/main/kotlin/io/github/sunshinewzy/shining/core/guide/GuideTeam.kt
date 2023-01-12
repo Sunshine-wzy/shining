@@ -1,14 +1,17 @@
 package io.github.sunshinewzy.shining.core.guide
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.data.JacksonWrapper
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.executePlayerDataContainer
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.getDataContainer
+import io.github.sunshinewzy.shining.core.lang.getLangText
+import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
+import io.github.sunshinewzy.shining.core.lang.sendLangTextWithPrefix
 import io.github.sunshinewzy.shining.core.menu.MenuBuilder.onBack
 import io.github.sunshinewzy.shining.core.menu.MenuBuilder.openMultiPageMenu
 import io.github.sunshinewzy.shining.core.menu.MenuBuilder.openSearchMenu
 import io.github.sunshinewzy.shining.core.menu.Search
-import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.SItem.Companion.setLore
 import io.github.sunshinewzy.shining.objects.SItem.Companion.setName
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
@@ -107,9 +110,9 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<GuideTeam>(GuideTeams) {
         const val GUIDE_TEAM = "guide_team"
 
-        private val createTeamItem = SItem(Material.SLIME_BALL, "&f创建队伍")
-        private val joinTeamItem = SItem(Material.ENDER_PEARL, "&f加入队伍")
-        private val editTeamNameItem = SItem(Material.NAME_TAG, "&f编辑队伍名称")
+        private val createTeamItem = NamespacedIdItem(Material.SLIME_BALL, NamespacedId(Shining, "shining_guide-create_team"))
+        private val joinTeamItem = NamespacedIdItem(Material.ENDER_PEARL, NamespacedId(Shining, "shining_guide-join_team"))
+        private val editTeamNameItem = NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-edit_team_name"))
 
 
         private suspend fun create(owner: Player, name: String, symbol: ItemStack): Boolean {
@@ -170,8 +173,8 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                     "ooaoooboo"
                 )
 
-                set('a', createTeamItem)
-                set('b', joinTeamItem)
+                set('a', createTeamItem.toLangItem(this@setupGuideTeam))
+                set('b', joinTeamItem.toLangItem(this@setupGuideTeam))
 
                 onClick('a') {
                     createGuideTeam()
@@ -187,7 +190,7 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
 
         private fun Player.createGuideTeam(name: String = "", symbol: ItemStack = ItemStack(Material.GRASS_BLOCK)) {
-            openMenu<Basic>("SGuide - 创建队伍") {
+            openMenu<Basic>(getLangText("menu-shining_guide-team-create-title")) {
                 rows(3)
 
                 map(
@@ -195,15 +198,23 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                     "obocoodoo"
                 )
 
-                set('b', editTeamNameItem.clone().setLore("", "&a> 当前队伍名称", "", "&e$name"))
-                set('c', symbol.clone().setName("&f编辑队伍图标"))
-                set('d', createTeamItem.clone().setLore("", "&a> 当前队伍信息", "", "&f$name"))
+                set('b', editTeamNameItem.toLangItem(this@createGuideTeam).let { langItem ->
+                    langItem.getSectionString("create")?.let { text ->
+                        langItem.clone().setLore("", text, "", "&e$name")
+                    } ?: langItem
+                })
+                set('c', symbol.clone().setName(getLangText("menu-shining_guide-team-create-edit_symbol")))
+                set('d', createTeamItem.toLangItem(this@createGuideTeam).let { langItem ->
+                    langItem.getSectionString("create")?.let { text ->
+                        langItem.clone().setLore("", text, "", "&f$name")
+                    } ?: langItem
+                })
 
                 
                 onClick('b') {
-                    sendMsg(Shining.prefixName, "请输入队伍名称")
+                    sendMsg(Shining.prefix, getLangText("menu-shining_guide-team-create-input_name"))
                     
-                    PlayerChatSubscriber(this@createGuideTeam, "队伍ID编辑") {
+                    PlayerChatSubscriber(this@createGuideTeam, getLangText("menu-shining_guide-team-create-edit_id")) {
                         submit {
                             createGuideTeam(message, symbol)
                         }
@@ -214,7 +225,7 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                 }
 
                 onClick('c') {
-                    openSearchMenu<ItemStack>("SGuide - 选择队伍图标") {
+                    openSearchMenu<ItemStack>(getLangText("menu-shining_guide-team-create-search_symbol-title")) {
                         searchMap { Search.allItemMap }
 
                         onClick { event, item ->
@@ -235,18 +246,18 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                     if(name.isNotBlank()) {
                         Shining.scope.launch(Dispatchers.IO) {
                             if(create(this@createGuideTeam, name, symbol)) {
-                                sendMsg(Shining.prefixName, "&a队伍 &f$name &a创建成功，SGuide功能已开启！")
+                                sendLangTextWithPrefix("menu-shining_guide-team-create-success", Shining.prefix, name)
                                 submit {
                                     closeInventory()
                                     playSound(location, Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f)
                                 }
                             } else {
-                                sendMsg(Shining.prefixName, "&c队伍ID已存在！")
+                                sendLangTextWithPrefix("menu-shining_guide-team-create-fail-id_already_exists")
                                 playSound(location, Sound.ENTITY_VILLAGER_NO, 1f, 1f)
                             }
                         }
                     } else {
-                        sendMsg(Shining.prefixName, "&c队伍ID和名称都不能为空！")
+                        sendLangTextWithPrefix("menu-shining_guide-team-create-fail-id_or_name_empty")
                         playSound(location, Sound.ENTITY_VILLAGER_NO, 1f, 1f)
                     }
                 }
@@ -277,7 +288,7 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                 }
                 
                 submit {
-                    openMultiPageMenu<GuideTeam>("SGuide - 加入队伍") {
+                    openMultiPageMenu<GuideTeam>(getLangText("menu-shining_guide-team-join-title")) {
                         elements { teams }
 
                         var applyTeamElement: GuideTeam? = null
@@ -310,7 +321,7 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                         onClick { event, element ->
                             if(applyTeam == null) {
                                 element.apply(this@joinGuideTeam)
-                                sendMsg(Shining.prefixName, "&a申请加入队伍 '&f${element.name}&a' 成功，等待队长 '&f${element.owner.playerName}&a' 同意")
+                                sendMsg(Shining.prefix, "&a申请加入队伍 '&f${element.name}&a' 成功，等待队长 '&f${element.owner.playerName}&a' 同意")
                                 closeInventory()
                             } else {
                                 openMenu<Basic>("Shining Guide - 队伍重复申请") { 
@@ -329,7 +340,7 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                                         lore += "§c新的队伍 '§f${element.name}§c' 吗?"
                                     }) {
                                         element.apply(this@joinGuideTeam)
-                                        sendMsg(Shining.prefixName, "&a申请加入队伍 '&f${element.name}&a' 成功，等待队长 '&f${element.owner.playerName}&a' 同意")
+                                        sendMsg(Shining.prefix, "&a申请加入队伍 '&f${element.name}&a' 成功，等待队长 '&f${element.owner.playerName}&a' 同意")
                                         closeInventory()
                                     }
                                     

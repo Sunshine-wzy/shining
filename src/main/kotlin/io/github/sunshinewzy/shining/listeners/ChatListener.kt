@@ -23,7 +23,7 @@ object ChatListener {
                 if(subscriber.isInvisible) e.isCancelled = true
                 
                 if(subscriber.isDotCancel && e.message == ".") {
-                    e.player.sendMsg(Shining.prefixName, "&6${subscriber.description} &6已取消")
+                    e.player.sendMsg(Shining.prefix, "&6${subscriber.description} &6已取消")
                     shouldRemoveSubscribers += subscriber
                     return@forEach
                 }

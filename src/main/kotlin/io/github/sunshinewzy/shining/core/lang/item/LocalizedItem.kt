@@ -1,7 +1,8 @@
-package io.github.sunshinewzy.shining.core.lang
+package io.github.sunshinewzy.shining.core.lang.item
 
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.lang.LanguageNodePrefix.ITEM
+import io.github.sunshinewzy.shining.core.lang.getLanguageNode
 import io.github.sunshinewzy.shining.core.lang.node.LanguageNode
 import io.github.sunshinewzy.shining.core.lang.node.ListNode
 import io.github.sunshinewzy.shining.core.lang.node.SectionNode
@@ -12,39 +13,10 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-class LocalizedItem(item: ItemStack, val languageNode: LanguageNode) : ItemStack(item) {
+open class LocalizedItem(item: ItemStack, val languageNode: LanguageNode) : ItemStack(item) {
 
     init {
-        when(languageNode) {
-            is TextNode -> {
-                setName(languageNode.text)
-            }
-            
-            is ListNode -> {
-                val list = LinkedList<String>()
-                languageNode.list.filterIsInstance<TextNode>().mapTo(list) { it.text }
-                
-                if(list.isNotEmpty()) {
-                    setName(list.removeFirst())
-                    
-                    if(list.isNotEmpty()) {
-                        setLore(list)
-                    }
-                }
-            }
-            
-            is SectionNode -> {
-                languageNode.section.getString("name")?.let { 
-                    setName(it)
-                }
-
-                languageNode.section.getStringList("lore").let {
-                    if(it.isNotEmpty()) {
-                        setLore(it)
-                    }
-                }
-            }
-        }
+        localize(languageNode)
     }
     
     constructor(item: ItemStack, amount: Int, languageNode: LanguageNode) : this(item, languageNode) {
@@ -59,5 +31,53 @@ class LocalizedItem(item: ItemStack, val languageNode: LanguageNode) : ItemStack
     constructor(type: Material, id: NamespacedId) : this(type, id.getLanguageNode(ITEM.prefix))
     constructor(type: Material, amount: Int, id: NamespacedId) : this(type, amount, id.getLanguageNode(ITEM.prefix))
     constructor(type: Material, damage: Short, amount: Int, id: NamespacedId) : this(type, damage, amount, id.getLanguageNode(ITEM.prefix))
+    
+    
+    fun getTextNode(): TextNode? = languageNode as? TextNode
+    fun getListNode(): ListNode? = languageNode as? ListNode
+    fun getSectionNode(): SectionNode? = languageNode as? SectionNode
+    
+    fun getSectionString(path: String): String? =
+        getSectionNode()?.section?.getString(path)
+    
+    
+    companion object {
+        
+        fun ItemStack.localize(languageNode: LanguageNode): ItemStack {
+            when(languageNode) {
+                is TextNode -> {
+                    setName(languageNode.text)
+                }
+
+                is ListNode -> {
+                    val list = LinkedList<String>()
+                    languageNode.list.filterIsInstance<TextNode>().mapTo(list) { it.text }
+
+                    if(list.isNotEmpty()) {
+                        setName(list.removeFirst())
+
+                        if(list.isNotEmpty()) {
+                            setLore(list)
+                        }
+                    }
+                }
+
+                is SectionNode -> {
+                    languageNode.section.getString("name")?.let {
+                        setName(it)
+                    }
+
+                    languageNode.section.getStringList("lore").let {
+                        if(it.isNotEmpty()) {
+                            setLore(it)
+                        }
+                    }
+                }
+            }
+            
+            return this
+        }
+        
+    }
     
 }

@@ -15,7 +15,7 @@ import taboolib.module.ui.type.Basic
 class LockItem(
     var item: ItemStack,
     isConsume: Boolean = true
-) : ElementLock({ player -> "&e物品 ${item.getName(player)} x${item.amount}" }, isConsume) {
+) : ElementLock({ player -> "${player.getLangText("menu-shining_guide-lock-item-description")} ${item.getName(player)} x${item.amount}" }, isConsume) {
 
     override fun check(player: Player): Boolean =
         player.inventory.containsItem(item)

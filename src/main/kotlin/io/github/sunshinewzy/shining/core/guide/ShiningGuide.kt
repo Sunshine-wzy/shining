@@ -7,8 +7,8 @@ import io.github.sunshinewzy.shining.core.dictionary.DictionaryRegistry
 import io.github.sunshinewzy.shining.core.dictionary.item.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.getGuideTeam
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.setupGuideTeam
-import io.github.sunshinewzy.shining.core.lang.LocalizedItem
 import io.github.sunshinewzy.shining.core.lang.getLangText
+import io.github.sunshinewzy.shining.core.lang.item.LocalizedItem
 import io.github.sunshinewzy.shining.objects.SCollection
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith

@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.core.lang
 
+import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.ShiningConfig.language
 import io.github.sunshinewzy.shining.api.addon.ShiningAddon
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
@@ -9,6 +10,7 @@ import io.github.sunshinewzy.shining.core.lang.node.SectionNode
 import io.github.sunshinewzy.shining.core.lang.node.TextNode
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import taboolib.module.chat.colored
 
 fun NamespacedId.toNodeString(): String =
     "${namespace.name}-$id"
@@ -43,6 +45,12 @@ fun getDefaultLangTextOrNull(node: String): String? =
 fun getDefaultLangText(node: String): String =
     ShiningLanguageManager.getLangText(language, node)
 
+fun getDefaultLangTextOrNull(node: String, vararg args: String): String? =
+    ShiningLanguageManager.getLangTextOrNull(language, node, *args)
+
+fun getDefaultLangText(node: String, vararg args: String): String =
+    ShiningLanguageManager.getLangText(language, node, *args)
+
 
 fun getDefaultLanguageNode(addon: ShiningAddon, node: String): LanguageNode? =
     ShiningLanguageManager.getAddonLanguageManager(addon)?.getLanguageNode(language, node)
@@ -61,6 +69,13 @@ fun getDefaultLangTextOrNull(addon: ShiningAddon, node: String): String? =
 
 fun getDefaultLangText(addon: ShiningAddon, node: String): String =
     ShiningLanguageManager.getAddonLanguageManager(addon)?.getLangText(language, node)
+        ?: throw LanguageException("Cannot find the language manager of the addon '${addon.getName()}'.")
+
+fun getDefaultLangTextOrNull(addon: ShiningAddon, node: String, vararg args: String): String? =
+    ShiningLanguageManager.getAddonLanguageManager(addon)?.getLangTextOrNull(language, node, *args)
+
+fun getDefaultLangText(addon: ShiningAddon, node: String, vararg args: String): String =
+    ShiningLanguageManager.getAddonLanguageManager(addon)?.getLangText(language, node, *args)
         ?: throw LanguageException("Cannot find the language manager of the addon '${addon.getName()}'.")
 
 
@@ -87,7 +102,31 @@ fun CommandSender.getLangText(node: String): String =
 
 fun CommandSender.sendLangText(node: String): Boolean =
     getLangTextOrNull(node)?.let { 
-        sendMessage(it)
+        sendMessage(it.colored())
+        true
+    } ?: false
+
+fun CommandSender.sendLangTextWithPrefix(node: String, prefix: String = Shining.prefix): Boolean =
+    getLangTextOrNull(node)?.let {
+        sendMessage("&f[$prefix&f] $it".colored())
+        true
+    } ?: false
+
+fun CommandSender.getLangTextOrNull(node: String, vararg args: String): String? =
+    ShiningLanguageManager.getLangTextOrNull(getLocale(), node, *args)
+
+fun CommandSender.getLangText(node: String, vararg args: String): String =
+    ShiningLanguageManager.getLangText(getLocale(), node, *args)
+
+fun CommandSender.sendLangText(node: String, vararg args: String): Boolean =
+    getLangTextOrNull(node, *args)?.let {
+        sendMessage(it.colored())
+        true
+    } ?: false
+
+fun CommandSender.sendLangTextWithPrefix(node: String, prefix: String = Shining.prefix, vararg args: String): Boolean =
+    getLangTextOrNull(node, *args)?.let {
+        sendMessage("&f[$prefix&f] $it".colored())
         true
     } ?: false
 
@@ -113,6 +152,31 @@ fun CommandSender.getLangText(addon: ShiningAddon, node: String): String =
 
 fun CommandSender.sendLangText(addon: ShiningAddon, node: String): Boolean =
     getLangTextOrNull(addon, node)?.let {
-        sendMessage(it)
+        sendMessage(it.colored())
+        true
+    } ?: false
+
+fun CommandSender.sendLangTextWithPrefix(addon: ShiningAddon, node: String, prefix: String = addon.getPrefix()): Boolean =
+    getLangTextOrNull(addon, node)?.let {
+        sendMessage("&f[$prefix&f] $it".colored())
+        true
+    } ?: false
+
+fun CommandSender.getLangTextOrNull(addon: ShiningAddon, node: String, vararg args: String): String? =
+    ShiningLanguageManager.getAddonLanguageManager(addon)?.getLangTextOrNull(getLocale(), node, *args)
+
+fun CommandSender.getLangText(addon: ShiningAddon, node: String, vararg args: String): String =
+    ShiningLanguageManager.getAddonLanguageManager(addon)?.getLangText(getLocale(), node, *args)
+        ?: throw LanguageException("Cannot find the language manager of the addon '${addon.getName()}'.")
+
+fun CommandSender.sendLangText(addon: ShiningAddon, node: String, vararg args: String): Boolean =
+    getLangTextOrNull(addon, node, *args)?.let {
+        sendMessage(it.colored())
+        true
+    } ?: false
+
+fun CommandSender.sendLangText(addon: ShiningAddon, node: String, prefix: String = addon.getPrefix(), vararg args: String): Boolean =
+    getLangTextOrNull(addon, node, *args)?.let {
+        sendMessage("&f[$prefix&f] $it".colored())
         true
     } ?: false

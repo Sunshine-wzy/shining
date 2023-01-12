@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.shining.commands
 
 import io.github.sunshinewzy.shining.Shining.COLOR_NAME
-import io.github.sunshinewzy.shining.Shining.prefixName
+import io.github.sunshinewzy.shining.Shining.prefix
 import io.github.sunshinewzy.shining.core.data.DataManager
 import io.github.sunshinewzy.shining.core.machine.legacy.SMachineWrench
 import io.github.sunshinewzy.shining.objects.SItem
@@ -27,7 +27,7 @@ object SunSTCommand {
                     val item = sender.inventory.itemInMainHand
                     if(item.type != Material.AIR) {
                         ItemEditor.editItem(item, sender)
-                    } else sender.sendMsg(prefixName, "&c手持物品不能为空")
+                    } else sender.sendMsg(prefix, "&c手持物品不能为空")
                 }
             }
             

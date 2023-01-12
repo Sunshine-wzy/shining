@@ -1,6 +1,6 @@
 options:
   # 前缀名称
-  prefix_name: &eShining
+  prefix: &eShining
   language: zh_CN
 
 # SQL数据库

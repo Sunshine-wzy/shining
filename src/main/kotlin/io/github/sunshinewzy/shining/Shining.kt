@@ -77,7 +77,7 @@ object Shining : Plugin(), ShiningPlugin {
     
     val plugin: BukkitPlugin by lazy { BukkitPlugin.getInstance() }
     val pluginManager: PluginManager by lazy { Bukkit.getPluginManager() }
-    val prefixName: String by lazy { config.getString("prefix_name")?.colored() ?: COLOR_NAME }
+    val prefix: String by lazy { config.getString("prefix")?.colored() ?: COLOR_NAME }
     val machineManager: IMachineManager by lazy { MachineManager }
     val objectMapper: ObjectMapper = jsonMapper { 
         addModule(SerializationModules.shining)
@@ -112,7 +112,10 @@ object Shining : Plugin(), ShiningPlugin {
     override fun getNamespace(): Namespace {
         return namespace
     }
-    
+
+    override fun getPrefix(): String {
+        return prefix
+    }
 
     private fun init() {
         try {

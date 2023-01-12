@@ -44,7 +44,7 @@ object ItemEditor {
             onClick('a') { event ->
                 PlayerChatSubscriber(player, "物品名称编辑") {
                     item.setName(message)
-                    player.sendMsg(Shining.prefixName, "&a物品名称编辑成功")
+                    player.sendMsg(Shining.prefix, "&a物品名称编辑成功")
 
                     submit {
                         editItem(item, player)
@@ -52,7 +52,7 @@ object ItemEditor {
                     true
                 }.register()
 
-                player.sendMessage("§f[${Shining.prefixName}§f] 请输入新的物品名称 (可用'§a&§f'表示颜色, 输入'§c.§f'以取消)")
+                player.sendMessage("§f[${Shining.prefix}§f] 请输入新的物品名称 (可用'§a&§f'表示颜色, 输入'§c.§f'以取消)")
                 player.closeInventory()
             }
 
@@ -88,7 +88,7 @@ object ItemEditor {
                                         lore[index] = message.colored()
                                         meta.lore = lore
                                         item.itemMeta = meta
-                                        player.sendMsg(Shining.prefixName, "&a物品Lore编辑成功")
+                                        player.sendMsg(Shining.prefix, "&a物品Lore编辑成功")
 
                                         submit {
                                             editLore(item, player)
@@ -99,7 +99,7 @@ object ItemEditor {
                                 true
                             }.register()
 
-                            player.sendMessage("§f[${Shining.prefixName}§f] 请输入新的Lore (可用'§a&§f'表示颜色, 输入'§c.§f'以取消)")
+                            player.sendMessage("§f[${Shining.prefix}§f] 请输入新的Lore (可用'§a&§f'表示颜色, 输入'§c.§f'以取消)")
                             player.closeInventory()
                         }
                     }
@@ -113,7 +113,7 @@ object ItemEditor {
                                         lore.add(index, message.colored())
                                         meta.lore = lore
                                         item.itemMeta = meta
-                                        player.sendMsg(Shining.prefixName, "&a物品Lore添加成功")
+                                        player.sendMsg(Shining.prefix, "&a物品Lore添加成功")
 
                                         submit {
                                             editLore(item, player)
@@ -124,7 +124,7 @@ object ItemEditor {
                                 true
                             }.register()
 
-                            player.sendMessage("§f[${Shining.prefixName}§f] 请输入要添加的Lore (可用'§a&§f'表示颜色, 输入'§c.§f'以取消)")
+                            player.sendMessage("§f[${Shining.prefix}§f] 请输入要添加的Lore (可用'§a&§f'表示颜色, 输入'§c.§f'以取消)")
                             player.closeInventory()
                         }
                     }
@@ -137,7 +137,7 @@ object ItemEditor {
                                     lore.removeAt(index)
                                     meta.lore = lore
                                     item.itemMeta = meta
-                                    player.sendMsg(Shining.prefixName, "&a物品Lore删除成功")
+                                    player.sendMsg(Shining.prefix, "&a物品Lore删除成功")
                                     player.closeInventory()
 
                                     editLore(item, player)
@@ -158,7 +158,7 @@ object ItemEditor {
                             lore += message.colored()
                             meta.lore = lore
                             item.itemMeta = meta
-                            player.sendMsg(Shining.prefixName, "&a物品Lore添加成功")
+                            player.sendMsg(Shining.prefix, "&a物品Lore添加成功")
 
                             submit {
                                 editLore(item, player)
@@ -167,7 +167,7 @@ object ItemEditor {
                             true
                         }.register()
 
-                        player.sendMessage("§f[${Shining.prefixName}§f] 请输入要添加的Lore (可用'§a&§f'表示颜色, 输入'§c.§f'以取消)")
+                        player.sendMessage("§f[${Shining.prefix}§f] 请输入要添加的Lore (可用'§a&§f'表示颜色, 输入'§c.§f'以取消)")
                         player.closeInventory()
                     }
                 }
