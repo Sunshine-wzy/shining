@@ -337,11 +337,8 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                                     
                                     set('a', buildItem(ShiningIcon.CONFIRM) {
                                         val theApplyTeamElement = applyTeamElement
-                                        lore += if(theApplyTeamElement != null) {
-                                            getLangText("menu-shining_guide-team-join-reapply-existing_team_name", theApplyTeamElement.name)
-                                        } else {
-                                            getLangText("menu-shining_guide-team-join-reapply-existing_team_id", applyTeam)
-                                        }
+                                        lore += getLangText("menu-shining_guide-team-join-reapply-existing_team").colored()
+                                        lore += if(theApplyTeamElement != null) "§e\"§f${theApplyTeamElement.name}§e\"" else "§ewith ID \"§f$applyTeam§e\""
                                         getLangListNode("menu-shining_guide-team-join-reapply-cancel_and_apply")
                                             ?.format(element.name)
                                             ?.let { lore += it.colored() }

@@ -125,7 +125,7 @@ class SMachineWrench(
         }
 
         menu.setAllTurnPageButton(9, 6, STurnPageType.NEXT_PAGE, ShiningIcon.PAGE_NEXT.item)
-        menu.setAllTurnPageButton(1, 6, STurnPageType.PRE_PAGE, ShiningIcon.PAGE_PRE.item)
+        menu.setAllTurnPageButton(1, 6, STurnPageType.PRE_PAGE, ShiningIcon.PAGE_PREVIOUS.item)
     }
 
     fun addMachine(machine: SMachine) {

@@ -45,7 +45,7 @@ class GuideCategory(id: String, symbol: ItemStack, var tier: Int = 0) : GuideEle
 
             setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
                 if(hasPreviousPage) {
-                    ShiningIcon.PAGE_PRE_GLASS_PANE.item
+                    ShiningIcon.PAGE_PREVIOUS_GLASS_PANE.item
                 } else ShiningIcon.EDGE.item
             }
 

@@ -117,7 +117,7 @@ class ItemCraftTask(
                             val inv = getTaskInv(player)
                             if(value == size - 1)
                                 inv.setItem(nextPageOrder, whiteGlass)
-                            inv.setItem(prePageOrder, ShiningIcon.PAGE_PRE.item)
+                            inv.setItem(prePageOrder, ShiningIcon.PAGE_PREVIOUS.item)
 
                             inv.setCraftSlotItem(pages[value])
                             invHolder.page = value + 1
@@ -136,7 +136,7 @@ class ItemCraftTask(
                         if(value > 1){
                             val inv = getTaskInv(player)
                             if(value > 2)
-                                inv.setItem(prePageOrder, ShiningIcon.PAGE_PRE.item)
+                                inv.setItem(prePageOrder, ShiningIcon.PAGE_PREVIOUS.item)
                             inv.setItem(nextPageOrder, ShiningIcon.PAGE_NEXT.item)
 
                             inv.setCraftSlotItem(pages[value - 2])
@@ -213,7 +213,7 @@ class ItemCraftTask(
                             if(value < size){
                                 if(value == size - 1)
                                     inv.setItem(nextPageOrder, whiteGlass)
-                                inv.setItem(prePageOrder, ShiningIcon.PAGE_PRE.item)
+                                inv.setItem(prePageOrder, ShiningIcon.PAGE_PREVIOUS.item)
 
                                 inv.setCraftSlotItem(pages[value])
                                 
@@ -229,7 +229,7 @@ class ItemCraftTask(
                         if(value in 1..size){
                             if(value > 1){
                                 if(value > 2)
-                                    inv.setItem(prePageOrder, ShiningIcon.PAGE_PRE.item)
+                                    inv.setItem(prePageOrder, ShiningIcon.PAGE_PREVIOUS.item)
                                 inv.setItem(nextPageOrder, ShiningIcon.PAGE_NEXT.item)
 
                                 inv.setCraftSlotItem(pages[value - 2])

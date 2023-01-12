@@ -77,6 +77,7 @@ object Shining : Plugin(), ShiningPlugin {
     
     val plugin: BukkitPlugin by lazy { BukkitPlugin.getInstance() }
     val pluginManager: PluginManager by lazy { Bukkit.getPluginManager() }
+    @get:JvmName("prefix")
     val prefix: String by lazy { config.getString("prefix")?.colored() ?: COLOR_NAME }
     val machineManager: IMachineManager by lazy { MachineManager }
     val objectMapper: ObjectMapper = jsonMapper { 

@@ -246,7 +246,7 @@ class SMenu(
     
     fun setDefaultTurnPageButton(): SMenu {
         setAllTurnPageButton(9, size, NEXT_PAGE, ShiningIcon.PAGE_NEXT.item)
-        setAllTurnPageButton(1, size, PRE_PAGE, ShiningIcon.PAGE_PRE.item)
+        setAllTurnPageButton(1, size, PRE_PAGE, ShiningIcon.PAGE_PREVIOUS.item)
         return this
     }
 

@@ -6,6 +6,25 @@ item-shining-shining_guide-join_team: '&f加入队伍'
 item-shining-shining_guide-edit_team_name:
   name: '&f编辑队伍名称'
   create: '&a> 当前队伍名称'
+item-shining-icon-back: ['&c⇦ 返回', '', '&f左键：&7返回上一页', '&fShift + 左键：&7返回主菜单']
+item-shining-icon-back_last_page: '&b⇦ 返回'
+item-shining-icon-submit: '&a>> 点击以提交任务 <<'
+item-shining-icon-workbench: '&a>> &d使用工作台合成 &a<<'
+item-shining-icon-page_next: '&a下一页 ⇩'
+item-shining-icon-page_previous: '&a上一页 ⇧'
+item-shining-icon-home: '&e⇨ &a返回主界面 &e⇦'
+item-shining-icon-page_next_glass_pane: '&a下一页 &e⇨'
+item-shining-icon-page_previous_glass_pane: '&e⇦ &a上一页'
+item-shining-icon-rename: '&e重命名'
+item-shining-icon-edit_lore: '&a编辑Lore'
+item-shining-icon-remove_mode: ['&c删除模式', '&7已关闭', '', '&a> 点击开启']
+item-shining-icon-remove_mode_shiny: ['&c删除模式', '&7已开启', '', '&a> 点击关闭']
+item-shining-icon-add_mode: ['&e增添模式', '&7已关闭', '', '&a> 点击开启']
+item-shining-icon-add_mode_shiny: ['&e增添模式', '&7已开启', '', '&a> 点击开启']
+item-shining-icon-search: '&a搜索'
+item-shining-icon-confirm: '&a确认'
+item-shining-icon-cancel: '&c取消'
+item-shining-icon-settings: '&e设置'
 menu-shining_guide-title: 'Shining 指南'
 menu-shining_guide-settings-title: 'Shining 指南 - 设置'
 menu-shining_guide-element-unlock-fail: '&c您未达成解锁该元素的条件'
@@ -30,6 +49,5 @@ menu-shining_guide-team-join-already_apply: ['&b您已申请加入该队伍，�
 menu-shining_guide-team-join-team_symbol: ['', '&e> 队长', '&f{0}', '', '&a> 队员']
 menu-shining_guide-team-join-apply-success: '&a申请加入队伍 "&f{0}&a" 成功，等待队长 "&f{1}&a" 同意'
 menu-shining_guide-team-join-reapply-title: 'Shining 指南 - 队伍重复申请'
-menu-shining_guide-team-join-reapply-existing_team_name: '&e您已经申请加入队伍 &f{0}'
-menu-shining_guide-team-join-reapply-existing_team_id: '&e您已经申请加入ID为 &f{0} &e的队伍'
+menu-shining_guide-team-join-reapply-existing_team: '&e您已经申请加入队伍'
 menu-shining_guide-team-join-reapply-cancel_and_apply: ['&c要取消原有申请并申请加入', '&c新的队伍 "&f{0}&c" 吗?']
