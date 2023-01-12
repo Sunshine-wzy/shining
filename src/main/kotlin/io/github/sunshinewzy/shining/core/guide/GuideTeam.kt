@@ -5,6 +5,7 @@ import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.data.JacksonWrapper
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.executePlayerDataContainer
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.getDataContainer
+import io.github.sunshinewzy.shining.core.lang.getLangListNode
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.lang.sendLangTextWithPrefix
@@ -30,6 +31,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import taboolib.common.LifeCycle
 import taboolib.common.platform.SkipTo
 import taboolib.common.platform.function.submit
+import taboolib.module.chat.colored
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 import taboolib.platform.util.buildItem
@@ -165,7 +167,7 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         }
 
         fun Player.setupGuideTeam() {
-            openMenu<Basic>("SGuide - 创建或加入队伍") {
+            openMenu<Basic>(getLangText("menu-shining_guide-team-setup-title")) {
                 rows(3)
 
                 map(
@@ -297,7 +299,9 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                                 applyTeamElement = element
                                 return@onGenerate buildItem(element.symbol) {
                                     this.name = "§f${element.name}"
-                                    lore += listOf("§b您已申请加入该队伍，请等待队长同意申请", "", "§e> 队长", "§f${element.owner.offlinePlayer.name}", "", "§a> 队员")
+                                    getLangListNode("menu-shining_guide-team-join-already_apply")
+                                        ?.format(element.owner.offlinePlayer.name)
+                                        ?.let { lore += it.colored() }
                                     element.members.value.forEach {
                                         lore += "§f${it.offlinePlayer.name}"
                                     }
@@ -307,7 +311,9 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                             
                             buildItem(element.symbol) {
                                 this.name = "§f${element.name}"
-                                lore += listOf("", "§e> 队长", "§f${element.owner.offlinePlayer.name}", "", "§a> 队员")
+                                getLangListNode("menu-shining_guide-team-join-team_symbol")
+                                    ?.format(element.owner.offlinePlayer.name)
+                                    ?.let { lore += it.colored() }
                                 element.members.value.forEach {
                                     lore += "§f${it.offlinePlayer.name}"
                                 }
@@ -321,10 +327,10 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                         onClick { event, element ->
                             if(applyTeam == null) {
                                 element.apply(this@joinGuideTeam)
-                                sendMsg(Shining.prefix, "&a申请加入队伍 '&f${element.name}&a' 成功，等待队长 '&f${element.owner.playerName}&a' 同意")
+                                sendLangTextWithPrefix("menu-shining_guide-team-join-apply-success", Shining.prefix, element.name, element.owner.playerName)
                                 closeInventory()
                             } else {
-                                openMenu<Basic>("Shining Guide - 队伍重复申请") { 
+                                openMenu<Basic>(getLangText("menu-shining_guide-team-join-reapply-title")) { 
                                     rows(1)
                                     
                                     map("oooaobooo")
@@ -332,15 +338,16 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                                     set('a', buildItem(ShiningIcon.CONFIRM) {
                                         val theApplyTeamElement = applyTeamElement
                                         lore += if(theApplyTeamElement != null) {
-                                            "§e您已经申请加入队伍 §f${theApplyTeamElement.name}"
+                                            getLangText("menu-shining_guide-team-join-reapply-existing_team_name", theApplyTeamElement.name)
                                         } else {
-                                            "§e您已经申请加入ID为 §f$applyTeam §e的队伍"
+                                            getLangText("menu-shining_guide-team-join-reapply-existing_team_id", applyTeam)
                                         }
-                                        lore += "§c要取消原有申请并申请加入"
-                                        lore += "§c新的队伍 '§f${element.name}§c' 吗?"
+                                        getLangListNode("menu-shining_guide-team-join-reapply-cancel_and_apply")
+                                            ?.format(element.name)
+                                            ?.let { lore += it.colored() }
                                     }) {
                                         element.apply(this@joinGuideTeam)
-                                        sendMsg(Shining.prefix, "&a申请加入队伍 '&f${element.name}&a' 成功，等待队长 '&f${element.owner.playerName}&a' 同意")
+                                        sendLangTextWithPrefix("menu-shining_guide-team-join-apply-success", Shining.prefix, element.name, element.owner.playerName)
                                         closeInventory()
                                     }
                                     

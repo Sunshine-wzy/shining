@@ -5,7 +5,6 @@ import io.github.sunshinewzy.shining.core.lang.node.LanguageNode
 import io.github.sunshinewzy.shining.core.lang.node.ListNode
 import io.github.sunshinewzy.shining.core.lang.node.SectionNode
 import io.github.sunshinewzy.shining.core.lang.node.TextNode
-import java.util.*
 
 interface ILanguageManager {
     
@@ -43,42 +42,10 @@ interface ILanguageManager {
     fun getLangText(locale: String, node: String): String =
         getLangTextOrNull(locale, node) ?: "{$locale:$node}"
     
-    fun getLangTextOrNull(locale: String, node: String, vararg args: String): String? {
-        val text = getLangTextOrNull(locale, node) ?: return null
-        val list = argRegex.findAll(text).toList()
-        if(list.isEmpty()) return text
+    fun getLangTextOrNull(locale: String, node: String, vararg args: String?): String? =
+        getLangTextNode(locale, node)?.format(*args)
 
-        val map = TreeMap<Int, Pair<Int, String>>()
-        list.forEach { res ->
-            args.getOrNull(res.value.substring(1, res.value.lastIndex).toInt())?.let {
-                map[res.range.first] = res.range.last to it
-            }
-        }
-        
-        return buildString {
-            var last = 0
-            for((start, pair) in map) {
-                val (end, arg) = pair
-                
-                append(text.substring(last, start))
-                append(arg)
-                
-                last = end + 1
-                if(last >= text.length) break
-            }
-            
-            if(last < text.length) {
-                append(text.substring(last))
-            }
-        }
-    }
-
-    fun getLangText(locale: String, node: String, vararg args: String): String =
+    fun getLangText(locale: String, node: String, vararg args: String?): String =
         getLangTextOrNull(locale, node, *args) ?: "{$locale:$node:${args.joinToString()}}"
-    
-    
-    companion object {
-        val argRegex = Regex("\\{[0-9]+}")
-    }
     
 }

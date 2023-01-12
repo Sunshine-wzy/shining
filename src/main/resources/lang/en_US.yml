@@ -1,4 +1,11 @@
 item-shining-shining_guide: '&eShining &aGuide'
+item-shining-shining_guide-create_team:
+  name: '&fCreate a team'
+  create: '&a> Information about the current team'
+item-shining-shining_guide-join_team: '&fJoin a team'
+item-shining-shining_guide-edit_team_name:
+  name: '&fEdit the name of the team'
+  create: '&a> Name of the current team'
 menu-shining_guide-title: 'Shining Guide'
 menu-shining_guide-settings-title: 'Shining Guide - Settings'
 menu-shining_guide-element-unlock-fail: '&cYou do not meet the condition to unlock the element'
@@ -8,3 +15,21 @@ menu-shining_guide-element-symbol-locked_lock-need_consume: '&7Need to consume'
 menu-shining_guide-element-symbol-locked_lock-need: '&7Need'
 menu-shining_guide-element-text-locked: '&4&lLocked'
 menu-shining_guide-element-text-complete: '&a&lCompleted'
+menu-shining_guide-lock-item-description: '&eItem'
+menu-shining_guide-team-setup-title: 'Shining Guide - Create or join a team'
+menu-shining_guide-team-create-edit_symbol: '&fEdit the symbol of the team'
+menu-shining_guide-team-create-title: 'Shining Guide - Create a team'
+menu-shining_guide-team-create-input_name: 'Please input the name of the team'
+menu-shining_guide-team-create-edit_id: 'Edit the ID of the team'
+menu-shining_guide-team-create-search_symbol-title: 'Shining Guide - Choose a symbol of the team'
+menu-shining_guide-team-create-success: '&aSuccessfully created the team "&f{0}&a", opening Shining Guide!'
+menu-shining_guide-team-create-fail-id_already_exists: '&cThe ID of the team already exists!'
+menu-shining_guide-team-create-fail-id_or_name_empty: '&cThe ID and name of the team cannot be empty!'
+menu-shining_guide-team-join-title: 'Shining Guide - Join a team'
+menu-shining_guide-team-join-already_apply: ['&bYou have applied to join this team, waiting for the captain to approve the application', '', '&e> The captain', '&f{0}', '', '&a> Members']
+menu-shining_guide-team-join-team_symbol: ['', '&e> The captain', '&f{0}', '', '&a> Members']
+menu-shining_guide-team-join-apply-success: '&aSuccessfully applied to join the team "&f{0}&a"，waiting for the captain "&f{1}&a" to approve the application'
+menu-shining_guide-team-join-reapply-title: 'Shining Guide - Reapply a team'
+menu-shining_guide-team-join-reapply-existing_team_name: '&eYou have applied to join the team &f{0}'
+menu-shining_guide-team-join-reapply-existing_team_id: '&eYou have applied to join the team with ID "&f{0}&e"'
+menu-shining_guide-team-join-reapply-cancel_and_apply: ['&cDo you want to cancel the current application and apply to join', '&cthe new team "&f{0}&c"?']
