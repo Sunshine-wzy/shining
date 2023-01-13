@@ -13,14 +13,12 @@ import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 import taboolib.module.ui.type.Linked
-import java.util.*
 
 object MenuBuilder {
 
     inline fun <reified T> Player.openMultiPageMenu(title: String = "chest", builder: Linked<T>.() -> Unit) {
         openMenu<Linked<T>>(title) { 
             buildMultiPage()
-            TreeMap<String, Int>()
             builder(this)
         }
     }

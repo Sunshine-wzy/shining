@@ -102,7 +102,7 @@ object ShiningGuide {
                     elements { getElements() }
 
                     val lockedElements = LinkedList<GuideElement>()
-                    onGenerate { player, element, index, slot ->
+                    onGenerate(true) { player, element, index, slot ->
                         val condition = element.getCondition(player)
                         if(condition == ElementCondition.LOCKED_DEPENDENCY || condition == ElementCondition.LOCKED_LOCK)
                             lockedElements += element

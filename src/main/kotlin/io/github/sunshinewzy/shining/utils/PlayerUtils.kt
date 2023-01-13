@@ -11,5 +11,8 @@ val UUID.player: Player?
 val UUID.offlinePlayer: OfflinePlayer
     get() = Bukkit.getOfflinePlayer(this)
 
-val UUID.playerName: String?
+val UUID.playerName: String
+    get() = offlinePlayer.name ?: toString()
+
+val UUID.playerNameOrNull: String?
     get() = offlinePlayer.name
