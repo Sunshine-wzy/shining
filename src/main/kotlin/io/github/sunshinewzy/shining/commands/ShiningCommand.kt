@@ -12,28 +12,30 @@ import io.github.sunshinewzy.shining.utils.giveItem
 import io.github.sunshinewzy.shining.utils.sendMsg
 import org.bukkit.Material
 import org.bukkit.entity.Player
-import taboolib.common.LifeCycle
-import taboolib.common.platform.Awake
-import taboolib.common.platform.command.command
+import taboolib.common.platform.command.CommandBody
+import taboolib.common.platform.command.CommandHeader
+import taboolib.common.platform.command.mainCommand
+import taboolib.common.platform.command.subCommand
 import taboolib.expansion.createHelper
 
-object SunSTCommand {
+@CommandHeader("shining", aliases = ["shi"])
+object ShiningCommand {
     
-    @Awake(LifeCycle.ENABLE)
-    fun registerCommands() {
-        command("sunst", aliases = listOf("sst", "sun")) {
-            literal("item") {
-                execute<Player> { sender, context, argument -> 
-                    val item = sender.inventory.itemInMainHand
-                    if(item.type != Material.AIR) {
-                        ItemEditor.editItem(item, sender)
-                    } else sender.sendMsg(prefix, "&c手持物品不能为空")
-                }
-            }
-            
-            createHelper()
+    @CommandBody
+    val main = mainCommand {
+        createHelper()
+    }
+    
+    @CommandBody
+    val item = subCommand {
+        execute<Player> { sender, context, argument ->
+            val item = sender.inventory.itemInMainHand
+            if(item.type != Material.AIR) {
+                ItemEditor.editItem(item, sender)
+            } else sender.sendMsg(prefix, "&c手持物品不能为空")
         }
     }
+    
     
     fun registerSCommands() {
         SCommand("SunST", "sun")

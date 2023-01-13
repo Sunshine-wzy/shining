@@ -5,11 +5,9 @@ import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.data.JacksonWrapper
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.executePlayerDataContainer
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.getDataContainer
-import io.github.sunshinewzy.shining.core.lang.getLangListNode
-import io.github.sunshinewzy.shining.core.lang.getLangSectionNode
-import io.github.sunshinewzy.shining.core.lang.getLangText
+import io.github.sunshinewzy.shining.core.lang.*
+import io.github.sunshinewzy.shining.core.lang.item.LocalizedItem.Companion.localize
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
-import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
 import io.github.sunshinewzy.shining.core.menu.MenuBuilder.onBack
 import io.github.sunshinewzy.shining.core.menu.MenuBuilder.openMultiPageMenu
 import io.github.sunshinewzy.shining.core.menu.MenuBuilder.openSearchMenu
@@ -176,12 +174,7 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
             set('B', ShiningIcon.BACK.getNamespacedIdItem().toLangItem(player), ShiningGuide.onClickBack)
 
-            set(
-                'a',
-                symbol.clone()
-                    .setName(player.getLangText(""))
-                    .setLore()
-            )
+            set('a', symbol.clone().localize(player.getLanguageNode("menu-shining_guide-team-info-symbol"), name))
             
             
             onClick(lock = true)

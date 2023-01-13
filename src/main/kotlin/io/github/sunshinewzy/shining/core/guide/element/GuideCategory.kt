@@ -78,6 +78,10 @@ class GuideCategory(id: String, symbol: ItemStack, var tier: Int = 0) : GuideEle
                     back(clicker, team)
                 }
             }
+
+            set(5 orderWith 1, ShiningIcon.SETTINGS.item) {
+                ShiningGuide.openSettings(player, team)
+            }
         }
     }
     

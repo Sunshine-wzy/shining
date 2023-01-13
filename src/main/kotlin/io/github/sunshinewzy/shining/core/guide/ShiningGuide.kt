@@ -173,7 +173,7 @@ object ShiningGuide {
 
             set('-', ShiningIcon.EDGE.item)
 
-            set('B', ShiningIcon.BACK.getNamespacedIdItem().toLangItem(player), ShiningGuide.onClickBack)
+            set('B', ShiningIcon.BACK.getNamespacedIdItem().toLangItem(player), onClickBack)
             
             set('a', itemTeamInfo) {
                 team.openInfoMenu(player)

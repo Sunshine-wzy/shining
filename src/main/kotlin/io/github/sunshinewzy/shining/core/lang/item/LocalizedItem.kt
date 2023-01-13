@@ -3,6 +3,7 @@ package io.github.sunshinewzy.shining.core.lang.item
 import io.github.sunshinewzy.shining.api.lang.LanguageNode
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.lang.LanguageNodePrefix.ITEM
+import io.github.sunshinewzy.shining.core.lang.formatArgs
 import io.github.sunshinewzy.shining.core.lang.getLanguageNode
 import io.github.sunshinewzy.shining.core.lang.node.ListNode
 import io.github.sunshinewzy.shining.core.lang.node.SectionNode
@@ -47,7 +48,7 @@ open class LocalizedItem(item: ItemStack, val languageNode: LanguageNode) : Item
     
     companion object {
         
-        fun ItemStack.localize(languageNode: LanguageNode): ItemStack {
+        fun ItemStack.localize(languageNode: LanguageNode?): ItemStack {
             when(languageNode) {
                 is TextNode -> {
                     setName(languageNode.text)
@@ -79,6 +80,41 @@ open class LocalizedItem(item: ItemStack, val languageNode: LanguageNode) : Item
                 }
             }
             
+            return this
+        }
+
+        fun ItemStack.localize(languageNode: LanguageNode?, vararg args: String?): ItemStack {
+            when(languageNode) {
+                is TextNode -> {
+                    setName(languageNode.format(*args))
+                }
+
+                is ListNode -> {
+                    val list = LinkedList<String>()
+                    languageNode.list.filterIsInstance<TextNode>().mapTo(list) { it.format(*args) }
+
+                    if(list.isNotEmpty()) {
+                        setName(list.removeFirst())
+
+                        if(list.isNotEmpty()) {
+                            setLore(list)
+                        }
+                    }
+                }
+
+                is SectionNode -> {
+                    languageNode.section.getString("name")?.let {
+                        setName(it.formatArgs(*args))
+                    }
+
+                    languageNode.section.getStringList("lore").let { loreList ->
+                        if(loreList.isNotEmpty()) {
+                            setLore(loreList.map { it.formatArgs(*args) })
+                        }
+                    }
+                }
+            }
+
             return this
         }
         

@@ -5,7 +5,7 @@ plugins {
     val kotlinVersion = "1.7.21"
     `java-library`
     `maven-publish`
-    id("io.izzel.taboolib") version "1.54"
+    id("io.izzel.taboolib") version "1.55"
     id("org.jetbrains.kotlin.jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
     id("org.jetbrains.dokka") version "1.7.20"
@@ -28,7 +28,7 @@ taboolib {
     
     install("platform-bukkit")
     classifier = null
-    version = "6.0.10-53"
+    version = "6.0.10-61"
     
     options("skip-kotlin-relocate", "enable-isolated-classloader")
     

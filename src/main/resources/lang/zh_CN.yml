@@ -66,3 +66,4 @@ menu-shining_guide-team-manage-application-not_found: '&4没有找到玩家 "&f{
 menu-shining_guide-team-manage-application-was_refused: '&c您向队伍 "&f{0}&c" (队长: "&f{1}&c") 提交入队申请被拒绝!'
 menu-shining_guide-team-welcome: '&a欢迎新人 "&f{0}&a" 加入队伍 "&f{1}&a"~'
 menu-shining_guide-team-info-title: 'Shining 指南 - 队伍信息'
+menu-shining_guide-team-info-symbol: '&f队伍: {0}'
