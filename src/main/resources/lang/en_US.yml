@@ -7,6 +7,7 @@ item-shining-shining_guide-team-edit_name:
   name: '&fEdit the name of the team'
   create: '&a> Name of the current team'
 item-shining-shining_guide-team-manage-application: '&aApplication to join the team'
+item-shining-shining_guide-settings-team_info: '&bTeam info'
 item-shining-icon-back: ['&c⇦ Back', '', '&fLeft Click：&7Go back to previous page', '&fShift + Left Click：&7Go back to main menu']
 item-shining-icon-back_last_page: '&b⇦ Back'
 item-shining-icon-submit: '&a>> Click to submit the task <<'

@@ -50,7 +50,7 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
     fun join(player: Player) {
         join(player.uniqueId)
-        player.getDataContainer()["guide_team"] = id
+        player.getDataContainer()[GUIDE_TEAM_ID] = id
     }
 
     private fun join(uuid: UUID) {
@@ -78,7 +78,8 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
     fun apply(player: Player) {
         apply(player.uniqueId)
-        player.getDataContainer()["guide_team_apply"] = id
+        player.getDataContainer()[GUIDE_TEAM_APPLY] = id
+        notifyCaptainApplication()
     }
 
     private fun apply(uuid: UUID) {
@@ -96,8 +97,8 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         
         join(uuid)
         uuid.executePlayerDataContainer { 
-            it["guide_team"] = id
-            it.delete("guide_team_apply")
+            it[GUIDE_TEAM_ID] = id
+            it.delete(GUIDE_TEAM_APPLY)
         }
         
         transaction {
@@ -114,7 +115,7 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
             return false
         
         uuid.executePlayerDataContainer { 
-            it.delete("guide_team_apply")
+            it.delete(GUIDE_TEAM_APPLY)
         }
         
         transaction { 
@@ -132,8 +133,10 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         captain.player?.let { player ->
             val names = applicants.value.joinToString { it.playerName }
             player.getLangSectionNode("menu-shining_guide-team-notify_captain_application")?.let { 
-                it.sendPrefixedJson(player, Shining.prefix, names)
-                player.playSound(player.location, Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1.5f)
+                submit {
+                    it.sendPrefixedJson(player, Shining.prefix, names)
+                    player.playSound(player.location, Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1.5f)
+                }
             }
         }
     }
@@ -157,6 +160,33 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         }
     }
     
+    fun openInfoMenu(player: Player) {
+        player.openMenu<Basic>(player.getLangText("menu-shining_guide-team-info-title")) {
+            rows(5)
+
+            map(
+                "-B-------",
+                "-   a   -",
+                "-       -",
+                "-       -",
+                "---------"
+            )
+
+            set('-', ShiningIcon.EDGE.item)
+
+            set('B', ShiningIcon.BACK.getNamespacedIdItem().toLangItem(player), ShiningGuide.onClickBack)
+
+            set(
+                'a',
+                symbol.clone()
+                    .setName(player.getLangText(""))
+                    .setLore()
+            )
+            
+            
+            onClick(lock = true)
+        }
+    }
     
     fun openManageMenu(player: Player) {
         transaction {
@@ -179,13 +209,9 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                 
                 set('-', ShiningIcon.EDGE.item)
                 
-                set('B', ShiningIcon.BACK.getNamespacedIdItem().toLangItem(player)) {
-                    if(clickEvent().isShiftClick)
-                        ShiningGuide.open(clicker)
-                    else ShiningGuide.openLastElement(clicker)
-                }
+                set('B', ShiningIcon.BACK.getNamespacedIdItem().toLangItem(player), ShiningGuide.onClickBack)
                 
-                set('a', if(applicants.value.isEmpty()) applicationManageItem else buildItem(applicationManageItem) { shiny() }) {
+                set('a', if(applicants.value.isEmpty()) applicationManageItem else applicationManageItem.shinyItem) {
                     openManageApplicationMenu(player)
                 }
                 
@@ -219,9 +245,7 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                     when(event.clickEvent().click) {
                         ClickType.LEFT, ClickType.SHIFT_LEFT -> {
                             if(approveApplication(element)) {
-                                player.sendPrefixedLangText("menu-shining_guide-team-manage-application-approve", Shining.prefix,
-                                    element.playerName
-                                )
+                                player.sendPrefixedLangText("menu-shining_guide-team-manage-application-approve", Shining.prefix, element.playerName)
                                 welcome(element)
                             } else {
                                 player.sendPrefixedLangText("menu-shining_guide-team-manage-application-not_found", Shining.prefix, element.playerName)
@@ -250,17 +274,18 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
     @SkipTo(LifeCycle.ACTIVE)
     companion object : IntEntityClass<GuideTeam>(GuideTeams) {
-        const val GUIDE_TEAM = "guide_team"
+        const val GUIDE_TEAM_ID = "shining_guide-team-id"
+        const val GUIDE_TEAM_APPLY = "shining_guide-team-apply"
 
         private val createTeamItem = NamespacedIdItem(Material.SLIME_BALL, NamespacedId(Shining, "shining_guide-team-create"))
         private val joinTeamItem = NamespacedIdItem(Material.ENDER_PEARL, NamespacedId(Shining, "shining_guide-team-join"))
         private val editTeamNameItem = NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-team-edit_name"))
-        private val applicationManageItem = NamespacedIdItem(Material.APPLE, NamespacedId(Shining, "shining_guide-team-manage-application"))
+        private val applicationManageItem = NamespacedIdItem(Material.GOLDEN_APPLE, NamespacedId(Shining, "shining_guide-team-manage-application"))
         
 
         private suspend fun create(captain: Player, name: String, symbol: ItemStack): Boolean {
             val container = captain.getDataContainer()
-            if(!container[GUIDE_TEAM].isNullOrEmpty()) {
+            if(!container[GUIDE_TEAM_ID].isNullOrEmpty()) {
                 return false
             }
             
@@ -278,7 +303,7 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                     this.members = JacksonWrapper(hashSetOf())
                     this.applicants = JacksonWrapper(hashSetOf())
                 }
-                container[GUIDE_TEAM] = guideTeam.id
+                container[GUIDE_TEAM_ID] = guideTeam.id
                 true
             }
         }
@@ -286,7 +311,7 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
         suspend fun Player.hasGuideTeam(): Boolean {
             return newSuspendedTransaction transaction@{
-                getDataContainer()[GUIDE_TEAM]?.toInt()?.let { id ->
+                getDataContainer()[GUIDE_TEAM_ID]?.toInt()?.let { id ->
                     findById(id)?.let {
                         return@transaction true
                     }
@@ -297,7 +322,7 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
         suspend fun Player.getGuideTeam(): GuideTeam? {
             return newSuspendedTransaction transaction@{
-                getDataContainer()[GUIDE_TEAM]?.toInt()?.let { id ->
+                getDataContainer()[GUIDE_TEAM_ID]?.toInt()?.let { id ->
                     findById(id)?.let {
                         return@transaction it
                     }
@@ -411,7 +436,7 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
         private fun Player.joinGuideTeam() {
             Shining.scope.launch(Dispatchers.IO) {
-                val applyTeam = getDataContainer()["guide_team_apply"]
+                val applyTeam = getDataContainer()[GUIDE_TEAM_APPLY]
                 val teams = newSuspendedTransaction {
                     val allTeam = all().limit(100)
                     if(applyTeam == null) {

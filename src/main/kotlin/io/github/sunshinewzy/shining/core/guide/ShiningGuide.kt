@@ -9,6 +9,7 @@ import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.getGuideTeam
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.setupGuideTeam
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.LocalizedItem
+import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.objects.SCollection
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
@@ -70,10 +71,7 @@ object ShiningGuide {
             openLastElement(it.clicker)
         }
     }
-    val onClickSettings: (ClickEvent) -> Unit = {
-        
-    }
-
+    
     
     const val TITLE = "menu-shining_guide-title"
     
@@ -129,7 +127,9 @@ object ShiningGuide {
                         element.open(event.clicker, team, null)
                     }
                     
-                    set(5 orderWith 1, ShiningIcon.SETTINGS.item, onClickSettings)
+                    set(5 orderWith 1, ShiningIcon.SETTINGS.item) {
+                        openSettings(player, team)
+                    }
                 }
             }
         }
@@ -155,9 +155,31 @@ object ShiningGuide {
         open(player)
     }
     
-    fun openSettings(player: Player) {
+    
+    private val itemTeamInfo = NamespacedIdItem(Material.APPLE, NamespacedId(Shining, "shining_guide-settings-team_info"))
+    
+    fun openSettings(player: Player, team: GuideTeam) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-settings-title")) {
+            rows(6)
+
+            map(
+                "-B-------",
+                "-a      -",
+                "-       -",
+                "-       -",
+                "-       -",
+                "---------"
+            )
+
+            set('-', ShiningIcon.EDGE.item)
+
+            set('B', ShiningIcon.BACK.getNamespacedIdItem().toLangItem(player), ShiningGuide.onClickBack)
             
+            set('a', itemTeamInfo) {
+                team.openInfoMenu(player)
+            }
+            
+            onClick(lock = true)
         }
     }
     

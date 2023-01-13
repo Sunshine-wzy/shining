@@ -11,10 +11,14 @@ import io.github.sunshinewzy.shining.objects.SItem.Companion.setLore
 import io.github.sunshinewzy.shining.objects.SItem.Companion.setName
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
+import taboolib.platform.util.buildItem
 import java.util.*
 
 open class LocalizedItem(item: ItemStack, val languageNode: LanguageNode) : ItemStack(item) {
 
+    val shinyItem: ItemStack by lazy { buildItem(this) { shiny() } }
+    
+    
     init {
         localize(languageNode)
     }
