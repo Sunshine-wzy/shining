@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.core.lang.node
+package io.github.sunshinewzy.shining.api.lang
 
 interface LanguageNode {
     

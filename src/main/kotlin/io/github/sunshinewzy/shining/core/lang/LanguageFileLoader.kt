@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.core.lang
 
-import io.github.sunshinewzy.shining.core.lang.node.LanguageNode
+import io.github.sunshinewzy.shining.api.lang.LanguageNode
 import io.github.sunshinewzy.shining.core.lang.node.ListNode
 import io.github.sunshinewzy.shining.core.lang.node.SectionNode
 import io.github.sunshinewzy.shining.core.lang.node.TextNode

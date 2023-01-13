@@ -54,19 +54,19 @@ abstract class GuideElement(
     }
     
     
-    fun open(player: Player, previousElement: GuideElement? = null) {
+    fun open(player: Player, team: GuideTeam, previousElement: GuideElement? = null) {
         if(previousElement != null)
             previousElementMap[player.uniqueId] = previousElement
         
         ShiningGuide.playerLastOpenElementMap[player.uniqueId] = this
-        openAction(player)
+        openAction(player, team)
     }
     
-    protected abstract fun openAction(player: Player)
+    protected abstract fun openAction(player: Player, team: GuideTeam)
     
-    fun back(player: Player) {
+    fun back(player: Player, team: GuideTeam) {
         previousElementMap[player.uniqueId]?.let { 
-            it.open(player, null)
+            it.open(player, team, null)
             return
         }
         

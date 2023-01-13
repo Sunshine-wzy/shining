@@ -3,14 +3,15 @@ package io.github.sunshinewzy.shining.core.lang
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.ShiningConfig.language
 import io.github.sunshinewzy.shining.api.addon.ShiningAddon
+import io.github.sunshinewzy.shining.api.lang.LanguageNode
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.lang.node.LanguageNode
 import io.github.sunshinewzy.shining.core.lang.node.ListNode
 import io.github.sunshinewzy.shining.core.lang.node.SectionNode
 import io.github.sunshinewzy.shining.core.lang.node.TextNode
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.module.chat.colored
+import java.util.*
 
 fun NamespacedId.toNodeString(): String =
     "${namespace.name}-$id"
@@ -106,7 +107,7 @@ fun CommandSender.sendLangText(node: String): Boolean =
         true
     } ?: false
 
-fun CommandSender.sendLangTextWithPrefix(node: String, prefix: String = Shining.prefix): Boolean =
+fun CommandSender.sendPrefixedLangText(node: String, prefix: String = Shining.prefix): Boolean =
     getLangTextOrNull(node)?.let {
         sendMessage("&f[$prefix&f] $it".colored())
         true
@@ -124,7 +125,7 @@ fun CommandSender.sendLangText(node: String, vararg args: String?): Boolean =
         true
     } ?: false
 
-fun CommandSender.sendLangTextWithPrefix(node: String, prefix: String = Shining.prefix, vararg args: String?): Boolean =
+fun CommandSender.sendPrefixedLangText(node: String, prefix: String = Shining.prefix, vararg args: String?): Boolean =
     getLangTextOrNull(node, *args)?.let {
         sendMessage("&f[$prefix&f] $it".colored())
         true
@@ -156,7 +157,7 @@ fun CommandSender.sendLangText(addon: ShiningAddon, node: String): Boolean =
         true
     } ?: false
 
-fun CommandSender.sendLangTextWithPrefix(addon: ShiningAddon, node: String, prefix: String = addon.getPrefix()): Boolean =
+fun CommandSender.sendPrefixedLangText(addon: ShiningAddon, node: String, prefix: String = addon.getPrefix()): Boolean =
     getLangTextOrNull(addon, node)?.let {
         sendMessage("&f[$prefix&f] $it".colored())
         true
@@ -180,3 +181,43 @@ fun CommandSender.sendLangText(addon: ShiningAddon, node: String, prefix: String
         sendMessage("&f[$prefix&f] $it".colored())
         true
     } ?: false
+
+
+fun String.formatArgs(vararg args: String?): String {
+    val text = this
+    var flag = true
+    for(str in args) {
+        if(str != null) {
+            flag = false
+            break
+        }
+    }
+    if(flag) return this
+
+    val list = LanguageNode.argRegex.findAll(text).toList()
+    if(list.isEmpty()) return text
+
+    val map = TreeMap<Int, Pair<Int, String>>()
+    list.forEach { res ->
+        args.getOrNull(res.value.substring(1, res.value.lastIndex).toInt())?.let {
+            map[res.range.first] = res.range.last to it
+        }
+    }
+
+    return buildString {
+        var last = 0
+        for((start, pair) in map) {
+            val (end, arg) = pair
+
+            append(text.substring(last, start))
+            append(arg)
+
+            last = end + 1
+            if(last >= text.length) break
+        }
+
+        if(last < text.length) {
+            append(text.substring(last))
+        }
+    }
+}

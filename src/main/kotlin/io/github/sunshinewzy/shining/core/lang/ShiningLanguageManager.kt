@@ -3,9 +3,9 @@ package io.github.sunshinewzy.shining.core.lang
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.ShiningConfig
 import io.github.sunshinewzy.shining.api.addon.ShiningAddon
+import io.github.sunshinewzy.shining.api.lang.LanguageNode
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.lang.node.LanguageNode
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.function.getJarFile

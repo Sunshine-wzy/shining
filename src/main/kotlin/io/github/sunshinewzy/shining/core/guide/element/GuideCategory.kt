@@ -2,6 +2,7 @@ package io.github.sunshinewzy.shining.core.guide.element
 
 import io.github.sunshinewzy.shining.core.guide.ElementCondition
 import io.github.sunshinewzy.shining.core.guide.GuideElement
+import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
@@ -23,7 +24,7 @@ class GuideCategory(id: String, symbol: ItemStack, var tier: Int = 0) : GuideEle
     private val elements = LinkedList<GuideElement>()
     
     
-    override fun openAction(player: Player) {
+    override fun openAction(player: Player, team: GuideTeam) {
         player.openMenu<Linked<GuideElement>>(player.getLangText(ShiningGuide.TITLE)) {
             rows(6)
             slots(ShiningGuide.slotOrders)
@@ -61,20 +62,20 @@ class GuideCategory(id: String, symbol: ItemStack, var tier: Int = 0) : GuideEle
                 if(element in lockLockedElements) {
                     if(element.unlock(player)) {
                         ShiningGuide.fireworkCongratulate(player)
-                        open(player)
+                        open(player, team)
                     }
                     
                     return@onClick
                 }
 
-                element.open(event.clicker, this@GuideCategory)
+                element.open(event.clicker, team, this@GuideCategory)
             }
 
             set(2 orderWith 1, ShiningIcon.BACK.item) {
                 if(clickEvent().isShiftClick) {
                     ShiningGuide.open(clicker)
                 } else {
-                    back(clicker)
+                    back(clicker, team)
                 }
             }
         }

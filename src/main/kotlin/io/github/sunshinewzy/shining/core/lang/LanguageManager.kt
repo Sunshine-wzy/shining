@@ -2,6 +2,8 @@ package io.github.sunshinewzy.shining.core.lang
 
 import io.github.sunshinewzy.shining.api.ShiningConfig
 import io.github.sunshinewzy.shining.api.lang.ILanguageManager
+import io.github.sunshinewzy.shining.api.lang.TextTransfer
+import io.github.sunshinewzy.shining.core.lang.transfer.ColorTextTransfer
 import taboolib.common.platform.function.warning
 import java.io.File
 import java.util.jar.JarFile
@@ -11,6 +13,8 @@ abstract class LanguageManager(val jarFile: File) : ILanguageManager {
     protected val languageCode: HashSet<String> = HashSet()
     protected val languageFileMap: HashMap<String, LanguageFile> = HashMap()
 
+    val textTransfer: MutableList<TextTransfer> = ArrayList()
+    
     
     init {
         // Load the language code
@@ -22,8 +26,8 @@ abstract class LanguageManager(val jarFile: File) : ILanguageManager {
             }
         }
         
-        // TODO: Load transfers
-        
+        // Load transfer
+        textTransfer += ColorTextTransfer
     }
     
     
@@ -45,8 +49,16 @@ abstract class LanguageManager(val jarFile: File) : ILanguageManager {
             }
         }
     }
+
+    override fun transfer(source: String): String {
+        var text = source
+        textTransfer.forEach { 
+            text = it.transfer(text)
+        }
+        return text
+    }
     
-    
+
     companion object {
         val languageCodeMap: Map<String, String> = hashMapOf(
             "zh_hans_cn" to "zh_CN",

@@ -11,6 +11,7 @@ import taboolib.common.platform.function.submit
 import taboolib.module.chat.uncolored
 import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
+import taboolib.module.ui.type.Basic
 import taboolib.module.ui.type.Linked
 import java.util.*
 
@@ -69,7 +70,7 @@ object MenuBuilder {
         }
     }
     
-    fun <T> Linked<T>.onBack(
+    fun Basic.onBack(
         slot: Int = 2 orderWith 1,
         item: ItemStack = ShiningIcon.BACK_LAST_PAGE.item,
         onClick: ClickEvent.() -> Unit

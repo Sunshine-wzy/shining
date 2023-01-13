@@ -37,6 +37,6 @@ enum class ShiningIcon(val item: ItemStack) : Itemable {
 
     override fun getItemStack(): ItemStack = item
     
-    fun getNamespacedIdItem(): NamespacedIdItem? = item as? NamespacedIdItem
+    fun getNamespacedIdItem(): NamespacedIdItem = item as NamespacedIdItem
     
 }

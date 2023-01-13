@@ -1,7 +1,6 @@
 package io.github.sunshinewzy.shining.api.lang
 
 import io.github.sunshinewzy.shining.core.lang.LanguageFile
-import io.github.sunshinewzy.shining.core.lang.node.LanguageNode
 import io.github.sunshinewzy.shining.core.lang.node.ListNode
 import io.github.sunshinewzy.shining.core.lang.node.SectionNode
 import io.github.sunshinewzy.shining.core.lang.node.TextNode
@@ -47,5 +46,7 @@ interface ILanguageManager {
 
     fun getLangText(locale: String, node: String, vararg args: String?): String =
         getLangTextOrNull(locale, node, *args) ?: "{$locale:$node:${args.joinToString()}}"
+    
+    fun transfer(source: String): String
     
 }

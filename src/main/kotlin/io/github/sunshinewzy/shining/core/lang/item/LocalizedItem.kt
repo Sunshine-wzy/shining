@@ -1,9 +1,9 @@
 package io.github.sunshinewzy.shining.core.lang.item
 
+import io.github.sunshinewzy.shining.api.lang.LanguageNode
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.lang.LanguageNodePrefix.ITEM
 import io.github.sunshinewzy.shining.core.lang.getLanguageNode
-import io.github.sunshinewzy.shining.core.lang.node.LanguageNode
 import io.github.sunshinewzy.shining.core.lang.node.ListNode
 import io.github.sunshinewzy.shining.core.lang.node.SectionNode
 import io.github.sunshinewzy.shining.core.lang.node.TextNode

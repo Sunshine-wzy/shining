@@ -54,7 +54,7 @@ object ShiningGuide {
     }
     
     
-    val onBuildEdge: (Inventory) -> Unit = { inv ->
+    val onBuildEdge: (Player, Inventory) -> Unit = { player, inv ->
         edgeOrders.forEach { index ->
             inv.getItem(index)?.let { 
                 if(!it.isAir()) return@forEach
@@ -126,7 +126,7 @@ object ShiningGuide {
                     onClick { event, element ->
                         if(element in lockedElements) return@onClick
 
-                        element.open(event.clicker, null)
+                        element.open(event.clicker, team, null)
                     }
                     
                     set(5 orderWith 1, ShiningIcon.SETTINGS.item, onClickSettings)
@@ -137,7 +137,18 @@ object ShiningGuide {
     
     fun openLastElement(player: Player) {
         playerLastOpenElementMap[player.uniqueId]?.let {
-            it.open(player)
+            Shining.scope.launch(Dispatchers.IO) {
+                val team = player.getGuideTeam() ?: kotlin.run {
+                    submit {
+                        player.setupGuideTeam()
+                    }
+                    return@launch
+                }
+
+                submit {
+                    it.open(player, team)
+                }
+            }
             return
         }
         
@@ -175,12 +186,7 @@ object ShiningGuide {
     }
     
     
-    private fun getElements(): List<GuideElement> {
-        val list = LinkedList<GuideElement>()
-        elementMap.values.forEach { 
-            list += it
-        }
-        return list
-    }
+    private fun getElements(): List<GuideElement> =
+        elementMap.flatMap { it.value }
     
 }

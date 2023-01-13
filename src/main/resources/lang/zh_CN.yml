@@ -51,3 +51,8 @@ menu-shining_guide-team-join-apply-success: '&a申请加入队伍 "&f{0}&a" 成�
 menu-shining_guide-team-join-reapply-title: 'Shining 指南 - 队伍重复申请'
 menu-shining_guide-team-join-reapply-existing_team: '&e您已经申请加入队伍'
 menu-shining_guide-team-join-reapply-cancel_and_apply: ['&c要取消原有申请并申请加入', '&c新的队伍 "&f{0}&c" 吗?']
+menu-shining_guide-team-notify_captain_application:
+  text: '&a玩家 "&f{0}&a" 申请加入您的队伍，点击此处打开队伍面板处理申请'
+  command: '/shining guide open team'
+menu-shining_guide-team-manage-title: 'Shining 指南 - 队伍管理'
+menu-shining_guide-team-manage-no_permission: '&c您不是队长，无权打开队伍管理面板'
