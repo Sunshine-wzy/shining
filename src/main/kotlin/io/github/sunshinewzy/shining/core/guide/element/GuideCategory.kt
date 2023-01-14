@@ -73,7 +73,7 @@ class GuideCategory(id: String, symbol: ItemStack, var tier: Int = 0) : GuideEle
 
             set(2 orderWith 1, ShiningIcon.BACK.item) {
                 if(clickEvent().isShiftClick) {
-                    ShiningGuide.open(clicker)
+                    ShiningGuide.openMainMenu(clicker)
                 } else {
                     back(clicker, team)
                 }

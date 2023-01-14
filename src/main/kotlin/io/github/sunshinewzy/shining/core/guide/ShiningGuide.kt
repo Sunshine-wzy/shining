@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.bukkit.FireworkEffect
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Firework
 import org.bukkit.entity.Player
@@ -47,12 +48,15 @@ object ShiningGuide {
                         openLastElement(player)
                     } else if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
                         event.isCancelled = true
-                        open(player)
+                        openMainMenu(player)
                     }
                 }
             }
         )
     }
+    
+    
+    val soundOpen: SoundSettings = SoundSettings(Sound.ENTITY_HORSE_ARMOR, 1.2f)
     
     
     val onBuildEdge: (Player, Inventory) -> Unit = { player, inv ->
@@ -66,7 +70,7 @@ object ShiningGuide {
     }
     val onClickBack: (ClickEvent) -> Unit = {
         if(it.clickEvent().isShiftClick) {
-            open(it.clicker)
+            openMainMenu(it.clicker)
         } else {
             openLastElement(it.clicker)
         }
@@ -81,7 +85,7 @@ object ShiningGuide {
     val playerLastOpenElementMap = HashMap<UUID, GuideElement>()
     
     
-    fun open(player: Player) {
+    fun openMainMenu(player: Player) {
         playerLastOpenElementMap -= player.uniqueId
         
         Shining.scope.launch(Dispatchers.IO) {
@@ -92,6 +96,7 @@ object ShiningGuide {
                 return@launch
             }
 
+            soundOpen.playSound(player)
             submit {
                 player.openMenu<Linked<GuideElement>>(player.getLangText(TITLE)) {
                     rows(6)
@@ -152,7 +157,7 @@ object ShiningGuide {
             return
         }
         
-        open(player)
+        openMainMenu(player)
     }
     
     

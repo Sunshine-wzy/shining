@@ -4,6 +4,7 @@ import io.github.sunshinewzy.shining.Shining.COLOR_NAME
 import io.github.sunshinewzy.shining.Shining.prefix
 import io.github.sunshinewzy.shining.core.data.DataManager
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.letGuideTeamOrWarn
+import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.machine.legacy.SMachineWrench
 import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.SItem.Companion.isItemSimilar
@@ -41,6 +42,12 @@ object ShiningCommand {
     @CommandBody
     val guide = subCommand {
         literal("open") {
+            literal("main") {
+                execute<Player> { sender, context, argument -> 
+                    ShiningGuide.openMainMenu(sender)
+                }
+            }
+            
             literal("team") {
                 literal("manage") {
                     execute<Player> { sender, context, argument ->
@@ -59,6 +66,10 @@ object ShiningCommand {
                         }
                     }
                 }
+            }
+            
+            execute<Player> { sender, context, argument -> 
+                ShiningGuide.openLastElement(sender)
             }
         }
     }

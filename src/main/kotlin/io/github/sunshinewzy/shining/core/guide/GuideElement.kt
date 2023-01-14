@@ -59,6 +59,8 @@ abstract class GuideElement(
             previousElementMap[player.uniqueId] = previousElement
         
         ShiningGuide.playerLastOpenElementMap[player.uniqueId] = this
+        
+        ShiningGuide.soundOpen.playSound(player)    // TODO: Allow every element to customize the open sound
         openAction(player, team)
     }
     
@@ -70,7 +72,7 @@ abstract class GuideElement(
             return
         }
         
-        ShiningGuide.open(player)
+        ShiningGuide.openMainMenu(player)
     }
     
     fun unlock(player: Player): Boolean {
