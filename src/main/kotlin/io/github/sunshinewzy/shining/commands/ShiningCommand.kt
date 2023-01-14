@@ -3,6 +3,7 @@ package io.github.sunshinewzy.shining.commands
 import io.github.sunshinewzy.shining.Shining.COLOR_NAME
 import io.github.sunshinewzy.shining.Shining.prefix
 import io.github.sunshinewzy.shining.core.data.DataManager
+import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.letGuideTeamOrWarn
 import io.github.sunshinewzy.shining.core.machine.legacy.SMachineWrench
 import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.SItem.Companion.isItemSimilar
@@ -16,6 +17,7 @@ import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.mainCommand
 import taboolib.common.platform.command.subCommand
+import taboolib.common.platform.function.submit
 import taboolib.expansion.createHelper
 
 @CommandHeader("shining", aliases = ["shi"])
@@ -33,6 +35,31 @@ object ShiningCommand {
             if(item.type != Material.AIR) {
                 ItemEditor.editItem(item, sender)
             } else sender.sendMsg(prefix, "&c手持物品不能为空")
+        }
+    }
+    
+    @CommandBody
+    val guide = subCommand {
+        literal("open") {
+            literal("team") {
+                literal("manage") {
+                    execute<Player> { sender, context, argument ->
+                        sender.letGuideTeamOrWarn { team ->
+                            submit {
+                                team.openManageMenu(sender)
+                            }
+                        }
+                    }
+                }
+
+                execute<Player> { sender, context, argument ->
+                    sender.letGuideTeamOrWarn { team ->
+                        submit {
+                            team.openInfoMenu(sender)
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -99,14 +126,6 @@ object ShiningCommand {
                 empty {
                     DataManager.reloadData()
                     sender.sendMsg(COLOR_NAME, "&a配置文件重载成功！")
-                }
-            }
-
-            .addCommand("group", "组", isOp = true) {
-
-
-                empty {
-
                 }
             }
 

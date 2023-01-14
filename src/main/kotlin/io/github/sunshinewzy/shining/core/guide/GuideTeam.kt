@@ -130,11 +130,9 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         
         captain.player?.let { player ->
             val names = applicants.value.joinToString { it.playerName }
-            player.getLangSectionNode("menu-shining_guide-team-notify_captain_application")?.let { 
-                submit {
-                    it.sendPrefixedJson(player, Shining.prefix, names)
-                    player.playSound(player.location, Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1.5f)
-                }
+            player.getLangSectionNode("menu-shining_guide-team-notify_captain_application")?.let {
+                it.sendPrefixedJson(player, Shining.prefix, names)
+                player.playSound(player.location, Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1.5f)
             }
         }
     }
@@ -164,8 +162,8 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
             map(
                 "-B-------",
-                "-   a   -",
-                "-       -",
+                "-   a  m-",
+                "- b     -",
                 "-       -",
                 "---------"
             )
@@ -175,6 +173,19 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
             set('B', ShiningIcon.BACK.getNamespacedIdItem().toLangItem(player), ShiningGuide.onClickBack)
 
             set('a', symbol.clone().localize(player.getLanguageNode("menu-shining_guide-team-info-symbol"), name))
+            set(
+                'b',
+                buildItem(Material.PLAYER_HEAD) {
+                    skullOwner = captain.playerName
+                    if(player.uniqueId == captain) shiny()
+                }.localize(player.getLanguageNode("menu-shining_guide-team-info-captain"), captain.playerName)
+            )
+            
+            if(player.uniqueId == captain) {
+                set('m', teamManageItem.toLangItem(player)) {
+                    openManageMenu(player)
+                }
+            }
             
             
             onClick(lock = true)
@@ -274,6 +285,7 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         private val joinTeamItem = NamespacedIdItem(Material.ENDER_PEARL, NamespacedId(Shining, "shining_guide-team-join"))
         private val editTeamNameItem = NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-team-edit_name"))
         private val applicationManageItem = NamespacedIdItem(Material.GOLDEN_APPLE, NamespacedId(Shining, "shining_guide-team-manage-application"))
+        private val teamManageItem = NamespacedIdItem(Material.COMPARATOR, NamespacedId(Shining, "shining_guide-team-manage"))
         
 
         private suspend fun create(captain: Player, name: String, symbol: ItemStack): Boolean {
@@ -322,6 +334,20 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                 }
 
                 null
+            }
+        }
+
+        const val PLAYER_NOT_IN_TEAM = "menu-shining-guide-team-player_not_in_team"
+        
+        fun Player.letGuideTeam(block: (team: GuideTeam) -> Unit) {
+            Shining.scope.launch(Dispatchers.IO) {
+                getGuideTeam()?.also(block)
+            }
+        }
+        
+        fun Player.letGuideTeamOrWarn(block: (team: GuideTeam) -> Unit) {
+            Shining.scope.launch(Dispatchers.IO) {
+                getGuideTeam()?.also(block) ?: sendPrefixedLangText(PLAYER_NOT_IN_TEAM)
             }
         }
 

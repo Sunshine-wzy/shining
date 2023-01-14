@@ -7,6 +7,7 @@ item-shining-shining_guide-team-edit_name:
   name: '&f编辑队伍名称'
   create: '&a> 当前队伍名称'
 item-shining-shining_guide-team-manage-application: '&a入队申请'
+item-shining-shining_guide-team-manage: '&b队伍管理'
 item-shining-shining_guide-settings-team_info: '&b队伍信息'
 item-shining-icon-back: ['&c⇦ 返回', '', '&f左键：&7返回上一页', '&fShift + 左键：&7返回主菜单']
 item-shining-icon-back_last_page: '&b⇦ 返回'
@@ -55,15 +56,17 @@ menu-shining_guide-team-join-reapply-existing_team: '&e您已经申请加入队�
 menu-shining_guide-team-join-reapply-cancel_and_apply: ['&c要取消原有申请并申请加入', '&c新的队伍 "&f{0}&c" 吗?']
 menu-shining_guide-team-notify_captain_application:
   text: '&a玩家 "&f{0}&a" 申请加入您的队伍，点击此处打开队伍面板处理申请'
-  command: '/shining guide open team'
+  command: '/shining guide open team manage'
 menu-shining_guide-team-manage-title: 'Shining 指南 - 队伍管理'
 menu-shining_guide-team-manage-no_permission: '&c您不是队长，无权打开队伍管理面板'
 menu-shining_guide-team-manage-application-title: 'Shining 指南 - 队伍管理 - 入队申请'
-menu-shining_guide-team-manage-application-applicant: ['', '&f左键：&7同意该申请', '&f右键：&7拒绝该申请']
+menu-shining_guide-team-manage-application-applicant: ['', '&f左键：&a同意该申请', '&f右键：&c拒绝该申请']
 menu-shining_guide-team-manage-application-approve: '&a同意了玩家 "&f{0}&a" 的入队申请'
 menu-shining_guide-team-manage-application-refuse: '&c拒绝了玩家 "&f{0}&c" 的入队申请'
 menu-shining_guide-team-manage-application-not_found: '&4没有找到玩家 "&f{0}&4" 的入队申请'
 menu-shining_guide-team-manage-application-was_refused: '&c您向队伍 "&f{0}&c" (队长: "&f{1}&c") 提交入队申请被拒绝!'
 menu-shining_guide-team-welcome: '&a欢迎新人 "&f{0}&a" 加入队伍 "&f{1}&a"~'
 menu-shining_guide-team-info-title: 'Shining 指南 - 队伍信息'
-menu-shining_guide-team-info-symbol: '&f队伍: {0}'
+menu-shining_guide-team-info-symbol: ['&d队伍: &f{0}', '', '&a>> 点击修改队伍名称 <<']
+menu-shining_guide-team-info-captain: ['&e队长: &f{0}']
+menu-shining-guide-team-player_not_in_team: '&c您不在队伍中'
