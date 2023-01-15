@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.core.guide
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.guide.IGuideElement
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.dictionary.DictionaryItem
 import io.github.sunshinewzy.shining.core.dictionary.DictionaryRegistry
@@ -35,7 +36,7 @@ import taboolib.platform.util.isAir
 import java.util.*
 
 object ShiningGuide {
-    private val elementMap = TreeMap<Int, MutableList<GuideElement>>()
+    private val elementMap = TreeMap<Int, MutableList<IGuideElement>>()
     private val guideItem: DictionaryItem = NamespacedId(Shining, "shining_guide").let { id ->
         DictionaryRegistry.registerItem(
             id, LocalizedItem(Material.ENCHANTED_BOOK, id),
@@ -82,7 +83,7 @@ object ShiningGuide {
     
     val edgeOrders = (((1 orderWith 1)..(9 orderWith 1)) + ((1 orderWith 6)..(9 orderWith 6)))
     val slotOrders = ((1 orderWith 2)..(9 orderWith 5)).toList()
-    val playerLastOpenElementMap = HashMap<UUID, GuideElement>()
+    val playerLastOpenElementMap = HashMap<UUID, IGuideElement>()
     
     
     fun openMainMenu(player: Player) {
@@ -98,18 +99,18 @@ object ShiningGuide {
 
             soundOpen.playSound(player)
             submit {
-                player.openMenu<Linked<GuideElement>>(player.getLangText(TITLE)) {
+                player.openMenu<Linked<IGuideElement>>(player.getLangText(TITLE)) {
                     rows(6)
                     slots(slotOrders)
 
                     elements { getElements() }
 
-                    val lockedElements = LinkedList<GuideElement>()
+                    val lockedElements = LinkedList<IGuideElement>()
                     onGenerate(true) { player, element, index, slot ->
-                        val condition = element.getCondition(player)
+                        val condition = element.getCondition(team)
                         if(condition == ElementCondition.LOCKED_DEPENDENCY || condition == ElementCondition.LOCKED_LOCK)
                             lockedElements += element
-                        element.getSymbolByCondition(player, condition)
+                        element.getSymbolByCondition(player, team, condition)
                     }
 
                     onBuild(true, onBuildEdge)
@@ -189,15 +190,8 @@ object ShiningGuide {
     }
     
     
-    fun registerElement(element: GuideElement, priority: Int = 10) {
-        elementMap[priority]?.let { 
-            it += element
-            return
-        }
-        
-        val list = LinkedList<GuideElement>()
-        list += element
-        elementMap[priority] = list
+    fun registerElement(element: IGuideElement, priority: Int = 10) {
+        elementMap.getOrPut(priority) { ArrayList() }.add(element)
     }
     
     fun fireworkCongratulate(player: Player) {
@@ -213,7 +207,7 @@ object ShiningGuide {
     }
     
     
-    private fun getElements(): List<GuideElement> =
+    private fun getElements(): List<IGuideElement> =
         elementMap.flatMap { it.value }
     
 }

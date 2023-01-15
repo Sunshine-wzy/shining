@@ -1,8 +1,10 @@
 package io.github.sunshinewzy.shining.core.guide
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.guide.IGuideElement
+import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.ElementCondition.*
-import io.github.sunshinewzy.shining.core.guide.data.ElementPlayerData
+import io.github.sunshinewzy.shining.core.guide.data.ElementTeamData
 import io.github.sunshinewzy.shining.core.lang.getDefaultLangText
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.interfaces.Updatable
@@ -19,23 +21,18 @@ import java.util.*
 import kotlin.reflect.KProperty
 
 abstract class GuideElement(
-    id: String,
+    val id: NamespacedId,
     val symbol: ItemStack
-) {
-    val id: String
-    var name = symbol.getDisplayName(id)
+) : IGuideElement {
+    private var name = symbol.getDisplayName(id.toString())
+
     
-    init {
-        this.id = id.uppercase()
-    }
-    
-    
-    private val dependencies: MutableList<GuideElement> = LinkedList()
+    private val dependencies: MutableList<IGuideElement> = LinkedList()
     private val locks = LinkedList<ElementLock>()
-    private val symbolHandlers = arrayListOf<Updatable>()
+    private val symbolHandlers = ArrayList<Updatable>()
     
-    private val previousElementMap = HashMap<UUID, GuideElement>()
-    private val teamDataMap = HashMap<UUID, ElementPlayerData>()
+    private val previousElementMap = HashMap<UUID, IGuideElement>()
+    private val teamDataMap = HashMap<GuideTeam, ElementTeamData>()
 
     private val completedSymbol: ItemStack by SymbolItemDelegate {
         val symbolItem = symbol.clone()
@@ -52,9 +49,17 @@ abstract class GuideElement(
             "&7$id"
         )
     }
-    
-    
-    fun open(player: Player, team: GuideTeam, previousElement: GuideElement? = null) {
+
+
+    override fun getId(): NamespacedId {
+        return id
+    }
+
+    override fun getName(): String {
+        return name
+    }
+
+    override fun open(player: Player, team: GuideTeam, previousElement: IGuideElement?) {
         if(previousElement != null)
             previousElementMap[player.uniqueId] = previousElement
         
@@ -66,7 +71,7 @@ abstract class GuideElement(
     
     protected abstract fun openAction(player: Player, team: GuideTeam)
     
-    fun back(player: Player, team: GuideTeam) {
+    override fun back(player: Player, team: GuideTeam) {
         previousElementMap[player.uniqueId]?.let { 
             it.open(player, team, null)
             return
@@ -75,7 +80,7 @@ abstract class GuideElement(
         ShiningGuide.openMainMenu(player)
     }
     
-    fun unlock(player: Player): Boolean {
+    override fun unlock(player: Player, team: GuideTeam): Boolean {
         for(lock in locks) {
             if(!lock.check(player)) {
                 player.sendMsg(Shining.prefix, "${player.getLangText("menu-shining_guide-element-unlock-fail")}: ${lock.description(player)}")
@@ -90,7 +95,7 @@ abstract class GuideElement(
             }
         }
         
-        getPlayerData(player).condition = UNLOCKED
+        getTeamData(team).condition = UNLOCKED
         return true
     }
     
@@ -100,12 +105,12 @@ abstract class GuideElement(
         }
     }
 
-    fun isPlayerCompleted(player: Player): Boolean =
-        teamDataMap[player.uniqueId]?.condition == COMPLETE
+    override fun isTeamCompleted(team: GuideTeam): Boolean =
+        teamDataMap[team]?.condition == COMPLETE
     
-    fun isPlayerDependencyUnlocked(player: Player): Boolean {
+    fun isTeamDependencyUnlocked(team: GuideTeam): Boolean {
         for(dependency in dependencies) {
-            if(!dependency.isPlayerCompleted(player)) {
+            if(!dependency.isTeamCompleted(team)) {
                 return false
             }
         }
@@ -113,19 +118,19 @@ abstract class GuideElement(
         return true
     }
     
-    fun isPlayerUnlocked(player: Player): Boolean =
-        teamDataMap[player.uniqueId]?.condition?.let { 
+    fun isTeamUnlocked(team: GuideTeam): Boolean =
+        teamDataMap[team]?.condition?.let { 
             it == UNLOCKED || it == COMPLETE
         } ?: false
 
     fun hasLock(): Boolean = locks.isNotEmpty()
     
-    fun getCondition(player: Player): ElementCondition =
-        if(isPlayerCompleted(player)) {
+    override fun getCondition(team: GuideTeam): ElementCondition =
+        if(isTeamCompleted(team)) {
             COMPLETE
-        } else if(isPlayerUnlocked(player)) {
+        } else if(isTeamUnlocked(team)) {
             UNLOCKED
-        } else if(!isPlayerDependencyUnlocked(player)) {
+        } else if(!isTeamDependencyUnlocked(team)) {
             LOCKED_DEPENDENCY
         } else if(hasLock()) {
             LOCKED_LOCK
@@ -133,7 +138,7 @@ abstract class GuideElement(
             UNLOCKED
         }
     
-    fun getSymbolByCondition(player: Player, condition: ElementCondition): ItemStack =
+    override fun getSymbolByCondition(player: Player, team: GuideTeam, condition: ElementCondition): ItemStack =
         when(condition) {
             COMPLETE -> completedSymbol
             
@@ -148,8 +153,8 @@ abstract class GuideElement(
                 lore += player.getLangText("menu-shining_guide-element-symbol-locked_dependency")
                 lore += ""
                 dependencies.forEach { 
-                    if(!it.isPlayerCompleted(player)) {
-                        lore += it.name
+                    if(!it.isTeamCompleted(team)) {
+                        lore += it.getName()
                     }
                 }
                 
@@ -177,15 +182,10 @@ abstract class GuideElement(
             }
         }
     
-    fun getPlayerData(uuid: UUID): ElementPlayerData =
-        teamDataMap[uuid] ?: ElementPlayerData().also { 
-            teamDataMap[uuid] = it
-        }
+    fun getTeamData(team: GuideTeam): ElementTeamData =
+        teamDataMap.getOrPut(team) { ElementTeamData() }
     
-    fun getPlayerData(player: Player): ElementPlayerData =
-        getPlayerData(player.uniqueId)
-    
-    fun registerDependency(element: GuideElement) {
+    fun registerDependency(element: IGuideElement) {
         dependencies += element
     }
     

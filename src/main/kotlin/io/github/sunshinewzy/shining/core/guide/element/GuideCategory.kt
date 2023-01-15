@@ -1,5 +1,7 @@
 package io.github.sunshinewzy.shining.core.guide.element
 
+import io.github.sunshinewzy.shining.api.guide.IGuideElement
+import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.ElementCondition
 import io.github.sunshinewzy.shining.core.guide.GuideElement
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
@@ -20,26 +22,26 @@ import java.util.*
  * @param symbol to display this [GuideCategory] in guide
  * @param tier higher tier will make this [GuideCategory] appear further down in the guide
  */
-class GuideCategory(id: String, symbol: ItemStack, var tier: Int = 0) : GuideElement(id, symbol) {
-    private val elements = LinkedList<GuideElement>()
+class GuideCategory(id: NamespacedId, symbol: ItemStack, var tier: Int = 0) : GuideElement(id, symbol) {
+    private val elements = LinkedList<IGuideElement>()
     
     
     override fun openAction(player: Player, team: GuideTeam) {
-        player.openMenu<Linked<GuideElement>>(player.getLangText(ShiningGuide.TITLE)) {
+        player.openMenu<Linked<IGuideElement>>(player.getLangText(ShiningGuide.TITLE)) {
             rows(6)
             slots(ShiningGuide.slotOrders)
 
             elements { elements }
 
-            val dependencyLockedElements = LinkedList<GuideElement>()
-            val lockLockedElements = LinkedList<GuideElement>()
+            val dependencyLockedElements = LinkedList<IGuideElement>()
+            val lockLockedElements = LinkedList<IGuideElement>()
             onGenerate { player, element, index, slot ->
-                val condition = element.getCondition(player)
+                val condition = element.getCondition(team)
                 if(condition == ElementCondition.LOCKED_DEPENDENCY)
                     dependencyLockedElements += element
                 else if(condition == ElementCondition.LOCKED_LOCK)
                     lockLockedElements += element
-                element.getSymbolByCondition(player, condition)
+                element.getSymbolByCondition(player, team, condition)
             }
 
             onBuild(true, ShiningGuide.onBuildEdge)
@@ -60,7 +62,7 @@ class GuideCategory(id: String, symbol: ItemStack, var tier: Int = 0) : GuideEle
                 if(element in dependencyLockedElements) return@onClick
                 
                 if(element in lockLockedElements) {
-                    if(element.unlock(player)) {
+                    if(element.unlock(player, team)) {
                         ShiningGuide.fireworkCongratulate(player)
                         open(player, team)
                     }
@@ -86,7 +88,7 @@ class GuideCategory(id: String, symbol: ItemStack, var tier: Int = 0) : GuideEle
     }
     
     
-    fun registerElement(element: GuideElement) {
+    fun registerElement(element: IGuideElement) {
         elements += element
     }
     

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.jsonMapper
 import io.github.sunshinewzy.shining.api.ShiningPlugin
 import io.github.sunshinewzy.shining.api.machine.IMachineManager
 import io.github.sunshinewzy.shining.api.namespace.Namespace
+import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.data.DataManager
 import io.github.sunshinewzy.shining.core.data.SerializationModules
 import io.github.sunshinewzy.shining.core.data.legacy.internal.SLocationData
@@ -153,10 +154,10 @@ object Shining : Plugin(), ShiningPlugin {
     
     @ShiningTestApi
     private fun test() {
-        val stoneCategory = GuideCategory("STONE_AGE", SItem(Material.STONE, "&f石器时代", "&d一切的起源"))
-        val steamCategory = GuideCategory("STEAM_AGE", SItem(Material.IRON_INGOT, "&e蒸汽时代", "&d第一次工业革命"))
-        val electricalCategory = GuideCategory("ELECTRICAL_AGE", SItem(Material.NETHERITE_INGOT, "&a电器时代", "&d第二次工业革命"))
-        val informationCateGory = GuideCategory("INFORMATION_AGE", SItem(Material.DIAMOND, "&b信息时代", "&d技术爆炸"))
+        val stoneCategory = GuideCategory(NamespacedId(Shining, "STONE_AGE"), SItem(Material.STONE, "&f石器时代", "&d一切的起源"))
+        val steamCategory = GuideCategory(NamespacedId(Shining, "STEAM_AGE"), SItem(Material.IRON_INGOT, "&e蒸汽时代", "&d第一次工业革命"))
+        val electricalCategory = GuideCategory(NamespacedId(Shining, "ELECTRICAL_AGE"), SItem(Material.NETHERITE_INGOT, "&a电器时代", "&d第二次工业革命"))
+        val informationCateGory = GuideCategory(NamespacedId(Shining, "INFORMATION_AGE"), SItem(Material.DIAMOND, "&b信息时代", "&d技术爆炸"))
         
         steamCategory.registerDependency(stoneCategory)
         electricalCategory.registerDependency(steamCategory)
@@ -164,12 +165,12 @@ object Shining : Plugin(), ShiningPlugin {
         
         val lockExperience = LockExperience(5)
         
-        val newStoneCategory = GuideCategory("NEW_STONE_AGE", SItem(Material.STONE_BRICKS, "&a新石器时代"))
-        val stickItem = GuideItem("STICK", SItem(Material.STICK, "&6工具的基石"))
+        val newStoneCategory = GuideCategory(NamespacedId(Shining, "NEW_STONE_AGE"), SItem(Material.STONE_BRICKS, "&a新石器时代"))
+        val stickItem = GuideItem(NamespacedId(Shining, "STICK"), SItem(Material.STICK, "&6工具的基石"))
         newStoneCategory.registerElement(stickItem)
         stoneCategory.registerElement(newStoneCategory)
         
-        val oldStoneCategory = GuideCategory("OLD_STONE_AGE", SItem(Material.COBBLESTONE, "&7旧石器时代"))
+        val oldStoneCategory = GuideCategory(NamespacedId(Shining, "OLD_STONE_AGE"), SItem(Material.COBBLESTONE, "&7旧石器时代"))
         stoneCategory.registerElement(oldStoneCategory)
         
         stickItem.registerLock(lockExperience)
