@@ -1,11 +1,12 @@
 package io.github.sunshinewzy.shining.core.guide.element
 
-import io.github.sunshinewzy.shining.api.guide.IGuideElement
+import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
+import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
+import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.guide.ElementCondition
-import io.github.sunshinewzy.shining.core.guide.GuideElement
-import io.github.sunshinewzy.shining.core.guide.GuideTeam
-import io.github.sunshinewzy.shining.core.guide.ShiningGuide
+import io.github.sunshinewzy.shining.core.guide.*
+import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor.setEditor
+import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
@@ -13,6 +14,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Linked
+import taboolib.platform.util.isAir
 import java.util.*
 
 /**
@@ -22,11 +24,12 @@ import java.util.*
  * @param symbol to display this [GuideCategory] in guide
  * @param tier higher tier will make this [GuideCategory] appear further down in the guide
  */
-class GuideCategory(id: NamespacedId, symbol: ItemStack, var tier: Int = 0) : GuideElement(id, symbol) {
-    private val elements = LinkedList<IGuideElement>()
+class GuideCategory(id: NamespacedId, symbol: ItemStack, var tier: Int = 0) : GuideElement(id, TODO(), symbol),
+    IGuideElementContainer {
+    private val elements: MutableList<IGuideElement> = LinkedList()
     
     
-    override fun openAction(player: Player, team: GuideTeam) {
+    override fun openMenu(player: Player, team: GuideTeam) {
         player.openMenu<Linked<IGuideElement>>(player.getLangText(ShiningGuide.TITLE)) {
             rows(6)
             slots(ShiningGuide.slotOrders)
@@ -36,6 +39,10 @@ class GuideCategory(id: NamespacedId, symbol: ItemStack, var tier: Int = 0) : Gu
             val dependencyLockedElements = LinkedList<IGuideElement>()
             val lockLockedElements = LinkedList<IGuideElement>()
             onGenerate { player, element, index, slot ->
+                if(ShiningGuideEditor.isEditModeEnabled(player)) {
+                    return@onGenerate element.getSymbolByCondition(player, team, ElementCondition.UNLOCKED)
+                }
+                
                 val condition = element.getCondition(team)
                 if(condition == ElementCondition.LOCKED_DEPENDENCY)
                     dependencyLockedElements += element
@@ -59,6 +66,11 @@ class GuideCategory(id: NamespacedId, symbol: ItemStack, var tier: Int = 0) : Gu
             }
 
             onClick { event, element ->
+                if(ShiningGuideEditor.isEditorEnabled(player)) {
+                    ShiningGuideEditor.openEditMenu(player, team, element, this@GuideCategory)
+                    return@onClick
+                }
+                
                 if(element in dependencyLockedElements) return@onClick
                 
                 if(element in lockLockedElements) {
@@ -66,11 +78,22 @@ class GuideCategory(id: NamespacedId, symbol: ItemStack, var tier: Int = 0) : Gu
                         ShiningGuide.fireworkCongratulate(player)
                         open(player, team)
                     }
-                    
                     return@onClick
                 }
 
                 element.open(event.clicker, team, this@GuideCategory)
+            }
+
+            if(ShiningGuideEditor.isEditorEnabled(player)) {
+                onClick(lock = true) {
+                    if(it.rawSlot in ShiningGuide.slotOrders && it.currentItem.isAir()) {
+                        ShiningGuideEditor.openEditMenu(player, team, null, this@GuideCategory)
+                    }
+                }
+            }
+
+            setEditor(player) {
+                openMenu(player, team)
             }
 
             set(2 orderWith 1, ShiningIcon.BACK.item) {
@@ -82,13 +105,29 @@ class GuideCategory(id: NamespacedId, symbol: ItemStack, var tier: Int = 0) : Gu
             }
 
             set(5 orderWith 1, ShiningIcon.SETTINGS.item) {
-                ShiningGuide.openSettings(player, team)
+                ShiningGuideSettings.openSettingsMenu(player, team)
             }
         }
     }
-    
-    
-    fun registerElement(element: IGuideElement) {
+
+    override fun update(state: IGuideElementState): Boolean {
+        if(state is GuideCategoryState) {
+            elements.clear()
+            elements += state.elements
+            
+            return true
+        }
+        
+        return false
+    }
+
+    override fun getState(): GuideCategoryState {
+        val state = GuideCategoryState(this)
+        state.elements += elements
+        return state
+    }
+
+    override fun registerElement(element: IGuideElement) {
         elements += element
     }
     

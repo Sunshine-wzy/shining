@@ -1,16 +1,16 @@
 package io.github.sunshinewzy.shining.core.guide
 
 import io.github.sunshinewzy.shining.Shining
-import io.github.sunshinewzy.shining.api.guide.IGuideElement
+import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.dictionary.DictionaryItem
 import io.github.sunshinewzy.shining.core.dictionary.DictionaryRegistry
 import io.github.sunshinewzy.shining.core.dictionary.item.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.getGuideTeam
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.setupGuideTeam
+import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor.setEditor
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.LocalizedItem
-import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.objects.SCollection
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
@@ -30,7 +30,6 @@ import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.submit
 import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
 import taboolib.module.ui.type.Linked
 import taboolib.platform.util.isAir
 import java.util.*
@@ -87,8 +86,6 @@ object ShiningGuide {
     
     
     fun openMainMenu(player: Player) {
-        playerLastOpenElementMap -= player.uniqueId
-        
         Shining.scope.launch(Dispatchers.IO) {
             val team = player.getGuideTeam() ?: kotlin.run {
                 submit {
@@ -97,96 +94,100 @@ object ShiningGuide {
                 return@launch
             }
 
-            soundOpen.playSound(player)
             submit {
-                player.openMenu<Linked<IGuideElement>>(player.getLangText(TITLE)) {
-                    rows(6)
-                    slots(slotOrders)
+                openMainMenu(player, team)
+            }
+        }
+    }
+    
+    fun openMainMenu(player: Player, team: GuideTeam) {
+        playerLastOpenElementMap -= player.uniqueId
+        soundOpen.playSound(player)
+        
+        player.openMenu<Linked<IGuideElement>>(player.getLangText(TITLE)) {
+            rows(6)
+            slots(slotOrders)
 
-                    elements { getElements() }
+            elements { getElements() }
 
-                    val lockedElements = LinkedList<IGuideElement>()
-                    onGenerate(true) { player, element, index, slot ->
-                        val condition = element.getCondition(team)
-                        if(condition == ElementCondition.LOCKED_DEPENDENCY || condition == ElementCondition.LOCKED_LOCK)
-                            lockedElements += element
-                        element.getSymbolByCondition(player, team, condition)
-                    }
+            val lockedElements = LinkedList<IGuideElement>()
+            onGenerate(true) { player, element, index, slot ->
+                if(ShiningGuideEditor.isEditModeEnabled(player)) {
+                    return@onGenerate element.getSymbolByCondition(player, team, ElementCondition.UNLOCKED)
+                }
 
-                    onBuild(true, onBuildEdge)
+                val condition = element.getCondition(team)
+                if(condition == ElementCondition.LOCKED_DEPENDENCY || condition == ElementCondition.LOCKED_LOCK)
+                    lockedElements += element
+                element.getSymbolByCondition(player, team, condition)
+            }
 
-                    setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
-                        if(hasPreviousPage) {
-                            ShiningIcon.PAGE_PREVIOUS_GLASS_PANE.item
-                        } else ShiningIcon.EDGE.item
-                    }
+            onBuild(true, onBuildEdge)
 
-                    setNextPage(8 orderWith 6) { page, hasNextPage ->
-                        if(hasNextPage) {
-                            ShiningIcon.PAGE_NEXT_GLASS_PANE.item
-                        } else ShiningIcon.EDGE.item
-                    }
+            setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
+                if(hasPreviousPage) {
+                    ShiningIcon.PAGE_PREVIOUS_GLASS_PANE.item
+                } else ShiningIcon.EDGE.item
+            }
 
-                    onClick { event, element ->
-                        if(element in lockedElements) return@onClick
+            setNextPage(8 orderWith 6) { page, hasNextPage ->
+                if(hasNextPage) {
+                    ShiningIcon.PAGE_NEXT_GLASS_PANE.item
+                } else ShiningIcon.EDGE.item
+            }
 
-                        element.open(event.clicker, team, null)
-                    }
-                    
-                    set(5 orderWith 1, ShiningIcon.SETTINGS.item) {
-                        openSettings(player, team)
+            onClick { event, element ->
+                if(ShiningGuideEditor.isEditorEnabled(player)) {
+                    ShiningGuideEditor.openEditMenu(player, team, element)
+                    return@onClick
+                }
+
+                if(element in lockedElements) return@onClick
+
+                element.open(event.clicker, team, null)
+            }
+
+            if(ShiningGuideEditor.isEditorEnabled(player)) {
+                onClick(lock = true) {
+                    if(it.rawSlot in slotOrders && it.currentItem.isAir()) {
+                        ShiningGuideEditor.openEditMenu(player, team, null)
                     }
                 }
             }
+
+            setEditor(player) {
+                openMainMenu(player, team)
+            }
+
+            set(5 orderWith 1, ShiningIcon.SETTINGS.item) {
+                ShiningGuideSettings.openSettingsMenu(player, team)
+            }
+
         }
     }
     
     fun openLastElement(player: Player) {
-        playerLastOpenElementMap[player.uniqueId]?.let {
-            Shining.scope.launch(Dispatchers.IO) {
-                val team = player.getGuideTeam() ?: kotlin.run {
-                    submit {
-                        player.setupGuideTeam()
-                    }
-                    return@launch
-                }
-
+        Shining.scope.launch(Dispatchers.IO) {
+            val team = player.getGuideTeam() ?: kotlin.run {
                 submit {
-                    it.open(player, team)
+                    player.setupGuideTeam()
                 }
+                return@launch
             }
-            return
+            
+            submit {
+                openLastElement(player, team)
+            }
         }
-        
-        openMainMenu(player)
     }
     
-    
-    private val itemTeamInfo = NamespacedIdItem(Material.APPLE, NamespacedId(Shining, "shining_guide-settings-team_info"))
-    
-    fun openSettings(player: Player, team: GuideTeam) {
-        player.openMenu<Basic>(player.getLangText("menu-shining_guide-settings-title")) {
-            rows(6)
-
-            map(
-                "-B-------",
-                "-a      -",
-                "-       -",
-                "-       -",
-                "-       -",
-                "---------"
-            )
-
-            set('-', ShiningIcon.EDGE.item)
-
-            set('B', ShiningIcon.BACK.getNamespacedIdItem().toLangItem(player), onClickBack)
-            
-            set('a', itemTeamInfo) {
-                team.openInfoMenu(player)
-            }
-            
-            onClick(lock = true)
+    fun openLastElement(player: Player, team: GuideTeam) {
+        playerLastOpenElementMap[player.uniqueId]?.let {
+            it.open(player, team)
+            return
         }
+
+        openMainMenu(player, team)
     }
     
     

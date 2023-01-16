@@ -3,6 +3,7 @@ package io.github.sunshinewzy.shining.objects.item
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.Itemable
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.lang.item.LanguageItem
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.objects.SItem
 import org.bukkit.Material
@@ -37,6 +38,6 @@ enum class ShiningIcon(val item: ItemStack) : Itemable {
 
     override fun getItemStack(): ItemStack = item
     
-    fun getNamespacedIdItem(): NamespacedIdItem = item as NamespacedIdItem
+    fun getLanguageItem(): LanguageItem = item as LanguageItem
     
 }

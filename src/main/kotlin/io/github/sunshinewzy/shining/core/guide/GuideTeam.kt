@@ -6,12 +6,11 @@ import io.github.sunshinewzy.shining.core.data.JacksonWrapper
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.executePlayerDataContainer
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.getDataContainer
 import io.github.sunshinewzy.shining.core.lang.*
-import io.github.sunshinewzy.shining.core.lang.item.LocalizedItem.Companion.localize
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
-import io.github.sunshinewzy.shining.core.menu.MenuBuilder.onBack
-import io.github.sunshinewzy.shining.core.menu.MenuBuilder.openMultiPageMenu
-import io.github.sunshinewzy.shining.core.menu.MenuBuilder.openSearchMenu
 import io.github.sunshinewzy.shining.core.menu.Search
+import io.github.sunshinewzy.shining.core.menu.onBack
+import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
+import io.github.sunshinewzy.shining.core.menu.openSearchMenu
 import io.github.sunshinewzy.shining.objects.SItem.Companion.setLore
 import io.github.sunshinewzy.shining.objects.SItem.Companion.setName
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
@@ -170,7 +169,7 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
             set('-', ShiningIcon.EDGE.item)
 
-            set('B', ShiningIcon.BACK.getNamespacedIdItem().toLangItem(player), ShiningGuide.onClickBack)
+            set('B', ShiningIcon.BACK.getLanguageItem().toLocalizedItem(player), ShiningGuide.onClickBack)
 
             set('a', symbol.clone().localize(player.getLanguageNode("menu-shining_guide-team-info-symbol"), name))
             set(
@@ -182,7 +181,7 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
             )
             
             if(player.uniqueId == captain) {
-                set('m', teamManageItem.toLangItem(player)) {
+                set('m', teamManageItem.toLocalizedItem(player)) {
                     openManageMenu(player)
                 }
             }
@@ -212,7 +211,7 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
             
             set('-', ShiningIcon.EDGE.item)
             
-            set('B', ShiningIcon.BACK.getNamespacedIdItem().toLangItem(player), ShiningGuide.onClickBack)
+            set('B', ShiningIcon.BACK.getLanguageItem().toLocalizedItem(player), ShiningGuide.onClickBack)
             
             set('a', if(applicants.value.isEmpty()) applicationManageItem else applicationManageItem.shinyItem) {
                 openManageApplicationMenu(player)
@@ -375,8 +374,8 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                     "ooaoooboo"
                 )
 
-                set('a', createTeamItem.toLangItem(this@setupGuideTeam))
-                set('b', joinTeamItem.toLangItem(this@setupGuideTeam))
+                set('a', createTeamItem.toLocalizedItem(this@setupGuideTeam))
+                set('b', joinTeamItem.toLocalizedItem(this@setupGuideTeam))
 
                 onClick('a') {
                     createGuideTeam()
@@ -400,13 +399,13 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                     "obocoodoo"
                 )
 
-                set('b', editTeamNameItem.toLangItem(this@createGuideTeam).let { langItem ->
+                set('b', editTeamNameItem.toLocalizedItem(this@createGuideTeam).let { langItem ->
                     langItem.getSectionString("create")?.let { text ->
                         langItem.clone().setLore("", text, "", "&e$name")
                     } ?: langItem
                 })
                 set('c', symbol.clone().setName(getLangText("menu-shining_guide-team-create-edit_symbol")))
-                set('d', createTeamItem.toLangItem(this@createGuideTeam).let { langItem ->
+                set('d', createTeamItem.toLocalizedItem(this@createGuideTeam).let { langItem ->
                     langItem.getSectionString("create")?.let { text ->
                         langItem.clone().setLore("", text, "", "&f$name")
                     } ?: langItem

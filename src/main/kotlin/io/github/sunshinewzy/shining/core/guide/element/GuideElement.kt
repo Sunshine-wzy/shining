@@ -1,8 +1,10 @@
-package io.github.sunshinewzy.shining.core.guide
+package io.github.sunshinewzy.shining.core.guide.element
 
 import io.github.sunshinewzy.shining.Shining
-import io.github.sunshinewzy.shining.api.guide.IGuideElement
+import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
+import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.guide.*
 import io.github.sunshinewzy.shining.core.guide.ElementCondition.*
 import io.github.sunshinewzy.shining.core.guide.data.ElementTeamData
 import io.github.sunshinewzy.shining.core.lang.getDefaultLangText
@@ -21,12 +23,10 @@ import java.util.*
 import kotlin.reflect.KProperty
 
 abstract class GuideElement(
-    val id: NamespacedId,
-    val symbol: ItemStack
+    private var id: NamespacedId,
+    private val description: ElementDescription,
+    private var symbol: ItemStack
 ) : IGuideElement {
-    private var name = symbol.getDisplayName(id.toString())
-
-    
     private val dependencies: MutableList<IGuideElement> = LinkedList()
     private val locks = LinkedList<ElementLock>()
     private val symbolHandlers = ArrayList<Updatable>()
@@ -56,7 +56,7 @@ abstract class GuideElement(
     }
 
     override fun getName(): String {
-        return name
+        return symbol.getDisplayName(id.toString())
     }
 
     override fun open(player: Player, team: GuideTeam, previousElement: IGuideElement?) {
@@ -66,17 +66,17 @@ abstract class GuideElement(
         ShiningGuide.playerLastOpenElementMap[player.uniqueId] = this
         
         ShiningGuide.soundOpen.playSound(player)    // TODO: Allow every element to customize the open sound
-        openAction(player, team)
+        openMenu(player, team)
     }
     
-    protected abstract fun openAction(player: Player, team: GuideTeam)
+    protected abstract fun openMenu(player: Player, team: GuideTeam)
     
     override fun back(player: Player, team: GuideTeam) {
         previousElementMap[player.uniqueId]?.let { 
             it.open(player, team, null)
             return
         }
-        
+
         ShiningGuide.openMainMenu(player)
     }
     
@@ -98,7 +98,15 @@ abstract class GuideElement(
         getTeamData(team).condition = UNLOCKED
         return true
     }
-    
+
+    override fun update(state: IGuideElementState): Boolean {
+        TODO()
+    }
+
+    override fun getState(): IGuideElementState {
+        TODO()
+    }
+
     fun update() {
         symbolHandlers.forEach { 
             it.update()

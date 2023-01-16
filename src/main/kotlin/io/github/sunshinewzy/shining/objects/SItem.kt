@@ -332,7 +332,7 @@ open class SItem(item: ItemStack) : ItemStack(item) {
         fun ItemStack.getLore(): MutableList<String> = itemMeta?.lore ?: mutableListOf()
         
         fun ItemStack.getDisplayName(default: String): String {
-            itemMeta?.run {
+            itemMeta?.apply {
                 if(hasDisplayName()) {
                     displayName.let { 
                         if(it != "") return it

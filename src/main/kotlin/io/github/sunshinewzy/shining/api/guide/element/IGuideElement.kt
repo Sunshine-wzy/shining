@@ -1,5 +1,6 @@
-package io.github.sunshinewzy.shining.api.guide
+package io.github.sunshinewzy.shining.api.guide.element
 
+import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.ElementCondition
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
@@ -17,6 +18,10 @@ interface IGuideElement {
     fun back(player: Player, team: GuideTeam)
 
     fun unlock(player: Player, team: GuideTeam): Boolean
+
+    fun update(state: IGuideElementState): Boolean
+
+    fun getState(): IGuideElementState
 
     fun getCondition(team: GuideTeam): ElementCondition
 

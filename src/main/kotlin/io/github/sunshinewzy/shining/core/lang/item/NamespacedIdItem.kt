@@ -3,18 +3,15 @@ package io.github.sunshinewzy.shining.core.lang.item
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.lang.LanguageNodePrefix
 import io.github.sunshinewzy.shining.core.lang.getLanguageNode
-import io.github.sunshinewzy.shining.core.lang.getLanguageNodeOrNull
-import io.github.sunshinewzy.shining.core.lang.getLocale
+import io.github.sunshinewzy.shining.objects.SItem.Companion.getMeta
 import org.bukkit.Material
-import org.bukkit.command.CommandSender
+import org.bukkit.enchantments.Enchantment
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
-import java.util.concurrent.ConcurrentHashMap
+import org.bukkit.inventory.meta.EnchantmentStorageMeta
 
-open class NamespacedIdItem(item: ItemStack, val id: NamespacedId) : LocalizedItem(item, id.getLanguageNode(LanguageNodePrefix.ITEM.prefix)) {
+open class NamespacedIdItem(item: ItemStack, val id: NamespacedId) : LanguageItem(item, { locale -> id.getLanguageNode(LanguageNodePrefix.ITEM.prefix, locale) }) {
 
-    private val langItemCacheMap: MutableMap<String, LocalizedItem> by lazy { ConcurrentHashMap() }
-    
-    
     constructor(item: ItemStack, amount: Int, id: NamespacedId) : this(item, id) {
         this.amount = amount
     }
@@ -23,15 +20,15 @@ open class NamespacedIdItem(item: ItemStack, val id: NamespacedId) : LocalizedIt
     constructor(type: Material, damage: Short, amount: Int, id: NamespacedId) : this(ItemStack(type, amount, damage), id)
     
     
-    fun toLangItem(sender: CommandSender): LocalizedItem {
-        val locale = sender.getLocale()
-        langItemCacheMap[locale]?.let { 
-            return it
+    override fun shiny(): NamespacedIdItem {
+        val meta = getMeta()
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+        if(meta is EnchantmentStorageMeta) {
+            meta.addStoredEnchant(Enchantment.LURE, 1, true)
+        } else {
+            meta.addEnchant(Enchantment.LURE, 1, true)
         }
-        
-        id.getLanguageNodeOrNull(LanguageNodePrefix.ITEM.prefix, locale)?.let { node -> 
-            return LocalizedItem(clone(), node).also { langItemCacheMap[locale] = it }
-        }
+        itemMeta = meta
         return this
     }
     

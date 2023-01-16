@@ -5,15 +5,10 @@ import com.fasterxml.jackson.module.kotlin.jsonMapper
 import io.github.sunshinewzy.shining.api.ShiningPlugin
 import io.github.sunshinewzy.shining.api.machine.IMachineManager
 import io.github.sunshinewzy.shining.api.namespace.Namespace
-import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.data.DataManager
 import io.github.sunshinewzy.shining.core.data.SerializationModules
 import io.github.sunshinewzy.shining.core.data.legacy.internal.SLocationData
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
-import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
-import io.github.sunshinewzy.shining.core.guide.element.GuideItem
-import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
-import io.github.sunshinewzy.shining.core.guide.lock.LockItem
 import io.github.sunshinewzy.shining.core.machine.MachineManager
 import io.github.sunshinewzy.shining.core.machine.legacy.*
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipe
@@ -154,6 +149,7 @@ object Shining : Plugin(), ShiningPlugin {
     
     @ShiningTestApi
     private fun test() {
+        /*
         val stoneCategory = GuideCategory(NamespacedId(Shining, "STONE_AGE"), SItem(Material.STONE, "&f石器时代", "&d一切的起源"))
         val steamCategory = GuideCategory(NamespacedId(Shining, "STEAM_AGE"), SItem(Material.IRON_INGOT, "&e蒸汽时代", "&d第一次工业革命"))
         val electricalCategory = GuideCategory(NamespacedId(Shining, "ELECTRICAL_AGE"), SItem(Material.NETHERITE_INGOT, "&a电器时代", "&d第二次工业革命"))
@@ -182,7 +178,7 @@ object Shining : Plugin(), ShiningPlugin {
         ShiningGuide.registerElement(stoneCategory)
         ShiningGuide.registerElement(informationCateGory, 13)
         ShiningGuide.registerElement(steamCategory, 11)
-        
+        */
         
         val mapper = jsonMapper { 
             addModule(SerializationModules.bukkit)

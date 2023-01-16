@@ -3,17 +3,14 @@ package io.github.sunshinewzy.shining.core.lang.item
 import io.github.sunshinewzy.shining.api.lang.LanguageNode
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.lang.LanguageNodePrefix.ITEM
-import io.github.sunshinewzy.shining.core.lang.formatArgs
 import io.github.sunshinewzy.shining.core.lang.getLanguageNode
 import io.github.sunshinewzy.shining.core.lang.node.ListNode
 import io.github.sunshinewzy.shining.core.lang.node.SectionNode
 import io.github.sunshinewzy.shining.core.lang.node.TextNode
-import io.github.sunshinewzy.shining.objects.SItem.Companion.setLore
-import io.github.sunshinewzy.shining.objects.SItem.Companion.setName
+import io.github.sunshinewzy.shining.utils.localize
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import taboolib.platform.util.buildItem
-import java.util.*
 
 open class LocalizedItem(item: ItemStack, val languageNode: LanguageNode) : ItemStack(item) {
 
@@ -44,80 +41,5 @@ open class LocalizedItem(item: ItemStack, val languageNode: LanguageNode) : Item
     
     fun getSectionString(path: String): String? =
         getSectionNode()?.section?.getString(path)
-    
-    
-    companion object {
-        
-        fun ItemStack.localize(languageNode: LanguageNode?): ItemStack {
-            when(languageNode) {
-                is TextNode -> {
-                    setName(languageNode.text)
-                }
-
-                is ListNode -> {
-                    val list = LinkedList<String>()
-                    languageNode.list.filterIsInstance<TextNode>().mapTo(list) { it.text }
-
-                    if(list.isNotEmpty()) {
-                        setName(list.removeFirst())
-
-                        if(list.isNotEmpty()) {
-                            setLore(list)
-                        }
-                    }
-                }
-
-                is SectionNode -> {
-                    languageNode.section.getString("name")?.let {
-                        setName(it)
-                    }
-
-                    languageNode.section.getStringList("lore").let {
-                        if(it.isNotEmpty()) {
-                            setLore(it)
-                        }
-                    }
-                }
-            }
-            
-            return this
-        }
-
-        fun ItemStack.localize(languageNode: LanguageNode?, vararg args: String?): ItemStack {
-            when(languageNode) {
-                is TextNode -> {
-                    setName(languageNode.format(*args))
-                }
-
-                is ListNode -> {
-                    val list = LinkedList<String>()
-                    languageNode.list.filterIsInstance<TextNode>().mapTo(list) { it.format(*args) }
-
-                    if(list.isNotEmpty()) {
-                        setName(list.removeFirst())
-
-                        if(list.isNotEmpty()) {
-                            setLore(list)
-                        }
-                    }
-                }
-
-                is SectionNode -> {
-                    languageNode.section.getString("name")?.let {
-                        setName(it.formatArgs(*args))
-                    }
-
-                    languageNode.section.getStringList("lore").let { loreList ->
-                        if(loreList.isNotEmpty()) {
-                            setLore(loreList.map { it.formatArgs(*args) })
-                        }
-                    }
-                }
-            }
-
-            return this
-        }
-        
-    }
     
 }

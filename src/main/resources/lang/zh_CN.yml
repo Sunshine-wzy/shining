@@ -9,6 +9,14 @@ item-shining-shining_guide-team-edit_name:
 item-shining-shining_guide-team-manage-application: '&a入队申请'
 item-shining-shining_guide-team-manage: '&b队伍管理'
 item-shining-shining_guide-settings-team_info: '&b队伍信息'
+item-shining-shining_guide-settings-edit_mode:
+  close: ['&e编辑模式', '&7已关闭', '', '&a> 点击开启']
+  open: ['&e编辑模式', '&a已开启', '', '&c> 点击关闭']
+item-shining-shining_guide-editor:
+  close: ['&e编辑器', '&7已关闭', '', '&a> 点击开启']
+  open: ['&e编辑器', '&a已开启', '', '&c> 点击关闭']
+item-shining-shining_guide-editor-create_state_copy: '&b创建状态副本'
+item-shining-shining_guide-editor-create_state_new: '&a创建新状态'
 item-shining-icon-back: ['&c⇦ 返回', '', '&f左键：&7返回上一页', '&fShift + 左键：&7返回主菜单']
 item-shining-icon-back_last_page: '&b⇦ 返回'
 item-shining-icon-submit: '&a>> 点击以提交任务 <<'

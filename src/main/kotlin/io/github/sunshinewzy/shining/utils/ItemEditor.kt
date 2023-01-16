@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.shining.utils
 
 import io.github.sunshinewzy.shining.Shining
-import io.github.sunshinewzy.shining.core.menu.MenuBuilder.buildMultiPage
+import io.github.sunshinewzy.shining.core.menu.buildMultiPage
 import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.SItem.Companion.getLore
 import io.github.sunshinewzy.shining.objects.SItem.Companion.getMeta
