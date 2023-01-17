@@ -16,7 +16,6 @@ import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipes
 import io.github.sunshinewzy.shining.core.task.TaskProgress
 import io.github.sunshinewzy.shining.listeners.SunSTSubscriber
 import io.github.sunshinewzy.shining.objects.SItem
-import io.github.sunshinewzy.shining.objects.item.SunSTItem
 import io.github.sunshinewzy.shining.objects.legacy.SBlock
 import io.github.sunshinewzy.shining.objects.machine.SunSTMachineManager
 import io.github.sunshinewzy.shining.utils.SReflect
@@ -123,7 +122,6 @@ object Shining : Plugin(), ShiningPlugin {
         
         SItem.initAction()
         DataManager.init()
-        SunSTItem.init()
         SMachineWrench.init()
         SLocationData.init()
         SSingleMachine.init()

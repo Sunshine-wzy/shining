@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.core.guide.lock
 
-import io.github.sunshinewzy.shining.core.guide.ElementLock
+import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon

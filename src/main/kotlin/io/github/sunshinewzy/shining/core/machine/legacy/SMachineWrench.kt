@@ -15,6 +15,7 @@ import io.github.sunshinewzy.shining.objects.inventoryholder.SPartProtectInvento
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.objects.legacy.SBlock
 import io.github.sunshinewzy.shining.utils.getPlayer
+import io.github.sunshinewzy.shining.utils.isItemSimilar
 import io.github.sunshinewzy.shining.utils.sendMsg
 import io.github.sunshinewzy.shining.utils.subscribeEvent
 import org.bukkit.Effect

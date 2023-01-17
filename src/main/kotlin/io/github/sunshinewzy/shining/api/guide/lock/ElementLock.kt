@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.core.guide
+package io.github.sunshinewzy.shining.api.guide.lock
 
 import org.bukkit.entity.Player
 

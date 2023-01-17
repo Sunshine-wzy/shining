@@ -3,9 +3,6 @@ package io.github.sunshinewzy.shining.utils
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.core.menu.buildMultiPage
 import io.github.sunshinewzy.shining.objects.SItem
-import io.github.sunshinewzy.shining.objects.SItem.Companion.getLore
-import io.github.sunshinewzy.shining.objects.SItem.Companion.getMeta
-import io.github.sunshinewzy.shining.objects.SItem.Companion.setName
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import org.bukkit.Material
 import org.bukkit.entity.Player

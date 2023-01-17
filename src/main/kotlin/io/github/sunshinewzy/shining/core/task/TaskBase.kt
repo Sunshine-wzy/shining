@@ -1,7 +1,6 @@
 package io.github.sunshinewzy.shining.core.task
 
 import io.github.sunshinewzy.shining.api.Itemable
-import io.github.sunshinewzy.shining.objects.SItem.Companion.setLore
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.*
 import org.bukkit.Bukkit

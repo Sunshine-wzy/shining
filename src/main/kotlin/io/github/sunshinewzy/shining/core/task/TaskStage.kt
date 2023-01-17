@@ -1,8 +1,6 @@
 package io.github.sunshinewzy.shining.core.task
 
 import io.github.sunshinewzy.shining.objects.SItem
-import io.github.sunshinewzy.shining.objects.SItem.Companion.setName
-import io.github.sunshinewzy.shining.objects.SItem.Companion.setNameAndLore
 import io.github.sunshinewzy.shining.objects.inventoryholder.SProtectInventoryHolder
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.*

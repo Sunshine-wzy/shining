@@ -10,7 +10,6 @@ import io.github.sunshinewzy.shining.events.smachine.SMachineRemoveEvent
 import io.github.sunshinewzy.shining.events.smachine.SMachineUpgradeEvent
 import io.github.sunshinewzy.shining.interfaces.Initable
 import io.github.sunshinewzy.shining.objects.SItem
-import io.github.sunshinewzy.shining.objects.SItem.Companion.setNameAndLore
 import io.github.sunshinewzy.shining.objects.SLocation
 import io.github.sunshinewzy.shining.objects.SLocation.Companion.toSLocation
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon

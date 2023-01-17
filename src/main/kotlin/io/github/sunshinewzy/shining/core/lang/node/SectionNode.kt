@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.shining.core.lang.node
 
 import io.github.sunshinewzy.shining.Shining
-import io.github.sunshinewzy.shining.api.lang.LanguageNode
+import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
 import io.github.sunshinewzy.shining.core.lang.ShiningLanguageManager.transfer
 import io.github.sunshinewzy.shining.core.lang.formatArgs
 import org.bukkit.command.CommandSender

@@ -2,7 +2,7 @@ package io.github.sunshinewzy.shining.core.lang
 
 import io.github.sunshinewzy.shining.api.ShiningConfig
 import io.github.sunshinewzy.shining.api.lang.ILanguageManager
-import io.github.sunshinewzy.shining.api.lang.TextTransfer
+import io.github.sunshinewzy.shining.api.lang.transfer.TextTransfer
 import io.github.sunshinewzy.shining.core.lang.transfer.ColorTextTransfer
 import taboolib.common.platform.function.warning
 import java.io.File

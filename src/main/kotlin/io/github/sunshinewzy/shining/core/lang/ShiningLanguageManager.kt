@@ -3,7 +3,7 @@ package io.github.sunshinewzy.shining.core.lang
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.ShiningConfig
 import io.github.sunshinewzy.shining.api.addon.ShiningAddon
-import io.github.sunshinewzy.shining.api.lang.LanguageNode
+import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import taboolib.common.LifeCycle

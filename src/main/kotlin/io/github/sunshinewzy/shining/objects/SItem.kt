@@ -1,21 +1,13 @@
 package io.github.sunshinewzy.shining.objects
 
-import io.github.sunshinewzy.shining.api.Itemable
-import io.github.sunshinewzy.shining.utils.getInt
-import io.github.sunshinewzy.shining.utils.giveItem
-import io.github.sunshinewzy.shining.utils.subscribeEvent
-import org.bukkit.Bukkit
+import io.github.sunshinewzy.shining.utils.*
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
-import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.Recipe
 import org.bukkit.inventory.ShapelessRecipe
-import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.plugin.java.JavaPlugin
-import taboolib.module.chat.colored
-import kotlin.random.Random
 
 open class SItem(item: ItemStack) : ItemStack(item) {
     
@@ -105,37 +97,13 @@ open class SItem(item: ItemStack) : ItemStack(item) {
 
     companion object {
         private val itemActions = HashMap<SItem, Pair<PlayerInteractEvent.() -> Boolean, ArrayList<PlayerInteractEvent.() -> Unit>>>()
-        private val protectedItems = ArrayList<ItemStack>()
         
         val items = HashMap<String, ItemStack>()
 
-        fun createTaskSymbol(type: Material, vararg lore: String = arrayOf()): SItem {
-            val loreList = arrayListOf("§a>点我查看任务<")
-            if(lore.isNotEmpty())
-                loreList.addAll(lore)
-
-            return SItem(type,"", loreList)
-        }
-        
-        fun createTaskSymbolWithDamage(type: Material, damage: Short, vararg lore: String = arrayOf()): SItem {
-            val loreList = arrayListOf("§a>点我查看任务<")
-            if(lore.isNotEmpty())
-                loreList.addAll(lore)
-
-            return SItem(type, damage, 1, "", loreList)
-        }
-        
-        
         internal fun initAction() {
             subscribeEvent<PlayerInteractEvent> { 
                 val item = item
                 if(item == null || item.type == Material.AIR) return@subscribeEvent
-                
-                protectedItems.forEach { 
-                    if(item.isItemSimilar(it)) {
-                        isCancelled = true
-                    }
-                }
                 
                 itemActions.forEach { (sItem, pair) -> 
                     if(pair.first(this) && item.isItemSimilar(sItem)){
@@ -144,104 +112,6 @@ open class SItem(item: ItemStack) : ItemStack(item) {
                 }
             }
         }
-        
-        fun ItemStack.protect(): ItemStack {
-            val item = clone()
-            item.amount = 1
-            protectedItems += item
-            return this
-        }
-        
-        fun ItemStack.setName(name: String): ItemStack {
-            val meta = if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type) 
-            
-            meta?.setDisplayName(name.colored())
-            itemMeta = meta
-            return this
-        }
-
-        fun ItemStack.setLore(vararg lore: String): ItemStack {
-            setLore(lore.toList())
-            return this
-        }
-
-        fun ItemStack.setLore(lore: List<String>): ItemStack {
-            val meta = if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type)
-            meta?.lore = lore.map { it.colored() }
-            itemMeta = meta
-            return this
-        }
-
-        fun ItemStack.addLore(vararg lore: String): ItemStack {
-            addLore(lore.toList())
-            return this
-        }
-
-        fun ItemStack.addLore(lore: List<String>): ItemStack {
-            (if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type))?.let { meta ->
-                val existLore = meta.lore ?: mutableListOf()
-                existLore += lore.map { it.colored() }
-                meta.lore = existLore
-                itemMeta = meta
-            }
-            return this
-        }
-
-        fun ItemStack.setNameAndLore(name: String, vararg lore: String): ItemStack {
-            setNameAndLore(name, lore.toList())
-            return this
-        }
-
-        fun ItemStack.setNameAndLore(name: String, lore: List<String>): ItemStack {
-            val meta = if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type)
-            meta?.lore = lore.map { it.colored() }
-            meta?.setDisplayName(name.colored())
-            itemMeta = meta
-            return this
-        }
-
-        @JvmStatic
-        fun ItemStack?.isItemSimilar(
-            item: ItemStack,
-            checkLore: Boolean = true,
-            checkAmount: Boolean = true,
-            checkDurability: Boolean = false,
-            ignoreLastTwoLine: Boolean = false
-        ): Boolean {
-            return if(this == null) {
-                false
-            } else if (type != item.type) {
-                false
-            } else if (checkAmount && amount < item.amount) {
-                false
-            } else if (checkDurability && durability != item.durability) {
-                false
-            } else if (hasItemMeta()) {
-                val itemMeta = itemMeta ?: return true
-
-                if (item.hasItemMeta()){
-                    val itemMeta2 = item.itemMeta ?: return true
-                    itemMeta.isMetaEqual(itemMeta2, checkLore, ignoreLastTwoLine)
-                }
-                    
-                else false
-            } else !item.hasItemMeta()
-        }
-        
-        @JvmStatic
-        fun ItemStack?.isItemSimilar(
-            item: Itemable,
-            checkLore: Boolean = true,
-            checkAmount: Boolean = true,
-            checkDurability: Boolean = false,
-            ignoreLastTwoLine: Boolean = false
-        ): Boolean = isItemSimilar(item.getItemStack(), checkLore, checkAmount, checkDurability, ignoreLastTwoLine)
-        
-        @JvmStatic
-        fun ItemStack?.isItemSimilar(item: ItemStack): Boolean = isItemSimilar(item, true)
-        
-        @JvmStatic
-        fun ItemStack?.isItemSimilar(item: ItemStack, checkLore: Boolean): Boolean = isItemSimilar(item, checkLore, true)
         
         
         fun ItemStack.addRecipe(plugin: JavaPlugin, recipe: Recipe): ItemStack {
@@ -325,126 +195,6 @@ open class SItem(item: ItemStack) : ItemStack(item) {
                 ).addIngredient(count, ingredient)
             )
             return this
-        }
-        
-        fun ItemStack.getMeta(): ItemMeta = itemMeta ?: Bukkit.getItemFactory().getItemMeta(type)!!
-        
-        fun ItemStack.getLore(): MutableList<String> = itemMeta?.lore ?: mutableListOf()
-        
-        fun ItemStack.getDisplayName(default: String): String {
-            itemMeta?.apply {
-                if(hasDisplayName()) {
-                    displayName.let { 
-                        if(it != "") return it
-                    }
-                }
-            }
-            
-            return default
-        }
-        
-        fun ItemStack.addUseCount(player: Player, maxCnt: Int): Boolean {
-            var itemGive: ItemStack? = null
-            if(amount > 1) {
-                itemGive = clone()
-                itemGive.amount--
-                amount = 1
-            }
-            var flag = false
-            
-            val meta = getMeta()
-            val lore = meta.lore ?: ArrayList<String>()
-            
-            if(lore.isNotEmpty() && lore.last().startsWith("§7||§a=")) {
-                val last = lore.last()
-                var str = last.substringBefore('>')
-                val cnt = last.filter { it == '=' }.length
-                
-                if(cnt >= maxCnt) {
-                    lore.removeAt(lore.lastIndex)
-                    lore.removeAt(lore.lastIndex)
-                    amount--
-                    
-                    flag = true
-                } else {
-                    str += "=> §e"
-                    val num = (100 / maxCnt) * (cnt + 1)
-                    str += "$num%"
-                    lore[lore.lastIndex] = str
-                }
-            } else {
-                lore.add("")
-                lore.add("§7||§a=> §e${100 / maxCnt}%")
-            }
-            
-            meta.lore = lore
-            itemMeta = meta
-            itemGive?.let { player.giveItem(itemGive) }
-            
-            return flag
-        }
-        
-        fun ItemStack.randomAmount(st: Int, ed: Int): ItemStack {
-            amount = Random.getInt(st, ed)
-            return this
-        }
-        
-        fun ItemStack.randomAmount(ed: Int): ItemStack = randomAmount(1, ed)
-
-        fun ItemStack.cloneRandomAmount(st: Int, ed: Int): ItemStack {
-            val randItem = clone()
-            randItem.amount = Random.getInt(st, ed)
-            return randItem
-        }
-
-        fun ItemStack.cloneRandomAmount(ed: Int): ItemStack = randomAmount(1, ed)
-        
-
-        fun ItemMeta.isMetaEqual(
-            itemMeta: ItemMeta,
-            checkLore: Boolean = true,
-            ignoreLastTwoLine: Boolean = false
-        ): Boolean {
-            return if (itemMeta.hasDisplayName() != hasDisplayName()) {
-                false
-            } else if (itemMeta.hasDisplayName() && hasDisplayName() && itemMeta.displayName != displayName) {
-                false
-            } else if (!checkLore) {
-                true
-            } else if (itemMeta.hasLore() && hasLore()) {
-                val lore = lore ?: return true
-                val lore2 = itemMeta.lore ?: return true
-                
-                lore.isLoreEqual(lore2, ignoreLastTwoLine)
-            } else !itemMeta.hasLore() && !hasLore()
-        }
-
-        
-        fun List<String>.isLoreEqual(
-            lore: List<String>,
-            ignoreLastTwoLine: Boolean = false
-        ): Boolean {
-            if(isEmpty() && lore.isEmpty()) return true
-            
-            if(ignoreLastTwoLine && last().startsWith("§7||")){
-                val loreIgnoreLastTwoLine = ArrayList<String>()
-                for(i in 0..lastIndex-2)
-                    loreIgnoreLastTwoLine.add(this[i])
-                
-                return loreIgnoreLastTwoLine.toString() == lore.toString()
-            }
-
-            return toString() == lore.toString()
-        }
-
-
-        fun ItemStack.addToSunSTItem(keyName: String): ItemStack {
-            items[keyName] = this
-            return this
-        }
-        
-        fun ItemStack.removeOne() {
-            amount--
         }
         
     }

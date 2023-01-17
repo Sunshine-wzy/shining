@@ -7,10 +7,10 @@ import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.letGuideTeam
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.machine.legacy.SMachineWrench
 import io.github.sunshinewzy.shining.objects.SItem
-import io.github.sunshinewzy.shining.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.shining.objects.menu.SunSTMenu
 import io.github.sunshinewzy.shining.utils.ItemEditor
 import io.github.sunshinewzy.shining.utils.giveItem
+import io.github.sunshinewzy.shining.utils.isItemSimilar
 import io.github.sunshinewzy.shining.utils.sendMsg
 import org.bukkit.Material
 import org.bukkit.entity.Player

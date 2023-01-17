@@ -6,10 +6,10 @@ import io.github.sunshinewzy.shining.events.smachine.SSingleMachineAddEvent
 import io.github.sunshinewzy.shining.events.smachine.SSingleMachineRemoveEvent
 import io.github.sunshinewzy.shining.interfaces.Initable
 import io.github.sunshinewzy.shining.interfaces.Registrable
-import io.github.sunshinewzy.shining.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.shining.objects.SLocation
 import io.github.sunshinewzy.shining.objects.SLocation.Companion.toSLocation
 import io.github.sunshinewzy.shining.utils.castMap
+import io.github.sunshinewzy.shining.utils.isItemSimilar
 import io.github.sunshinewzy.shining.utils.subscribeEvent
 import org.bukkit.Location
 import org.bukkit.Material

@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.shining.objects
 
 import io.github.sunshinewzy.shining.api.Itemable
-import io.github.sunshinewzy.shining.objects.SItem.Companion.cloneRandomAmount
+import io.github.sunshinewzy.shining.utils.cloneRandomAmount
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import kotlin.random.Random

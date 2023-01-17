@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.core.lang.node
 
-import io.github.sunshinewzy.shining.api.lang.LanguageNode
+import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
 import taboolib.module.chat.colored
 
 class ListNode(val list: List<LanguageNode>) : LanguageNode {

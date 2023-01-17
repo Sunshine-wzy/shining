@@ -3,9 +3,9 @@ package io.github.sunshinewzy.shining.core.machine.legacy
 import io.github.sunshinewzy.shining.exceptions.MachineStructureException
 import io.github.sunshinewzy.shining.exceptions.NoIngredientException
 import io.github.sunshinewzy.shining.objects.SCoordinate
-import io.github.sunshinewzy.shining.objects.SItem.Companion.getMeta
 import io.github.sunshinewzy.shining.objects.legacy.SBlock
 import io.github.sunshinewzy.shining.utils.addClone
+import io.github.sunshinewzy.shining.utils.getMeta
 import io.github.sunshinewzy.shining.utils.setItem
 import org.bukkit.Location
 import org.bukkit.Material

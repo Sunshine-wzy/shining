@@ -1,17 +1,19 @@
 package io.github.sunshinewzy.shining.utils
 
 import io.github.sunshinewzy.shining.api.Itemable
-import io.github.sunshinewzy.shining.api.lang.LanguageNode
+import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
 import io.github.sunshinewzy.shining.core.lang.formatArgs
 import io.github.sunshinewzy.shining.core.lang.node.ListNode
 import io.github.sunshinewzy.shining.core.lang.node.SectionNode
 import io.github.sunshinewzy.shining.core.lang.node.TextNode
-import io.github.sunshinewzy.shining.objects.SItem.Companion.setLore
-import io.github.sunshinewzy.shining.objects.SItem.Companion.setName
+import org.bukkit.Bukkit
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.ItemMeta
+import taboolib.module.chat.colored
 import taboolib.platform.util.ItemBuilder
 import taboolib.platform.util.buildItem
 import java.util.*
+import java.util.concurrent.ThreadLocalRandom
 
 fun buildItem(item: Itemable, builder: ItemBuilder.() -> Unit = {}): ItemStack {
     return buildItem(item.getItemStack(), builder)
@@ -85,4 +87,128 @@ fun ItemStack.localize(languageNode: LanguageNode?, vararg args: String?): ItemS
     }
 
     return this
+}
+
+fun ItemStack.setName(name: String): ItemStack {
+    val meta = if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type)
+
+    meta?.setDisplayName(name.colored())
+    itemMeta = meta
+    return this
+}
+
+fun ItemStack.setLore(lore: List<String>): ItemStack {
+    val meta = if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type)
+    meta?.lore = lore.map { it.colored() }
+    itemMeta = meta
+    return this
+}
+
+fun ItemStack.setLore(vararg lore: String): ItemStack {
+    setLore(lore.toList())
+    return this
+}
+
+fun ItemStack.addLore(lore: List<String>): ItemStack {
+    val meta = getMeta()
+    val existLore = meta.lore ?: ArrayList<String>()
+    existLore += lore.map { it.colored() }
+    meta.lore = existLore
+    itemMeta = meta
+    return this
+}
+
+fun ItemStack.addLore(vararg lore: String): ItemStack {
+    addLore(lore.toList())
+    return this
+}
+
+fun ItemStack.setNameAndLore(name: String, lore: List<String>): ItemStack {
+    val meta = getMeta()
+    meta.lore = lore.map { it.colored() }
+    meta.setDisplayName(name.colored())
+    itemMeta = meta
+    return this
+}
+
+fun ItemStack.setNameAndLore(name: String, vararg lore: String): ItemStack {
+    setNameAndLore(name, lore.toList())
+    return this
+}
+
+fun ItemStack?.isItemSimilar(
+    item: ItemStack,
+    checkLore: Boolean = true,
+    checkAmount: Boolean = true,
+    checkDurability: Boolean = false
+): Boolean {
+    return if(this == null) {
+        false
+    } else if (type != item.type) {
+        false
+    } else if (checkAmount && amount < item.amount) {
+        false
+    } else if (checkDurability && durability != item.durability) {
+        false
+    } else if (hasItemMeta()) {
+        val itemMeta = itemMeta ?: return true
+
+        if (item.hasItemMeta()){
+            val itemMeta2 = item.itemMeta ?: return true
+            itemMeta.isMetaSimilar(itemMeta2, checkLore)
+        } else false
+    } else !item.hasItemMeta()
+}
+
+fun ItemStack?.isItemSimilar(
+    item: Itemable,
+    checkLore: Boolean = true,
+    checkAmount: Boolean = true,
+    checkDurability: Boolean = false
+): Boolean = isItemSimilar(item.getItemStack(), checkLore, checkAmount, checkDurability)
+
+fun ItemStack?.isItemSimilar(item: ItemStack): Boolean = isItemSimilar(item, true)
+
+fun ItemStack?.isItemSimilar(item: ItemStack, checkLore: Boolean): Boolean = isItemSimilar(item, checkLore, true)
+
+fun ItemMeta.isMetaSimilar(itemMeta: ItemMeta, checkLore: Boolean = true): Boolean {
+    return if (itemMeta.hasDisplayName() != hasDisplayName()) {
+        false
+    } else if (itemMeta.hasDisplayName() && hasDisplayName() && itemMeta.displayName != displayName) {
+        false
+    } else if (!checkLore) {
+        true
+    } else if (itemMeta.hasLore() && hasLore()) {
+        val lore = lore ?: return true
+        val lore2 = itemMeta.lore ?: return true
+
+        if(lore.isEmpty() && lore2.isEmpty()) return true
+        lore.toString() == lore2.toString()
+    } else !itemMeta.hasLore() && !hasLore()
+}
+
+fun ItemStack.randomAmount(start: Int, end: Int): ItemStack {
+    amount = ThreadLocalRandom.current().nextInt(start, end)
+    return this
+}
+
+fun ItemStack.randomAmount(end: Int): ItemStack = randomAmount(1, end)
+
+fun ItemStack.cloneRandomAmount(start: Int, end: Int): ItemStack =
+    clone().also { it.amount = ThreadLocalRandom.current().nextInt(start, end) }
+
+fun ItemStack.cloneRandomAmount(end: Int): ItemStack = randomAmount(1, end)
+
+fun ItemStack.getMeta(): ItemMeta = itemMeta ?: Bukkit.getItemFactory().getItemMeta(type)!!
+
+fun ItemStack.getLore(): MutableList<String> = itemMeta?.lore ?: mutableListOf()
+
+fun ItemStack.getDisplayName(default: String): String {
+    itemMeta?.apply {
+        if(hasDisplayName()) {
+            return displayName
+        }
+    }
+
+    return default
 }

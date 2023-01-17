@@ -1,11 +1,16 @@
 package io.github.sunshinewzy.shining.core.guide.element
 
+import io.github.sunshinewzy.shining.api.guide.ElementCondition
+import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.guide.*
+import io.github.sunshinewzy.shining.core.guide.GuideTeam
+import io.github.sunshinewzy.shining.core.guide.ShiningGuide
+import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor.setEditor
+import io.github.sunshinewzy.shining.core.guide.ShiningGuideSettings
 import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
@@ -24,8 +29,12 @@ import java.util.*
  * @param symbol to display this [GuideCategory] in guide
  * @param tier higher tier will make this [GuideCategory] appear further down in the guide
  */
-class GuideCategory(id: NamespacedId, symbol: ItemStack, var tier: Int = 0) : GuideElement(id, TODO(), symbol),
-    IGuideElementContainer {
+class GuideCategory(
+    id: NamespacedId,
+    description: ElementDescription,
+    symbol: ItemStack,
+    var tier: Int = 0
+) : GuideElement(id, description, symbol), IGuideElementContainer {
     private val elements: MutableList<IGuideElement> = LinkedList()
     
     
@@ -110,21 +119,24 @@ class GuideCategory(id: NamespacedId, symbol: ItemStack, var tier: Int = 0) : Gu
         }
     }
 
-    override fun update(state: IGuideElementState): Boolean {
-        if(state is GuideCategoryState) {
-            elements.clear()
-            elements += state.elements
-            
-            return true
-        }
-        
-        return false
+    override fun saveToState(state: IGuideElementState): Boolean {
+        if(state !is GuideCategoryState) return false
+        if(!super.saveToState(state)) return false
+
+        state.elements += elements
+        return true
     }
 
-    override fun getState(): GuideCategoryState {
-        val state = GuideCategoryState(this)
-        state.elements += elements
-        return state
+    override fun getState(): GuideCategoryState =
+        GuideCategoryState(this).also { saveToState(it) }
+
+    override fun update(state: IGuideElementState): Boolean {
+        if(state !is GuideCategoryState) return false
+        if(!super.update(state)) return false
+
+        elements.clear()
+        elements += state.elements
+        return true
     }
 
     override fun registerElement(element: IGuideElement) {

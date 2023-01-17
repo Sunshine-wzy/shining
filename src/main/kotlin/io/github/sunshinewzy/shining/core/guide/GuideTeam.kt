@@ -11,8 +11,6 @@ import io.github.sunshinewzy.shining.core.menu.Search
 import io.github.sunshinewzy.shining.core.menu.onBack
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.core.menu.openSearchMenu
-import io.github.sunshinewzy.shining.objects.SItem.Companion.setLore
-import io.github.sunshinewzy.shining.objects.SItem.Companion.setName
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.*
 import kotlinx.coroutines.Dispatchers

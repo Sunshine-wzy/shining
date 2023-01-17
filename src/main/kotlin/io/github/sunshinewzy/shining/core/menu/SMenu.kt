@@ -3,7 +3,6 @@ package io.github.sunshinewzy.shining.core.menu
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.events.smenu.SMenuClickEvent
 import io.github.sunshinewzy.shining.events.smenu.SMenuOpenEvent
-import io.github.sunshinewzy.shining.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.shining.objects.SPage
 import io.github.sunshinewzy.shining.objects.STurnPageType
 import io.github.sunshinewzy.shining.objects.STurnPageType.NEXT_PAGE
@@ -11,10 +10,7 @@ import io.github.sunshinewzy.shining.objects.STurnPageType.PRE_PAGE
 import io.github.sunshinewzy.shining.objects.inventoryholder.SInventoryHolder
 import io.github.sunshinewzy.shining.objects.inventoryholder.SProtectInventoryHolder
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
-import io.github.sunshinewzy.shining.utils.actionList
-import io.github.sunshinewzy.shining.utils.asPlayer
-import io.github.sunshinewzy.shining.utils.orderWith
-import io.github.sunshinewzy.shining.utils.subscribeEvent
+import io.github.sunshinewzy.shining.utils.*
 import org.bukkit.Bukkit
 import org.bukkit.Sound
 import org.bukkit.entity.Player

@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.core.guide
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.dictionary.DictionaryItem

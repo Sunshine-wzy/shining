@@ -3,9 +3,9 @@ package io.github.sunshinewzy.shining.objects.menu
 import io.github.sunshinewzy.shining.Shining.COLOR_NAME
 import io.github.sunshinewzy.shining.core.menu.SMenu
 import io.github.sunshinewzy.shining.objects.SItem
-import io.github.sunshinewzy.shining.objects.SItem.Companion.setName
 import io.github.sunshinewzy.shining.utils.getPlayer
 import io.github.sunshinewzy.shining.utils.sendMsg
+import io.github.sunshinewzy.shining.utils.setName
 import io.github.sunshinewzy.shining.utils.subscribeEvent
 import org.bukkit.Material
 import org.bukkit.event.player.AsyncPlayerChatEvent

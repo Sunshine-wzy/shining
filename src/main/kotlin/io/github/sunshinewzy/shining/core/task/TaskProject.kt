@@ -3,12 +3,8 @@ package io.github.sunshinewzy.shining.core.task
 import io.github.sunshinewzy.shining.core.data.DataManager
 import io.github.sunshinewzy.shining.core.data.DataManager.getTaskProgress
 import io.github.sunshinewzy.shining.objects.SItem
-import io.github.sunshinewzy.shining.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.shining.objects.inventoryholder.SProtectInventoryHolder
-import io.github.sunshinewzy.shining.utils.asPlayer
-import io.github.sunshinewzy.shining.utils.createEdge
-import io.github.sunshinewzy.shining.utils.hasCompleteStage
-import io.github.sunshinewzy.shining.utils.subscribeEvent
+import io.github.sunshinewzy.shining.utils.*
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound

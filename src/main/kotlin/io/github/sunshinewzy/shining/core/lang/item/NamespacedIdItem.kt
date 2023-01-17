@@ -3,7 +3,7 @@ package io.github.sunshinewzy.shining.core.lang.item
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.lang.LanguageNodePrefix
 import io.github.sunshinewzy.shining.core.lang.getLanguageNode
-import io.github.sunshinewzy.shining.objects.SItem.Companion.getMeta
+import io.github.sunshinewzy.shining.utils.getMeta
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemFlag

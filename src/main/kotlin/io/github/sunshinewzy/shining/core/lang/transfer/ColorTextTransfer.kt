@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.core.lang.transfer
 
-import io.github.sunshinewzy.shining.api.lang.TextTransfer
+import io.github.sunshinewzy.shining.api.lang.transfer.TextTransfer
 import taboolib.module.chat.colored
 
 object ColorTextTransfer : TextTransfer {

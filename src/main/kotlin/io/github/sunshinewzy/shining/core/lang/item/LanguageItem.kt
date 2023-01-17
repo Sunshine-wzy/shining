@@ -1,10 +1,10 @@
 package io.github.sunshinewzy.shining.core.lang.item
 
 import io.github.sunshinewzy.shining.api.ShiningConfig
-import io.github.sunshinewzy.shining.api.lang.LanguageNode
+import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
 import io.github.sunshinewzy.shining.core.lang.getLocale
 import io.github.sunshinewzy.shining.core.lang.node.SectionNode
-import io.github.sunshinewzy.shining.objects.SItem.Companion.getMeta
+import io.github.sunshinewzy.shining.utils.getMeta
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.enchantments.Enchantment

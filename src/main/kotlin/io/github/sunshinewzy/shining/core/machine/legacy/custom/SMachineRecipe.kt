@@ -5,8 +5,6 @@ import io.github.sunshinewzy.shining.core.machine.legacy.SMachine
 import io.github.sunshinewzy.shining.core.menu.SMenu
 import io.github.sunshinewzy.shining.objects.SCoordinate
 import io.github.sunshinewzy.shining.objects.SItem
-import io.github.sunshinewzy.shining.objects.SItem.Companion.isItemSimilar
-import io.github.sunshinewzy.shining.objects.SItem.Companion.setNameAndLore
 import io.github.sunshinewzy.shining.objects.inventoryholder.SInventoryHolder.Companion.getSHolder
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.objects.legacy.SBlock
