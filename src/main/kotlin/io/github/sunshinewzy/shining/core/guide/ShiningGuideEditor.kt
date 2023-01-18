@@ -48,6 +48,7 @@ object ShiningGuideEditor {
             if(element != null) {
                 set('a', itemCreateStateCopy.toLocalizedItem(player)) {
                     val state = element.getState()
+                    state.openEditor(player)
                 }
             }
             

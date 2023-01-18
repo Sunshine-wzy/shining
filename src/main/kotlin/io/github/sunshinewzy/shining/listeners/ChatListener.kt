@@ -7,45 +7,37 @@ import org.bukkit.event.player.AsyncPlayerChatEvent
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 object ChatListener {
-    private val playerSubscribers = HashSet<PlayerChatSubscriber>()
+    private val playerChatSubscriberMap: ConcurrentHashMap<UUID, MutableList<PlayerChatSubscriber>> = ConcurrentHashMap()
     
     
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    fun onAsyncPlayerChat(e: AsyncPlayerChatEvent) {
-        if(e.message == "") return
+    fun onAsyncPlayerChat(event: AsyncPlayerChatEvent) {
+        if(event.message.isEmpty()) return
         
-        val uuid = e.player.uniqueId
-        val shouldRemoveSubscribers = LinkedList<PlayerChatSubscriber>()
-        playerSubscribers.forEach { subscriber ->
-            if(uuid == subscriber.uuid) {
-                if(subscriber.isInvisible) e.isCancelled = true
-                
-                if(subscriber.isDotCancel && e.message == ".") {
-                    e.player.sendMsg(Shining.prefix, "&6${subscriber.description} &6已取消")
-                    shouldRemoveSubscribers += subscriber
-                    return@forEach
-                }
-                
-                try {
-                    if(subscriber.action(e)) {
-                        shouldRemoveSubscribers += subscriber
-                    }
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
+        playerChatSubscriberMap[event.player.uniqueId]?.let { subscribers ->
+            val subscriber = subscribers.firstOrNull() ?: return@let
+            
+            if(subscriber.isInvisible) event.isCancelled = true
+
+            if(subscriber.isDotCancel && event.message == ".") {
+                event.player.sendMsg(Shining.prefix, "&6${subscriber.description} &6已取消")
+                subscribers.remove(subscriber)
             }
-        }
-        
-        shouldRemoveSubscribers.forEach { 
-            playerSubscribers.remove(it)
+
+            if(subscriber.action(event)) {
+                subscribers.remove(subscriber)
+            }
         }
     }
 
 
     fun registerPlayerChatSubscriber(subscriber: PlayerChatSubscriber) {
-        playerSubscribers += subscriber
+        playerChatSubscriberMap
+            .getOrPut(subscriber.uuid) { LinkedList() }
+            .add(subscriber)
     }
     
 }
