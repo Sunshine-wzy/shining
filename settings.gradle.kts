@@ -1,1 +1,1 @@
-rootProject.name="Shining"
+rootProject.name="shining"

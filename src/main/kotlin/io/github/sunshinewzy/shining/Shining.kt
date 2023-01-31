@@ -3,12 +3,16 @@ package io.github.sunshinewzy.shining
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import io.github.sunshinewzy.shining.api.ShiningPlugin
+import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.machine.IMachineManager
 import io.github.sunshinewzy.shining.api.namespace.Namespace
+import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.data.DataManager
 import io.github.sunshinewzy.shining.core.data.SerializationModules
 import io.github.sunshinewzy.shining.core.data.legacy.internal.SLocationData
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
+import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
+import io.github.sunshinewzy.shining.core.guide.element.GuideItem
 import io.github.sunshinewzy.shining.core.machine.MachineManager
 import io.github.sunshinewzy.shining.core.machine.legacy.*
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipe
@@ -61,8 +65,8 @@ import taboolib.platform.BukkitPlugin
     RuntimeDependency(value = "!com.zaxxer:HikariCP:4.0.3", isolated = true)
 )
 object Shining : Plugin(), ShiningPlugin {
-    const val NAME = "Shining"
-    const val COLOR_NAME = "§eShining"
+    const val NAME = "shining"
+    const val COLOR_NAME = "§eshining"
     
     @Config
     lateinit var config: Configuration
@@ -88,7 +92,7 @@ object Shining : Plugin(), ShiningPlugin {
         registerSerialization()
         registerListeners()
         init()
-        
+
         val metrics = Metrics(10212, pluginVersion, Platform.BUKKIT)
         
         info("Shining 加载成功！")
@@ -147,6 +151,14 @@ object Shining : Plugin(), ShiningPlugin {
     
     @ShiningTestApi
     private fun test() {
+        val stoneCategory = GuideCategory(NamespacedId(Shining, "stone_age"), ElementDescription("&f石器时代", "&d一切的起源"), SItem(Material.STONE))
+        
+        val stickItem = GuideItem(NamespacedId(Shining, "stick"), ElementDescription("&6工具的基石"), SItem(Material.STICK))
+        
+        stoneCategory.registerElement(stickItem)
+        
+        ShiningGuide.registerElement(stoneCategory)
+        
         /*
         val stoneCategory = GuideCategory(NamespacedId(Shining, "STONE_AGE"), SItem(Material.STONE, "&f石器时代", "&d一切的起源"))
         val steamCategory = GuideCategory(NamespacedId(Shining, "STEAM_AGE"), SItem(Material.IRON_INGOT, "&e蒸汽时代", "&d第一次工业革命"))

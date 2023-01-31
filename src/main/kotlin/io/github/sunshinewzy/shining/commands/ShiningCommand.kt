@@ -1,14 +1,10 @@
 package io.github.sunshinewzy.shining.commands
 
 import io.github.sunshinewzy.shining.Shining.COLOR_NAME
-import io.github.sunshinewzy.shining.Shining.prefix
 import io.github.sunshinewzy.shining.core.data.DataManager
-import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.letGuideTeamOrWarn
-import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.machine.legacy.SMachineWrench
 import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.menu.SunSTMenu
-import io.github.sunshinewzy.shining.utils.ItemEditor
 import io.github.sunshinewzy.shining.utils.giveItem
 import io.github.sunshinewzy.shining.utils.isItemSimilar
 import io.github.sunshinewzy.shining.utils.sendMsg
@@ -16,63 +12,23 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
+import taboolib.common.platform.command.PermissionDefault
 import taboolib.common.platform.command.mainCommand
-import taboolib.common.platform.command.subCommand
-import taboolib.common.platform.function.submit
 import taboolib.expansion.createHelper
 
-@CommandHeader("shining", aliases = ["shi"])
+@CommandHeader("shining", aliases = ["shi"], permissionDefault = PermissionDefault.TRUE)
 object ShiningCommand {
     
-    @CommandBody
+    @CommandBody(permissionDefault = PermissionDefault.TRUE)
     val main = mainCommand {
         createHelper()
     }
     
     @CommandBody
-    val item = subCommand {
-        execute<Player> { sender, context, argument ->
-            val item = sender.inventory.itemInMainHand
-            if(item.type != Material.AIR) {
-                ItemEditor.editItem(item, sender)
-            } else sender.sendMsg(prefix, "&c手持物品不能为空")
-        }
-    }
+    val item = CommandItem.item
     
-    @CommandBody
-    val guide = subCommand {
-        literal("open") {
-            literal("main") {
-                execute<Player> { sender, context, argument -> 
-                    ShiningGuide.openMainMenu(sender)
-                }
-            }
-            
-            literal("team") {
-                literal("manage") {
-                    execute<Player> { sender, context, argument ->
-                        sender.letGuideTeamOrWarn { team ->
-                            submit {
-                                team.openManageMenu(sender)
-                            }
-                        }
-                    }
-                }
-
-                execute<Player> { sender, context, argument ->
-                    sender.letGuideTeamOrWarn { team ->
-                        submit {
-                            team.openInfoMenu(sender)
-                        }
-                    }
-                }
-            }
-            
-            execute<Player> { sender, context, argument -> 
-                ShiningGuide.openLastElement(sender)
-            }
-        }
-    }
+    @CommandBody(permissionDefault = PermissionDefault.TRUE)
+    val guide = CommandGuide.guide
     
     
     fun registerSCommands() {

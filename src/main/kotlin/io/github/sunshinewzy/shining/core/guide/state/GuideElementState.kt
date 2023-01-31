@@ -5,12 +5,11 @@ import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.editor.chat.ChatEditor
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.lang.getLangText
-import io.github.sunshinewzy.shining.core.lang.item.LocalizedItem
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
-import io.github.sunshinewzy.shining.utils.PlayerChatSubscriber
 import io.github.sunshinewzy.shining.utils.addLore
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -50,10 +49,15 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
             set('B', ShiningIcon.BACK.getLanguageItem().toLocalizedItem(player), ShiningGuide.onClickBack)
 
             set('a', itemEditId.toCurrentLocalizedItem(player, id.toString())) {
-                PlayerChatSubscriber(player, player.getLangText("text-shining_guide-editor-state-element-id")) {
-                    
-                    true
-                }.register()
+                ChatEditor.open(
+                    player,
+                    player.getLangText("text-shining_guide-editor-state-element-id"),
+                    predicate = { NamespacedId.fromString(it) != null }
+                ) { content ->  
+                    NamespacedId.fromString(content)?.let { 
+                        id = it
+                    }
+                }
             }
 
             onClick(lock = true)
@@ -64,8 +68,8 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
         addLore("", player.getLangText("menu-shining_guide-editor-state-current_lore"), currentLore)
     }
     
-    protected fun NamespacedIdItem.toCurrentLocalizedItem(player: Player, currentLore: String): LocalizedItem {
-        return toLocalizedItem(player).also { addCurrentLore(player, currentLore) }
+    protected fun NamespacedIdItem.toCurrentLocalizedItem(player: Player, currentLore: String): ItemStack {
+        return toLocalizedItem(player).clone().also { addCurrentLore(player, currentLore) }
     }
     
     

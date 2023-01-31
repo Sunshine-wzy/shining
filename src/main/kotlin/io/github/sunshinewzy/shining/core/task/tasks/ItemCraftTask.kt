@@ -6,7 +6,6 @@ import io.github.sunshinewzy.shining.core.task.TaskProject.Companion.lastTaskPro
 import io.github.sunshinewzy.shining.core.task.TaskStage
 import io.github.sunshinewzy.shining.exceptions.NoRecipeException
 import io.github.sunshinewzy.shining.objects.SItem
-import io.github.sunshinewzy.shining.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.shining.objects.SPageValue
 import io.github.sunshinewzy.shining.objects.inventoryholder.SProtectInventoryHolder
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon

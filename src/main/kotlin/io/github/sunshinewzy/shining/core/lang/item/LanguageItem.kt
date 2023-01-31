@@ -2,6 +2,7 @@ package io.github.sunshinewzy.shining.core.lang.item
 
 import io.github.sunshinewzy.shining.api.ShiningConfig
 import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
+import io.github.sunshinewzy.shining.core.lang.LanguageFileLoader
 import io.github.sunshinewzy.shining.core.lang.getLocale
 import io.github.sunshinewzy.shining.core.lang.node.SectionNode
 import io.github.sunshinewzy.shining.utils.getMeta
@@ -66,8 +67,10 @@ open class LanguageItem(item: ItemStack, val localeToNode: (locale: String) -> L
         return LanguageItem(clone()) { locale ->
             val node = localeToNode(locale)
             if(node is SectionNode) {
-                node.section.getConfigurationSection(state)?.let { 
-                    return@LanguageItem SectionNode(it)
+                node.section[state]?.let { stateNode ->
+                    LanguageFileLoader.loadNode(stateNode)?.let {
+                        return@LanguageItem it
+                    }
                 }
             }
             node

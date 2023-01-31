@@ -15,7 +15,6 @@ import io.github.sunshinewzy.shining.listeners.BlockListener
 import io.github.sunshinewzy.shining.objects.SCoordinate
 import io.github.sunshinewzy.shining.objects.SFlatCoord
 import io.github.sunshinewzy.shining.objects.SItem
-import io.github.sunshinewzy.shining.objects.SItem.Companion.isItemSimilar
 import io.github.sunshinewzy.shining.objects.SMetadataValue
 import io.github.sunshinewzy.shining.utils.SReflect.damage
 import org.bukkit.*

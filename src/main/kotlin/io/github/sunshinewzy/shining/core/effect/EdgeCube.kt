@@ -4,7 +4,7 @@ import taboolib.common.util.Location
 import taboolib.common.util.Vector
 import taboolib.module.effect.ParticleObj
 import taboolib.module.effect.ParticleSpawner
-import taboolib.module.effect.VectorUtils
+import taboolib.module.effect.utils.VectorUtils
 import kotlin.math.max
 import kotlin.math.min
 

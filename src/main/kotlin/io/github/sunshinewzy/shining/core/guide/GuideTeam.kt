@@ -248,6 +248,8 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                         } else {
                             player.sendPrefixedLangText("menu-shining_guide-team-manage-application-not_found", Shining.prefix, element.playerName)
                         }
+
+                        openManageApplicationMenu(player)
                     }
 
                     ClickType.RIGHT, ClickType.SHIFT_RIGHT -> {
