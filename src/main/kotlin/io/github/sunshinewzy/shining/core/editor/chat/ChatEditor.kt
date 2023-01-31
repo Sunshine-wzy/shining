@@ -16,12 +16,12 @@ object ChatEditor {
     
     fun open(
         player: Player,
-        description: String = "",
+        name: String = "",
         isInvisible: Boolean = true,
         predicate: AsyncPlayerChatEvent.(String) -> Boolean = { true },
         callback: (content: String) -> Unit
     ) {
-        val session = ChatEditorSession(player, description, isInvisible, predicate, callback)
+        val session = ChatEditorSession(player, name, isInvisible, predicate, callback)
         sessionMap[player.uniqueId] = session
         session.send(player)
     }

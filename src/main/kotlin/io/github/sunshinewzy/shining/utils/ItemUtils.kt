@@ -203,7 +203,7 @@ fun ItemStack.getMeta(): ItemMeta = itemMeta ?: Bukkit.getItemFactory().getItemM
 
 fun ItemStack.getLore(): MutableList<String> = itemMeta?.lore ?: mutableListOf()
 
-fun ItemStack.getDisplayName(default: String): String {
+fun ItemStack.getDisplayName(default: String = ""): String {
     itemMeta?.apply {
         if(hasDisplayName()) {
             return displayName

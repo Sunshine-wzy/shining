@@ -11,6 +11,7 @@ import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.addLore
+import io.github.sunshinewzy.shining.utils.getDisplayName
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -37,7 +38,7 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
 
             map(
                 "-B-------",
-                "-ab     -",
+                "-abc    -",
                 "-       -",
                 "-       -",
                 "-       -",
@@ -51,30 +52,57 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
             set('a', itemEditId.toCurrentLocalizedItem(player, id.toString())) {
                 ChatEditor.open(
                     player,
-                    player.getLangText("text-shining_guide-editor-state-element-id"),
+                    itemEditId.toLocalizedItem(player).getDisplayName(),
                     predicate = { NamespacedId.fromString(it) != null }
-                ) { content ->  
+                ) { content -> 
                     NamespacedId.fromString(content)?.let { 
                         id = it
                     }
+                    openEditor(player)
                 }
+                player.closeInventory()
+            }
+            
+            set('b', itemEditDescriptionName.toCurrentLocalizedItem(player, descriptionName)) {
+                ChatEditor.open(player, itemEditDescriptionName.getDisplayName()) { content ->  
+                    descriptionName = content
+                    openEditor(player)
+                }
+                player.closeInventory()
+            }
+            
+            set('c', itemEditDescriptionLore.toCurrentLocalizedItem(player, descriptionLore)) {
+                // TODO: Lore editor
+                
+                player.closeInventory()
             }
 
             onClick(lock = true)
         }
     }
     
-    protected fun ItemStack.addCurrentLore(player: Player, currentLore: String) {
-        addLore("", player.getLangText("menu-shining_guide-editor-state-current_lore"), currentLore)
+    protected fun ItemStack.addCurrentLore(player: Player, currentLore: String?) {
+        addLore("", player.getLangText("menu-shining_guide-editor-state-current_lore"), currentLore ?: "null")
     }
     
-    protected fun NamespacedIdItem.toCurrentLocalizedItem(player: Player, currentLore: String): ItemStack {
+    protected fun ItemStack.addCurrentLore(player: Player, currentLore: List<String>) {
+        addLore("", player.getLangText("menu-shining_guide-editor-state-current_lore"))
+        addLore(currentLore)
+    }
+    
+    protected fun NamespacedIdItem.toCurrentLocalizedItem(player: Player, currentLore: String?): ItemStack {
+        return toLocalizedItem(player).clone().also { addCurrentLore(player, currentLore) }
+    }
+    
+    protected fun NamespacedIdItem.toCurrentLocalizedItem(player: Player, currentLore: List<String>): ItemStack {
         return toLocalizedItem(player).clone().also { addCurrentLore(player, currentLore) }
     }
     
     
     companion object {
         private val itemEditId = NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-editor-state-element-id"))
+        private val itemEditDescriptionName = NamespacedIdItem(Material.APPLE, NamespacedId(Shining, "shining_guide-editor-state-element-description_name"))
+        private val itemEditDescriptionLore = NamespacedIdItem(Material.BREAD, NamespacedId(Shining, "shining_guide-editor-state-element-description_lore"))
         
     }
     

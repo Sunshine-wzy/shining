@@ -18,6 +18,8 @@ item-shining-shining_guide-editor:
 item-shining-shining_guide-editor-create_state_copy: '&b创建状态副本'
 item-shining-shining_guide-editor-create_state_new: '&a创建新状态'
 item-shining-shining_guide-editor-state-element-id: '&fID'
+item-shining-shining_guide-editor-state-element-description_name: '&f名称'
+item-shining-shining_guide-editor-state-element-description_lore: '&f描述'
 item-shining-icon-back: ['&c⇦ 返回', '', '&f左键：&7返回上一页', '&fShift + 左键：&7返回主菜单']
 item-shining-icon-back_last_page: '&b⇦ 返回'
 item-shining-icon-submit: '&a>> 点击以提交任务 <<'
@@ -80,7 +82,6 @@ menu-shining_guide-team-info-symbol: ['&d队伍: &f{0}', '', '&a>> 点击修改�
 menu-shining_guide-team-info-captain: ['&e队长: &f{0}']
 menu-shining_guide-team-player_not_in_team: '&c您不在队伍中'
 menu-shining_guide-editor-state-current_lore: '&a> 当前:'
-text-shining_guide-editor-state-element-id: 'ID'
 text-editor-chat-edit: '> &e编辑&f: {0}'
 text-editor-chat-content_correct: '| &a当前&f: {0}'
 text-editor-chat-content_incorrect: '| &c当前&f: {0}'
