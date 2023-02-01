@@ -92,7 +92,7 @@ object Shining : Plugin(), ShiningPlugin {
         registerSerialization()
         registerListeners()
         init()
-
+        
         val metrics = Metrics(10212, pluginVersion, Platform.BUKKIT)
         
         info("Shining 加载成功！")

@@ -7,25 +7,22 @@ import taboolib.common.platform.function.adaptPlayer
 import taboolib.module.chat.TellrawJson
 import taboolib.module.chat.colored
 
-class ChatEditorSession(
-    val player: Player,
-    val name: String = "",
-    val isInvisible: Boolean = true,
-    val action: AsyncPlayerChatEvent.(String) -> Boolean = { true },
-    val callback: (content: String) -> Unit
-) {
-    var content: String = ""
+abstract class ChatEditorSession(val name: String) {
+    var isInvisible: Boolean = true
+        private set
+    var predicate: AsyncPlayerChatEvent.(String) -> Boolean = { true }
+        private set
+//    var callback: (content: T) -> Unit = {}
+    
     var isCorrect: Boolean = false
+        internal set
     
     
-    fun send(player: Player) {
+    open fun send(player: Player) {
         TellrawJson().newLine()
             .append(player.getLangText("text-editor-chat-edit", name).colored())
             .newLine()
-            .append(
-                if(isCorrect) player.getLangText("text-editor-chat-content_correct", content).colored()
-                else player.getLangText("text-editor-chat-content_incorrect", content).colored()
-            )
+            .let { display(it, player) }
             .newLine()
             .append("     §7[§a√§7]")
             .runCommand("/shiningapi editor chat submit")
@@ -33,6 +30,23 @@ class ChatEditorSession(
             .runCommand("/shiningapi editor chat cancel")
             .newLine()
             .sendTo(adaptPlayer(player))
+    }
+    
+    abstract fun display(json: TellrawJson, player: Player): TellrawJson
+    
+    abstract fun submit(player: Player)
+    
+    abstract fun update(event: AsyncPlayerChatEvent)
+    
+    abstract fun isEmpty(): Boolean
+    
+    
+    fun visible() {
+        isInvisible = false
+    }
+    
+    fun predicate(block: AsyncPlayerChatEvent.(String) -> Boolean) {
+        predicate = block
     }
     
 }

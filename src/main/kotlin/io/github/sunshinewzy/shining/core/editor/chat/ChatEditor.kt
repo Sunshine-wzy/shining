@@ -14,14 +14,7 @@ import java.util.concurrent.ConcurrentHashMap
 object ChatEditor {
     private val sessionMap: ConcurrentHashMap<UUID, ChatEditorSession> = ConcurrentHashMap()
     
-    fun open(
-        player: Player,
-        name: String = "",
-        isInvisible: Boolean = true,
-        predicate: AsyncPlayerChatEvent.(String) -> Boolean = { true },
-        callback: (content: String) -> Unit
-    ) {
-        val session = ChatEditorSession(player, name, isInvisible, predicate, callback)
+    fun open(player: Player, session: ChatEditorSession) {
         sessionMap[player.uniqueId] = session
         session.send(player)
     }
@@ -31,7 +24,7 @@ object ChatEditor {
             if(session.isCorrect) {
                 sessionMap.remove(player.uniqueId)
                 player.sendLangText("text-editor-chat-session-submit_correct", session.name)
-                session.callback(session.content)
+                session.submit(player)
             } else {
                 player.sendLangText("text-editor-chat-session-submit_incorrect", session.name)
             }
@@ -51,14 +44,13 @@ object ChatEditor {
         sessionMap[event.player.uniqueId]?.let { session->
             if(session.isInvisible) event.isCancelled = true
             
-            val content = event.message
-            if(session.action(event, content)) {
-                session.content = content
+            if(session.predicate(event, event.message)) {
+                session.update(event)
                 session.isCorrect = true
                 session.send(event.player)
             } else {
-                if(session.content.isEmpty()) {
-                    session.content = content
+                if(session.isEmpty()) {
+                    session.update(event)
                     session.send(event.player)
                 }
                 
@@ -67,4 +59,12 @@ object ChatEditor {
         }
     }
     
+}
+
+
+inline fun <reified T: ChatEditorSession> buildChatEditorSession(name: String = "", builder: T.() -> Unit): T =
+    T::class.java.getDeclaredConstructor(String::class.java).newInstance(name).also(builder)
+
+inline fun <reified T: ChatEditorSession> Player.openChatEditor(name: String = "", builder: T.() -> Unit) {
+    ChatEditor.open(this, buildChatEditorSession(name, builder))
 }
