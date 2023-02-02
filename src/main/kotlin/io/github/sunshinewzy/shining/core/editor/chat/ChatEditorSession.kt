@@ -12,7 +12,6 @@ abstract class ChatEditorSession(val name: String) {
         private set
     var predicate: AsyncPlayerChatEvent.(String) -> Boolean = { true }
         private set
-//    var callback: (content: T) -> Unit = {}
     
     var isCorrect: Boolean = false
         internal set
@@ -22,23 +21,33 @@ abstract class ChatEditorSession(val name: String) {
         TellrawJson().newLine()
             .append(player.getLangText("text-editor-chat-edit", name).colored())
             .newLine()
-            .let { display(it, player) }
+            .append("§7|")
             .newLine()
-            .append("     §7[§a√§7]")
+            .also { display(player, it) }
+            .newLine()
+            .append("       §7[§a√§7]")
+            .hoverText(player.getLangText("text-editor-chat-session-button-submit").colored())
             .runCommand("/shiningapi editor chat submit")
-            .append("         §7[§c×§7]")
+            .append("       §7[§c×§7]")
+            .hoverText(player.getLangText("text-editor-chat-session-button-cancel").colored())
             .runCommand("/shiningapi editor chat cancel")
             .newLine()
             .sendTo(adaptPlayer(player))
     }
     
-    abstract fun display(json: TellrawJson, player: Player): TellrawJson
+    abstract fun display(player: Player, json: TellrawJson)
     
     abstract fun submit(player: Player)
+    
+    abstract fun cancel(player: Player)
+    
+    abstract fun final(player: Player)
     
     abstract fun update(event: AsyncPlayerChatEvent)
     
     abstract fun isEmpty(): Boolean
+    
+    open fun mode(player: Player, mode: String) {}
     
     
     fun visible() {

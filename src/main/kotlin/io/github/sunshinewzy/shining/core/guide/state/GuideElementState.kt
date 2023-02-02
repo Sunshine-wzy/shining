@@ -5,7 +5,9 @@ import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.editor.chat.ChatEditor
+import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
+import io.github.sunshinewzy.shining.core.editor.chat.type.Text
+import io.github.sunshinewzy.shining.core.editor.chat.type.TextList
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
@@ -23,7 +25,7 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
     
     var id: NamespacedId? = null
     var descriptionName: String? = null
-    val descriptionLore: MutableList<String> = LinkedList()
+    var descriptionLore: MutableList<String> = LinkedList()
     
     val dependencyMap: MutableMap<NamespacedId, IGuideElement> = HashMap()
     val locks: MutableList<ElementLock> = LinkedList()
@@ -33,7 +35,7 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
         element?.update(this) ?: false
 
     override fun openEditor(player: Player) {
-        player.openMenu<Basic> {
+        player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-title")) {
             rows(6)
 
             map(
@@ -49,53 +51,71 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
 
             set('B', ShiningIcon.BACK.getLanguageItem().toLocalizedItem(player), ShiningGuide.onClickBack)
 
-            set('a', itemEditId.toCurrentLocalizedItem(player, id.toString())) {
-                ChatEditor.open(
-                    player,
-                    itemEditId.toLocalizedItem(player).getDisplayName(),
-                    predicate = { NamespacedId.fromString(it) != null }
-                ) { content -> 
-                    NamespacedId.fromString(content)?.let { 
-                        id = it
+            set('a', itemEditId.toCurrentLocalizedItem(player, "&f$id")) {
+                player.openChatEditor<Text>(itemEditId.toLocalizedItem(player).getDisplayName()) {
+                    content(id.toString())
+                    
+                    predicate { NamespacedId.fromString(it) != null }
+                    
+                    onSubmit { content ->
+                        NamespacedId.fromString(content)?.let {
+                            id = it
+                        }
                     }
-                    openEditor(player)
+
+                    onFinal {
+                        openEditor(player)
+                    }
                 }
-                player.closeInventory()
             }
             
             set('b', itemEditDescriptionName.toCurrentLocalizedItem(player, descriptionName)) {
-                ChatEditor.open(player, itemEditDescriptionName.getDisplayName()) { content ->  
-                    descriptionName = content
-                    openEditor(player)
+                player.openChatEditor<Text>(itemEditDescriptionName.toLocalizedItem(player).getDisplayName()) {
+                    content(descriptionName)
+                    
+                    onSubmit { 
+                        descriptionName = content
+                    }
+                    
+                    onFinal {
+                        openEditor(player)
+                    }
                 }
-                player.closeInventory()
             }
             
             set('c', itemEditDescriptionLore.toCurrentLocalizedItem(player, descriptionLore)) {
-                // TODO: Lore editor
-                
-                player.closeInventory()
+                player.openChatEditor<TextList>(itemEditDescriptionLore.toLocalizedItem(player).getDisplayName()) {
+                    list(descriptionLore)
+                    
+                    onSubmit { 
+                        descriptionLore = it
+                    }
+
+                    onFinal {
+                        openEditor(player)
+                    }
+                }
             }
 
             onClick(lock = true)
         }
     }
     
-    protected fun ItemStack.addCurrentLore(player: Player, currentLore: String?) {
-        addLore("", player.getLangText("menu-shining_guide-editor-state-current_lore"), currentLore ?: "null")
+    protected fun ItemStack.addCurrentLore(player: Player, currentLore: String?): ItemStack {
+        return addLore("", player.getLangText("menu-shining_guide-editor-state-current_lore"), currentLore ?: "null")
     }
     
-    protected fun ItemStack.addCurrentLore(player: Player, currentLore: List<String>) {
+    protected fun ItemStack.addCurrentLore(player: Player, currentLore: List<String>): ItemStack {
         addLore("", player.getLangText("menu-shining_guide-editor-state-current_lore"))
-        addLore(currentLore)
+        return addLore(currentLore)
     }
     
     protected fun NamespacedIdItem.toCurrentLocalizedItem(player: Player, currentLore: String?): ItemStack {
-        return toLocalizedItem(player).clone().also { addCurrentLore(player, currentLore) }
+        return toLocalizedItem(player).clone().addCurrentLore(player, currentLore)
     }
     
     protected fun NamespacedIdItem.toCurrentLocalizedItem(player: Player, currentLore: List<String>): ItemStack {
-        return toLocalizedItem(player).clone().also { addCurrentLore(player, currentLore) }
+        return toLocalizedItem(player).clone().addCurrentLore(player, currentLore)
     }
     
     

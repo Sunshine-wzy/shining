@@ -19,12 +19,16 @@ object ChatEditor {
         session.send(player)
     }
     
+    fun getSession(player: Player): ChatEditorSession? =
+        sessionMap[player.uniqueId]
+    
     fun submit(player: Player) {
-        sessionMap[player.uniqueId]?.let { session ->
+        getSession(player)?.let { session ->
             if(session.isCorrect) {
                 sessionMap.remove(player.uniqueId)
                 player.sendLangText("text-editor-chat-session-submit_correct", session.name)
                 session.submit(player)
+                session.final(player)
             } else {
                 player.sendLangText("text-editor-chat-session-submit_incorrect", session.name)
             }
@@ -34,6 +38,8 @@ object ChatEditor {
     fun cancel(player: Player) {
         sessionMap.remove(player.uniqueId)?.let { session ->
             player.sendLangText("text-editor-chat-session-cancel", session.name)
+            session.cancel(player)
+            session.final(player)
         }
     }
     
@@ -65,6 +71,7 @@ object ChatEditor {
 inline fun <reified T: ChatEditorSession> buildChatEditorSession(name: String = "", builder: T.() -> Unit): T =
     T::class.java.getDeclaredConstructor(String::class.java).newInstance(name).also(builder)
 
-inline fun <reified T: ChatEditorSession> Player.openChatEditor(name: String = "", builder: T.() -> Unit) {
+inline fun <reified T: ChatEditorSession> Player.openChatEditor(name: String = "", closeInventory: Boolean = true, builder: T.() -> Unit) {
     ChatEditor.open(this, buildChatEditorSession(name, builder))
+    if(closeInventory) closeInventory()
 }

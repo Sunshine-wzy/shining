@@ -9,14 +9,22 @@ internal object CommandEditor {
     val editor = subCommand {
         literal("chat") {
             literal("submit") {
-                execute<Player> { sender, context, argument ->
+                execute<Player> { sender, _, _ ->
                     ChatEditor.submit(sender)
                 }
             }
 
             literal("cancel") {
-                execute<Player> { sender, context, argument ->
+                execute<Player> { sender, _, _ ->
                     ChatEditor.cancel(sender)
+                }
+            }
+            
+            literal("mode") {
+                dynamic { 
+                    execute<Player> { sender, _, argument -> 
+                        ChatEditor.getSession(sender)?.mode(sender, argument)
+                    }
                 }
             }
         }
