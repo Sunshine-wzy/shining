@@ -14,12 +14,10 @@ abstract class ChatEditorSession<T>(val name: String) {
     var isCorrect: Boolean = false
         protected set
     
-    var submitCallback: (content: T) -> Unit = {}
-        private set
-    var cancelCallback: (content: T) -> Unit = {}
-        private set
-    var finalCallback: (content: T) -> Unit = {}
-        private set
+    private var submitCallback: (content: T) -> Unit = {}
+    private var cancelCallback: (content: T) -> Unit = {}
+    private var finalCallback: (content: T) -> Unit = {}
+    
     var isInvisible: Boolean = true
         private set
     var predicate: AsyncPlayerChatEvent.(String) -> Boolean = { true }

@@ -57,13 +57,13 @@ open class TextMap(name: String) : ChatEditorSession<MutableMap<String, String>>
 
     
     private fun checkCorrect() {
-        isCorrect = true
         for(value in content.values) {
             if(value.isEmpty()) {
                 isCorrect = false
-                break
+                return
             }
         }
+        isCorrect = true
     }
     
 }

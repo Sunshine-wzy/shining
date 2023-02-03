@@ -20,6 +20,8 @@ item-shining-shining_guide-editor-create_state_new: '&a创建新状态'
 item-shining-shining_guide-editor-state-element-id: '&fID'
 item-shining-shining_guide-editor-state-element-description_name: '&f名称'
 item-shining-shining_guide-editor-state-element-description_lore: '&f描述'
+item-shining-shining_guide-editor-state-element-basic_editor: '&a基础元素编辑器'
+item-shining-shining_guide-editor-state-element-advanced_editor: '&b高级元素编辑器'
 item-shining-icon-back: ['&c⇦ 返回', '', '&f左键：&7返回上一页', '&fShift + 左键：&7返回主菜单']
 item-shining-icon-back_last_page: '&b⇦ 返回'
 item-shining-icon-submit: '&a>> 点击以提交任务 <<'
