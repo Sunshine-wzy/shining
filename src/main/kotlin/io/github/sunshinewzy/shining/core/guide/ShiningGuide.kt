@@ -190,10 +190,12 @@ object ShiningGuide {
 
         openMainMenu(player, team)
     }
-    
-    
-    fun registerElement(element: IGuideElement, priority: Int = 10) {
-        elementMap.getOrPut(priority) { ArrayList() }.add(element)
+
+    /**
+     * @param tier Higher tier will make this [element] appear further down in the guide
+     */
+    fun registerElement(element: IGuideElement, tier: Int = 10) {
+        elementMap.getOrPut(tier) { ArrayList() }.add(element)
     }
     
     fun fireworkCongratulate(player: Player) {

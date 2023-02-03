@@ -12,14 +12,14 @@ import java.util.concurrent.ConcurrentHashMap
 
 @SkipTo(LifeCycle.ENABLE)
 object ChatEditor {
-    private val sessionMap: ConcurrentHashMap<UUID, ChatEditorSession> = ConcurrentHashMap()
+    private val sessionMap: ConcurrentHashMap<UUID, ChatEditorSession<*>> = ConcurrentHashMap()
     
-    fun open(player: Player, session: ChatEditorSession) {
+    fun open(player: Player, session: ChatEditorSession<*>) {
         sessionMap[player.uniqueId] = session
         session.send(player)
     }
     
-    fun getSession(player: Player): ChatEditorSession? =
+    fun getSession(player: Player): ChatEditorSession<*>? =
         sessionMap[player.uniqueId]
     
     fun submit(player: Player) {
@@ -52,14 +52,8 @@ object ChatEditor {
             
             if(session.predicate(event, event.message)) {
                 session.update(event)
-                session.isCorrect = true
                 session.send(event.player)
             } else {
-                if(session.isEmpty()) {
-                    session.update(event)
-                    session.send(event.player)
-                }
-                
                 event.player.sendLangText("text-editor-chat-session-incorrect")
             }
         }
@@ -68,10 +62,10 @@ object ChatEditor {
 }
 
 
-inline fun <reified T: ChatEditorSession> buildChatEditorSession(name: String = "", builder: T.() -> Unit): T =
+inline fun <reified T: ChatEditorSession<*>> buildChatEditorSession(name: String = "", builder: T.() -> Unit): T =
     T::class.java.getDeclaredConstructor(String::class.java).newInstance(name).also(builder)
 
-inline fun <reified T: ChatEditorSession> Player.openChatEditor(name: String = "", closeInventory: Boolean = true, builder: T.() -> Unit) {
+inline fun <reified T: ChatEditorSession<*>> Player.openChatEditor(name: String = "", closeInventory: Boolean = true, builder: T.() -> Unit) {
     ChatEditor.open(this, buildChatEditorSession(name, builder))
     if(closeInventory) closeInventory()
 }

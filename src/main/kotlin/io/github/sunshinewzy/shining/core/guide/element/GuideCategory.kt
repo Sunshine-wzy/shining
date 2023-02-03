@@ -27,13 +27,11 @@ import java.util.*
  *
  * @param id to identify this [GuideCategory]
  * @param symbol to display this [GuideCategory] in guide
- * @param tier higher tier will make this [GuideCategory] appear further down in the guide
  */
 class GuideCategory(
     id: NamespacedId,
     description: ElementDescription,
-    symbol: ItemStack,
-    var tier: Int = 0
+    symbol: ItemStack
 ) : GuideElement(id, description, symbol), IGuideElementContainer {
     private val elements: MutableList<IGuideElement> = LinkedList()
     

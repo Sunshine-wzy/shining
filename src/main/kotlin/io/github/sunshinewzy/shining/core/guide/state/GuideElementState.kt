@@ -53,7 +53,7 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
 
             set('a', itemEditId.toCurrentLocalizedItem(player, "&f$id")) {
                 player.openChatEditor<Text>(itemEditId.toLocalizedItem(player).getDisplayName()) {
-                    content(id.toString())
+                    text(id.toString())
                     
                     predicate { NamespacedId.fromString(it) != null }
                     
@@ -71,7 +71,7 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
             
             set('b', itemEditDescriptionName.toCurrentLocalizedItem(player, descriptionName)) {
                 player.openChatEditor<Text>(itemEditDescriptionName.toLocalizedItem(player).getDisplayName()) {
-                    content(descriptionName)
+                    text(descriptionName)
                     
                     onSubmit { 
                         descriptionName = content

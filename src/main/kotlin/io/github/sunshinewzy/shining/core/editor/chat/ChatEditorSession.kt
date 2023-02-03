@@ -7,14 +7,28 @@ import taboolib.common.platform.function.adaptPlayer
 import taboolib.module.chat.TellrawJson
 import taboolib.module.chat.colored
 
-abstract class ChatEditorSession(val name: String) {
+abstract class ChatEditorSession<T>(val name: String) {
+    abstract var content: T
+        protected set
+    
+    var isCorrect: Boolean = false
+        protected set
+    
+    var submitCallback: (content: T) -> Unit = {}
+        private set
+    var cancelCallback: (content: T) -> Unit = {}
+        private set
+    var finalCallback: (content: T) -> Unit = {}
+        private set
     var isInvisible: Boolean = true
         private set
     var predicate: AsyncPlayerChatEvent.(String) -> Boolean = { true }
         private set
-    
-    var isCorrect: Boolean = false
-        internal set
+
+
+    abstract fun display(player: Player, json: TellrawJson)
+
+    abstract fun update(event: AsyncPlayerChatEvent)
     
     
     open fun send(player: Player) {
@@ -25,28 +39,42 @@ abstract class ChatEditorSession(val name: String) {
             .newLine()
             .also { display(player, it) }
             .newLine()
-            .append("       §7[§a√§7]")
+            .append("       ")
+            .append(if(isCorrect) "§7[§a√§7]" else "§7[√]")
             .hoverText(player.getLangText("text-editor-chat-session-button-submit").colored())
             .runCommand("/shiningapi editor chat submit")
-            .append("       §7[§c×§7]")
+            .append("       ")
+            .append("§7[§c×§7]")
             .hoverText(player.getLangText("text-editor-chat-session-button-cancel").colored())
             .runCommand("/shiningapi editor chat cancel")
             .newLine()
             .sendTo(adaptPlayer(player))
     }
-    
-    abstract fun display(player: Player, json: TellrawJson)
-    
-    abstract fun submit(player: Player)
-    
-    abstract fun cancel(player: Player)
-    
-    abstract fun final(player: Player)
-    
-    abstract fun update(event: AsyncPlayerChatEvent)
-    
-    abstract fun isEmpty(): Boolean
-    
+
+    open fun submit(player: Player) {
+        submitCallback(content)
+    }
+
+    open fun cancel(player: Player) {
+        cancelCallback(content)
+    }
+
+    open fun final(player: Player) {
+        finalCallback(content)
+    }
+
+    open fun onSubmit(block: (content: T) -> Unit) {
+        submitCallback = block
+    }
+
+    open fun onCancel(block: (content: T) -> Unit) {
+        cancelCallback = block
+    }
+
+    open fun onFinal(block: (content: T) -> Unit) {
+        finalCallback = block
+    }
+
     open fun mode(player: Player, mode: String) {}
     
     

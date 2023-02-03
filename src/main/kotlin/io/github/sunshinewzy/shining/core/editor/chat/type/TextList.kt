@@ -10,14 +10,9 @@ import taboolib.module.chat.TellrawJson
 import taboolib.module.chat.colored
 import java.util.*
 
-open class TextList(name: String) : ChatEditorSession(name) {
-    private val list: MutableList<String> = LinkedList()
-    var submitCallback: (list: MutableList<String>) -> Unit = {}
-        private set
-    var cancelCallback: (list: MutableList<String>) -> Unit = {}
-        private set
-    var finalCallback: (list: MutableList<String>) -> Unit = {}
-        private set
+open class TextList(name: String) : ChatEditorSession<MutableList<String>>(name) {
+    override var content: MutableList<String> = LinkedList()
+    
     var mode: Mode = ADD
         private set
     var index: Int = 0
@@ -25,9 +20,8 @@ open class TextList(name: String) : ChatEditorSession(name) {
     
     
     override fun display(player: Player, json: TellrawJson) {
-        list.forEachIndexed { index, str -> 
-            json.append(if(mode == EDIT && index == this.index) "§7| §d${index + 1}. §f" else "§7| ${index + 1}. §f")
-                .append(str.colored())
+        content.forEachIndexed { index, str -> 
+            json.append(if(mode == EDIT && index == this.index) "§7| §d${index + 1}. §f${str.colored()}" else "§7| ${index + 1}. §f${str.colored()}")
                 .hoverText(player.getLangText("text-editor-chat-session-text_list-edit").colored())
                 .runCommand("/shiningapi editor chat mode EDIT.$index")
                 .append("    ")
@@ -45,48 +39,36 @@ open class TextList(name: String) : ChatEditorSession(name) {
                 .newLine()
         }
         
-        json.append(if(mode == ADD && this.index == list.size) "§7| §d[§a+§d]" else "§7| [§a+§7]")
+        json.append(if(mode == ADD && this.index == content.size) "§7| §d[§a+§d]" else "§7| [§a+§7]")
             .hoverText(player.getLangText("text-editor-chat-session-text_list-add").colored())
-            .runCommand("/shiningapi editor chat mode ADD.${list.size}")
-    }
-
-    override fun submit(player: Player) {
-        submitCallback(list)
-    }
-
-    override fun cancel(player: Player) {
-        cancelCallback(list)
-    }
-
-    override fun final(player: Player) {
-        finalCallback(list)
+            .runCommand("/shiningapi editor chat mode ADD.${content.size}")
     }
 
     override fun update(event: AsyncPlayerChatEvent) {
         when(mode) {
             EDIT -> {
-                if(index in list.indices) {
-                    list[index] = event.message
+                if(index in content.indices) {
+                    content[index] = event.message
                 } else {
                     event.player.sendPrefixedLangText("text-editor-chat-session-text_list-index_out_of_bounds")
                 }
             }
             
             ADD -> {
-                if(index in list.indices) {
-                    list.add(index, event.message)
+                if(index in content.indices) {
+                    content.add(index, event.message)
                     index++
                 } else {
-                    list.add(event.message)
-                    index = list.size
+                    content.add(event.message)
+                    index = content.size
                 }
             }
             
             REMOVE -> {}
         }
+        
+        isCorrect = content.isNotEmpty()
     }
-
-    override fun isEmpty(): Boolean = list.isEmpty()
 
     override fun mode(player: Player, mode: String) {
         val split = mode.split('.')
@@ -96,8 +78,8 @@ open class TextList(name: String) : ChatEditorSession(name) {
         val theIndex = split[1].toIntOrNull() ?: return
 
         if(theMode == REMOVE) {
-            if(theIndex in list.indices) {
-                list.removeAt(theIndex)
+            if(theIndex in content.indices) {
+                content.removeAt(theIndex)
                 send(player)
             } else {
                 player.sendPrefixedLangText("text-editor-chat-session-text_list-index_out_of_bounds")
@@ -110,28 +92,16 @@ open class TextList(name: String) : ChatEditorSession(name) {
         send(player)
     }
     
-
-    fun onSubmit(block: (list: MutableList<String>) -> Unit) {
-        submitCallback = block
-    }
-
-    fun onCancel(block: (list: MutableList<String>) -> Unit) {
-        cancelCallback = block
-    }
-
-    fun onFinal(block: (list: MutableList<String>) -> Unit) {
-        finalCallback = block
-    }
     
     fun list(list: List<String>) {
         if(list.isEmpty()) return
         
-        this.list += list
-        this.index = this.list.size
-        this.isCorrect = true
+        content += list
+        index = content.size
+        isCorrect = true
     }
     
-    fun getList(): List<String> = list
+    fun getList(): List<String> = content
     
     
     enum class Mode {
