@@ -30,8 +30,10 @@ interface IGuideElement {
 
     fun getCondition(team: GuideTeam): ElementCondition
 
+    fun getSymbolByCondition(player: Player, condition: ElementCondition): ItemStack
+    
     fun getSymbolByCondition(player: Player, team: GuideTeam, condition: ElementCondition): ItemStack
-
+    
     fun isTeamCompleted(team: GuideTeam): Boolean
     
 }

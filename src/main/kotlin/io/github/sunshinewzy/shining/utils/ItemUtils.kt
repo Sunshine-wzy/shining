@@ -104,24 +104,34 @@ fun ItemStack.setLore(lore: List<String>): ItemStack {
     return this
 }
 
-fun ItemStack.setLore(vararg lore: String): ItemStack {
+fun ItemStack.setLore(vararg lore: String): ItemStack =
     setLore(lore.toList())
-    return this
-}
 
 fun ItemStack.addLore(lore: List<String>): ItemStack {
     val meta = getMeta()
-    val existLore = meta.lore ?: ArrayList<String>()
-    existLore += lore.map { it.colored() }
+    val existLore = meta.lore ?: ArrayList()
+    existLore += lore.colored()
     meta.lore = existLore
     itemMeta = meta
     return this
 }
 
-fun ItemStack.addLore(vararg lore: String): ItemStack {
+fun ItemStack.addLore(vararg lore: String): ItemStack =
     addLore(lore.toList())
+
+fun ItemStack.insertLore(index: Int, lore: List<String>): ItemStack {
+    val meta = getMeta()
+    val existLore = meta.lore ?: ArrayList()
+    if(index in 0..existLore.size) {
+        existLore.addAll(index, lore.colored())
+        meta.lore = existLore
+        itemMeta = meta
+    }
     return this
 }
+
+fun ItemStack.insertLore(index: Int, vararg lore: String): ItemStack =
+    insertLore(index, lore.toList())
 
 fun ItemStack.setNameAndLore(name: String, lore: List<String>): ItemStack {
     val meta = getMeta()
@@ -131,10 +141,8 @@ fun ItemStack.setNameAndLore(name: String, lore: List<String>): ItemStack {
     return this
 }
 
-fun ItemStack.setNameAndLore(name: String, vararg lore: String): ItemStack {
+fun ItemStack.setNameAndLore(name: String, vararg lore: String): ItemStack =
     setNameAndLore(name, lore.toList())
-    return this
-}
 
 fun ItemStack?.isItemSimilar(
     item: ItemStack,

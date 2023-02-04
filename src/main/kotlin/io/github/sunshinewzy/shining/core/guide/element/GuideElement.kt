@@ -136,7 +136,7 @@ abstract class GuideElement(
             UNLOCKED
         }
     
-    override fun getSymbolByCondition(player: Player, team: GuideTeam, condition: ElementCondition): ItemStack =
+    override fun getSymbolByCondition(player: Player, condition: ElementCondition): ItemStack =
         when(condition) {
             COMPLETE -> {
                 val symbolItem = symbol.clone()
@@ -146,32 +146,15 @@ abstract class GuideElement(
                 loreList += description.lore
                 symbolItem.setNameAndLore(description.name, loreList)
             }
-            
-            UNLOCKED -> description.setOnItem(symbol.clone())
-            
-            LOCKED_DEPENDENCY -> {
-                val lore = ArrayList<String>()
-                lore += "&7$id"
-                lore += player.getLangText(TEXT_LOCKED)
-                lore += ""
-                
-                lore += player.getLangText("menu-shining_guide-element-symbol-locked_dependency")
-                lore += ""
-                dependencyMap.values.forEach { 
-                    if(!it.isTeamCompleted(team)) {
-                        lore += it.getDescription().name
-                    }
-                }
 
-                SItem(Material.BARRIER, description.name, lore)
-            }
-            
+            UNLOCKED -> description.setOnItem(symbol.clone())
+
             LOCKED_LOCK -> {
                 val lore = ArrayList<String>()
                 lore += "&7$id"
                 lore += player.getLangText(TEXT_LOCKED)
                 lore += ""
-                
+
                 lore += player.getLangText("menu-shining_guide-element-symbol-locked_lock")
                 lore += ""
 
@@ -185,8 +168,34 @@ abstract class GuideElement(
 
                 SItem(Material.BARRIER, description.name, lore)
             }
+            
+            else -> throw IllegalArgumentException("The condition $condition is not supported without a team argument.")
+        }
+
+    override fun getSymbolByCondition(player: Player, team: GuideTeam, condition: ElementCondition): ItemStack =
+        when(condition) {
+            LOCKED_DEPENDENCY -> {
+                val lore = ArrayList<String>()
+                lore += "&7$id"
+                lore += player.getLangText(TEXT_LOCKED)
+                lore += ""
+
+                lore += player.getLangText("menu-shining_guide-element-symbol-locked_dependency")
+                lore += ""
+
+                dependencyMap.values.forEach {
+                    if(!it.isTeamCompleted(team)) {
+                        lore += it.getDescription().name
+                    }
+                }
+
+                SItem(Material.BARRIER, description.name, lore)
+            }
+            
+            else -> getSymbolByCondition(player, condition)
         }
     
+
     fun getTeamData(team: GuideTeam): ElementTeamData =
         teamDataMap.getOrPut(team) { ElementTeamData() }
     
