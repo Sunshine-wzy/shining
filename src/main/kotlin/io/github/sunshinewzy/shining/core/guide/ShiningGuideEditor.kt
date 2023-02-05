@@ -29,7 +29,7 @@ object ShiningGuideEditor {
     
     
     @JvmOverloads
-    fun openEditMenu(player: Player, team: GuideTeam, element: IGuideElement?, elementContainer: IGuideElementContainer? = null) {
+    fun openEditMenu(player: Player, element: IGuideElement?, elementContainer: IGuideElementContainer? = null) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-title")) { 
             rows(6)
 

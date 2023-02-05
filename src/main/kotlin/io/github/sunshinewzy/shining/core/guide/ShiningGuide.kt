@@ -139,7 +139,7 @@ object ShiningGuide {
 
             onClick { event, element ->
                 if(ShiningGuideEditor.isEditorEnabled(player)) {
-                    ShiningGuideEditor.openEditMenu(player, team, element)
+                    ShiningGuideEditor.openEditMenu(player, element)
                     return@onClick
                 }
 
@@ -151,7 +151,7 @@ object ShiningGuide {
             if(ShiningGuideEditor.isEditorEnabled(player)) {
                 onClick(lock = true) {
                     if(it.rawSlot in slotOrders && it.currentItem.isAir()) {
-                        ShiningGuideEditor.openEditMenu(player, team, null)
+                        ShiningGuideEditor.openEditMenu(player, null)
                     }
                 }
             }
@@ -208,6 +208,50 @@ object ShiningGuide {
     
     fun getItem(): ItemStack {
         return guideItem.item.clone()
+    }
+
+    fun openCompletedMainMenu(player: Player) {
+        playerLastOpenElementMap -= player.uniqueId
+        soundOpen.playSound(player)
+
+        player.openMenu<Linked<IGuideElement>>(player.getLangText(TITLE)) {
+            rows(6)
+            slots(slotOrders)
+
+            elements { getElements() }
+
+            onGenerate(true) { player, element, index, slot ->
+                element.getSymbolByCondition(player, ElementCondition.COMPLETE)
+            }
+
+            onBuild(true, onBuildEdge)
+
+            setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
+                if(hasPreviousPage) {
+                    ShiningIcon.PAGE_PREVIOUS_GLASS_PANE.item
+                } else ShiningIcon.EDGE.item
+            }
+
+            setNextPage(8 orderWith 6) { page, hasNextPage ->
+                if(hasNextPage) {
+                    ShiningIcon.PAGE_NEXT_GLASS_PANE.item
+                } else ShiningIcon.EDGE.item
+            }
+
+            onClick { event, element ->
+                element.open(event.clicker, GuideTeam.CompletedTeam, null)
+            }
+
+        }
+    }
+    
+    fun openCompletedLastElement(player: Player) {
+        playerLastOpenElementMap[player.uniqueId]?.let {
+            it.open(player, GuideTeam.CompletedTeam)
+            return
+        }
+
+        openCompletedMainMenu(player)
     }
     
     

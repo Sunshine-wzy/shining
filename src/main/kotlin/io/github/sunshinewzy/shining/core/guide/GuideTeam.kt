@@ -34,7 +34,7 @@ import taboolib.module.ui.type.Basic
 import taboolib.platform.util.buildItem
 import java.util.*
 
-class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
+open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
     var name: String by GuideTeams.name
     var captain: UUID by GuideTeams.captain
     var symbol: ItemStack by GuideTeams.symbol
@@ -561,5 +561,8 @@ class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
             }
         }
     }
+    
+    
+    object CompletedTeam : GuideTeam(EntityID(-1, GuideTeams))
     
 }

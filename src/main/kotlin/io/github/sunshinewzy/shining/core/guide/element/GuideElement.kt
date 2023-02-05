@@ -104,9 +104,9 @@ abstract class GuideElement(
     }
 
     override fun isTeamCompleted(team: GuideTeam): Boolean =
-        teamDataMap[team]?.condition == COMPLETE
+        team == GuideTeam.CompletedTeam || teamDataMap[team]?.condition == COMPLETE
     
-    fun isTeamDependencyUnlocked(team: GuideTeam): Boolean {
+    fun isTeamDependencyCompleted(team: GuideTeam): Boolean {
         for(dependency in dependencyMap.values) {
             if(!dependency.isTeamCompleted(team)) {
                 return false
@@ -128,7 +128,7 @@ abstract class GuideElement(
             COMPLETE
         } else if(isTeamUnlocked(team)) {
             UNLOCKED
-        } else if(!isTeamDependencyUnlocked(team)) {
+        } else if(!isTeamDependencyCompleted(team)) {
             LOCKED_DEPENDENCY
         } else if(hasLock()) {
             LOCKED_LOCK

@@ -74,7 +74,7 @@ class GuideCategory(
 
             onClick { event, element ->
                 if(ShiningGuideEditor.isEditorEnabled(player)) {
-                    ShiningGuideEditor.openEditMenu(player, team, element, this@GuideCategory)
+                    ShiningGuideEditor.openEditMenu(player, element, this@GuideCategory)
                     return@onClick
                 }
                 
@@ -94,7 +94,7 @@ class GuideCategory(
             if(ShiningGuideEditor.isEditorEnabled(player)) {
                 onClick(lock = true) {
                     if(it.rawSlot in ShiningGuide.slotOrders && it.currentItem.isAir()) {
-                        ShiningGuideEditor.openEditMenu(player, team, null, this@GuideCategory)
+                        ShiningGuideEditor.openEditMenu(player, null, this@GuideCategory)
                     }
                 }
             }
