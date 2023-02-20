@@ -2,6 +2,7 @@ package io.github.sunshinewzy.shining.core.guide
 
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
+import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.dictionary.DictionaryItem
@@ -210,7 +211,8 @@ object ShiningGuide {
         return guideItem.item.clone()
     }
 
-    fun openCompletedMainMenu(player: Player) {
+    @JvmOverloads
+    fun openCompletedMainMenu(player: Player, context: GuideContext = EmptyGuideContext) {
         playerLastOpenElementMap -= player.uniqueId
         soundOpen.playSound(player)
 
