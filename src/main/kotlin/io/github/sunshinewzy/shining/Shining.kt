@@ -13,6 +13,7 @@ import io.github.sunshinewzy.shining.core.data.legacy.internal.SLocationData
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.guide.element.GuideItem
+import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.machine.MachineManager
 import io.github.sunshinewzy.shining.core.machine.legacy.*
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipe
@@ -153,9 +154,18 @@ object Shining : Plugin(), ShiningPlugin {
     private fun test() {
         val stoneCategory = GuideCategory(NamespacedId(Shining, "stone_age"), ElementDescription("&f石器时代", "&d一切的起源"), SItem(Material.STONE))
         
-        val stickItem = GuideItem(NamespacedId(Shining, "stick"), ElementDescription("&6工具的基石"), SItem(Material.STICK))
+        val lockExperience = LockExperience(5)
         
+        val stickItem = GuideItem(NamespacedId(Shining, "stick"), ElementDescription("&6工具的基石"), SItem(Material.STICK))
+        stickItem.registerLock(lockExperience)
         stoneCategory.registerElement(stickItem)
+        
+        val newStoneCategory = GuideCategory(NamespacedId(Shining, "new_stone_age"), ElementDescription("&a新石器时代", "&6刀耕火种"), SItem(Material.STONE_BRICKS))
+        newStoneCategory.registerDependency(stickItem)
+        stoneCategory.registerElement(newStoneCategory)
+        
+        val pickaxeItem = GuideItem(NamespacedId(Shining, "pickaxe"), ElementDescription("&e生产力提高"), SItem(Material.STONE_PICKAXE))
+        newStoneCategory.registerElement(pickaxeItem)
         
         ShiningGuide.registerElement(stoneCategory)
         

@@ -19,6 +19,7 @@ import io.github.sunshinewzy.shining.utils.setNameAndLore
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.jetbrains.exposed.dao.id.EntityID
 import java.util.*
 
 abstract class GuideElement(
@@ -30,7 +31,7 @@ abstract class GuideElement(
     private val locks: MutableList<ElementLock> = LinkedList()
     
     private val previousElementMap: MutableMap<UUID, IGuideElement> = HashMap()
-    private val teamDataMap: MutableMap<GuideTeam, ElementTeamData> = HashMap()
+    private val teamDataMap: MutableMap<EntityID<Int>, ElementTeamData> = HashMap()
 
 
     override fun getId(): NamespacedId = id
@@ -104,7 +105,7 @@ abstract class GuideElement(
     }
 
     override fun isTeamCompleted(team: GuideTeam): Boolean =
-        team == GuideTeam.CompletedTeam || teamDataMap[team]?.condition == COMPLETE
+        team == GuideTeam.CompletedTeam || teamDataMap[team.id]?.condition == COMPLETE
     
     fun isTeamDependencyCompleted(team: GuideTeam): Boolean {
         for(dependency in dependencyMap.values) {
@@ -117,7 +118,7 @@ abstract class GuideElement(
     }
     
     fun isTeamUnlocked(team: GuideTeam): Boolean =
-        teamDataMap[team]?.condition?.let { 
+        teamDataMap[team.id]?.condition?.let { 
             it == UNLOCKED || it == COMPLETE
         } ?: false
 
@@ -197,7 +198,7 @@ abstract class GuideElement(
     
 
     fun getTeamData(team: GuideTeam): ElementTeamData =
-        teamDataMap.getOrPut(team) { ElementTeamData() }
+        teamDataMap.getOrPut(team.id) { ElementTeamData() }
     
     fun registerDependency(element: IGuideElement) {
         dependencyMap[element.getId()] = element

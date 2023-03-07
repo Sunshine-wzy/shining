@@ -12,7 +12,7 @@ import io.github.sunshinewzy.shining.core.guide.EmptyGuideContext
  */
 interface GuideContext {
     /**
-     * Return the element with the given [key] from this context or `null`.
+     * Returns the element with the given [key] from this context or `null`.
      */
     operator fun <E: Element> get(key: Key<E>): E?
 
@@ -23,7 +23,7 @@ interface GuideContext {
     fun <R> fold(initial: R, operation: (R, Element) -> R): R
 
     /**
-     * Return a context containing elements from this context and elements from  other [context].
+     * Returns a context containing elements from this context and elements from  other [context].
      * The elements from this context with the same key as in the other one are dropped.
      */
     operator fun plus(context: GuideContext): GuideContext =
@@ -35,7 +35,7 @@ interface GuideContext {
         }
 
     /**
-     * Return a context containing elements from this context, but without an element with
+     * Returns a context containing elements from this context, but without an element with
      * the specified [key].
      */
     fun minusKey(key: Key<*>): GuideContext
