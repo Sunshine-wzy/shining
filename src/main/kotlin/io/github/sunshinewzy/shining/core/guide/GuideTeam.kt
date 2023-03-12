@@ -167,7 +167,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
             set('-', ShiningIcon.EDGE.item)
 
-            set('B', ShiningIcon.BACK.getLanguageItem().toLocalizedItem(player), ShiningGuide.onClickBack)
+            set('B', ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player), ShiningGuide.onClickBack)
 
             set('a', symbol.clone().localize(player.getLanguageNode("menu-shining_guide-team-info-symbol"), name))
             set(
@@ -209,7 +209,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
             set('-', ShiningIcon.EDGE.item)
 
-            set('B', ShiningIcon.BACK.getLanguageItem().toLocalizedItem(player), ShiningGuide.onClickBack)
+            set('B', ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player), ShiningGuide.onClickBack)
 
             set('a', if (applicants.value.isEmpty()) applicationManageItem else applicationManageItem.shinyItem) {
                 openManageApplicationMenu(player)

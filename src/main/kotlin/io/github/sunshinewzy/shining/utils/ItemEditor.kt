@@ -187,7 +187,7 @@ object ItemEditor {
                 }
             }
 
-            set(2 orderWith 1, ShiningIcon.BACK_LAST_PAGE.item) {
+            set(2 orderWith 1, ShiningIcon.BACK.item) {
                 editItem(item, player)
             }
 

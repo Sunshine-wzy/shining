@@ -11,8 +11,8 @@ import org.bukkit.inventory.ItemStack
 import taboolib.platform.util.buildItem
 
 enum class ShiningIcon(val item: ItemStack) : Itemable {
+    BACK_MENU(NamespacedIdItem(Material.ENCHANTED_BOOK, NamespacedId(Shining, "icon-back_menu"))),
     BACK(NamespacedIdItem(Material.ENCHANTED_BOOK, NamespacedId(Shining, "icon-back"))),
-    BACK_LAST_PAGE(NamespacedIdItem(Material.ENCHANTED_BOOK, NamespacedId(Shining, "icon-back_last_page"))),
     SUBMIT(NamespacedIdItem(Material.SLIME_BALL, NamespacedId(Shining, "icon-submit"))),
     WORKBENCH(NamespacedIdItem(Material.CRAFTING_TABLE, NamespacedId(Shining, "icon-workbench"))),
     PAGE_NEXT(NamespacedIdItem(Material.ENCHANTED_BOOK, NamespacedId(Shining, "icon-page_next"))),

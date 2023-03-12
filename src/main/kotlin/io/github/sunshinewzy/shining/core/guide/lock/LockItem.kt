@@ -36,7 +36,7 @@ class LockItem(
                 "ooooa"
             )
 
-            set('#', ShiningIcon.BACK.item, ShiningGuide.onClickBack)
+            set('#', ShiningIcon.BACK_MENU.item, ShiningGuide.onClickBack)
             set('a', item)
 
             onClick(lock = true)

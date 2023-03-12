@@ -134,7 +134,7 @@ abstract class TaskBase(
 
     fun setBackItemOrder(x: Int, y: Int) {
         backItemOrder = x orderWith y
-        setSlotItem(backItemOrder, ShiningIcon.BACK)
+        setSlotItem(backItemOrder, ShiningIcon.BACK_MENU)
     }
 
 

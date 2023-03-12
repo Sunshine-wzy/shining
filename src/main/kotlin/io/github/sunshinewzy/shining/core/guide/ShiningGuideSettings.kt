@@ -35,7 +35,7 @@ object ShiningGuideSettings {
 
             set('-', ShiningIcon.EDGE.item)
 
-            set('B', ShiningIcon.BACK.getLanguageItem().toLocalizedItem(player), ShiningGuide.onClickBack)
+            set('B', ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player), ShiningGuide.onClickBack)
 
             set('a', itemTeamInfo.toLocalizedItem(player)) {
                 team.openInfoMenu(player)

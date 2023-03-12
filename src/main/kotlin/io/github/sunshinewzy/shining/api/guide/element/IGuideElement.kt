@@ -2,8 +2,10 @@ package io.github.sunshinewzy.shining.api.guide.element
 
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
+import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.guide.EmptyGuideContext
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -16,10 +18,24 @@ interface IGuideElement {
 
     fun getSymbol(): ItemStack
 
-    fun open(player: Player, team: GuideTeam, previousElement: IGuideElement? = null)
+    /**
+     * Let the [player] in [team] open the element.
+     * 
+     * @param team If it is [GuideTeam.CompletedTeam], all elements in the element will be shown completed.
+     * @param previousElement The previous element which calls the current element.
+     */
+    fun open(player: Player, team: GuideTeam, previousElement: IGuideElement? = null, context: GuideContext = EmptyGuideContext)
 
-    fun back(player: Player, team: GuideTeam)
+    /**
+     * Let the [player] open the previous element.
+     */
+    fun back(player: Player, team: GuideTeam, context: GuideContext = EmptyGuideContext)
 
+    /**
+     * Let the [player] try to unlock the element.
+     * 
+     * @return True when the [player] unlock the element successfully.
+     */
     fun unlock(player: Player, team: GuideTeam): Boolean
 
     fun saveToState(state: IGuideElementState): Boolean
@@ -29,8 +45,6 @@ interface IGuideElement {
     fun update(state: IGuideElementState): Boolean
 
     fun getCondition(team: GuideTeam): ElementCondition
-
-    fun getSymbolByCondition(player: Player, condition: ElementCondition): ItemStack
 
     fun getSymbolByCondition(player: Player, team: GuideTeam, condition: ElementCondition): ItemStack
 

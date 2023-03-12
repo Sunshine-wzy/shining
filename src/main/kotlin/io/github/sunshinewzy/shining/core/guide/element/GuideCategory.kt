@@ -2,6 +2,7 @@ package io.github.sunshinewzy.shining.core.guide.element
 
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
+import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
@@ -28,7 +29,7 @@ import java.util.*
  * @param id to identify this [GuideCategory]
  * @param symbol to display this [GuideCategory] in guide
  */
-class GuideCategory(
+open class GuideCategory(
     id: NamespacedId,
     description: ElementDescription,
     symbol: ItemStack
@@ -36,7 +37,7 @@ class GuideCategory(
     private val elements: MutableList<IGuideElement> = LinkedList()
 
 
-    override fun openMenu(player: Player, team: GuideTeam) {
+    override fun openMenu(player: Player, team: GuideTeam, context: GuideContext) {
         player.openMenu<Linked<IGuideElement>>(player.getLangText(ShiningGuide.TITLE)) {
             rows(6)
             slots(ShiningGuide.slotOrders)
@@ -74,7 +75,7 @@ class GuideCategory(
 
             onClick { event, element ->
                 if (ShiningGuideEditor.isEditorEnabled(player)) {
-                    ShiningGuideEditor.openEditMenu(player, element, this@GuideCategory)
+                    ShiningGuideEditor.openEditMenu(player, team, element, this@GuideCategory)
                     return@onClick
                 }
 
@@ -83,36 +84,40 @@ class GuideCategory(
                 if (element in lockLockedElements) {
                     if (element.unlock(player, team)) {
                         ShiningGuide.fireworkCongratulate(player)
-                        open(player, team)
+                        open(player, team, null, context)
                     }
                     return@onClick
                 }
 
-                element.open(event.clicker, team, this@GuideCategory)
+                element.open(event.clicker, team, this@GuideCategory, context)
             }
 
             if (ShiningGuideEditor.isEditorEnabled(player)) {
                 onClick(lock = true) {
                     if (it.rawSlot in ShiningGuide.slotOrders && it.currentItem.isAir()) {
-                        ShiningGuideEditor.openEditMenu(player, null, this@GuideCategory)
+                        ShiningGuideEditor.openEditMenu(player, team, null, this@GuideCategory)
                     }
                 }
             }
 
             setEditor(player) {
-                openMenu(player, team)
+                openMenu(player, team, context)
             }
 
-            set(2 orderWith 1, ShiningIcon.BACK.item) {
-                if (clickEvent().isShiftClick) {
-                    ShiningGuide.openMainMenu(clicker)
-                } else {
-                    back(clicker, team)
+            if (this@GuideCategory !== ShiningGuide) {
+                set(2 orderWith 1, ShiningIcon.BACK_MENU.item) {
+                    if (clickEvent().isShiftClick) {
+                        ShiningGuide.openMainMenu(player, team, context)
+                    } else {
+                        back(player, team, context)
+                    }
                 }
             }
 
-            set(5 orderWith 1, ShiningIcon.SETTINGS.item) {
-                ShiningGuideSettings.openSettingsMenu(player, team)
+            if (team !== GuideTeam.CompletedTeam) {
+                set(5 orderWith 1, ShiningIcon.SETTINGS.item) {
+                    ShiningGuideSettings.openSettingsMenu(player, team)
+                }
             }
         }
     }

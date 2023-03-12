@@ -25,8 +25,8 @@ item-shining-shining_guide-editor-state-element-description_lore: '&b描述'
 item-shining-shining_guide-editor-state-element-dependencies: '&e依赖'
 item-shining-shining_guide-editor-state-element-locks: '&c锁'
 item-shining-shining_guide-editor-state-element-dependency-remove: '&c移除'
-item-shining-icon-back: [ '&c⇦ 返回', '', '&f左键：&7返回上一页', '&fShift + 左键：&7返回主菜单' ]
-item-shining-icon-back_last_page: '&b⇦ 返回'
+item-shining-icon-back_menu: [ '&c⇦ 返回', '', '&f左键：&7返回上一页', '&fShift + 左键：&7返回主菜单' ]
+item-shining-icon-back: '&b⇦ 返回'
 item-shining-icon-submit: '&a>> 点击以提交任务 <<'
 item-shining-icon-workbench: '&a>> &d使用工作台合成 &a<<'
 item-shining-icon-page_next: '&a下一页 ⇩'

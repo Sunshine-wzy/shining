@@ -4,6 +4,7 @@ import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.ElementCondition.*
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
+import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
@@ -40,19 +41,19 @@ abstract class GuideElement(
 
     override fun getSymbol(): ItemStack = symbol
 
-    override fun open(player: Player, team: GuideTeam, previousElement: IGuideElement?) {
+    override fun open(player: Player, team: GuideTeam, previousElement: IGuideElement?, context: GuideContext) {
         if (previousElement != null)
             previousElementMap[player.uniqueId] = previousElement
 
         ShiningGuide.playerLastOpenElementMap[player.uniqueId] = this
 
         ShiningGuide.soundOpen.playSound(player)    // TODO: Allow every element to customize the open sound
-        openMenu(player, team)
+        openMenu(player, team, context)
     }
 
-    protected abstract fun openMenu(player: Player, team: GuideTeam)
+    protected abstract fun openMenu(player: Player, team: GuideTeam, context: GuideContext)
 
-    override fun back(player: Player, team: GuideTeam) {
+    override fun back(player: Player, team: GuideTeam, context: GuideContext) {
         previousElementMap[player.uniqueId]?.let {
             it.open(player, team, null)
             return
@@ -108,7 +109,7 @@ abstract class GuideElement(
     }
 
     override fun isTeamCompleted(team: GuideTeam): Boolean =
-        team == GuideTeam.CompletedTeam || teamDataMap[team.id]?.condition == COMPLETE
+        team === GuideTeam.CompletedTeam || teamDataMap[team.id]?.condition == COMPLETE
 
     fun isTeamDependencyCompleted(team: GuideTeam): Boolean {
         for (dependency in dependencyMap.values) {
@@ -140,7 +141,7 @@ abstract class GuideElement(
             UNLOCKED
         }
 
-    override fun getSymbolByCondition(player: Player, condition: ElementCondition): ItemStack =
+    override fun getSymbolByCondition(player: Player, team: GuideTeam, condition: ElementCondition): ItemStack =
         when (condition) {
             COMPLETE -> {
                 val symbolItem = symbol.clone()
@@ -153,6 +154,24 @@ abstract class GuideElement(
 
             UNLOCKED -> description.setOnItem(symbol.clone())
 
+            LOCKED_DEPENDENCY -> {
+                val lore = ArrayList<String>()
+                lore += "&7$id"
+                lore += player.getLangText(TEXT_LOCKED)
+                lore += ""
+
+                lore += player.getLangText("menu-shining_guide-element-symbol-locked_dependency")
+                lore += ""
+
+                dependencyMap.values.forEach {
+                    if (!it.isTeamCompleted(team)) {
+                        lore += it.getDescription().name
+                    }
+                }
+
+                SItem(Material.BARRIER, description.name, lore)
+            }
+            
             LOCKED_LOCK -> {
                 val lore = ArrayList<String>()
                 lore += "&7$id"
@@ -180,31 +199,6 @@ abstract class GuideElement(
 
                 SItem(Material.BARRIER, description.name, lore)
             }
-
-            else -> throw IllegalArgumentException("The condition $condition is not supported without a team argument.")
-        }
-
-    override fun getSymbolByCondition(player: Player, team: GuideTeam, condition: ElementCondition): ItemStack =
-        when (condition) {
-            LOCKED_DEPENDENCY -> {
-                val lore = ArrayList<String>()
-                lore += "&7$id"
-                lore += player.getLangText(TEXT_LOCKED)
-                lore += ""
-
-                lore += player.getLangText("menu-shining_guide-element-symbol-locked_dependency")
-                lore += ""
-
-                dependencyMap.values.forEach {
-                    if (!it.isTeamCompleted(team)) {
-                        lore += it.getDescription().name
-                    }
-                }
-
-                SItem(Material.BARRIER, description.name, lore)
-            }
-
-            else -> getSymbolByCondition(player, condition)
         }
 
 

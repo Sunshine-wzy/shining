@@ -1,6 +1,9 @@
 package io.github.sunshinewzy.shining.core.menu
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.core.guide.EmptyGuideContext
+import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.PlayerChatSubscriber
@@ -72,8 +75,28 @@ inline fun <reified T> Linked<T>.buildMultiPage() {
 
 fun Basic.onBack(
     slot: Int = 2 orderWith 1,
-    item: ItemStack = ShiningIcon.BACK_LAST_PAGE.item,
+    item: ItemStack = ShiningIcon.BACK.item,
     onClick: ClickEvent.() -> Unit
 ) {
     set(slot, item, onClick)
+}
+
+fun Basic.onBackMenu(player: Player, team: GuideTeam, context: GuideContext = EmptyGuideContext, slot: Char = 'B') {
+    set(slot, ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player)) {
+        if (clickEvent().isShiftClick) {
+            ShiningGuide.openMainMenu(player, team, context)
+        } else {
+            ShiningGuide.openLastElement(player, team, context)
+        }
+    }
+}
+
+fun Basic.onBackMenu(player: Player, team: GuideTeam, context: GuideContext = EmptyGuideContext, slot: Int) {
+    set(slot, ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player)) {
+        if (clickEvent().isShiftClick) {
+            ShiningGuide.openMainMenu(player, team, context)
+        } else {
+            ShiningGuide.openLastElement(player, team, context)
+        }
+    }
 }

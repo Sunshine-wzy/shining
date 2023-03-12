@@ -271,7 +271,7 @@ class ItemCraftTask(
                 Triple(holderName to player.uniqueId, SPageValue(1), pages)
             )
             val inv = Bukkit.createInventory(holder, 5 * 9, "合成表")
-            inv.setItem(9, 5, ShiningIcon.BACK)
+            inv.setItem(9, 5, ShiningIcon.BACK_MENU)
 
             val recipes = Bukkit.getServer().getRecipesFor(this)
             if (recipes.isEmpty()) {

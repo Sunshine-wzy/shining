@@ -7,6 +7,7 @@ import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.LanguageItem
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
+import io.github.sunshinewzy.shining.core.menu.onBackMenu
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.Material
@@ -31,7 +32,7 @@ object ShiningGuideEditor {
 
 
     @JvmOverloads
-    fun openEditMenu(player: Player, element: IGuideElement?, elementContainer: IGuideElementContainer? = null) {
+    fun openEditMenu(player: Player, team: GuideTeam, element: IGuideElement?, elementContainer: IGuideElementContainer? = null) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-title")) {
             rows(6)
 
@@ -46,12 +47,12 @@ object ShiningGuideEditor {
 
             set('-', ShiningIcon.EDGE.item)
 
-            set('B', ShiningIcon.BACK.getLanguageItem().toLocalizedItem(player), ShiningGuide.onClickBack)
+            onBackMenu(player, team)
 
             if (element != null) {
                 set('a', itemCreateStateCopy.toLocalizedItem(player)) {
                     val state = element.getState()
-                    state.openEditor(player)
+                    state.openEditor(player, team)
                 }
             }
 
