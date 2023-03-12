@@ -10,21 +10,20 @@ import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 
 object MachineRegistrationProcessor : IMachineRegistrationProcessor {
-    
-    
-    
+
+
     override fun onRegister(machine: IMachine) {
-        when(machine) {
+        when (machine) {
             is SimpleMachine -> {
-                
+
             }
-            
+
             is PlaneMachine -> {
-                
+
             }
-            
+
             is MultiblockMachine -> {
-                
+
             }
         }
     }
@@ -32,18 +31,18 @@ object MachineRegistrationProcessor : IMachineRegistrationProcessor {
 
     @SubscribeEvent(EventPriority.HIGHEST)
     fun onPlayerInteract(event: PlayerInteractEvent) {
-        
+
     }
-    
+
     @SubscribeEvent(EventPriority.HIGHEST)
     fun onBlockPlace(event: BlockPlaceEvent) {
         val item = event.itemInHand.dictionaryItem
-        
+
     }
-    
+
     @SubscribeEvent(EventPriority.HIGHEST)
     fun onBlockBreak(event: BlockBreakEvent) {
-        
+
     }
-    
+
 }

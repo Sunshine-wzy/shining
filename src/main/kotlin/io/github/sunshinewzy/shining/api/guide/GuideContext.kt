@@ -14,7 +14,7 @@ interface GuideContext {
     /**
      * Returns the element with the given [key] from this context or `null`.
      */
-    operator fun <E: Element> get(key: Key<E>): E?
+    operator fun <E : Element> get(key: Key<E>): E?
 
     /**
      * Accumulates entries of this context starting with [initial] value and applying [operation]
@@ -27,10 +27,10 @@ interface GuideContext {
      * The elements from this context with the same key as in the other one are dropped.
      */
     operator fun plus(context: GuideContext): GuideContext =
-        if(context === EmptyGuideContext) this
+        if (context === EmptyGuideContext) this
         else context.fold(this) { acc, element ->
             val removed = acc.minusKey(element.key)
-            if(removed === EmptyGuideContext) element
+            if (removed === EmptyGuideContext) element
             else CombinedGuideContext(removed, element)
         }
 
@@ -39,11 +39,11 @@ interface GuideContext {
      * the specified [key].
      */
     fun minusKey(key: Key<*>): GuideContext
-    
+
     /**
      * Key for the elements of GuideContext. E is a type of element with this key.
      */
-    interface Key<E: Element>
+    interface Key<E : Element>
 
     /**
      * An element of the [GuideContext]. An element of the guide context is a singleton context by itself.
@@ -53,12 +53,12 @@ interface GuideContext {
 
         @Suppress("UNCHECKED_CAST")
         override fun <E : Element> get(key: Key<E>): E? =
-            if(this.key == key) this as E else null
+            if (this.key == key) this as E else null
 
         override fun <R> fold(initial: R, operation: (R, Element) -> R): R =
             operation(initial, this)
 
         override fun minusKey(key: Key<*>): GuideContext =
-            if(this.key == key) EmptyGuideContext else this
+            if (this.key == key) EmptyGuideContext else this
     }
 }

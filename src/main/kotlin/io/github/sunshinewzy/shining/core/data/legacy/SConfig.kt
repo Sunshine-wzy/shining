@@ -23,11 +23,11 @@ abstract class SConfig(
         "config/" + if (path == "") "$name.yml"
         else "${path.replace("\\", "/")}/$name.yml"
     )
-    
+
     val config: YamlConfiguration = YamlConfiguration.loadConfiguration(file)
 
 
-    constructor(plugin: JavaPlugin, name: String, file: File): this(
+    constructor(plugin: JavaPlugin, name: String, file: File) : this(
         plugin,
         name,
         file.getDataPath(plugin)
@@ -35,7 +35,7 @@ abstract class SConfig(
 
     init {
 
-        if(file.exists()){
+        if (file.exists()) {
             Bukkit.getScheduler().runTaskLater(Shining.plugin, Runnable {
                 load()
             }, 1)
@@ -47,23 +47,23 @@ abstract class SConfig(
     /**
      * 创建文件时调用
      */
-    open fun YamlConfiguration.createConfig() { }
+    open fun YamlConfiguration.createConfig() {}
 
 
     /**
      * 加载文件后调用
      */
-    open fun YamlConfiguration.loadConfig() { }
+    open fun YamlConfiguration.loadConfig() {}
 
-    
+
     fun get(key: String, default: Any): Any {
-        config.get(key)?.let { 
+        config.get(key)?.let {
             return it
         }
-        
+
         return default
     }
-    
+
 
     /**
      * 创建配置文件
@@ -74,7 +74,7 @@ abstract class SConfig(
 
         try {
             config.save(file)
-        } catch (ex: IOException){
+        } catch (ex: IOException) {
             ex.printStackTrace()
         }
     }
@@ -92,13 +92,13 @@ abstract class SConfig(
 
     }
 
-    
+
     companion object {
         inline fun <reified T> File.loadYamlConfig(target: MutableList<T>, keys: List<String>) {
             val fileConfig = YamlConfiguration.loadConfiguration(this)
 
             keys.forEach {
-                if(fileConfig.contains(it)){
+                if (fileConfig.contains(it)) {
                     val list = SManager.castList(fileConfig.get(it), T::class.java) ?: return@forEach
                     target.addAll(list)
                 }
@@ -109,7 +109,7 @@ abstract class SConfig(
             val fileConfig = YamlConfiguration.loadConfiguration(this)
 
             target.forEach { (key, value) ->
-                if(fileConfig.contains(key)){
+                if (fileConfig.contains(key)) {
                     val list = SManager.castList(key, T::class.java) ?: return@forEach
                     value.addAll(list)
                 }
@@ -117,6 +117,6 @@ abstract class SConfig(
 
         }
     }
-    
-    
+
+
 }

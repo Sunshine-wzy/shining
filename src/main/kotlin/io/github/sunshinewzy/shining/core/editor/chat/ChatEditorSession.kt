@@ -10,14 +10,14 @@ import taboolib.module.chat.colored
 abstract class ChatEditorSession<T>(val name: String) {
     abstract var content: T
         protected set
-    
+
     var isCorrect: Boolean = false
         protected set
-    
+
     private var submitCallback: (content: T) -> Unit = {}
     private var cancelCallback: (content: T) -> Unit = {}
     private var finalCallback: (content: T) -> Unit = {}
-    
+
     var isInvisible: Boolean = true
         private set
     var predicate: AsyncPlayerChatEvent.(String) -> Boolean = { true }
@@ -27,8 +27,8 @@ abstract class ChatEditorSession<T>(val name: String) {
     abstract fun display(player: Player, json: TellrawJson)
 
     abstract fun update(event: AsyncPlayerChatEvent)
-    
-    
+
+
     open fun send(player: Player) {
         TellrawJson().newLine()
             .append(player.getLangText("text-editor-chat-edit", name).colored())
@@ -38,7 +38,7 @@ abstract class ChatEditorSession<T>(val name: String) {
             .also { display(player, it) }
             .newLine()
             .append("       ")
-            .append(if(isCorrect) "§7[§a√§7]" else "§7[√]")
+            .append(if (isCorrect) "§7[§a√§7]" else "§7[√]")
             .hoverText(player.getLangText("text-editor-chat-session-button-submit").colored())
             .runCommand("/shiningapi editor chat submit")
             .append("       ")
@@ -74,14 +74,14 @@ abstract class ChatEditorSession<T>(val name: String) {
     }
 
     open fun mode(player: Player, mode: String) {}
-    
-    
+
+
     fun visible() {
         isInvisible = false
     }
-    
+
     fun predicate(block: AsyncPlayerChatEvent.(String) -> Boolean) {
         predicate = block
     }
-    
+
 }

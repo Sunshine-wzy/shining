@@ -46,9 +46,9 @@ import kotlin.random.Random
 
 inline fun <reified T> Any.castList(): ArrayList<T> {
     val list = ArrayList<T>()
-    if(this is List<*>){
-        forEach { 
-            if(it is T)
+    if (this is List<*>) {
+        forEach {
+            if (it is T)
                 list += it
         }
     }
@@ -62,7 +62,7 @@ inline fun <reified K, reified V> Any.castMap(kClazz: Class<K>, vClazz: Class<V>
     val result = HashMap<K, V>()
     if (this is Map<*, *>) {
         for ((key, value) in this) {
-            if(key != null && value != null && key is K && value is V){
+            if (key != null && value != null && key is K && value is V) {
                 result[kClazz.cast(key)] = vClazz.cast(value)
             }
         }
@@ -71,10 +71,14 @@ inline fun <reified K, reified V> Any.castMap(kClazz: Class<K>, vClazz: Class<V>
     return null
 }
 
-inline fun <reified K, reified V> Any.castMap(kClazz: Class<K>, vClazz: Class<V>, targetMap: MutableMap<K, V>): Boolean {
+inline fun <reified K, reified V> Any.castMap(
+    kClazz: Class<K>,
+    vClazz: Class<V>,
+    targetMap: MutableMap<K, V>
+): Boolean {
     if (this is Map<*, *>) {
         for ((key, value) in this) {
-            if(key != null && value != null && key is K && value is V)
+            if (key != null && value != null && key is K && value is V)
                 targetMap[kClazz.cast(key)] = vClazz.cast(value)
         }
         return true
@@ -83,31 +87,31 @@ inline fun <reified K, reified V> Any.castMap(kClazz: Class<K>, vClazz: Class<V>
 }
 
 inline fun <reified K, reified V> Any.castMap(targetMap: MutableMap<K, V>): Boolean {
-    if(castMap(K::class.java, V::class.java, targetMap))
+    if (castMap(K::class.java, V::class.java, targetMap))
         return true
     return false
 }
 
 fun Any.castMapBoolean(): HashMap<String, Boolean> {
     val map = HashMap<String, Boolean>()
-    
-    if(this is Map<*, *>){
-        forEach { key, value -> 
-            if(key != null && value != null && key is String && value is Boolean){
+
+    if (this is Map<*, *>) {
+        forEach { key, value ->
+            if (key != null && value != null && key is String && value is Boolean) {
                 map[key] = value
             }
         }
     }
-    
+
     return map
 }
 
 fun Any.castMapString(): HashMap<String, String> {
     val map = HashMap<String, String>()
 
-    if(this is Map<*, *>){
+    if (this is Map<*, *>) {
         forEach { key, value ->
-            if(key is String && value is String){
+            if (key is String && value is String) {
                 map[key] = value
             }
         }
@@ -121,18 +125,18 @@ fun Any.castMapString(): HashMap<String, String> {
 //region TaskModule 任务模块
 
 fun Player.hasCompleteTask(task: TaskBase?): Boolean {
-    if(task == null) return true
-    
+    if (task == null) return true
+
     val taskProject = task.taskStage.taskProject
     val progress = taskProject.getProgress(this)
-    
+
     return progress.hasCompleteTask(task)
 }
 
 fun Player.hasCompleteStage(stage: TaskStage?): Boolean {
-    if(stage == null) return true
-    if(stage.finalTask == null) return true
-    
+    if (stage == null) return true
+    if (stage.finalTask == null) return true
+
     val progress = stage.taskProject.getProgress(this)
     return progress.hasCompleteStage(stage)
 }
@@ -152,25 +156,25 @@ fun Player.openInvWithSound(inv: Inventory, openSound: Sound, volume: Float, pit
  * 否则以掉落物的形式生成到玩家附近
  */
 fun Player.giveItem(item: ItemStack, amount: Int = 0) {
-    if(amount > 0) {
-        if(amount < 64) {
+    if (amount > 0) {
+        if (amount < 64) {
             item.amount = amount
         } else item.amount = 64
     }
-    
-    if(inventory.isFull()) {
+
+    if (inventory.isFull()) {
         world.dropItem(location, item)
     } else inventory.addItem(item)
 }
 
 fun Player.giveItem(items: Array<ItemStack>) {
-    items.forEach { 
+    items.forEach {
         giveItem(it)
     }
 }
 
 fun Player.giveItem(items: List<ItemStack>) {
-    items.forEach { 
+    items.forEach {
         giveItem(it)
     }
 }
@@ -180,11 +184,11 @@ fun Player.giveItem(item: Itemable, amount: Int = 0) {
 }
 
 fun Player.giveItemInMainHand(item: ItemStack) {
-    if(inventory.itemInMainHand.type == Material.AIR) {
+    if (inventory.itemInMainHand.type == Material.AIR) {
         inventory.setItemInMainHand(item)
         return
     }
-    
+
     giveItem(item)
 }
 
@@ -221,7 +225,14 @@ fun Player.spawnParticle(particle: Particle, listLoc: List<Location>, count: Int
     }
 }
 
-fun Player.spawnParticle(particle: Particle, listLoc: List<Location>, count: Int, offsetX: Double, offsetY: Double, offsetZ: Double) {
+fun Player.spawnParticle(
+    particle: Particle,
+    listLoc: List<Location>,
+    count: Int,
+    offsetX: Double,
+    offsetY: Double,
+    offsetZ: Double
+) {
     listLoc.forEach {
         spawnParticle(particle, it, count, offsetX, offsetY, offsetZ)
     }
@@ -249,7 +260,7 @@ fun Player.tryToPlaceBlock(loc: Location, clickedBlock: Block, item: ItemStack, 
 }
 
 fun Player.damageItemInMainHand(damage: Int = 1) {
-    inventory.setItemInMainHand(inventory.itemInMainHand.damage(damage, this)) 
+    inventory.setItemInMainHand(inventory.itemInMainHand.damage(damage, this))
 }
 
 fun Player.damageItemInOffHand(damage: Int = 1) {
@@ -291,37 +302,37 @@ fun UUID.findPlayer(): Player? =
  * 判断物品栏中是否含有 [amount] 数量的物品 [item]
  */
 fun Inventory.containsItem(item: ItemStack, amount: Int = 1): Boolean {
-    if(amount <= 0) return true
-    
+    if (amount <= 0) return true
+
     val theItem = item.clone()
     var cnt = theItem.amount * amount
     theItem.amount = 1
-    
+
     storageContents.forEach {
-        if(it == null) return@forEach
-        
+        if (it == null) return@forEach
+
         if (it.isItemSimilar(theItem)) {
             cnt -= it.amount
             if (cnt <= 0) return true
         }
     }
-    
+
     return false
 }
 
 fun Inventory.containsItem(items: Array<ItemStack>): Boolean {
-    items.forEach { 
-        if(!containsItem(it)) return false
+    items.forEach {
+        if (!containsItem(it)) return false
     }
     return true
 }
 
 fun Inventory.containsItem(types: List<Material>, amount: Int = 1): Boolean {
-    if(amount <= 0) return true
+    if (amount <= 0) return true
     var cnt = amount
 
     storageContents.forEach {
-        if(it == null) return@forEach
+        if (it == null) return@forEach
 
         if (it.type in types) {
             cnt -= it.amount
@@ -338,22 +349,22 @@ fun Inventory.containsItem(types: Materialsable, amount: Int = 1): Boolean = con
  * 移除物品栏中 [amount] 数量的物品 [item]
  */
 fun Inventory.removeSItem(item: ItemStack, amount: Int = 1): Boolean {
-    if(amount <= 0) return true
+    if (amount <= 0) return true
 
     val theItem = item.clone()
     var cnt = theItem.amount * amount
     theItem.amount = 1
-    
+
     storageContents.forEach {
-        if(it == null) return@forEach
+        if (it == null) return@forEach
 
         if (it.isItemSimilar(theItem)) {
             val theCnt = cnt
             cnt -= it.amount
 
-            if(it.amount > theCnt) it.amount -= theCnt
+            if (it.amount > theCnt) it.amount -= theCnt
             else it.amount = 0
-            
+
             if (cnt <= 0) return true
         }
     }
@@ -362,31 +373,31 @@ fun Inventory.removeSItem(item: ItemStack, amount: Int = 1): Boolean {
 }
 
 fun Inventory.removeSItem(items: Array<ItemStack>): Boolean {
-    items.forEach { 
-        if(!removeSItem(it)) return false
+    items.forEach {
+        if (!removeSItem(it)) return false
     }
     return true
 }
 
 fun Inventory.removeSItem(items: List<ItemStack>): Boolean {
     items.forEach {
-        if(!removeSItem(it)) return false
+        if (!removeSItem(it)) return false
     }
     return true
 }
 
 fun Inventory.removeSItem(type: Material, amount: Int = 1): Boolean {
-    if(amount <= 0) return true
+    if (amount <= 0) return true
     var cnt = amount
 
     storageContents.forEach {
-        if(it == null) return@forEach
+        if (it == null) return@forEach
 
         if (it.type == type) {
             val theCnt = cnt
             cnt -= it.amount
 
-            if(it.amount > theCnt) it.amount -= theCnt
+            if (it.amount > theCnt) it.amount -= theCnt
             else it.amount = 0
 
             if (cnt <= 0) return true
@@ -397,17 +408,17 @@ fun Inventory.removeSItem(type: Material, amount: Int = 1): Boolean {
 }
 
 fun Inventory.removeSItem(types: List<Material>, amount: Int = 1): Boolean {
-    if(amount <= 0) return true
+    if (amount <= 0) return true
     var cnt = amount
 
     storageContents.forEach {
-        if(it == null) return@forEach
+        if (it == null) return@forEach
 
         if (it.type in types) {
             val theCnt = cnt
             cnt -= it.amount
 
-            if(it.amount > theCnt) it.amount -= theCnt
+            if (it.amount > theCnt) it.amount -= theCnt
             else it.amount = 0
 
             if (cnt <= 0) return true
@@ -421,16 +432,16 @@ fun Inventory.removeSItem(types: Materialsable, amount: Int = 1): Boolean = remo
 
 
 fun PlayerInventory.removeHandItem(item: ItemStack, amount: Int = 1): Boolean {
-    if(amount <= 0) return true
+    if (amount <= 0) return true
     val handItem = itemInMainHand
-    if(handItem.type == Material.AIR) return false
+    if (handItem.type == Material.AIR) return false
 
     val theItem = item.clone()
     val cnt = theItem.amount * amount
     theItem.amount = 1
-    
-    if(handItem.isItemSimilar(theItem)) {
-        return if(handItem.amount > cnt) {
+
+    if (handItem.isItemSimilar(theItem)) {
+        return if (handItem.amount > cnt) {
             handItem.amount -= cnt
             true
         } else {
@@ -438,21 +449,21 @@ fun PlayerInventory.removeHandItem(item: ItemStack, amount: Int = 1): Boolean {
             false
         }
     }
-    
+
     return false
 }
 
 fun PlayerInventory.removeOffHandItem(item: ItemStack, amount: Int = 1): Boolean {
-    if(amount <= 0) return true
+    if (amount <= 0) return true
     val handItem = itemInOffHand
-    if(handItem.type == Material.AIR) return false
+    if (handItem.type == Material.AIR) return false
 
     val theItem = item.clone()
     val cnt = theItem.amount * amount
     theItem.amount = 1
 
-    if(handItem.isItemSimilar(theItem)) {
-        return if(handItem.amount > cnt) {
+    if (handItem.isItemSimilar(theItem)) {
+        return if (handItem.amount > cnt) {
             handItem.amount -= cnt
             true
         } else {
@@ -482,33 +493,40 @@ fun Inventory.setItem(x: Int, y: Int, item: Itemable) {
 fun Inventory.setItems(start: Int, end: Int, width: Int, items: List<ItemStack>): ArrayList<ItemStack> {
     var j = 0
     val list = arrayListOf<ItemStack>()
-    
-    for(ptr in start..end step 9) {
-        for(i in ptr until ptr + width) {
-            if(j in items.indices)
+
+    for (ptr in start..end step 9) {
+        for (i in ptr until ptr + width) {
+            if (j in items.indices)
                 setItem(i, items[j])
             else return list
 
             j++
         }
     }
-    
-    for(k in j until items.size) {
+
+    for (k in j until items.size) {
         list += items[k]
     }
     return list
 }
 
-fun Inventory.setItems(startX: Int, startY: Int, endX: Int, endY: Int, width: Int, items: List<ItemStack>): ArrayList<ItemStack> =
+fun Inventory.setItems(
+    startX: Int,
+    startY: Int,
+    endX: Int,
+    endY: Int,
+    width: Int,
+    items: List<ItemStack>
+): ArrayList<ItemStack> =
     setItems(startX orderWith startY, endX orderWith endY, width, items)
 
 fun <T> Inventory.actionList(start: Int, end: Int, width: Int, list: List<T>, action: T.(Int) -> Unit): ArrayList<T> {
     var j = 0
     val resList = arrayListOf<T>()
 
-    for(ptr in start..end step 9) {
-        for(i in ptr until ptr + width) {
-            if(j in list.indices)
+    for (ptr in start..end step 9) {
+        for (i in ptr until ptr + width) {
+            if (j in list.indices)
                 action(list[j], i)
             else return resList
 
@@ -516,25 +534,40 @@ fun <T> Inventory.actionList(start: Int, end: Int, width: Int, list: List<T>, ac
         }
     }
 
-    for(k in j until list.size) {
+    for (k in j until list.size) {
         resList += list[k]
     }
     return resList
 }
 
-fun <T> Inventory.actionList(startX: Int, startY: Int, endX: Int, endY: Int, width: Int, list: List<T>, action: T.(Int) -> Unit): ArrayList<T> =
+fun <T> Inventory.actionList(
+    startX: Int,
+    startY: Int,
+    endX: Int,
+    endY: Int,
+    width: Int,
+    list: List<T>,
+    action: T.(Int) -> Unit
+): ArrayList<T> =
     actionList(startX orderWith startY, endX orderWith endY, width, list, action)
 
 /**
  * @param action First Int is page, second Int is order.
  */
-fun <T> Inventory.actionList(page: Int, start: Int, end: Int, width: Int, list: List<T>, action: T.(Int, Int) -> Unit): ArrayList<T> {
+fun <T> Inventory.actionList(
+    page: Int,
+    start: Int,
+    end: Int,
+    width: Int,
+    list: List<T>,
+    action: T.(Int, Int) -> Unit
+): ArrayList<T> {
     var j = 0
     val resList = arrayListOf<T>()
 
-    for(ptr in start..end step 9) {
-        for(i in ptr until min(ptr + width, end)) {
-            if(j in list.indices)
+    for (ptr in start..end step 9) {
+        for (i in ptr until min(ptr + width, end)) {
+            if (j in list.indices)
                 action(list[j], page, i)
             else return resList
 
@@ -542,13 +575,22 @@ fun <T> Inventory.actionList(page: Int, start: Int, end: Int, width: Int, list: 
         }
     }
 
-    for(k in j until list.size) {
+    for (k in j until list.size) {
         resList += list[k]
     }
     return resList
 }
 
-fun <T> Inventory.actionList(page: Int, startX: Int, startY: Int, endX: Int, endY: Int, width: Int, list: List<T>, action: T.(Int, Int) -> Unit): ArrayList<T> =
+fun <T> Inventory.actionList(
+    page: Int,
+    startX: Int,
+    startY: Int,
+    endX: Int,
+    endY: Int,
+    width: Int,
+    list: List<T>,
+    action: T.(Int, Int) -> Unit
+): ArrayList<T> =
     actionList(page, startX orderWith startY, endX orderWith endY, width, list, action)
 
 
@@ -556,15 +598,16 @@ fun <T> Inventory.actionList(page: Int, startX: Int, startY: Int, endX: Int, end
  * 快速创建 5*9 边框
  */
 fun Inventory.createEdge(invSize: Int, edgeItem: ItemStack) {
-    val meta = (if (edgeItem.hasItemMeta()) edgeItem.itemMeta else Bukkit.getItemFactory().getItemMeta(edgeItem.type)) ?: return
+    val meta = (if (edgeItem.hasItemMeta()) edgeItem.itemMeta else Bukkit.getItemFactory().getItemMeta(edgeItem.type))
+        ?: return
     meta.setDisplayName(" ")
     edgeItem.itemMeta = meta
 
-    for(i in 0..8) {
+    for (i in 0..8) {
         setItem(i, edgeItem)
         setItem(i + 9 * (invSize - 1), edgeItem)
     }
-    for(i in 9..9*(invSize - 2) step 9) {
+    for (i in 9..9 * (invSize - 2) step 9) {
         setItem(i, edgeItem)
         setItem(i + 8, edgeItem)
     }
@@ -575,37 +618,35 @@ fun Inventory.setCraftSlotItem(craftOrder: Int, item: ItemStack, baseX: Int = 0,
 }
 
 fun Inventory.setCraftSlotItem(items: Array<ItemStack>, baseX: Int = 0, baseY: Int = 1) {
-    items.forEachIndexed {
-            i, itemStack ->
+    items.forEachIndexed { i, itemStack ->
         setCraftSlotItem(i, itemStack, baseX, baseY)
     }
 }
 
 fun Inventory.setCraftSlotItem(items: List<ItemStack>, baseX: Int = 0, baseY: Int = 1) {
-    items.forEachIndexed {
-            i, itemStack ->
+    items.forEachIndexed { i, itemStack ->
         setCraftSlotItem(i, itemStack, baseX, baseY)
     }
 }
 
 fun Inventory.clearCraftSlotItem(baseX: Int = 0, baseY: Int = 1) {
-    for(i in 0..8)
+    for (i in 0..8)
         setCraftSlotItem(i, ItemStack(Material.AIR), baseX, baseY)
 }
 
 fun Inventory.getRectangleItems(x: Int, y: Int, width: Int, height: Int): Array<ItemStack> {
     val items = Array(width * height) { ItemStack(Material.AIR) }
-    
+
     var ptr = 0
-    for(j in y until (y + height)) {
-        for(i in x until (x + width)) {
-            getItem(i orderWith j)?.let { 
+    for (j in y until (y + height)) {
+        for (i in x until (x + width)) {
+            getItem(i orderWith j)?.let {
                 items[ptr] = it
             }
             ptr++
         }
     }
-    
+
     return items
 }
 
@@ -614,14 +655,14 @@ fun Inventory.getSquareItems(x: Int, y: Int, length: Int): Array<ItemStack> =
 
 fun Inventory.removeRectangleItems(items: Array<ItemStack>, x: Int, y: Int, width: Int, height: Int): Boolean {
     val target = getRectangleItems(x, y, width, height)
-    if(target.size != items.size) return false
-    
-    for(i in items.indices) {
-        if(!target[i].isItemSimilar(items[i]))
+    if (target.size != items.size) return false
+
+    for (i in items.indices) {
+        if (!target[i].isItemSimilar(items[i]))
             return false
     }
-    
-    for(i in items.indices) {
+
+    for (i in items.indices) {
         target[i].amount -= items[i].amount
     }
     return true
@@ -637,8 +678,8 @@ fun InventoryView.asPlayer(): Player = player as Player
 
 //region File 文件
 
-fun File.getDataPath(plugin: JavaPlugin) 
-    = absolutePath.split("(?<=${plugin.dataFolder.absolutePath.replace('\\', '/')}/)[\\s\\S]*(?=/$name)".toRegex()).last()
+fun File.getDataPath(plugin: JavaPlugin) =
+    absolutePath.split("(?<=${plugin.dataFolder.absolutePath.replace('\\', '/')}/)[\\s\\S]*(?=/$name)".toRegex()).last()
 
 //endregion
 
@@ -648,19 +689,19 @@ fun ShapedRecipe.getRecipe(): Array<ItemStack> {
     val recipe = Array(9) { ItemStack(Material.AIR) }
     val rows = shape
     val ingredients = ingredientMap
-    
-    for(i in rows.indices){
+
+    for (i in rows.indices) {
         val base = i * 3
         val str = rows[i]
-        
-        for(j in str.indices){
-            if(str[j] != ' '){
+
+        for (j in str.indices) {
+            if (str[j] != ' ') {
                 val item = ingredients[str[j]] ?: continue
                 recipe[base + j] = ItemStack(item.type)
             }
         }
     }
-    
+
     return recipe
 }
 
@@ -674,9 +715,9 @@ fun Block.getFaceLocation(face: BlockFace): Location = location.getFaceLocation(
 
 fun Block.getSMetadata(plugin: JavaPlugin, key: String): SMetadataValue {
     var meta = SMetadataValue(plugin, 0)
-    if(hasMetadata(key)) {
-        for(metadata in getMetadata(key)){
-            if(metadata is SMetadataValue){
+    if (hasMetadata(key)) {
+        for (metadata in getMetadata(key)) {
+            if (metadata is SMetadataValue) {
                 meta = metadata
                 break
             }
@@ -689,7 +730,7 @@ fun Block.getSMetadataInt(plugin: JavaPlugin, key: String): Int = getSMetadata(p
 
 
 fun BlockFace.transform(): MutableList<BlockFace> =
-    when(this) {
+    when (this) {
         NORTH, SOUTH -> arrayListOf(EAST, WEST, UP, DOWN)
         EAST, WEST -> arrayListOf(NORTH, SOUTH, UP, DOWN)
         UP, DOWN -> arrayListOf(NORTH, SOUTH, EAST, WEST)
@@ -704,17 +745,17 @@ fun BlockFace.transform(excludeFace: BlockFace): MutableList<BlockFace> {
 }
 
 fun Block.getChest(): Chest? {
-    if(type == Material.CHEST) {
+    if (type == Material.CHEST) {
         val state = state
-        if(state is Chest) return state
+        if (state is Chest) return state
     }
     return null
 }
 
 fun Block.getHopper(): Hopper? {
-    if(type == Material.HOPPER) {
+    if (type == Material.HOPPER) {
         val state = state
-        if(state is Hopper) return state
+        if (state is Hopper) return state
     }
     return null
 }
@@ -723,11 +764,12 @@ fun Block.getHopper(): Hopper? {
 
 //region Location 位置
 
-fun Location.getFaceLocation(face: BlockFace): Location = clone().add(face.modX.toDouble(), face.modY.toDouble(), face.modZ.toDouble())
+fun Location.getFaceLocation(face: BlockFace): Location =
+    clone().add(face.modX.toDouble(), face.modY.toDouble(), face.modZ.toDouble())
 
 
 fun Location.add(flatCoord: SFlatCoord, face: BlockFace): Location =
-    when(face) {
+    when (face) {
         EAST -> add(flatCoord.x.toDouble(), flatCoord.y.toDouble(), 0.0)
         WEST -> subtract(flatCoord.x.toDouble(), flatCoord.y.toDouble(), 0.0)
         SOUTH -> add(0.0, flatCoord.y.toDouble(), flatCoord.x.toDouble())
@@ -766,43 +808,43 @@ fun Location.subtractClone(y: Int): Location =
 
 fun Location.judgePlaneAround(type: Material, includeCorners: Boolean = false): Boolean {
     val loc = clone()
-    
+
     loc.x = x + 1
-    if(loc.block.type != type) return false
+    if (loc.block.type != type) return false
 
     loc.x = x - 1
-    if(loc.block.type != type) return false
+    if (loc.block.type != type) return false
     loc.x = x
 
     loc.z = z + 1
-    if(loc.block.type != type) return false
+    if (loc.block.type != type) return false
 
     loc.z = z - 1
-    if(loc.block.type != type) return false
+    if (loc.block.type != type) return false
     loc.z = z
-    
-    if(includeCorners){
+
+    if (includeCorners) {
         loc.x = x + 1
-        
+
         loc.z = z + 1
-        if(loc.block.type != type) return false
-        
+        if (loc.block.type != type) return false
+
         loc.z = z - 1
-        if(loc.block.type != type) return false
-        
-        
+        if (loc.block.type != type) return false
+
+
         loc.x = x - 1
 
         loc.z = z + 1
-        if(loc.block.type != type) return false
+        if (loc.block.type != type) return false
 
         loc.z = z - 1
-        if(loc.block.type != type) return false
+        if (loc.block.type != type) return false
 
         loc.x = x
         loc.z = z
     }
-    
+
     return true
 }
 
@@ -810,36 +852,36 @@ fun Location.judgePlaneAround(types: List<Material>, includeCorners: Boolean = f
     val loc = clone()
 
     loc.x = x + 1
-    if(!types.contains(loc.block.type)) return false
+    if (!types.contains(loc.block.type)) return false
 
     loc.x = x - 1
-    if(!types.contains(loc.block.type)) return false
+    if (!types.contains(loc.block.type)) return false
     loc.x = x
 
     loc.z = z + 1
-    if(!types.contains(loc.block.type)) return false
+    if (!types.contains(loc.block.type)) return false
 
     loc.z = z - 1
-    if(!types.contains(loc.block.type)) return false
+    if (!types.contains(loc.block.type)) return false
     loc.z = z
 
-    if(includeCorners){
+    if (includeCorners) {
         loc.x = x + 1
 
         loc.z = z + 1
-        if(!types.contains(loc.block.type)) return false
+        if (!types.contains(loc.block.type)) return false
 
         loc.z = z - 1
-        if(!types.contains(loc.block.type)) return false
+        if (!types.contains(loc.block.type)) return false
 
 
         loc.x = x - 1
 
         loc.z = z + 1
-        if(!types.contains(loc.block.type)) return false
+        if (!types.contains(loc.block.type)) return false
 
         loc.z = z - 1
-        if(!types.contains(loc.block.type)) return false
+        if (!types.contains(loc.block.type)) return false
 
         loc.x = x
         loc.z = z
@@ -852,36 +894,36 @@ fun Location.judgePlaneAround(type: Material, includeCorners: Boolean = false, j
     val loc = clone()
 
     loc.x = x + 1
-    loc.block.let { if(it.type != type || !judge(it)) return false }
+    loc.block.let { if (it.type != type || !judge(it)) return false }
 
     loc.x = x - 1
-    loc.block.let { if(it.type != type || !judge(it)) return false }
+    loc.block.let { if (it.type != type || !judge(it)) return false }
     loc.x = x
 
     loc.z = z + 1
-    loc.block.let { if(it.type != type || !judge(it)) return false }
+    loc.block.let { if (it.type != type || !judge(it)) return false }
 
     loc.z = z - 1
-    loc.block.let { if(it.type != type || !judge(it)) return false }
+    loc.block.let { if (it.type != type || !judge(it)) return false }
     loc.z = z
 
-    if(includeCorners){
+    if (includeCorners) {
         loc.x = x + 1
 
         loc.z = z + 1
-        loc.block.let { if(it.type != type || !judge(it)) return false }
+        loc.block.let { if (it.type != type || !judge(it)) return false }
 
         loc.z = z - 1
-        loc.block.let { if(it.type != type || !judge(it)) return false }
+        loc.block.let { if (it.type != type || !judge(it)) return false }
 
 
         loc.x = x - 1
 
         loc.z = z + 1
-        loc.block.let { if(it.type != type || !judge(it)) return false }
+        loc.block.let { if (it.type != type || !judge(it)) return false }
 
         loc.z = z - 1
-        loc.block.let { if(it.type != type || !judge(it)) return false }
+        loc.block.let { if (it.type != type || !judge(it)) return false }
 
         loc.x = x
         loc.z = z
@@ -895,36 +937,36 @@ fun Location.countPlaneAround(type: Material, includeCorners: Boolean = false): 
     var cnt = 0
 
     loc.x = x + 1
-    if(loc.block.type == type) cnt++
+    if (loc.block.type == type) cnt++
 
     loc.x = x - 1
-    if(loc.block.type == type) cnt++
+    if (loc.block.type == type) cnt++
     loc.x = x
 
     loc.z = z + 1
-    if(loc.block.type == type) cnt++
+    if (loc.block.type == type) cnt++
 
     loc.z = z - 1
-    if(loc.block.type == type) cnt++
+    if (loc.block.type == type) cnt++
     loc.z = z
 
-    if(includeCorners){
+    if (includeCorners) {
         loc.x = x + 1
 
         loc.z = z + 1
-        if(loc.block.type == type) cnt++
+        if (loc.block.type == type) cnt++
 
         loc.z = z - 1
-        if(loc.block.type == type) cnt++
+        if (loc.block.type == type) cnt++
 
 
         loc.x = x - 1
 
         loc.z = z + 1
-        if(loc.block.type == type) cnt++
+        if (loc.block.type == type) cnt++
 
         loc.z = z - 1
-        if(loc.block.type == type) cnt++
+        if (loc.block.type == type) cnt++
 
         loc.x = x
         loc.z = z
@@ -938,36 +980,36 @@ fun Location.countPlaneAround(type: Material, includeCorners: Boolean = false, j
     var cnt = 0
 
     loc.x = x + 1
-    loc.block.let { if(it.type == type && judge(it)) cnt++ }
+    loc.block.let { if (it.type == type && judge(it)) cnt++ }
 
     loc.x = x - 1
-    loc.block.let { if(it.type == type && judge(it)) cnt++ }
+    loc.block.let { if (it.type == type && judge(it)) cnt++ }
     loc.x = x
 
     loc.z = z + 1
-    loc.block.let { if(it.type == type && judge(it)) cnt++ }
+    loc.block.let { if (it.type == type && judge(it)) cnt++ }
 
     loc.z = z - 1
-    loc.block.let { if(it.type == type && judge(it)) cnt++ }
+    loc.block.let { if (it.type == type && judge(it)) cnt++ }
     loc.z = z
 
-    if(includeCorners){
+    if (includeCorners) {
         loc.x = x + 1
 
         loc.z = z + 1
-        loc.block.let { if(it.type == type && judge(it)) cnt++ }
+        loc.block.let { if (it.type == type && judge(it)) cnt++ }
 
         loc.z = z - 1
-        loc.block.let { if(it.type == type && judge(it)) cnt++ }
+        loc.block.let { if (it.type == type && judge(it)) cnt++ }
 
 
         loc.x = x - 1
 
         loc.z = z + 1
-        loc.block.let { if(it.type == type && judge(it)) cnt++ }
+        loc.block.let { if (it.type == type && judge(it)) cnt++ }
 
         loc.z = z - 1
-        loc.block.let { if(it.type == type && judge(it)) cnt++ }
+        loc.block.let { if (it.type == type && judge(it)) cnt++ }
 
         loc.x = x
         loc.z = z
@@ -991,13 +1033,13 @@ fun MaterialData.getDurability(): Short = toItemStack(1).durability
 
 inline fun <reified F, reified S> MetadataValueAdapter.asPair(default: Pair<F, S>): Pair<F, S> {
     val obj = value()
-    if(obj is Pair<*, *>){
+    if (obj is Pair<*, *>) {
         val (first, second) = obj
-        if(first is F && second is S){
+        if (first is F && second is S) {
             return first to second
         }
     }
-    
+
     return default
 }
 
@@ -1027,7 +1069,7 @@ fun CommandSender.sendMsg(prefix: String, msg: String) {
 }
 
 fun ProxyCommandSender.sendMsg(prefix: String, msg: List<String>) {
-    msg.forEach { 
+    msg.forEach {
         sendMessage("&f[$prefix&f] $it".colored())
     }
 }
@@ -1070,7 +1112,7 @@ fun <E> Array<out E>.toArrayList(): ArrayList<E> {
 
 fun Array<ItemStack>.typeHash(): Int {
     var hash = 1
-    forEach { 
+    forEach {
         hash = hash * 31 + it.type.hashCode()
     }
     return hash
@@ -1082,14 +1124,14 @@ fun Array<ItemStack>.typeHash(): Int {
 
 fun <K, T> MutableMap<K, MutableList<T>>.putElement(key: K, element: T) {
     val value = this[key]
-    if(value != null) {
+    if (value != null) {
         value += element
     } else this[key] = arrayListOf(element)
 }
 
 fun <K, T> MutableMap<K, MutableList<T>>.clearAndPutElement(key: K, element: T) {
     val value = this[key]
-    if(value != null) {
+    if (value != null) {
         value.clear()
         value += element
     } else this[key] = arrayListOf(element)
@@ -1116,125 +1158,125 @@ fun String.isLetterOrDigitOrUnderline(): Boolean =
 //region Json
 
 fun ObjectNode.putPrimitive(fieldName: String, v: Any): Boolean {
-    if(v is Int) {
+    if (v is Int) {
         put(fieldName, v)
         return true
     }
 
-    if(v is Long) {
+    if (v is Long) {
         put(fieldName, v)
         return true
     }
 
-    if(v is Float) {
+    if (v is Float) {
         put(fieldName, v)
         return true
     }
 
-    if(v is Double) {
+    if (v is Double) {
         put(fieldName, v)
         return true
     }
 
-    if(v is Short) {
+    if (v is Short) {
         put(fieldName, v)
         return true
     }
 
-    if(v is Boolean) {
+    if (v is Boolean) {
         put(fieldName, v)
         return true
     }
 
-    if(v is String) {
+    if (v is String) {
         put(fieldName, v)
         return true
     }
 
-    if(v is ByteArray) {
+    if (v is ByteArray) {
         put(fieldName, v)
         return true
     }
 
-    if(v is BigDecimal) {
+    if (v is BigDecimal) {
         put(fieldName, v)
         return true
     }
 
-    if(v is BigInteger) {
+    if (v is BigInteger) {
         put(fieldName, v)
         return true
     }
-    
+
     return false
 }
 
 fun JsonNode.asPrimitiveOrNull(): Any? {
-    if(isInt) return intValue()
-    if(isLong) return longValue()
-    if(isFloat) return floatValue()
-    if(isDouble) return doubleValue()
-    if(isShort) return shortValue()
-    if(isBoolean) return booleanValue()
-    if(isTextual) return textValue()
-    if(isBinary) return binaryValue()
-    if(isBigDecimal) return decimalValue()
-    if(isBigInteger) return bigIntegerValue()
-    
+    if (isInt) return intValue()
+    if (isLong) return longValue()
+    if (isFloat) return floatValue()
+    if (isDouble) return doubleValue()
+    if (isShort) return shortValue()
+    if (isBoolean) return booleanValue()
+    if (isTextual) return textValue()
+    if (isBinary) return binaryValue()
+    if (isBigDecimal) return decimalValue()
+    if (isBigInteger) return bigIntegerValue()
+
     return null
 }
 
 fun JsonGenerator.writePrimitiveField(fieldName: String, v: Any): Boolean {
-    if(v is Int) {
+    if (v is Int) {
         writeNumberField(fieldName, v)
         return true
     }
 
-    if(v is Long) {
+    if (v is Long) {
         writeNumberField(fieldName, v)
         return true
     }
 
-    if(v is Float) {
+    if (v is Float) {
         writeNumberField(fieldName, v)
         return true
     }
 
-    if(v is Double) {
+    if (v is Double) {
         writeNumberField(fieldName, v)
         return true
     }
 
-    if(v is Short) {
+    if (v is Short) {
         writeNumberField(fieldName, v)
         return true
     }
 
-    if(v is Boolean) {
+    if (v is Boolean) {
         writeBooleanField(fieldName, v)
         return true
     }
 
-    if(v is String) {
+    if (v is String) {
         writeStringField(fieldName, v)
         return true
     }
 
-    if(v is ByteArray) {
+    if (v is ByteArray) {
         writeBinaryField(fieldName, v)
         return true
     }
 
-    if(v is BigDecimal) {
+    if (v is BigDecimal) {
         writeNumberField(fieldName, v)
         return true
     }
 
-    if(v is BigInteger) {
+    if (v is BigInteger) {
         writeNumberField(fieldName, v)
         return true
     }
-    
+
     return false
 }
 

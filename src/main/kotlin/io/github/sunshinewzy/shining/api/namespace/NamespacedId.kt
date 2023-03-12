@@ -26,14 +26,14 @@ class NamespacedId(val namespace: Namespace, val id: String) {
         check(VALID_ID.matcher(id).matches()) {
             "Invalid id. Must be [a-z0-9/_-]: $id"
         }
-        
+
         val string = toString()
         check(string.length < 256) {
             "NamespacedId must be less than 256 characters: $string"
         }
     }
-    
-    
+
+
     /**
      * Create an id in the plugin's namespace.
      *
@@ -49,7 +49,7 @@ class NamespacedId(val namespace: Namespace, val id: String) {
      * @param id the id to create
      */
     constructor(plugin: ShiningPlugin, id: String) : this(plugin.getNamespace(), id.lowercase())
-    
+
 
     override fun hashCode(): Int {
         var hash = 5
@@ -59,11 +59,11 @@ class NamespacedId(val namespace: Namespace, val id: String) {
     }
 
     override fun equals(other: Any?): Boolean {
-        if(this === other) return true
-        if(other !is NamespacedId) return false
+        if (this === other) return true
+        if (other !is NamespacedId) return false
 
-        if(namespace != other.namespace) return false
-        if(id != other.id) return false
+        if (namespace != other.namespace) return false
+        if (id != other.id) return false
 
         return true
     }
@@ -71,12 +71,12 @@ class NamespacedId(val namespace: Namespace, val id: String) {
     override fun toString(): String {
         return "${namespace.name}:$id"
     }
-    
+
 
     companion object {
         val VALID_ID = Pattern.compile("[a-z0-9/_-]+")
         val NULL: NamespacedId by lazy { shining("null") }
-        
+
 
         /**
          * Get an id in the shining namespace.
@@ -108,7 +108,7 @@ class NamespacedId(val namespace: Namespace, val id: String) {
          * @param string the string to convert to a NamespacedId
          * @param defaultNamespace the default namespace to use if none was
          * supplied. If null, the `shining` namespace will be used
-         * 
+         *
          * @return the created NamespacedId. null if invalid id
          * @see .fromString
          */
@@ -116,27 +116,27 @@ class NamespacedId(val namespace: Namespace, val id: String) {
             check(string.isNotEmpty()) {
                 "Input string must not be empty"
             }
-            
+
             val components = string.split(":".toRegex(), limit = 3).toTypedArray()
-            if(components.size > 2) {
+            if (components.size > 2) {
                 return null
             }
-            
-            val id = if(components.size == 2) components[1] else ""
-            if(components.size == 1) {
+
+            val id = if (components.size == 2) components[1] else ""
+            if (components.size == 1) {
                 val value = components[0]
-                return if(value.isEmpty() || !VALID_ID.matcher(value).matches()) {
+                return if (value.isEmpty() || !VALID_ID.matcher(value).matches()) {
                     null
                 } else defaultNamespace?.let { NamespacedId(it, value) } ?: shining(value)
-            } else if(components.size == 2 && !VALID_ID.matcher(id).matches()) {
+            } else if (components.size == 2 && !VALID_ID.matcher(id).matches()) {
                 return null
             }
-            
+
             val namespace = components[0]
-            if(namespace.isEmpty()) {
+            if (namespace.isEmpty()) {
                 return defaultNamespace?.let { NamespacedId(it, id) } ?: shining(id)
             }
-            return if(!Namespace.VALID_NAMESPACE.matcher(namespace).matches()) {
+            return if (!Namespace.VALID_NAMESPACE.matcher(namespace).matches()) {
                 null
             } else NamespacedId(Namespace[namespace], id)
         }

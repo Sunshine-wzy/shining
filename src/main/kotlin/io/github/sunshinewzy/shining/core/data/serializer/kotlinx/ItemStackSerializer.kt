@@ -21,7 +21,7 @@ object ItemStackSerializer : StringSerializer<ItemStack>("ItemStack") {
 //            item.amount = json["amount"].asInt
 //            item.setItemTag(ItemTag.fromJson(json["nbt"]).asCompound())
 //        }
-        
+
 //        return item
         TODO()
     }

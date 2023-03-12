@@ -10,18 +10,18 @@ import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.chat.TellrawJson
 
 class SectionNode(val section: ConfigurationSection) : LanguageNode {
-    
+
     fun sendJson(sender: CommandSender, vararg args: String?) {
         val text = section.getString("text") ?: return
         sendJsonTo(text, sender, *args)
     }
-    
+
     fun sendPrefixedJson(sender: CommandSender, prefix: String = Shining.prefix, vararg args: String?) {
         val text = section.getString("text") ?: return
         sendJsonTo("&f[$prefix&f] $text", sender, *args)
     }
-    
-    
+
+
     private fun sendJsonTo(text: String, sender: CommandSender, vararg args: String?) {
         TellrawJson().sendTo(adaptCommandSender(sender)) {
             append(transfer(text.formatArgs(*args)))
@@ -34,5 +34,5 @@ class SectionNode(val section: ConfigurationSection) : LanguageNode {
             section.getString("url")?.let { openURL(transfer(it.formatArgs(*args))) }
         }
     }
-    
+
 }

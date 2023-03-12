@@ -7,15 +7,16 @@ import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-class GuideMachine(id: NamespacedId, description: ElementDescription, symbol: ItemStack) : GuideElement(id, description, symbol) {
+class GuideMachine(id: NamespacedId, description: ElementDescription, symbol: ItemStack) :
+    GuideElement(id, description, symbol) {
 
-    
+
     override fun openMenu(player: Player, team: GuideTeam) {
-        
+
     }
 
     override fun getState(): IGuideElementState {
         TODO("Not yet implemented")
     }
-    
+
 }

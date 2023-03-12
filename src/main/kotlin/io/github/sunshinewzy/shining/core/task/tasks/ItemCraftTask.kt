@@ -33,71 +33,69 @@ class ItemCraftTask(
 ) : TaskBase(taskStage, id, taskName, order, predecessor, symbol, reward, 5, *descriptionLore) {
     private var hasMultiPages = false
     private val pages = ArrayList<Array<ItemStack>>()
-    
-    
+
+
     init {
         isCreateEdge = false
-        
+
         setSubmitItemOrder(9, 1)
         setBackItemOrder(9, 5)
         setSlotItem(6, 3, craftItem)
         setSlotItem(8, 3, ShiningIcon.WORKBENCH)
-        
-        for(i in 1..4){
+
+        for (i in 1..4) {
             setSlotItem(i, 1, whiteGlass)
             setSlotItem(i, 5, whiteGlass)
         }
-        for(i in 2..4)
+        for (i in 2..4)
             setSlotItem(4, i, whiteGlass)
-        
-        
+
+
         val recipes = Bukkit.getServer().getRecipesFor(craftItem)
-        if(recipes.isEmpty()) throw NoRecipeException(craftItem)
-        
+        if (recipes.isEmpty()) throw NoRecipeException(craftItem)
+
         val shapedRecipes = ArrayList<ShapedRecipe>()
         val shapelessRecipes = ArrayList<ShapelessRecipe>()
-        recipes.forEach { 
-            if(!it.result.isItemSimilar(craftItem)) return@forEach
-            
-            when(it) {
+        recipes.forEach {
+            if (!it.result.isItemSimilar(craftItem)) return@forEach
+
+            when (it) {
                 is ShapedRecipe ->
                     shapedRecipes.add(it)
+
                 is ShapelessRecipe ->
                     shapelessRecipes.add(it)
             }
         }
-        if(shapedRecipes.isEmpty() && shapelessRecipes.isEmpty())
+        if (shapedRecipes.isEmpty() && shapelessRecipes.isEmpty())
             throw NoRecipeException(craftItem)
-        
-        if(shapedRecipes.size == 1 && shapelessRecipes.isEmpty()){
+
+        if (shapedRecipes.size == 1 && shapelessRecipes.isEmpty()) {
             setCraftSlotItem(shapedRecipes.first().getRecipe())
-        }
-        else if(shapelessRecipes.size == 1 && shapedRecipes.isEmpty()){
+        } else if (shapelessRecipes.size == 1 && shapedRecipes.isEmpty()) {
             setCraftSlotItem(shapelessRecipes.first().ingredientList)
-        }
-        else{
-            shapedRecipes.forEach { 
+        } else {
+            shapedRecipes.forEach {
                 pages.add(it.getRecipe())
             }
-            shapelessRecipes.forEach { 
-                shapedRecipe ->
+            shapelessRecipes.forEach { shapedRecipe ->
                 val list = shapedRecipe.ingredientList
                 val shapelessArray = Array(9) {
-                    if(it in list.indices){
+                    if (it in list.indices) {
                         list[it]
                     } else ItemStack(Material.AIR)
                 }
                 pages.add(shapelessArray)
             }
-            
+
             hasMultiPages = true
-            if(pages.isNotEmpty()){
+            if (pages.isNotEmpty()) {
                 setCraftSlotItem(pages.first())
                 setSlotItem(nextPageOrder, ShiningIcon.PAGE_NEXT)
             }
             holder.page = 1
         }
-        
+
     }
 
 
@@ -105,16 +103,16 @@ class ItemCraftTask(
         val invHolder = e.inventory.holder as TaskInventoryHolder
         val player = e.view.asPlayer()
 
-        when(e.rawSlot) {
+        when (e.rawSlot) {
             nextPageOrder ->
-                if(hasMultiPages){
+                if (hasMultiPages) {
                     val value = invHolder.page
                     val size = pages.size
 
-                    if(value in 1..size){
-                        if(value < size){
+                    if (value in 1..size) {
+                        if (value < size) {
                             val inv = getTaskInv(player)
-                            if(value == size - 1)
+                            if (value == size - 1)
                                 inv.setItem(nextPageOrder, whiteGlass)
                             inv.setItem(prePageOrder, ShiningIcon.PAGE_PREVIOUS.item)
 
@@ -122,19 +120,18 @@ class ItemCraftTask(
                             invHolder.page = value + 1
                             openTaskInv(player, inv)
                         }
-                    }
-                    else invHolder.page = 1
+                    } else invHolder.page = 1
                 }
 
             prePageOrder ->
-                if(hasMultiPages){
+                if (hasMultiPages) {
                     val value = invHolder.page
                     val size = pages.size
 
-                    if(value in 1..size){
-                        if(value > 1){
+                    if (value in 1..size) {
+                        if (value > 1) {
                             val inv = getTaskInv(player)
-                            if(value > 2)
+                            if (value > 2)
                                 inv.setItem(prePageOrder, ShiningIcon.PAGE_PREVIOUS.item)
                             inv.setItem(nextPageOrder, ShiningIcon.PAGE_NEXT.item)
 
@@ -142,13 +139,12 @@ class ItemCraftTask(
                             invHolder.page = value - 1
                             openTaskInv(player, inv)
                         }
-                    }
-                    else invHolder.page = 1
+                    } else invHolder.page = 1
                 }
-            
+
             in craftSlotOrders -> {
-                e.currentItem?.let { 
-                    if(it.type != Material.AIR)
+                e.currentItem?.let {
+                    if (it.type != Material.AIR)
                         it.openItemRecipeInv(player)
                 }
             }
@@ -156,7 +152,7 @@ class ItemCraftTask(
     }
 
     override fun submit(player: Player) {
-        if(player.inventory.containsItem(craftItem))
+        if (player.inventory.containsItem(craftItem))
             completeTask(player)
         else requireNotEnough(player)
     }
@@ -164,86 +160,84 @@ class ItemCraftTask(
     private fun setCraftSlotItem(craftOrder: Int, item: ItemStack) {
         setSlotItem(craftOrder.toX(3), 1 + craftOrder.toY(3), item)
     }
-    
+
     private fun setCraftSlotItem(items: Array<ItemStack>) {
         items.forEachIndexed { i, itemStack ->
             setCraftSlotItem(i, itemStack)
         }
     }
-    
+
     private fun setCraftSlotItem(items: List<ItemStack>) {
         items.forEachIndexed { i, itemStack ->
             setCraftSlotItem(i, itemStack)
         }
     }
 
-    
+
     companion object DisplayItemRecipe {
         private const val holderName = "DisplayItemRecipe"
         private val whiteGlass = SItem(Material.WHITE_STAINED_GLASS_PANE, " ")
         private val nextPageOrder = 4 orderWith 5
         private val prePageOrder = 4 orderWith 1
         private val craftSlotOrders = arrayOf(9, 10, 11, 18, 19, 20, 27, 28, 29)
-        
+
         init {
-            subscribeEvent<InventoryClickEvent> { 
+            subscribeEvent<InventoryClickEvent> {
                 val player = view.asPlayer()
                 val holder = inventory.holder
-                if(holder !is SProtectInventoryHolder<*>) return@subscribeEvent
-                
+                if (holder !is SProtectInventoryHolder<*>) return@subscribeEvent
+
                 val data = holder.data
-                if(data == null || data !is Triple<*, *, *>) return@subscribeEvent
-                
+                if (data == null || data !is Triple<*, *, *>) return@subscribeEvent
+
                 val (first, second, third) = data
-                if(first == null || first !is Pair<*, *> || second !is SPageValue || third !is ArrayList<*>) return@subscribeEvent
-                
+                if (first == null || first !is Pair<*, *> || second !is SPageValue || third !is ArrayList<*>) return@subscribeEvent
+
                 val (pFirst, pSecond) = first
-                if(pFirst !is String || pSecond !is UUID || pFirst != holderName || pSecond != player.uniqueId) return@subscribeEvent
-                
+                if (pFirst !is String || pSecond !is UUID || pFirst != holderName || pSecond != player.uniqueId) return@subscribeEvent
+
                 val value = second.page
                 val pages = third.castList<Array<ItemStack>>()
                 val inv = inventory
-                
-                when(rawSlot) {
+
+                when (rawSlot) {
                     nextPageOrder -> {
                         val size = pages.size
 
-                        if(value in 1..size){
-                            if(value < size){
-                                if(value == size - 1)
+                        if (value in 1..size) {
+                            if (value < size) {
+                                if (value == size - 1)
                                     inv.setItem(nextPageOrder, whiteGlass)
                                 inv.setItem(prePageOrder, ShiningIcon.PAGE_PREVIOUS.item)
 
                                 inv.setCraftSlotItem(pages[value])
-                                
+
                                 second.page = value + 1
                             }
-                        }
-                        else second.page = 1
+                        } else second.page = 1
                     }
 
                     prePageOrder -> {
                         val size = pages.size
 
-                        if(value in 1..size){
-                            if(value > 1){
-                                if(value > 2)
+                        if (value in 1..size) {
+                            if (value > 1) {
+                                if (value > 2)
                                     inv.setItem(prePageOrder, ShiningIcon.PAGE_PREVIOUS.item)
                                 inv.setItem(nextPageOrder, ShiningIcon.PAGE_NEXT.item)
 
                                 inv.setCraftSlotItem(pages[value - 2])
                                 second.page = value - 1
                             }
-                        }
-                        else second.page = 1
+                        } else second.page = 1
                     }
-                    
+
                     9 orderWith 5 -> {
                         val uuid = player.uniqueId
-                        if(lastTaskProject.containsKey(uuid)){
+                        if (lastTaskProject.containsKey(uuid)) {
                             lastTaskProject[uuid]?.let { project ->
-                                if(project.lastTaskInv.containsKey(uuid)){
-                                    project.lastTaskInv[uuid]?.let { 
+                                if (project.lastTaskInv.containsKey(uuid)) {
+                                    project.lastTaskInv[uuid]?.let {
                                         it.openTaskInv(player)
                                         return@subscribeEvent
                                     }
@@ -253,24 +247,24 @@ class ItemCraftTask(
                         player.closeInventory()
                         return@subscribeEvent
                     }
-                    
+
                     in craftSlotOrders -> {
-                        currentItem?.let { 
-                            if(it.type != Material.AIR)
+                        currentItem?.let {
+                            if (it.type != Material.AIR)
                                 it.openItemRecipeInv(player)
                         }
                         return@subscribeEvent
                     }
-                    
+
                     else -> return@subscribeEvent
                 }
-                
+
                 player.playSound(player.location, Sound.ENTITY_HORSE_ARMOR, 1f, 1.2f)
                 player.updateInventory()
             }
         }
-        
-        
+
+
         fun ItemStack.openItemRecipeInv(player: Player) {
             val pages = ArrayList<Array<ItemStack>>()
             val holder = SProtectInventoryHolder(
@@ -280,71 +274,69 @@ class ItemCraftTask(
             inv.setItem(9, 5, ShiningIcon.BACK)
 
             val recipes = Bukkit.getServer().getRecipesFor(this)
-            if(recipes.isEmpty()){
+            if (recipes.isEmpty()) {
                 inv.setItem(5, 3, SItem(Material.STRUCTURE_VOID, "§c这个物品没有合成表！"))
                 player.openInventoryWithSound(inv)
                 return
             }
-            
+
             val shapedRecipes = ArrayList<ShapedRecipe>()
             val shapelessRecipes = ArrayList<ShapelessRecipe>()
             recipes.forEach {
-                if(!it.result.isItemSimilar(this)) return@forEach
+                if (!it.result.isItemSimilar(this)) return@forEach
 
-                when(it) {
+                when (it) {
                     is ShapedRecipe ->
                         shapedRecipes.add(it)
+
                     is ShapelessRecipe ->
                         shapelessRecipes.add(it)
                 }
             }
-            if(shapedRecipes.isEmpty() && shapelessRecipes.isEmpty()){
+            if (shapedRecipes.isEmpty() && shapelessRecipes.isEmpty()) {
                 inv.setItem(5, 3, SItem(Material.STRUCTURE_VOID, "§c这个物品没有合成表！"))
                 player.openInventoryWithSound(inv)
                 return
             }
-            
+
             inv.setItem(6, 3, this)
             inv.setItem(8, 3, ShiningIcon.WORKBENCH)
 
-            for(i in 1..4){
+            for (i in 1..4) {
                 inv.setItem(i, 1, whiteGlass)
                 inv.setItem(i, 5, whiteGlass)
             }
-            for(i in 2..4)
+            for (i in 2..4)
                 inv.setItem(4, i, whiteGlass)
-            
 
-            if(shapedRecipes.size == 1 && shapelessRecipes.isEmpty()){
+
+            if (shapedRecipes.size == 1 && shapelessRecipes.isEmpty()) {
                 inv.setCraftSlotItem(shapedRecipes.first().getRecipe())
-            }
-            else if(shapelessRecipes.size == 1 && shapedRecipes.isEmpty()){
+            } else if (shapelessRecipes.size == 1 && shapedRecipes.isEmpty()) {
                 inv.setCraftSlotItem(shapelessRecipes.first().ingredientList)
-            }
-            else{
+            } else {
                 shapedRecipes.forEach {
                     pages.add(it.getRecipe())
                 }
-                shapelessRecipes.forEach {
-                        shapedRecipe ->
+                shapelessRecipes.forEach { shapedRecipe ->
                     val list = shapedRecipe.ingredientList
                     val shapelessArray = Array(9) {
-                        if(it in list.indices){
+                        if (it in list.indices) {
                             list[it]
                         } else ItemStack(Material.AIR)
                     }
                     pages.add(shapelessArray)
                 }
 
-                if(pages.isNotEmpty()){
+                if (pages.isNotEmpty()) {
                     inv.setCraftSlotItem(pages.first())
                     inv.setItem(nextPageOrder, ShiningIcon.PAGE_NEXT)
                 }
             }
-            
+
             player.openInventoryWithSound(inv)
         }
-        
+
     }
-    
+
 }

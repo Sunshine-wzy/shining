@@ -18,26 +18,26 @@ class ItemTask(
     val requireItems: Array<ItemStack>,
     vararg descriptionLore: String,
 ) : TaskBase(taskStage, id, taskName, order, predecessor, symbol, reward, 5, *descriptionLore) {
-    
+
     init {
         setSubmitItemOrder(5, 2)
         setBackItemOrder(5, 4)
-        
-        for(i in requireItems.indices){
-            if(i >= 5) break
-            
+
+        for (i in requireItems.indices) {
+            if (i >= 5) break
+
             setSlotItem(3 + i, 3, requireItems[i])
         }
     }
-    
+
     override fun submit(player: Player) {
-        if(player.inventory.containsItem(requireItems))
+        if (player.inventory.containsItem(requireItems))
             completeTask(player)
         else requireNotEnough(player)
     }
 
     override fun clickInventory(e: InventoryClickEvent) {
-        
+
     }
-    
+
 }

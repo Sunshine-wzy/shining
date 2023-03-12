@@ -11,8 +11,8 @@ open class SimpleMachine(
     val item: DictionaryItem
 ) : AbstractMachine(property) {
     private val recipes: MutableList<MachineRecipe> = arrayListOf()
-    
-    
+
+
     override fun run() {
         TODO("Not yet implemented")
     }
@@ -20,5 +20,5 @@ open class SimpleMachine(
     override fun edit() {
         TODO("Not yet implemented")
     }
-    
+
 }

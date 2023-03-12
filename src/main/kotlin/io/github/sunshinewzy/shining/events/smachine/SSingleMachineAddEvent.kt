@@ -10,13 +10,13 @@ class SSingleMachineAddEvent(
     val loc: Location,
     val player: Player
 ) : SSingleMachineEvent(sSingleMachine) {
-    
+
     override fun getHandlers(): HandlerList = handlerList
 
 
     companion object {
         private val handlerList = HandlerList()
-        
+
         @JvmStatic
         fun getHandlerList(): HandlerList = handlerList
     }

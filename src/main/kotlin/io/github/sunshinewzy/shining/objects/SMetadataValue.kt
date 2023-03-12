@@ -9,6 +9,6 @@ open class SMetadataValue(plugin: JavaPlugin, var data: Any) : MetadataValueAdap
     }
 
     override fun invalidate() {
-        
+
     }
 }

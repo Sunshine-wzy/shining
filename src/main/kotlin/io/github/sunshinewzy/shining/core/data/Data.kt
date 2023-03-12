@@ -9,11 +9,11 @@ open class Data : IData {
     final override val name: String
     final override val root: IDataRoot
     final override val parent: IData?
-    
-    
+
+
     protected val map = ConcurrentHashMap<String, Any>()
-    
-    
+
+
     @JvmOverloads
     constructor(name: String, root: IDataRoot, parent: IData? = null) {
         this.name = name
@@ -22,17 +22,17 @@ open class Data : IData {
     }
 
     constructor(name: String, parent: IData) : this(name, parent.root, parent)
-    
+
     internal constructor(name: String) {
         this.name = name
         @Suppress("LeakingThis")
         this.root = this as IDataRoot
         this.parent = null
     }
-    
+
 
     override fun set(path: String, value: Any) {
-        if(path.isEmpty()) return
+        if (path.isEmpty()) return
 
         val separator = root.options.pathSeparator
         // `i` is the leading (higher) index
@@ -41,23 +41,23 @@ open class Data : IData {
         var j: Int
 
         var data: IData = this
-        while(path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
+        while (path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
             val currentPath = path.substring(j, i)
             data = data.getData(currentPath) ?: data.createData(currentPath)
         }
-        
+
         val key = path.substring(j)
-        if(data === this) {
+        if (data === this) {
             map[key] = value
             return
         }
-        
+
         data[key] = value
     }
 
     override fun get(path: String): Any? {
-        if(path.isEmpty()) return this
-        
+        if (path.isEmpty()) return this
+
         val separator = root.options.pathSeparator
         // `i` is the leading (higher) index
         // `j` is the trailing (lower) index
@@ -65,16 +65,16 @@ open class Data : IData {
         var j: Int
 
         var data: IData = this
-        while(path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
+        while (path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
             val currentPath = path.substring(j, i)
             data = data.getData(currentPath) ?: return null
         }
-        
+
         val key = path.substring(j)
-        if(data === this) {
+        if (data === this) {
             return map[key]
         }
-        
+
         return data[key]
     }
 
@@ -83,13 +83,13 @@ open class Data : IData {
     }
 
     override fun <T> getWithType(path: String, type: Class<T>): T? {
-        get(path)?.let { 
-            if(type.isInstance(it)) {
+        get(path)?.let {
+            if (type.isInstance(it)) {
                 @Suppress("UNCHECKED_CAST")
                 return it as T
             }
         }
-        
+
         return null
     }
 
@@ -102,7 +102,7 @@ open class Data : IData {
     }
 
     override fun createData(path: String): IData {
-        if(path.isEmpty()) return this
+        if (path.isEmpty()) return this
 
         val separator = root.options.pathSeparator
         // `i` is the leading (higher) index
@@ -111,13 +111,13 @@ open class Data : IData {
         var j: Int
 
         var data: IData = this
-        while(path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
+        while (path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
             val currentPath = path.substring(j, i)
             data = data.getData(currentPath) ?: data.createData(currentPath)
         }
 
         val key = path.substring(j)
-        if(data === this) {
+        if (data === this) {
             return Data(key, this).also { map[key] = it }
         }
 
@@ -125,7 +125,7 @@ open class Data : IData {
     }
 
     override fun remove(path: String) {
-        if(path.isEmpty()) return
+        if (path.isEmpty()) return
 
         val separator = root.options.pathSeparator
         // `i` is the leading (higher) index
@@ -134,13 +134,13 @@ open class Data : IData {
         var j: Int
 
         var data: IData = this
-        while(path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
+        while (path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
             val currentPath = path.substring(j, i)
             data = data.getData(currentPath) ?: return
         }
 
         val key = path.substring(j)
-        if(data === this) {
+        if (data === this) {
             map -= key
             return
         }
@@ -159,7 +159,7 @@ open class Data : IData {
     }
 
     override fun getValues(deep: Boolean): Map<String, Any> {
-        return LinkedHashMap<String, Any>().also { 
+        return LinkedHashMap<String, Any>().also {
             mapChildrenValues(it, this, deep)
         }
     }
@@ -283,27 +283,27 @@ open class Data : IData {
     override fun getMapList(path: String): List<Map<*, *>> {
         return getList(path)?.filterIsInstance<Map<*, *>>() ?: emptyList()
     }
-    
+
 
     fun mapChildrenKeys(output: MutableSet<String>, relativeTo: IData, deep: Boolean) {
-        map.forEach { (key, value) -> 
+        map.forEach { (key, value) ->
             output += IData.createPath(this, key, relativeTo)
-            
-            if(deep && value is Data) {
+
+            if (deep && value is Data) {
                 value.mapChildrenKeys(output, relativeTo, true)
             }
         }
     }
-    
+
     fun mapChildrenValues(output: MutableMap<String, Any>, relativeTo: IData, deep: Boolean) {
-        map.forEach { (key, value) -> 
+        map.forEach { (key, value) ->
             output[IData.createPath(this, key, relativeTo)] = value
-            
-            if(deep && value is Data) {
+
+            if (deep && value is Data) {
                 value.mapChildrenValues(output, relativeTo, true)
             }
         }
     }
-    
-    
+
+
 }

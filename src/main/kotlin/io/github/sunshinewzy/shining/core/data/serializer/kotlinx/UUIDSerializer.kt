@@ -9,5 +9,5 @@ object UUIDSerializer : StringSerializer<UUID>("UUID") {
 
     override fun fromString(source: String): UUID =
         UUID.fromString(source)
-    
+
 }

@@ -40,39 +40,44 @@ class SMachineWrench(
     val pitch: Float = 1.2f
 ) : SItem(item), Initable {
     val illustratedBookName = illustratedBook.itemMeta?.displayName ?: "§r$name §r机器图鉴"
-    
+
     private val machines = HashMap<SBlock, ArrayList<SMachine>>()
     private val holder = SPartProtectInventoryHolder(arrayListOf(), 0)
     private val menu = SMenu("SMachineWrench-illustratedBook-$name", illustratedBookName, 6)
-    
+
     var prefix = "&b扳手"
     var msgDestroy = "&c多方块机器已被破坏！"
     var msgAlreadyExist = "&e这里已经有多方块机器了~"
     var msgBuildSuccessful = "&a构建成功！"
     var msgIncorrectStructure = "&f多方块机器&c结构不正确"
     var msgMachineUpgrade = "&a多方块机器升级成功！"
-    
-    
-    constructor(plugin: JavaPlugin, item: ItemStack, name: String, illustratedBookName: String) : this(plugin, item, name, SItem(Material.ENCHANTED_BOOK, illustratedBookName))
-    
-    
+
+
+    constructor(plugin: JavaPlugin, item: ItemStack, name: String, illustratedBookName: String) : this(
+        plugin,
+        item,
+        name,
+        SItem(Material.ENCHANTED_BOOK, illustratedBookName)
+    )
+
+
     init {
         wrenches += this
-        
+
         menu.createEdge(edgeItem)
         menu.holder = holder
 
-        
+
         addAction({
             val clickedBlock = clickedBlock
             action == Action.RIGHT_CLICK_BLOCK && hand == EquipmentSlot.HAND && clickedBlock != null && clickedBlock.type != Material.AIR
-        }) { 
+        }) {
             val clickedBlock = clickedBlock ?: return@addAction
             isCancelled = true
 
             val loc = clickedBlock.location
-            if(loc.hasSMachine()){
-                if(loc.judgeSMachineStructure(player, true)){
+            if (loc.hasSMachine()) {
+                if (loc.judgeSMachineStructure(player, true)) {
                     player.playSound(loc, Sound.BLOCK_PISTON_CONTRACT, 1f, 1.5f)
                     player.sendMsg(prefix, msgAlreadyExist)
                 }
@@ -81,10 +86,10 @@ class SMachineWrench(
             }
 
             machines.forEach machines@{ (sBlock, listMachine) ->
-                if(!sBlock.isSimilar(clickedBlock)) return@machines
+                if (!sBlock.isSimilar(clickedBlock)) return@machines
 
                 listMachine.forEach machine@{ sMachine ->
-                    if(sMachine.judgeStructure(loc, true)){
+                    if (sMachine.judgeStructure(loc, true)) {
                         sMachine.addMachine(loc, player)
 
                         loc.world?.playEffect(loc, Effect.ENDER_SIGNAL, 1)
@@ -98,7 +103,7 @@ class SMachineWrench(
             player.playEffect(loc, Effect.STEP_SOUND, 1)
             player.sendMsg(prefix, msgIncorrectStructure)
         }
-        
+
         illustratedBook.addAction({ hand == EquipmentSlot.HAND }) {
             openIllustratedBook(player)
         }
@@ -115,11 +120,11 @@ class SMachineWrench(
             }
         }
 
-        
+
         menu.setMultiPageAction(1, 2, 2, 4, 7, sMachines) { page, order ->
             menu.setPageButton(page, order, displayItem, id) {
                 val player = getPlayer()
-                if(player.isOp) {
+                if (player.isOp) {
                     edit(player)
                 }
             }
@@ -131,72 +136,72 @@ class SMachineWrench(
 
     fun addMachine(machine: SMachine) {
         val centerBlock = machine.structure.centerBlock
-        if(machines.containsKey(centerBlock)){
+        if (machines.containsKey(centerBlock)) {
             val listMachine = machines[centerBlock] ?: kotlin.run {
                 machines[centerBlock] = arrayListOf(machine)
                 return
             }
-            
+
             listMachine.add(machine)
         } else machines[centerBlock] = arrayListOf(machine)
     }
-    
+
     fun openIllustratedBook(player: Player) {
         menu.openInventoryByPageWithSound(player, 1, openSound, volume, pitch)
     }
-    
-    
+
+
     companion object : Initable {
         private val playerLastAddMachine = HashMap<UUID, Pair<String, Short>>()
         val wrenches = ArrayList<SMachineWrench>()
-        
-        
+
+
         override fun init() {
-            subscribeEvent<PlayerInteractEvent> { 
+            subscribeEvent<PlayerInteractEvent> {
                 val clickedBlock = clickedBlock ?: return@subscribeEvent
-                
-                if(action == Action.RIGHT_CLICK_BLOCK && hand == EquipmentSlot.HAND && clickedBlock.type != Material.AIR){
+
+                if (action == Action.RIGHT_CLICK_BLOCK && hand == EquipmentSlot.HAND && clickedBlock.type != Material.AIR) {
                     item?.let { item ->
-                        if(item.type != Material.AIR) {
-                            wrenches.forEach { 
-                                if(item.isItemSimilar(it)) return@subscribeEvent
+                        if (item.type != Material.AIR) {
+                            wrenches.forEach {
+                                if (item.isItemSimilar(it)) return@subscribeEvent
                             }
                         }
                     }
-                    
+
                     val loc = clickedBlock.location
                     val machine = loc.getSMachine()
-                    if(machine != null){
-                        if(loc.judgeSMachineStructure(player)){
-                            if(machine is SMachineManual){
+                    if (machine != null) {
+                        if (loc.judgeSMachineStructure(player)) {
+                            if (machine is SMachineManual) {
                                 machine.runMachine(SMachineRunEvent.Manual(loc, player))
                             }
-                            
-                            if(machine.isCancelInteract)
+
+                            if (machine.isCancelInteract)
                                 isCancelled = true
                         }
                     }
                 }
             }
-            
+
             subscribeEvent<SMachineAddEvent> {
                 sMachine.sMachines[SLocation(loc)] = SMachineInformation(player.uniqueId.toString())
-                
+
                 playerLastAddMachine[player.uniqueId] = sMachine.id to 0
-                
+
             }
-            
-            subscribeEvent<SMachineUpgradeEvent> { 
+
+            subscribeEvent<SMachineUpgradeEvent> {
                 playerLastAddMachine[player.uniqueId] = sMachine.id to level
             }
-            
-            subscribeEvent<SMachineRemoveEvent> { 
+
+            subscribeEvent<SMachineRemoveEvent> {
                 sMachine.sMachines.remove(SLocation(loc))
-                
+
             }
-            
+
         }
-        
+
         fun Player.getLastAddMachine(): Pair<String, Short> =
             playerLastAddMachine[uniqueId] ?: ("" to 0)
     }

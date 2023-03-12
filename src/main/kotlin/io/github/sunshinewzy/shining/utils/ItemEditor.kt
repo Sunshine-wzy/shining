@@ -14,10 +14,27 @@ import taboolib.module.ui.type.Basic
 import taboolib.module.ui.type.Linked
 
 object ItemEditor {
-    val wools = arrayListOf(Material.LIME_WOOL, Material.YELLOW_WOOL, Material.LIGHT_BLUE_WOOL, Material.PINK_WOOL, Material.ORANGE_WOOL, Material.WHITE_WOOL, Material.MAGENTA_WOOL, Material.CYAN_WOOL, Material.LIGHT_GRAY_WOOL, Material.PURPLE_WOOL, Material.BROWN_WOOL, Material.BLUE_WOOL, Material.GREEN_WOOL, Material.GRAY_WOOL, Material.RED_WOOL, Material.BLACK_WOOL)
+    val wools = arrayListOf(
+        Material.LIME_WOOL,
+        Material.YELLOW_WOOL,
+        Material.LIGHT_BLUE_WOOL,
+        Material.PINK_WOOL,
+        Material.ORANGE_WOOL,
+        Material.WHITE_WOOL,
+        Material.MAGENTA_WOOL,
+        Material.CYAN_WOOL,
+        Material.LIGHT_GRAY_WOOL,
+        Material.PURPLE_WOOL,
+        Material.BROWN_WOOL,
+        Material.BLUE_WOOL,
+        Material.GREEN_WOOL,
+        Material.GRAY_WOOL,
+        Material.RED_WOOL,
+        Material.BLACK_WOOL
+    )
 
     val editItemOrder = 2 orderWith 2
-    
+
 
     fun editItem(item: ItemStack, player: Player) {
         player.openMenu<Basic>("物品编辑器") {
@@ -56,26 +73,26 @@ object ItemEditor {
             onClick('b') { event ->
                 editLore(item, event.clicker)
             }
-            
+
             onClick(lock = true)
         }
     }
-    
+
     fun editLore(item: ItemStack, player: Player) {
         player.openMenu<Linked<String>>("编辑 Lore") {
             buildMultiPage()
-            
+
             elements { item.getLore() }
 
             var iterator = wools.iterator()
             onGenerate { _, element, index, _ ->
-                if(!iterator.hasNext()) iterator = wools.iterator()
+                if (!iterator.hasNext()) iterator = wools.iterator()
                 SItem(iterator.next(), "&f${page * 36 + index}", element)
             }
-            
+
             var status = Status.EDIT
             onClick onClickLore@{ event, element ->
-                when(status) {
+                when (status) {
                     Status.EDIT -> {
                         event.currentItem?.itemMeta?.displayName?.let { displayName ->
                             PlayerChatSubscriber(player, "物品Lore编辑") {
@@ -100,7 +117,7 @@ object ItemEditor {
                             player.closeInventory()
                         }
                     }
-                    
+
                     Status.ADD -> {
                         event.currentItem?.itemMeta?.displayName?.let { displayName ->
                             PlayerChatSubscriber(player, "添加物品Lore") {
@@ -125,7 +142,7 @@ object ItemEditor {
                             player.closeInventory()
                         }
                     }
-                    
+
                     Status.REMOVE -> {
                         event.currentItem?.itemMeta?.displayName?.let { displayName ->
                             item.itemMeta?.let { meta ->
@@ -141,14 +158,14 @@ object ItemEditor {
                                 }
                             }
                         }
-                    } 
+                    }
                 }
             }
-            
+
             onClick { event ->
-                if(status == Status.ADD) {
+                if (status == Status.ADD) {
                     val currentItem = event.currentItem
-                    if(currentItem == null || currentItem.type == Material.AIR) {
+                    if (currentItem == null || currentItem.type == Material.AIR) {
                         PlayerChatSubscriber(player, "添加物品Lore") {
                             val meta = item.getMeta()
                             val lore = meta.lore ?: mutableListOf()
@@ -160,7 +177,7 @@ object ItemEditor {
                             submit {
                                 editLore(item, player)
                             }
-                            
+
                             true
                         }.register()
 
@@ -169,31 +186,31 @@ object ItemEditor {
                     }
                 }
             }
-            
+
             set(2 orderWith 1, ShiningIcon.BACK_LAST_PAGE.item) {
                 editItem(item, player)
             }
-            
+
             set(5 orderWith 1, ShiningIcon.REMOVE_MODE.item) {
                 currentItem?.let {
-                    if(status == Status.REMOVE) {
+                    if (status == Status.REMOVE) {
                         status = Status.EDIT
                         currentItem = ShiningIcon.REMOVE_MODE.item
-                    } else if(status == Status.EDIT) {
+                    } else if (status == Status.EDIT) {
                         status = Status.REMOVE
                         currentItem = ShiningIcon.REMOVE_MODE_SHINY.item
                     }
-                    
+
                     player.updateInventory()
                 }
             }
-            
+
             set(8 orderWith 1, ShiningIcon.ADD_MODE.item) {
                 currentItem?.let {
-                    if(status == Status.ADD) {
+                    if (status == Status.ADD) {
                         status = Status.EDIT
                         currentItem = ShiningIcon.ADD_MODE.item
-                    } else if(status == Status.EDIT) {
+                    } else if (status == Status.EDIT) {
                         status = Status.ADD
                         currentItem = ShiningIcon.ADD_MODE_SHINY.item
                     }
@@ -203,12 +220,12 @@ object ItemEditor {
             }
         }
     }
-    
-    
+
+
     enum class Status {
         EDIT,
         ADD,
         REMOVE
     }
-    
+
 }

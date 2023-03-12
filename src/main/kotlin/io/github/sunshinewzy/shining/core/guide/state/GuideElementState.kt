@@ -19,6 +19,7 @@ import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.addLore
 import io.github.sunshinewzy.shining.utils.getDisplayName
 import io.github.sunshinewzy.shining.utils.insertLore
+import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -27,25 +28,25 @@ import taboolib.module.ui.type.Basic
 import java.util.*
 
 abstract class GuideElementState(private var element: IGuideElement? = null) : IGuideElementState {
-    
+
     var id: NamespacedId? = null
     var descriptionName: String? = null
     var descriptionLore: MutableList<String> = LinkedList()
-    
+
     val dependencyMap: MutableMap<NamespacedId, IGuideElement> = HashMap()
     val locks: MutableList<ElementLock> = LinkedList()
-    
-    
+
+
     abstract fun openAdvancedEditor(player: Player)
-    
-    
+
+
     override fun update(): Boolean =
         element?.update(this) ?: false
 
     override fun openEditor(player: Player) {
-        player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-title")) { 
+        player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-title")) {
             rows(3)
-            
+
             map(
                 "-B-------",
                 "-  a b  -",
@@ -53,21 +54,21 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
             )
 
             set('-', ShiningIcon.EDGE.item)
-            
+
             set('B', ShiningIcon.BACK.getLanguageItem().toLocalizedItem(player), ShiningGuide.onClickBack)
-            
+
             set('a', itemBasicEditor.toLocalizedItem(player)) {
                 openBasicEditor(player)
             }
-            
+
             set('b', itemAdvancedEditor.toLocalizedItem(player)) {
                 openAdvancedEditor(player)
             }
-            
+
             onClick(lock = true)
         }
     }
-    
+
     open fun openBasicEditor(player: Player) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-title")) {
             rows(3)
@@ -91,7 +92,7 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
                     } ?: map("namespace", "id")
 
                     predicate {
-                        when(index) {
+                        when (index) {
                             "namespace" -> Namespace.VALID_NAMESPACE.matcher(it).matches()
                             "id" -> NamespacedId.VALID_ID.matcher(it).matches()
                             else -> false
@@ -108,7 +109,7 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
                     }
 
                     onFinal {
-                        openEditor(player)
+                        openBasicEditor(player)
                     }
                 }
             }
@@ -122,7 +123,7 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
                     }
 
                     onFinal {
-                        openEditor(player)
+                        openBasicEditor(player)
                     }
                 }
             }
@@ -136,15 +137,15 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
                     }
 
                     onFinal {
-                        openEditor(player)
+                        openBasicEditor(player)
                     }
                 }
             }
-            
+
             set('d', itemEditDependencies.toLocalizedItem(player)) {
                 openDependenciesEditor(player)
             }
-            
+
             set('e', itemEditLocks.toLocalizedItem(player)) {
                 openLocksEditor(player)
             }
@@ -152,60 +153,110 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
             onClick(lock = true)
         }
     }
-    
-    
+
+
     fun openDependenciesEditor(player: Player) {
         player.openMultiPageMenu<IGuideElement>(player.getLangText("menu-shining_guide-editor-state-basic-dependencies-title")) {
             elements { dependencyMap.values.toList() }
-            
-            onGenerate(async = true) { player, element, index, slot ->  
+
+            onGenerate(async = true) { player, element, index, slot ->
                 element.getSymbolByCondition(player, ElementCondition.UNLOCKED)
                     .insertLore(0, "&7${element.getId()}", "")
             }
-            
-            onClick { event, element -> 
+
+            onClick { event, element ->
+                openDependencyEditor(player, element)
+            }
+
+            set(2 orderWith 1, ShiningIcon.BACK.getLanguageItem().toLocalizedItem(player)) {
+                openBasicEditor(player)
+            }
+        }
+    }
+
+    fun openDependencyEditor(player: Player, element: IGuideElement) {
+        player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-dependencies-title")) {
+            rows(3)
+
+            map(
+                "-B-------",
+                "- a     -",
+                "---------"
+            )
+
+            set('-', ShiningIcon.EDGE.item)
+
+            set('B', ShiningIcon.BACK.getLanguageItem().toLocalizedItem(player)) {
+                openDependenciesEditor(player)
+            }
+
+            set('a', itemEditDependencyRemove.toLocalizedItem(player)) {
+                dependencyMap -= element.getId()
+            }
+
+            onClick(lock = true) {
                 
             }
         }
     }
-    
+
     fun openLocksEditor(player: Player) {
         player.openMultiPageMenu<ElementLock>(player.getLangText("menu-shining_guide-editor-state-basic-locks-title")) {
             elements { locks }
-            
-            
+
+
         }
     }
-    
-    
+
+
     protected fun ItemStack.addCurrentLore(player: Player, currentLore: String?): ItemStack {
         return addLore("", player.getLangText("menu-shining_guide-editor-state-current_lore"), currentLore ?: "null")
     }
-    
+
     protected fun ItemStack.addCurrentLore(player: Player, currentLore: List<String>): ItemStack {
         addLore("", player.getLangText("menu-shining_guide-editor-state-current_lore"))
         return addLore(currentLore)
     }
-    
+
     protected fun NamespacedIdItem.toCurrentLocalizedItem(player: Player, currentLore: String?): ItemStack {
         return toLocalizedItem(player).clone().addCurrentLore(player, currentLore)
     }
-    
+
     protected fun NamespacedIdItem.toCurrentLocalizedItem(player: Player, currentLore: List<String>): ItemStack {
         return toLocalizedItem(player).clone().addCurrentLore(player, currentLore)
     }
-    
-    
+
+
     companion object {
-        private val itemBasicEditor = NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-editor-state-element-basic_editor"))
-        private val itemAdvancedEditor = NamespacedIdItem(Material.DIAMOND, NamespacedId(Shining, "shining_guide-editor-state-element-advanced_editor"))
-        
-        private val itemEditId = NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-editor-state-element-id"))
-        private val itemEditDescriptionName = NamespacedIdItem(Material.APPLE, NamespacedId(Shining, "shining_guide-editor-state-element-description_name"))
-        private val itemEditDescriptionLore = NamespacedIdItem(Material.BREAD, NamespacedId(Shining, "shining_guide-editor-state-element-description_lore"))
-        private val itemEditDependencies = NamespacedIdItem(Material.CHEST, NamespacedId(Shining, "shining_guide-editor-state-element-dependencies"))
-        private val itemEditLocks = NamespacedIdItem(Material.TRIPWIRE_HOOK, NamespacedId(Shining, "shining_guide-editor-state-element-locks"))
-        
+        private val itemBasicEditor = NamespacedIdItem(
+            Material.NAME_TAG,
+            NamespacedId(Shining, "shining_guide-editor-state-element-basic_editor")
+        )
+        private val itemAdvancedEditor = NamespacedIdItem(
+            Material.DIAMOND,
+            NamespacedId(Shining, "shining_guide-editor-state-element-advanced_editor")
+        )
+
+        private val itemEditId =
+            NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-editor-state-element-id"))
+        private val itemEditDescriptionName = NamespacedIdItem(
+            Material.APPLE,
+            NamespacedId(Shining, "shining_guide-editor-state-element-description_name")
+        )
+        private val itemEditDescriptionLore = NamespacedIdItem(
+            Material.BREAD,
+            NamespacedId(Shining, "shining_guide-editor-state-element-description_lore")
+        )
+        private val itemEditDependencies =
+            NamespacedIdItem(Material.CHEST, NamespacedId(Shining, "shining_guide-editor-state-element-dependencies"))
+        private val itemEditLocks =
+            NamespacedIdItem(Material.TRIPWIRE_HOOK, NamespacedId(Shining, "shining_guide-editor-state-element-locks"))
+
+        private val itemEditDependencyRemove = NamespacedIdItem(
+            Material.BARRIER,
+            NamespacedId(Shining, "shining_guide-editor-state-element-dependency-remove")
+        )
+
     }
-    
+
 }

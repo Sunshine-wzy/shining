@@ -10,7 +10,7 @@ import kotlin.math.min
 
 /**
  * 表示一个边缘立方体
- * 
+ *
  * @param minLoc 一个点
  * @param maxLoc 另外一个点
  * @param step   绘制边框时的步进长度
@@ -46,13 +46,13 @@ class EdgeCube @JvmOverloads constructor(
         var length: Double
         // 这里直接得到向X正半轴方向的向量
         var vector = RIGHT.clone()
-        for(i in 1..4) {
-            length = if(i % 2 == 0) depth else width
+        for (i in 1..4) {
+            length = if (i % 2 == 0) depth else width
 
             // 4条高
             run {
                 var j = 0.0
-                while(j < height) {
+                while (j < height) {
                     spawnParticle(newOrigin.clone().add(UP.clone().multiply(j)))
                     j += step
                 }
@@ -60,7 +60,7 @@ class EdgeCube @JvmOverloads constructor(
 
             // 第n条边
             var j = 0.0
-            while(j < length) {
+            while (j < length) {
                 val spawnLoc = newOrigin.clone().add(vector.clone().multiply(j))
                 spawnParticle(spawnLoc)
                 spawnParticle(spawnLoc.add(0.0, height, 0.0))

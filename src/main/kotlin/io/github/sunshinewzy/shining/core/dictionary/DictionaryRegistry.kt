@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack
 import java.util.concurrent.ConcurrentHashMap
 
 object DictionaryRegistry : IDictionaryRegistry {
-    
+
     private val itemsByName: MutableMap<NamespacedId, DictionaryItem> = ConcurrentHashMap()
     private val itemsById: MutableMap<String, MutableList<DictionaryItem>> = ConcurrentHashMap()
 
@@ -34,7 +34,7 @@ object DictionaryRegistry : IDictionaryRegistry {
     override fun getById(id: String): List<DictionaryItem> {
         return itemsById[id.lowercase()] ?: emptyList()
     }
-    
+
 
     override fun registerItem(name: NamespacedId, item: ItemStack, vararg behaviors: ItemBehavior): DictionaryItem {
         return register(DictionaryItem(name, item.setDictionaryName(name), *behaviors))
@@ -43,16 +43,16 @@ object DictionaryRegistry : IDictionaryRegistry {
     override fun hasItem(name: NamespacedId): Boolean {
         return itemsByName.containsKey(name)
     }
-    
-    
-    private fun <T: DictionaryItem> register(item: T): T {
+
+
+    private fun <T : DictionaryItem> register(item: T): T {
         val name = item.name
         require(name !in itemsByName) { "Duplicate DictionaryItem name: $name" }
-        
+
         itemsByName[name] = item
         itemsById.putElement(name.id, item)
-        
+
         return item
     }
-    
+
 }

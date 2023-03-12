@@ -15,7 +15,10 @@ import taboolib.module.ui.type.Basic
 class LockItem(
     var item: ItemStack,
     isConsume: Boolean = true
-) : ElementLock({ player -> "${player.getLangText("menu-shining_guide-lock-item-description")} ${item.getName(player)} x${item.amount}" }, isConsume) {
+) : ElementLock(
+    { player -> "${player.getLangText("menu-shining_guide-lock-item-description")} ${item.getName(player)} x${item.amount}" },
+    isConsume
+) {
 
     override fun check(player: Player): Boolean =
         player.inventory.containsItem(item)
@@ -25,17 +28,17 @@ class LockItem(
     }
 
     override fun tip(player: Player) {
-        player.openMenu<Basic>(player.getLangText(ShiningGuide.TITLE)) { 
+        player.openMenu<Basic>(player.getLangText(ShiningGuide.TITLE)) {
             rows(3)
-            
+
             map(
                 "#",
                 "ooooa"
             )
-            
+
             set('#', ShiningIcon.BACK.item, ShiningGuide.onClickBack)
             set('a', item)
-            
+
             onClick(lock = true)
         }
     }

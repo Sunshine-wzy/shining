@@ -10,13 +10,13 @@ class SMachineAddEvent(
     val loc: Location,
     val player: Player
 ) : SMachineEvent(sMachine) {
-    
+
     override fun getHandlers(): HandlerList = handlerList
 
 
     companion object {
         private val handlerList = HandlerList()
-        
+
         @JvmStatic
         fun getHandlerList(): HandlerList = handlerList
     }

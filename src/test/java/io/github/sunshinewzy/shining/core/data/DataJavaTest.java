@@ -14,13 +14,13 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DataJavaTest {
-	
+
 	@Test
 	public void container() {
 		IDataContainer container = new DataContainer();
 		IData data = container.get(new NamespacedId(Namespace.get("shining"), "awa_container"));
 		data.set("awa", 233);
-		
+
 		HashMap<String, Integer> map = new HashMap<>();
 		map.put("1", 1);
 		map.put("2", 2);
@@ -30,12 +30,12 @@ public class DataJavaTest {
 
 		System.out.println(data.getKeys(false));
 		System.out.println(data.getKeys(true));
-		
+
 		System.out.println(data.getValues(false));
 		System.out.println(data.getValues(true));
-		
+
 		int value = data.getWithType("awa", Integer.class, 0);
 		assertEquals(value, 233);
 	}
-	
+
 }

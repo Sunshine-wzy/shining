@@ -11,13 +11,13 @@ class JacksonColumnType(
     private val objectMapper: ObjectMapper,
     typeConstructor: ObjectMapper.() -> JavaType
 ) : TextColumnType() {
-    
+
     val type: JavaType = typeConstructor(objectMapper)
-    
+
 
     override fun valueFromDB(value: Any): Any {
-        super.valueFromDB(value).let { 
-            if(it is String) {
+        super.valueFromDB(value).let {
+            if (it is String) {
                 return objectMapper.readValue(it, type)
             }
             return it
@@ -31,19 +31,23 @@ class JacksonColumnType(
     override fun nonNullValueToString(value: Any): String {
         return super.nonNullValueToString(serialize(value))
     }
-    
-    
+
+
     private fun serialize(value: Any): Any {
-        if(type.rawClass.isInstance(value)) {
+        if (type.rawClass.isInstance(value)) {
             return objectMapper.writeValueAsString(value)
         }
         return value
     }
-    
+
 }
 
 
-fun <T> Table.jackson(name: String, objectMapper: ObjectMapper, typeConstructor: ObjectMapper.() -> JavaType): Column<T> =
+fun <T> Table.jackson(
+    name: String,
+    objectMapper: ObjectMapper,
+    typeConstructor: ObjectMapper.() -> JavaType
+): Column<T> =
     registerColumn(name, JacksonColumnType(objectMapper, typeConstructor))
 
 fun <T> Table.jackson(name: String, objectMapper: ObjectMapper, type: Class<T>): Column<T> =

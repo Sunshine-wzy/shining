@@ -11,10 +11,10 @@ abstract class SMachineManual(
 ) : SMachine(id, name, wrench, structure) {
 
     final override fun runMachine(event: SMachineRunEvent) {
-        if(event is SMachineRunEvent.Manual)
+        if (event is SMachineRunEvent.Manual)
             manualRun(event, getLevel(event.sLoc))
     }
-    
+
     abstract fun manualRun(event: SMachineRunEvent.Manual, level: Short)
-    
+
 }

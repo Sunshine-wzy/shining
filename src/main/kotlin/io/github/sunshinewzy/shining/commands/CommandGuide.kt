@@ -7,7 +7,7 @@ import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.function.submit
 
 internal object CommandGuide {
-    
+
     val guide = subCommand {
         literal("open") {
             literal("main") {
@@ -41,5 +41,5 @@ internal object CommandGuide {
             }
         }
     }
-    
+
 }

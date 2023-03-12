@@ -17,5 +17,5 @@ abstract class ItemBehavior {
     open fun onInventoryClick(event: InventoryClickEvent, player: Player, item: ItemStack) {}
     open fun onInventoryClickOnCursor(event: InventoryClickEvent, player: Player, item: ItemStack) {}
     open fun onInventoryHotbarSwap(event: InventoryClickEvent, player: Player, item: ItemStack) {}
-    
+
 }

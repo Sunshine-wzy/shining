@@ -29,7 +29,7 @@ abstract class GuideElement(
 ) : IGuideElement {
     private val dependencyMap: MutableMap<NamespacedId, IGuideElement> = HashMap()
     private val locks: MutableList<ElementLock> = LinkedList()
-    
+
     private val previousElementMap: MutableMap<UUID, IGuideElement> = HashMap()
     private val teamDataMap: MutableMap<EntityID<Int>, ElementTeamData> = HashMap()
 
@@ -41,60 +41,63 @@ abstract class GuideElement(
     override fun getSymbol(): ItemStack = symbol
 
     override fun open(player: Player, team: GuideTeam, previousElement: IGuideElement?) {
-        if(previousElement != null)
+        if (previousElement != null)
             previousElementMap[player.uniqueId] = previousElement
-        
+
         ShiningGuide.playerLastOpenElementMap[player.uniqueId] = this
-        
+
         ShiningGuide.soundOpen.playSound(player)    // TODO: Allow every element to customize the open sound
         openMenu(player, team)
     }
-    
+
     protected abstract fun openMenu(player: Player, team: GuideTeam)
-    
+
     override fun back(player: Player, team: GuideTeam) {
-        previousElementMap[player.uniqueId]?.let { 
+        previousElementMap[player.uniqueId]?.let {
             it.open(player, team, null)
             return
         }
 
         ShiningGuide.openMainMenu(player)
     }
-    
+
     override fun unlock(player: Player, team: GuideTeam): Boolean {
-        for(lock in locks) {
-            if(!lock.check(player)) {
-                player.sendMsg(Shining.prefix, "${player.getLangText("menu-shining_guide-element-unlock-fail")}: ${lock.description(player)}")
+        for (lock in locks) {
+            if (!lock.check(player)) {
+                player.sendMsg(
+                    Shining.prefix,
+                    "${player.getLangText("menu-shining_guide-element-unlock-fail")}: ${lock.description(player)}"
+                )
                 lock.tip(player)
                 return false
             }
         }
-        
-        locks.forEach { 
-            if(it.isConsume) {
+
+        locks.forEach {
+            if (it.isConsume) {
                 it.consume(player)
             }
         }
-        
+
         getTeamData(team).condition = UNLOCKED
         return true
     }
 
     override fun update(state: IGuideElementState): Boolean {
-        if(state !is GuideElementState) return false
-        
+        if (state !is GuideElementState) return false
+
         state.id?.let { id = it }
         state.descriptionName?.let { description = ElementDescription(it, state.descriptionLore) }
         dependencyMap.clear()
         dependencyMap += state.dependencyMap
         locks.clear()
         locks += state.locks
-        
+
         return true
     }
 
     override fun saveToState(state: IGuideElementState): Boolean {
-        if(state !is GuideElementState) return false
+        if (state !is GuideElementState) return false
 
         state.id = id
         state.descriptionName = description.name
@@ -106,39 +109,39 @@ abstract class GuideElement(
 
     override fun isTeamCompleted(team: GuideTeam): Boolean =
         team == GuideTeam.CompletedTeam || teamDataMap[team.id]?.condition == COMPLETE
-    
+
     fun isTeamDependencyCompleted(team: GuideTeam): Boolean {
-        for(dependency in dependencyMap.values) {
-            if(!dependency.isTeamCompleted(team)) {
+        for (dependency in dependencyMap.values) {
+            if (!dependency.isTeamCompleted(team)) {
                 return false
             }
         }
 
         return true
     }
-    
+
     fun isTeamUnlocked(team: GuideTeam): Boolean =
-        teamDataMap[team.id]?.condition?.let { 
+        teamDataMap[team.id]?.condition?.let {
             it == UNLOCKED || it == COMPLETE
         } ?: false
 
     fun hasLock(): Boolean = locks.isNotEmpty()
-    
+
     override fun getCondition(team: GuideTeam): ElementCondition =
-        if(isTeamCompleted(team)) {
+        if (isTeamCompleted(team)) {
             COMPLETE
-        } else if(isTeamUnlocked(team)) {
+        } else if (isTeamUnlocked(team)) {
             UNLOCKED
-        } else if(!isTeamDependencyCompleted(team)) {
+        } else if (!isTeamDependencyCompleted(team)) {
             LOCKED_DEPENDENCY
-        } else if(hasLock()) {
+        } else if (hasLock()) {
             LOCKED_LOCK
         } else {
             UNLOCKED
         }
-    
+
     override fun getSymbolByCondition(player: Player, condition: ElementCondition): ItemStack =
-        when(condition) {
+        when (condition) {
             COMPLETE -> {
                 val symbolItem = symbol.clone()
                 val loreList = ArrayList<String>()
@@ -160,21 +163,29 @@ abstract class GuideElement(
                 lore += ""
 
                 locks.forEach {
-                    lore += if(it.isConsume) {
-                        "${player.getLangText("menu-shining_guide-element-symbol-locked_lock-need_consume")} ${it.description(player)}"
+                    lore += if (it.isConsume) {
+                        "${player.getLangText("menu-shining_guide-element-symbol-locked_lock-need_consume")} ${
+                            it.description(
+                                player
+                            )
+                        }"
                     } else {
-                        "${player.getLangText("menu-shining_guide-element-symbol-locked_lock-need")} ${it.description(player)}"
+                        "${player.getLangText("menu-shining_guide-element-symbol-locked_lock-need")} ${
+                            it.description(
+                                player
+                            )
+                        }"
                     }
                 }
 
                 SItem(Material.BARRIER, description.name, lore)
             }
-            
+
             else -> throw IllegalArgumentException("The condition $condition is not supported without a team argument.")
         }
 
     override fun getSymbolByCondition(player: Player, team: GuideTeam, condition: ElementCondition): ItemStack =
-        when(condition) {
+        when (condition) {
             LOCKED_DEPENDENCY -> {
                 val lore = ArrayList<String>()
                 lore += "&7$id"
@@ -185,33 +196,33 @@ abstract class GuideElement(
                 lore += ""
 
                 dependencyMap.values.forEach {
-                    if(!it.isTeamCompleted(team)) {
+                    if (!it.isTeamCompleted(team)) {
                         lore += it.getDescription().name
                     }
                 }
 
                 SItem(Material.BARRIER, description.name, lore)
             }
-            
+
             else -> getSymbolByCondition(player, condition)
         }
-    
+
 
     fun getTeamData(team: GuideTeam): ElementTeamData =
         teamDataMap.getOrPut(team.id) { ElementTeamData() }
-    
+
     fun registerDependency(element: IGuideElement) {
         dependencyMap[element.getId()] = element
     }
-    
+
     fun registerLock(lock: ElementLock) {
         locks += lock
     }
-    
-    
+
+
     companion object {
         const val TEXT_LOCKED = "menu-shining_guide-element-text-locked"
         const val TEXT_COMPLETE = "menu-shining_guide-element-text-complete"
     }
-    
+
 }

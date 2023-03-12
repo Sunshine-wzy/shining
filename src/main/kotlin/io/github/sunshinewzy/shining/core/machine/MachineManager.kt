@@ -20,7 +20,7 @@ object MachineManager : IMachineManager {
         get() = activeMachineMap[this]
     val Location.machine: IMachine?
         get() = position.machine
-    
+
 
     override fun activate(location: SPosition, machine: IMachine) {
         activeMachineMap[location] = machine
@@ -49,9 +49,9 @@ object MachineManager : IMachineManager {
 
     @SubscribeEvent(EventPriority.HIGHEST)
     fun onPlayerInteract(event: PlayerInteractEvent) {
-        if(event.hand != EquipmentSlot.HAND) return
+        if (event.hand != EquipmentSlot.HAND) return
 
 
     }
-    
+
 }

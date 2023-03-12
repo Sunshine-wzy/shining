@@ -38,27 +38,30 @@ object DataManager : Initable {
     private val dir = getDataFolder()
     private val allReloadData = ArrayList<SAutoSaveData>()
     private val lazyOperations = arrayListOf<LazyOperational>()
-    
 
-    val databaseConfig: ConfigurationSection by lazy { Shining.config.getConfigurationSection("database") ?: throw RuntimeException("Config 'database' does not exist.") }
-    
-    
+
+    val databaseConfig: ConfigurationSection by lazy {
+        Shining.config.getConfigurationSection("database")
+            ?: throw RuntimeException("Config 'database' does not exist.")
+    }
+
+
     lateinit var database: Database
         private set
     lateinit var sDatabase: SDatabase<*>
         private set
-    
-    
+
+
     val allAutoSaveData = ArrayList<SAutoSaveData>()
     val sPlayerData = HashMap<String, SunSTPlayerData>()
     val firstJoinGiveOpenItems = HashMap<String, ItemStack>()
-    
+
     val autoSavePeriod: Long by lazy { Shining.config.getLong("auto_save_period", 6000L) }
-    
-    
+
+
     override fun init() {
-        
-        if(Shining.config.getBoolean("database.enable")) {
+
+        if (Shining.config.getBoolean("database.enable")) {
             val hostSQL = HostSQL(databaseConfig)
             database = Database.connect(createDataSource(hostSQL))
             sDatabase = DatabaseSQL(hostSQL)
@@ -66,14 +69,14 @@ object DataManager : Initable {
             database = Database.connect(createDataSource(HostSQLite(newFile(getDataFolder(), "data/data.db"))))
             sDatabase = DatabaseSQLite(newFile(getDataFolder(), "data/sdata.db"))
         }
-        
-        submit(async = true, delay = autoSavePeriod, period = autoSavePeriod) { 
-            lazyOperations.forEach { 
+
+        submit(async = true, delay = autoSavePeriod, period = autoSavePeriod) {
+            lazyOperations.forEach {
                 it.saveLazy()
             }
         }
 
-        
+
         TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
 
         transaction {
@@ -81,7 +84,7 @@ object DataManager : Initable {
                 GuideTeams, PlayerData
             )
         }
-        
+
     }
 
 
@@ -94,13 +97,16 @@ object DataManager : Initable {
         config.jdbcUrl = host.connectionUrl
         when (host) {
             is HostSQL -> {
-                config.driverClassName = settingsFile.getString("DefaultSettings.DriverClassName", "com.mysql.jdbc.Driver")
+                config.driverClassName =
+                    settingsFile.getString("DefaultSettings.DriverClassName", "com.mysql.jdbc.Driver")
                 config.username = host.user
                 config.password = host.password
             }
+
             is HostSQLite -> {
                 config.driverClassName = "org.sqlite.JDBC"
             }
+
             else -> {
                 error("Unsupported host: $host")
             }
@@ -122,100 +128,100 @@ object DataManager : Initable {
         }
         return config
     }
-    
-    
+
+
     @Awake(LifeCycle.DISABLE)
     fun saveData() {
-        allAutoSaveData.forEach { 
+        allAutoSaveData.forEach {
             it.save()
         }
-        
-        lazyOperations.forEach { 
+
+        lazyOperations.forEach {
             it.saveLazy()
         }
     }
-    
+
     fun reloadData() {
-        allReloadData.forEach { 
+        allReloadData.forEach {
             it.save()
             it.load()
         }
     }
-    
+
     fun addReloadData(data: SAutoSaveData) {
         allReloadData.add(data)
     }
-    
+
     private fun loadFolderData(
         folderName: String,
         dirFolder: File = File(dir, folderName),
         block: (file: File, fileName: String) -> Unit
     ) {
-        if(!dirFolder.exists()) return
+        if (!dirFolder.exists()) return
         val files = dirFolder.listFiles() ?: return
-        
+
         files.forEach {
-            if(it.isFile){
+            if (it.isFile) {
                 val extensionName = it.extension
-                if(extensionName == "yml"){
+                if (extensionName == "yml") {
                     val fileName = it.nameWithoutExtension
                     block(it, fileName)
                 }
             }
-            
+
 //            else if(it.isDirectory){
 //                loadFolderData()
 //            }
         }
     }
-    
+
     fun registerLazy(lazy: LazyOperational) {
         lazyOperations += lazy
     }
-    
-    
+
+
     fun Player.getSunSTData(): SunSTPlayerData {
         val uid = uniqueId.toString()
-        
-        sPlayerData[uid]?.let { 
+
+        sPlayerData[uid]?.let {
             return it
         }
-        
+
         val data = SunSTPlayerData(Shining.plugin, uid)
         data.load()
-        
+
         sPlayerData[uid] = data
         return data
     }
-    
+
     fun Player.getTaskProgress(id: String): TaskProgress {
         val data = getSunSTData()
-        data.taskProgress[id]?.let { 
+        data.taskProgress[id]?.let {
             return it
         }
-        
+
         val progress = TaskProgress()
         data.taskProgress[id] = progress
         return progress
     }
-    
+
     inline fun <reified V> YamlConfiguration.getMap(
         key: String,
         map: MutableMap<String, V>
     ): Boolean {
-        if(!contains(key))
+        if (!contains(key))
             return false
-        
+
         val root = getConfigurationSection(key) ?: return false
         val keys = root.getKeys(false)
-        keys.forEach { 
+        keys.forEach {
             val value = root.get(it) ?: return@forEach
-            if(value is V){
+            if (value is V) {
                 map[it] = value
             }
         }
 
         return true
     }
-    
+
 }

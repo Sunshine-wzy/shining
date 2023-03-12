@@ -23,17 +23,17 @@ open class SerialData : ISerialData {
 
 
     protected val map: MutableMap<String, SerialDataWrapper<*>> = ConcurrentHashMap()
-    
-    
+
+
     @JvmOverloads
     constructor(name: String, root: ISerialDataRoot, parent: ISerialData? = null) {
         this.name = name
         this.root = root
         this.parent = parent
     }
-    
+
     constructor(name: String, parent: ISerialData) : this(name, parent.root, parent)
-    
+
     internal constructor(name: String) {
         this.name = name
         @Suppress("LeakingThis")
@@ -43,7 +43,7 @@ open class SerialData : ISerialData {
 
 
     override fun set(path: String, value: Any) {
-        if(path.isEmpty()) return
+        if (path.isEmpty()) return
 
         val separator = root.options.pathSeparator
         // `i` is the leading (higher) index
@@ -52,13 +52,13 @@ open class SerialData : ISerialData {
         var j: Int
 
         var data: ISerialData = this
-        while(path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
+        while (path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
             val currentPath = path.substring(j, i)
             data = data.getData(currentPath) ?: data.createData(currentPath)
         }
 
         val key = path.substring(j)
-        if(data === this) {
+        if (data === this) {
             map[key] = SerialDataWrapper(value)
             return
         }
@@ -67,7 +67,7 @@ open class SerialData : ISerialData {
     }
 
     override fun get(path: String): Any? {
-        if(path.isEmpty()) return this
+        if (path.isEmpty()) return this
 
         val separator = root.options.pathSeparator
         // `i` is the leading (higher) index
@@ -76,13 +76,13 @@ open class SerialData : ISerialData {
         var j: Int
 
         var data: ISerialData = this
-        while(path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
+        while (path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
             val currentPath = path.substring(j, i)
             data = data.getData(currentPath) ?: return null
         }
 
         val key = path.substring(j)
-        if(data === this) {
+        if (data === this) {
             return map[key]?.data
         }
 
@@ -95,7 +95,7 @@ open class SerialData : ISerialData {
 
     override fun <T> getWithType(path: String, type: Class<T>): T? {
         get(path)?.let {
-            if(type.isInstance(it)) {
+            if (type.isInstance(it)) {
                 @Suppress("UNCHECKED_CAST")
                 return it as T
             }
@@ -113,7 +113,7 @@ open class SerialData : ISerialData {
     }
 
     override fun createData(path: String): ISerialData {
-        if(path.isEmpty()) return this
+        if (path.isEmpty()) return this
 
         val separator = root.options.pathSeparator
         // `i` is the leading (higher) index
@@ -122,13 +122,13 @@ open class SerialData : ISerialData {
         var j: Int
 
         var data: ISerialData = this
-        while(path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
+        while (path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
             val currentPath = path.substring(j, i)
             data = data.getData(currentPath) ?: data.createData(currentPath)
         }
 
         val key = path.substring(j)
-        if(data === this) {
+        if (data === this) {
             return SerialData(key, this).also { map[key] = SerialDataWrapper(it) }
         }
 
@@ -136,7 +136,7 @@ open class SerialData : ISerialData {
     }
 
     override fun remove(path: String) {
-        if(path.isEmpty()) return
+        if (path.isEmpty()) return
 
         val separator = root.options.pathSeparator
         // `i` is the leading (higher) index
@@ -145,13 +145,13 @@ open class SerialData : ISerialData {
         var j: Int
 
         var data: ISerialData = this
-        while(path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
+        while (path.indexOf(separator, (i + 1).also { j = it }).also { i = it } != -1) {
             val currentPath = path.substring(j, i)
             data = data.getData(currentPath) ?: return
         }
 
         val key = path.substring(j)
-        if(data === this) {
+        if (data === this) {
             map -= key
             return
         }
@@ -299,9 +299,9 @@ open class SerialData : ISerialData {
     fun mapChildrenKeys(output: MutableSet<String>, relativeTo: ISerialData, deep: Boolean) {
         map.forEach { (key, wrapper) ->
             output += IData.createPath(this, key, relativeTo)
-            
+
             val value = wrapper.data ?: return@forEach
-            if(deep && value is SerialData) {
+            if (deep && value is SerialData) {
                 value.mapChildrenKeys(output, relativeTo, true)
             }
         }
@@ -312,7 +312,7 @@ open class SerialData : ISerialData {
             val value = wrapper.data ?: return@forEach
             output[IData.createPath(this, key, relativeTo)] = value
 
-            if(deep && value is SerialData) {
+            if (deep && value is SerialData) {
                 value.mapChildrenValues(output, relativeTo, true)
             }
         }
@@ -324,7 +324,7 @@ open class SerialData : ISerialData {
         map.forEach { (key, wrapper) ->
             val obj = wrapper.data ?: return@forEach
 
-            if(obj is ISerialData) {
+            if (obj is ISerialData) {
                 generator.writeObjectFieldStart(key)
                 generator.writeStringField(KEY_TYPE, SERIAL_DATA)
                 generator.writeFieldName(KEY_DATA)
@@ -332,8 +332,8 @@ open class SerialData : ISerialData {
                 generator.writeEndObject()
                 return@forEach
             }
-            
-            if(generator.writePrimitiveField(key, obj)) {
+
+            if (generator.writePrimitiveField(key, obj)) {
                 return@forEach
             }
 
@@ -343,7 +343,7 @@ open class SerialData : ISerialData {
             generator.writeEndObject()
         }
         generator.writeEndObject()
-        
+
         return generator
     }
 
@@ -356,25 +356,25 @@ open class SerialData : ISerialData {
 
     override fun serializeToJsonNode(): JsonNode {
         val node = root.objectMapper.createObjectNode()
-        map.forEach { (key, wrapper) -> 
+        map.forEach { (key, wrapper) ->
             val obj = wrapper.data ?: return@forEach
-            
-            if(obj is ISerialData) {
+
+            if (obj is ISerialData) {
                 val newNode = node.putObject(key)
                 newNode.put(KEY_TYPE, SERIAL_DATA)
                 newNode.replace(KEY_DATA, obj.serializeToJsonNode())
                 return@forEach
             }
-            
-            if(node.putPrimitive(key, obj)) {
+
+            if (node.putPrimitive(key, obj)) {
                 return@forEach
             }
-            
+
             val newNode = node.putObject(key)
             newNode.put(KEY_TYPE, obj::class.java.name)
             newNode.putPOJO(KEY_DATA, obj)
         }
-        
+
         return node
     }
 
@@ -385,15 +385,15 @@ open class SerialData : ISerialData {
     }
 
     override fun deserialize(source: JsonNode): Boolean {
-        if(source !is ObjectNode) return false
+        if (source !is ObjectNode) return false
 
         source.fields().forEach { (key, node) ->
-            if(node is ObjectNode) {
+            if (node is ObjectNode) {
                 val type = node.get(KEY_TYPE)
                     ?.takeIf { it.isTextual }?.textValue()
                     ?.takeIf { it.isNotBlank() } ?: return false
 
-                if(type == SERIAL_DATA) {
+                if (type == SERIAL_DATA) {
                     val data = node.get(KEY_DATA) ?: return false
                     createData(key).deserialize(data)
                     return@forEach
@@ -411,19 +411,19 @@ open class SerialData : ISerialData {
                 }
             }
         }
-        
+
         return true
     }
 
     override fun deserialize(source: String): Boolean {
         return deserialize(root.objectMapper.readTree(source))
     }
-    
-    
+
+
     companion object {
         const val KEY_TYPE = "s_type"
         const val KEY_DATA = "s_data"
         const val SERIAL_DATA = "SerialData"
     }
-    
+
 }

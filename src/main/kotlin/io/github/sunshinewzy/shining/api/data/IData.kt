@@ -2,16 +2,16 @@ package io.github.sunshinewzy.shining.api.data
 
 /**
  * Represent a [Map] like object, capable of storing custom data in it.
- * 
- * 
+ *
+ *
  * 表示一个类似 [Map] 的对象，可以存储自定义数据。
  */
 interface IData {
-    
+
     val name: String
-    
+
     val root: IDataRoot
-    
+
     val parent: IData?
 
 
@@ -73,8 +73,8 @@ interface IData {
 
     /**
      * Get the requested [IData] by path.
-     * 
-     * 
+     *
+     *
      * If the [IData] does not exist, this will return null.
      *
      * @param path Path of the [IData] to get.
@@ -84,8 +84,8 @@ interface IData {
 
     /**
      * Create an empty [IData] at the specified path.
-     * 
-     * 
+     *
+     *
      * Any value that was previously set at this path will be overwritten. If
      * the previous value was itself a [IData], it will
      * be orphaned.
@@ -97,7 +97,7 @@ interface IData {
 
     /**
      * Remove the requested Object by path.
-     * 
+     *
      * @param path Path of the Object to remove.
      */
     fun remove(path: String)
@@ -501,8 +501,8 @@ interface IData {
      * @return Requested List of Maps.
      */
     fun getMapList(path: String): List<Map<*, *>>
-    
-    
+
+
     companion object {
         /**
          * Get the requested Object with reified type [T] by path.
@@ -529,12 +529,12 @@ interface IData {
             return getWithType(path, T::class.java, default)
         }
 
-        
+
         /**
          * Create a relative path to the given [IData] from
          * the given relative [IData], or from its
          * [IData.root] when [relativeTo] is null.
-         * 
+         *
          * @param data [IData] to create a path for.
          * @param key Name of the specified [IData].
          * @param relativeTo [IData] to create the path relative to.
@@ -545,30 +545,30 @@ interface IData {
         @JvmOverloads
         fun createPath(data: IData, key: String, relativeTo: IData? = null): String {
             val root = data.root
-            if(relativeTo != null && root !== relativeTo.root)
+            if (relativeTo != null && root !== relativeTo.root)
                 return ""
-            
+
             val separator = root.options.pathSeparator
-            
+
             val builder = StringBuilder()
             var parent: IData? = data
-            while(parent != null && parent !== relativeTo) {
-                if(builder.isNotEmpty())
+            while (parent != null && parent !== relativeTo) {
+                if (builder.isNotEmpty())
                     builder.insert(0, separator)
-                
+
                 builder.insert(0, parent.name)
                 parent = parent.parent
             }
-            
-            if(key.isNotEmpty()) {
-                if(builder.isNotEmpty())
+
+            if (key.isNotEmpty()) {
+                if (builder.isNotEmpty())
                     builder.append(separator)
-                
+
                 builder.append(key)
             }
 
             return builder.toString()
         }
     }
-    
+
 }

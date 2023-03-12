@@ -8,12 +8,12 @@ import java.util.concurrent.ConcurrentHashMap
 
 class DataContainer : IDataContainer {
     private val map = ConcurrentHashMap<NamespacedId, IDataRoot>()
-    
+
 
     override fun get(key: NamespacedId): IDataRoot {
         map[key]?.let { return it }
-        
+
         return DataRoot(key.id, this).also { map[key] = it }
     }
-    
+
 }

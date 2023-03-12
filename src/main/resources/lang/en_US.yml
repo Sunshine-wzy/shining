@@ -8,7 +8,7 @@ item-shining-shining_guide-team-edit_name:
   create: '&a> Name of the current team'
 item-shining-shining_guide-team-manage-application: '&aApplication to join the team'
 item-shining-shining_guide-settings-team_info: '&bTeam info'
-item-shining-icon-back: ['&c⇦ Back', '', '&fLeft Click：&7Go back to previous page', '&fShift + Left Click：&7Go back to main menu']
+item-shining-icon-back: [ '&c⇦ Back', '', '&fLeft Click：&7Go back to previous page', '&fShift + Left Click：&7Go back to main menu' ]
 item-shining-icon-back_last_page: '&b⇦ Back'
 item-shining-icon-submit: '&a>> Click to submit the task <<'
 item-shining-icon-workbench: '&a>> &dCraft with workbench &a<<'
@@ -19,10 +19,10 @@ item-shining-icon-page_next_glass_pane: '&aNext page &e⇨'
 item-shining-icon-page_previous_glass_pane: '&e⇦ &aPrevious page'
 item-shining-icon-rename: '&eRename'
 item-shining-icon-edit_lore: '&aEdit lore'
-item-shining-icon-remove_mode: ['&cRemove mode', '&7Closed', '', '&a> Click to open']
-item-shining-icon-remove_mode_shiny: ['&cRemove mode', '&7Opened', '', '&a> Click to close']
-item-shining-icon-add_mode: ['&eAdd mode', '&7Closed', '', '&a> Click to open']
-item-shining-icon-add_mode_shiny: ['&eAdd mode', '&7Opened', '', '&a> Click to close']
+item-shining-icon-remove_mode: [ '&cRemove mode', '&7Closed', '', '&a> Click to open' ]
+item-shining-icon-remove_mode_shiny: [ '&cRemove mode', '&7Opened', '', '&a> Click to close' ]
+item-shining-icon-add_mode: [ '&eAdd mode', '&7Closed', '', '&a> Click to open' ]
+item-shining-icon-add_mode_shiny: [ '&eAdd mode', '&7Opened', '', '&a> Click to close' ]
 item-shining-icon-search: '&aSearch'
 item-shining-icon-confirm: '&aConfirm'
 item-shining-icon-cancel: '&cCancel'
@@ -47,9 +47,9 @@ menu-shining_guide-team-create-success: '&aSuccessfully created the team "&f{0}&
 menu-shining_guide-team-create-fail-id_already_exists: '&cThe ID of the team already exists!'
 menu-shining_guide-team-create-fail-id_or_name_empty: '&cThe ID and name of the team cannot be empty!'
 menu-shining_guide-team-join-title: 'Shining Guide - Join a team'
-menu-shining_guide-team-join-already_apply: ['&bYou have applied to join this team,', '&bwaiting for the captain', '&bto approve the application', '', '&e> The captain', '&f{0}', '', '&a> Members']
-menu-shining_guide-team-join-team_symbol: ['', '&e> The captain', '&f{0}', '', '&a> Members']
+menu-shining_guide-team-join-already_apply: [ '&bYou have applied to join this team,', '&bwaiting for the captain', '&bto approve the application', '', '&e> The captain', '&f{0}', '', '&a> Members' ]
+menu-shining_guide-team-join-team_symbol: [ '', '&e> The captain', '&f{0}', '', '&a> Members' ]
 menu-shining_guide-team-join-apply-success: '&aSuccessfully applied to join the team "&f{0}&a"，waiting for the captain "&f{1}&a" to approve the application'
 menu-shining_guide-team-join-reapply-title: 'Shining Guide - Reapply a team'
 menu-shining_guide-team-join-reapply-existing_team: '&eYou have applied to join the team'
-menu-shining_guide-team-join-reapply-cancel_and_apply: ['&cDo you want to cancel the current', '&capplication and apply to join', '&cthe new team "&f{0}&c"?']
+menu-shining_guide-team-join-reapply-cancel_and_apply: [ '&cDo you want to cancel the current', '&capplication and apply to join', '&cthe new team "&f{0}&c"?' ]

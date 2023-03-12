@@ -9,5 +9,5 @@ object ShiningCommandAPI {
 
     @CommandBody
     val editor = CommandEditor.editor
-    
+
 }

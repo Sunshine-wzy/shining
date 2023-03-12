@@ -9,11 +9,12 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import java.util.*
 
 object GuideTeams : IntIdTable() {
-    
+
     val name = varchar("name", 50)
     val captain = uuid("captain").uniqueIndex()
     val symbol = jackson("symbol", Shining.objectMapper, ItemStack::class.java)
     val members = jackson("members", Shining.objectMapper, object : TypeReference<JacksonWrapper<HashSet<UUID>>>() {})
-    val applicants = jackson("applicants", Shining.objectMapper, object : TypeReference<JacksonWrapper<HashSet<UUID>>>() {})
-    
+    val applicants =
+        jackson("applicants", Shining.objectMapper, object : TypeReference<JacksonWrapper<HashSet<UUID>>>() {})
+
 }

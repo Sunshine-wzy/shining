@@ -14,5 +14,5 @@ class SLocationDataAddEvent(sLocation: SLocation, val key: String, val value: St
         @JvmStatic
         fun getHandlerList(): HandlerList = handlerList
     }
-    
+
 }

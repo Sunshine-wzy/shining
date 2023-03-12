@@ -19,62 +19,62 @@ class SCommandWrapper(
     val isTabCompleter: Boolean = false,
     val complements: ArrayList<String> = ArrayList()
 ) {
-    
+
     private fun wrap(name: String, wrapper: SCWrapper, type: Type = NORMAL): Boolean {
-        if(isTabCompleter) {
-            if(args.size == 1) {
+        if (isTabCompleter) {
+            if (args.size == 1) {
                 val first = args.first()
-                if(first == "") {
+                if (first == "") {
                     complements += name
-                } else if(name.indexOf(first, ignoreCase = true) == 0) {
+                } else if (name.indexOf(first, ignoreCase = true) == 0) {
                     complements += name
                 }
             }
-            
-            if(type == EMPTY)
+
+            if (type == EMPTY)
                 return false
         }
-        
-        
-        when(type) {
+
+
+        when (type) {
             NORMAL -> {
-                if(args.isEmpty() || !args.first().equals(name, true))
+                if (args.isEmpty() || !args.first().equals(name, true))
                     return false
             }
 
             EMPTY -> {
-                if(args.isNotEmpty() && args.first() != "")
+                if (args.isNotEmpty() && args.first() != "")
                     return false
             }
 
         }
-        
+
         var pre = preArg
         val list = args.copy()
-        if(type != EMPTY) pre = list.removeFirst()
-        
+        if (type != EMPTY) pre = list.removeFirst()
+
         val scWrapper = SCommandWrapper(sender, cmd, label, list, pre, isTabCompleter, complements)
         wrapper(scWrapper)
         return true
     }
-    
-    
+
+
     operator fun String.invoke(wrapper: SCWrapper) {
         wrap(this, wrapper)
     }
-    
+
     operator fun Collection<String>.invoke(wrapper: SCWrapper) {
-        forEach { 
-            if(wrap(it, wrapper))
+        forEach {
+            if (wrap(it, wrapper))
                 return
         }
     }
-    
+
     fun empty(wrapper: SCWrapper) {
         wrap("", wrapper, EMPTY)
     }
-    
-    
+
+
     fun getPlayer(): Player? = sender as? Player
 
 
@@ -82,5 +82,5 @@ class SCommandWrapper(
         NORMAL,
         EMPTY
     }
-    
+
 }

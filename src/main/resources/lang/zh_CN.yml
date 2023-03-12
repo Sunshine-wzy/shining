@@ -10,11 +10,11 @@ item-shining-shining_guide-team-manage-application: '&a入队申请'
 item-shining-shining_guide-team-manage: '&b队伍管理'
 item-shining-shining_guide-settings-team_info: '&b队伍信息'
 item-shining-shining_guide-settings-edit_mode:
-  close: ['&e编辑模式', '&7已关闭', '', '&a> 点击开启']
-  open: ['&e编辑模式', '&a已开启', '', '&c> 点击关闭']
+  close: [ '&e编辑模式', '&7已关闭', '', '&a> 点击开启' ]
+  open: [ '&e编辑模式', '&a已开启', '', '&c> 点击关闭' ]
 item-shining-shining_guide-editor:
-  close: ['&e编辑器', '&7已关闭', '', '&a> 点击开启']
-  open: ['&e编辑器', '&a已开启', '', '&c> 点击关闭']
+  close: [ '&e编辑器', '&7已关闭', '', '&a> 点击开启' ]
+  open: [ '&e编辑器', '&a已开启', '', '&c> 点击关闭' ]
 item-shining-shining_guide-editor-create_state_copy: '&b创建状态副本'
 item-shining-shining_guide-editor-create_state_new: '&a创建新状态'
 item-shining-shining_guide-editor-state-element-basic_editor: '&a基础状态编辑器'
@@ -24,7 +24,8 @@ item-shining-shining_guide-editor-state-element-description_name: '&a名称'
 item-shining-shining_guide-editor-state-element-description_lore: '&b描述'
 item-shining-shining_guide-editor-state-element-dependencies: '&e依赖'
 item-shining-shining_guide-editor-state-element-locks: '&c锁'
-item-shining-icon-back: ['&c⇦ 返回', '', '&f左键：&7返回上一页', '&fShift + 左键：&7返回主菜单']
+item-shining-shining_guide-editor-state-element-dependency-remove: '&c移除'
+item-shining-icon-back: [ '&c⇦ 返回', '', '&f左键：&7返回上一页', '&fShift + 左键：&7返回主菜单' ]
 item-shining-icon-back_last_page: '&b⇦ 返回'
 item-shining-icon-submit: '&a>> 点击以提交任务 <<'
 item-shining-icon-workbench: '&a>> &d使用工作台合成 &a<<'
@@ -35,10 +36,10 @@ item-shining-icon-page_next_glass_pane: '&a下一页 &e⇨'
 item-shining-icon-page_previous_glass_pane: '&e⇦ &a上一页'
 item-shining-icon-rename: '&e重命名'
 item-shining-icon-edit_lore: '&a编辑Lore'
-item-shining-icon-remove_mode: ['&c删除模式', '&7已关闭', '', '&a> 点击开启']
-item-shining-icon-remove_mode_shiny: ['&c删除模式', '&7已开启', '', '&a> 点击关闭']
-item-shining-icon-add_mode: ['&e增添模式', '&7已关闭', '', '&a> 点击开启']
-item-shining-icon-add_mode_shiny: ['&e增添模式', '&7已开启', '', '&a> 点击开启']
+item-shining-icon-remove_mode: [ '&c删除模式', '&7已关闭', '', '&a> 点击开启' ]
+item-shining-icon-remove_mode_shiny: [ '&c删除模式', '&7已开启', '', '&a> 点击关闭' ]
+item-shining-icon-add_mode: [ '&e增添模式', '&7已关闭', '', '&a> 点击开启' ]
+item-shining-icon-add_mode_shiny: [ '&e增添模式', '&7已开启', '', '&a> 点击开启' ]
 item-shining-icon-search: '&a搜索'
 item-shining-icon-confirm: '&a确认'
 item-shining-icon-cancel: '&c取消'
@@ -63,27 +64,27 @@ menu-shining_guide-team-create-success: '&a队伍 "&f{0}&a" 创建成功，Shini
 menu-shining_guide-team-create-fail-id_already_exists: '&c队伍ID已存在!'
 menu-shining_guide-team-create-fail-id_or_name_empty: '&c队伍ID和名称都不能为空!'
 menu-shining_guide-team-join-title: 'Shining 指南 - 加入队伍'
-menu-shining_guide-team-join-already_apply: ['&b您已申请加入该队伍，请等待队长同意申请', '', '&e> 队长', '&f{0}', '', '&a> 队员']
-menu-shining_guide-team-join-team_symbol: ['', '&e> 队长', '&f{0}', '', '&a> 队员']
+menu-shining_guide-team-join-already_apply: [ '&b您已申请加入该队伍，请等待队长同意申请', '', '&e> 队长', '&f{0}', '', '&a> 队员' ]
+menu-shining_guide-team-join-team_symbol: [ '', '&e> 队长', '&f{0}', '', '&a> 队员' ]
 menu-shining_guide-team-join-apply-success: '&a申请加入队伍 "&f{0}&a" 成功，等待队长 "&f{1}&a" 同意'
 menu-shining_guide-team-join-reapply-title: 'Shining 指南 - 队伍重复申请'
 menu-shining_guide-team-join-reapply-existing_team: '&e您已经申请加入队伍'
-menu-shining_guide-team-join-reapply-cancel_and_apply: ['&c要取消原有申请并申请加入', '&c新的队伍 "&f{0}&c" 吗?']
+menu-shining_guide-team-join-reapply-cancel_and_apply: [ '&c要取消原有申请并申请加入', '&c新的队伍 "&f{0}&c" 吗?' ]
 menu-shining_guide-team-notify_captain_application:
   text: '&a玩家 "&f{0}&a" 申请加入您的队伍，点击此处打开队伍面板处理申请'
   command: '/shining guide open team manage'
 menu-shining_guide-team-manage-title: 'Shining 指南 - 队伍管理'
 menu-shining_guide-team-manage-no_permission: '&c您不是队长，无权打开队伍管理面板'
 menu-shining_guide-team-manage-application-title: 'Shining 指南 - 队伍管理 - 入队申请'
-menu-shining_guide-team-manage-application-applicant: ['', '&f左键：&a同意该申请', '&f右键：&c拒绝该申请']
+menu-shining_guide-team-manage-application-applicant: [ '', '&f左键：&a同意该申请', '&f右键：&c拒绝该申请' ]
 menu-shining_guide-team-manage-application-approve: '&a同意了玩家 "&f{0}&a" 的入队申请'
 menu-shining_guide-team-manage-application-refuse: '&c拒绝了玩家 "&f{0}&c" 的入队申请'
 menu-shining_guide-team-manage-application-not_found: '&4没有找到玩家 "&f{0}&4" 的入队申请'
 menu-shining_guide-team-manage-application-was_refused: '&c您向队伍 "&f{0}&c" (队长: "&f{1}&c") 提交入队申请被拒绝!'
 menu-shining_guide-team-welcome: '&a欢迎新人 "&f{0}&a" 加入队伍 "&f{1}&a"~'
 menu-shining_guide-team-info-title: 'Shining 指南 - 队伍信息'
-menu-shining_guide-team-info-symbol: ['&d队伍: &f{0}', '', '&a>> 点击修改队伍名称 <<']
-menu-shining_guide-team-info-captain: ['&e队长: &f{0}']
+menu-shining_guide-team-info-symbol: [ '&d队伍: &f{0}', '', '&a>> 点击修改队伍名称 <<' ]
+menu-shining_guide-team-info-captain: [ '&e队长: &f{0}' ]
 menu-shining_guide-team-player_not_in_team: '&c您不在队伍中'
 menu-shining_guide-editor-title: 'Shining 指南 - 编辑器'
 menu-shining_guide-editor-state-title: 'Shining 指南 - 状态编辑'

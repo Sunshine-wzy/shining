@@ -18,19 +18,19 @@ import taboolib.expansion.createHelper
 
 @CommandHeader("shining", aliases = ["shi"], permissionDefault = PermissionDefault.TRUE)
 object ShiningCommand {
-    
+
     @CommandBody(permissionDefault = PermissionDefault.TRUE)
     val main = mainCommand {
         createHelper()
     }
-    
+
     @CommandBody
     val item = CommandItem.item
-    
+
     @CommandBody(permissionDefault = PermissionDefault.TRUE)
     val guide = CommandGuide.guide
-    
-    
+
+
     fun registerSCommands() {
         SCommand("SunST", "sun")
             .addCommand("machine", "多方块机器") {
@@ -43,15 +43,18 @@ object ShiningCommand {
                             sender.sendMsg("&c请拿着&a扳手&c输入此命令以获得该扳手可构建的机器图鉴！")
                         }
 
-                        if(handItem.type == Material.AIR) {
+                        if (handItem.type == Material.AIR) {
                             sendTip()
                             return@empty
                         }
 
-                        for(wrench in SMachineWrench.wrenches) {
-                            if(handItem.isItemSimilar(wrench)) {
+                        for (wrench in SMachineWrench.wrenches) {
+                            if (handItem.isItemSimilar(wrench)) {
                                 player.giveItem(wrench.illustratedBook)
-                                player.sendMsg(COLOR_NAME, "&a您已获得 [${wrench.illustratedBook.itemMeta?.displayName}&a]")
+                                player.sendMsg(
+                                    COLOR_NAME,
+                                    "&a您已获得 [${wrench.illustratedBook.itemMeta?.displayName}&a]"
+                                )
 
                                 return@empty
                             }
@@ -69,13 +72,13 @@ object ShiningCommand {
             .addCommand("give", "获得一个SunST物品", isOp = true) {
                 SItem.items.keys {
                     empty {
-                        if(sender !is Player){
+                        if (sender !is Player) {
                             sender.sendMessage("只有玩家才能使用此命令")
                             return@empty
                         }
 
                         val items = SItem.items
-                        if(items.containsKey(preArg)){
+                        if (items.containsKey(preArg)) {
                             val item = items[preArg] ?: return@empty
                             sender.giveItem(item)
                             sender.sendMsg(COLOR_NAME, "&a您已获得 $preArg")
@@ -85,7 +88,7 @@ object ShiningCommand {
                 }
 
                 empty {
-                    sender.sendMsg(COLOR_NAME,"&agive 后加SunST物品名称 (按 TAB 可以自动补全~)")
+                    sender.sendMsg(COLOR_NAME, "&agive 后加SunST物品名称 (按 TAB 可以自动补全~)")
                 }
             }
 
@@ -104,5 +107,5 @@ object ShiningCommand {
             }
 
     }
-    
+
 }

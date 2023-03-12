@@ -5,18 +5,18 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 object PlayerDatabaseHandler {
-    
+
     val dataContainer: MutableMap<UUID, PlayerDataContainer> = ConcurrentHashMap()
-    
-    
+
+
     fun Player.getDataContainer(): PlayerDataContainer {
         return dataContainer[uniqueId] ?: error("unavailable")
     }
-    
+
     fun Player.setupDataContainer() {
         dataContainer[uniqueId] = PlayerDataContainer(uniqueId.toString())
     }
-    
+
     fun Player.releaseDataContainer() {
         dataContainer.remove(uniqueId)
     }
@@ -28,5 +28,5 @@ object PlayerDatabaseHandler {
                 dataContainer.remove(this)
             }
     }
-    
+
 }

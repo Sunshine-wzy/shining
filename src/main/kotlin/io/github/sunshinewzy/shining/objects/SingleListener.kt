@@ -26,7 +26,7 @@ class SingleListener<T : Event>(
     }
 
     companion object {
-        
+
         @JvmStatic
         fun <T : Event> listen(
             clazz: Class<T>,
@@ -35,7 +35,8 @@ class SingleListener<T : Event>(
             consumer: (T) -> Unit
         ): SingleListener<T> {
             val listener = SingleListener(clazz, { it.javaClass == clazz }, consumer)
-            Bukkit.getPluginManager().registerEvent(clazz, listener, priority, listener, Shining.plugin, ignoreCancelled)
+            Bukkit.getPluginManager()
+                .registerEvent(clazz, listener, priority, listener, Shining.plugin, ignoreCancelled)
             return listener
         }
     }

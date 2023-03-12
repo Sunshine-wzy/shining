@@ -16,10 +16,9 @@ class MachineInteractBehavior : MachineBehavior() {
         item: ItemStack,
         action: Action
     ) {
-        if(!action.isRightClick()) return
-        
-        
-        
+        if (!action.isRightClick()) return
+
+
     }
-    
+
 }

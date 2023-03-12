@@ -14,18 +14,18 @@ abstract class SMachineTimer(
     val plugin: JavaPlugin,
     val period: Long,
 ) : SMachine(id, name, wrench, structure) {
-    
+
     init {
         Bukkit.getScheduler().runTaskTimer(plugin, Runnable {
-            
+
         }, period, period)
-        
+
     }
-    
+
     final override fun runMachine(event: SMachineRunEvent) {
-        if(event is SMachineRunEvent.Timer)
+        if (event is SMachineRunEvent.Timer)
             timerRun(event, getLevel(event.sLoc))
     }
-    
+
     abstract fun timerRun(event: SMachineRunEvent.Timer, level: Short)
 }

@@ -34,8 +34,8 @@ class GuideCategory(
     symbol: ItemStack
 ) : GuideElement(id, description, symbol), IGuideElementContainer {
     private val elements: MutableList<IGuideElement> = LinkedList()
-    
-    
+
+
     override fun openMenu(player: Player, team: GuideTeam) {
         player.openMenu<Linked<IGuideElement>>(player.getLangText(ShiningGuide.TITLE)) {
             rows(6)
@@ -46,14 +46,14 @@ class GuideCategory(
             val dependencyLockedElements = LinkedList<IGuideElement>()
             val lockLockedElements = LinkedList<IGuideElement>()
             onGenerate { player, element, index, slot ->
-                if(ShiningGuideEditor.isEditModeEnabled(player)) {
+                if (ShiningGuideEditor.isEditModeEnabled(player)) {
                     return@onGenerate element.getSymbolByCondition(player, team, ElementCondition.UNLOCKED)
                 }
-                
+
                 val condition = element.getCondition(team)
-                if(condition == ElementCondition.LOCKED_DEPENDENCY)
+                if (condition == ElementCondition.LOCKED_DEPENDENCY)
                     dependencyLockedElements += element
-                else if(condition == ElementCondition.LOCKED_LOCK)
+                else if (condition == ElementCondition.LOCKED_LOCK)
                     lockLockedElements += element
                 element.getSymbolByCondition(player, team, condition)
             }
@@ -61,27 +61,27 @@ class GuideCategory(
             onBuild(true, ShiningGuide.onBuildEdge)
 
             setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
-                if(hasPreviousPage) {
+                if (hasPreviousPage) {
                     ShiningIcon.PAGE_PREVIOUS_GLASS_PANE.item
                 } else ShiningIcon.EDGE.item
             }
 
             setNextPage(8 orderWith 6) { page, hasNextPage ->
-                if(hasNextPage) {
+                if (hasNextPage) {
                     ShiningIcon.PAGE_NEXT_GLASS_PANE.item
                 } else ShiningIcon.EDGE.item
             }
 
             onClick { event, element ->
-                if(ShiningGuideEditor.isEditorEnabled(player)) {
+                if (ShiningGuideEditor.isEditorEnabled(player)) {
                     ShiningGuideEditor.openEditMenu(player, element, this@GuideCategory)
                     return@onClick
                 }
-                
-                if(element in dependencyLockedElements) return@onClick
-                
-                if(element in lockLockedElements) {
-                    if(element.unlock(player, team)) {
+
+                if (element in dependencyLockedElements) return@onClick
+
+                if (element in lockLockedElements) {
+                    if (element.unlock(player, team)) {
                         ShiningGuide.fireworkCongratulate(player)
                         open(player, team)
                     }
@@ -91,9 +91,9 @@ class GuideCategory(
                 element.open(event.clicker, team, this@GuideCategory)
             }
 
-            if(ShiningGuideEditor.isEditorEnabled(player)) {
+            if (ShiningGuideEditor.isEditorEnabled(player)) {
                 onClick(lock = true) {
-                    if(it.rawSlot in ShiningGuide.slotOrders && it.currentItem.isAir()) {
+                    if (it.rawSlot in ShiningGuide.slotOrders && it.currentItem.isAir()) {
                         ShiningGuideEditor.openEditMenu(player, null, this@GuideCategory)
                     }
                 }
@@ -104,7 +104,7 @@ class GuideCategory(
             }
 
             set(2 orderWith 1, ShiningIcon.BACK.item) {
-                if(clickEvent().isShiftClick) {
+                if (clickEvent().isShiftClick) {
                     ShiningGuide.openMainMenu(clicker)
                 } else {
                     back(clicker, team)
@@ -118,8 +118,8 @@ class GuideCategory(
     }
 
     override fun saveToState(state: IGuideElementState): Boolean {
-        if(state !is GuideCategoryState) return false
-        if(!super.saveToState(state)) return false
+        if (state !is GuideCategoryState) return false
+        if (!super.saveToState(state)) return false
 
         state.elements += elements
         return true
@@ -129,8 +129,8 @@ class GuideCategory(
         GuideCategoryState(this).also { saveToState(it) }
 
     override fun update(state: IGuideElementState): Boolean {
-        if(state !is GuideCategoryState) return false
-        if(!super.update(state)) return false
+        if (state !is GuideCategoryState) return false
+        if (!super.update(state)) return false
 
         elements.clear()
         elements += state.elements
@@ -140,6 +140,6 @@ class GuideCategory(
     override fun registerElement(element: IGuideElement) {
         elements += element
     }
-    
-    
+
+
 }

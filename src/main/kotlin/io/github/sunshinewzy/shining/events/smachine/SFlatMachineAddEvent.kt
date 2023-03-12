@@ -12,13 +12,13 @@ class SFlatMachineAddEvent(
     val player: Player,
     val face: BlockFace
 ) : SFlatMachineEvent(sFlatMachine, loc) {
-    
+
     override fun getHandlers(): HandlerList = handlerList
 
 
     companion object {
         private val handlerList = HandlerList()
-        
+
         @JvmStatic
         fun getHandlerList(): HandlerList = handlerList
     }

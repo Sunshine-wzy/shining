@@ -13,7 +13,7 @@ class SSingleMachineData(
 ) : SAutoCoverSaveData(plugin, sSingleMachine.id, "SSingleMachine") {
 
     override fun YamlConfiguration.modifyConfig() {
-        sSingleMachine.singleMachines.forEach { (sLoc, information) -> 
+        sSingleMachine.singleMachines.forEach { (sLoc, information) ->
             set(sLoc.toString(), information)
         }
     }
@@ -25,6 +25,6 @@ class SSingleMachineData(
             SSingleMachine.addMachine(SLocation(sLoc), sSingleMachine, information)
         }
     }
-    
-    
+
+
 }

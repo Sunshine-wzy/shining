@@ -18,21 +18,21 @@ import taboolib.common.platform.event.SubscribeEvent
 
 object BlockListener {
     val tryToPlaceBlockLocations = HashMap<Location, BlockPlaceEvent.() -> Boolean>()
-    
-    
+
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun onBlockPlace(e: BlockPlaceEvent) {
         val block = e.blockPlaced
         val loc = block.location
         val item = e.itemInHand
-        
-        if(tryToPlaceBlockLocations.isNotEmpty()){
-            
-            if(tryToPlaceBlockLocations.containsKey(loc)){
-                if(!e.isCancelled && block.type == Material.AIR && item.type != Material.AIR && item.amount > 0){
+
+        if (tryToPlaceBlockLocations.isNotEmpty()) {
+
+            if (tryToPlaceBlockLocations.containsKey(loc)) {
+                if (!e.isCancelled && block.type == Material.AIR && item.type != Material.AIR && item.amount > 0) {
                     val theBlock = tryToPlaceBlockLocations[loc] ?: return
 
-                    if(theBlock(e))
+                    if (theBlock(e))
                         SBlock(item).setLocation(loc)
                 }
 
@@ -40,13 +40,13 @@ object BlockListener {
             }
         }
 
-        if(SEnergyCell.hasEnergyBlocks()) {
+        if (SEnergyCell.hasEnergyBlocks()) {
             val sBlock = SBlock(item)
 
-            if(sBlock.isEnergyBlock()) {
+            if (sBlock.isEnergyBlock()) {
                 block.operate {
-                    val flag= surroundings {
-                        if(sBlock.isSimilar(this)) {
+                    val flag = surroundings {
+                        if (sBlock.isSimilar(this)) {
                             getEnergyCell()?.let {
                                 it.addBlock(getSLocation())
                                 return@surroundings true
@@ -55,31 +55,31 @@ object BlockListener {
 
                         false
                     }
-                    
-                    if(!flag) {
+
+                    if (!flag) {
 //                        block.addEnergyEntity()
                     }
                 }
             }
         }
-        
+
     }
-    
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun onBlockBreak(e: BlockBreakEvent) {
-        if(!e.isCancelled) {
+        if (!e.isCancelled) {
             val block = e.block
 
-            if(SEnergyCell.hasEnergyBlocks()) {
+            if (SEnergyCell.hasEnergyBlocks()) {
                 val sBlock = block.toSBlock()
 
-                if(sBlock.isEnergyBlock()) {
+                if (sBlock.isEnergyBlock()) {
                     block.removeEnergyBlock()
                 }
             }
-            
+
             SLocationData.clearData(block.world.name, block.getSLocation().toString())
         }
     }
-    
+
 }

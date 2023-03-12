@@ -16,11 +16,11 @@ import org.bukkit.event.world.WorldLoadEvent
 class SLocationData(val world: String) : SAutoCoverSaveData(Shining.plugin, world, "SLocationData") {
 
     override fun YamlConfiguration.createConfig() {
-        
+
     }
 
     override fun YamlConfiguration.modifyConfig() {
-        if(data.containsKey(world)) {
+        if (data.containsKey(world)) {
             data[world]?.forEach { (sLoc, data) ->
                 set(sLoc, data)
             }
@@ -32,23 +32,23 @@ class SLocationData(val world: String) : SAutoCoverSaveData(Shining.plugin, worl
         roots.forEach { sLoc ->
             val map = HashMap<String, String>()
 
-            if(getMap(sLoc, map) && map.isNotEmpty())
+            if (getMap(sLoc, map) && map.isNotEmpty())
                 addData(world, sLoc, map)
         }
     }
-    
-    
+
+
     companion object : Initable {
         private val createdDataWorlds = HashSet<String>()
-        
+
         // SLocationData <world, <sLocation, <key, value>>>
         val data = HashMap<String, HashMap<String, HashMap<String, String>>>()
 
 
         fun addData(world: String, sLocation: String, key: String, value: String) {
-            if(data.containsKey(world)) {
+            if (data.containsKey(world)) {
                 data[world]?.let { worldData ->
-                    if(worldData.containsKey(sLocation)) {
+                    if (worldData.containsKey(sLocation)) {
                         worldData[sLocation]?.let {
                             it[key] = value
                         }
@@ -56,7 +56,7 @@ class SLocationData(val world: String) : SAutoCoverSaveData(Shining.plugin, worl
                 }
             } else {
                 checkWorldData(world)
-                
+
                 val map = HashMap<String, HashMap<String, String>>()
                 map[sLocation] = hashMapOf(key to value)
                 data[world] = map
@@ -66,15 +66,15 @@ class SLocationData(val world: String) : SAutoCoverSaveData(Shining.plugin, worl
         }
 
         fun addData(world: String, sLocation: String, dataMap: HashMap<String, String>) {
-            if(data.containsKey(world)) {
+            if (data.containsKey(world)) {
                 data[world]?.let { worldData ->
-                    if(worldData.containsKey(sLocation)) {
+                    if (worldData.containsKey(sLocation)) {
                         worldData[sLocation]?.putAll(dataMap)
                     } else worldData[sLocation] = dataMap
                 }
             } else {
                 checkWorldData(world)
-                
+
                 val map = HashMap<String, HashMap<String, String>>()
                 map[sLocation] = dataMap
                 data[world] = map
@@ -82,29 +82,29 @@ class SLocationData(val world: String) : SAutoCoverSaveData(Shining.plugin, worl
         }
 
         fun removeData(world: String, sLocation: String, key: String) {
-            if(data.containsKey(world)) {
+            if (data.containsKey(world)) {
                 data[world]?.let { worldData ->
-                    if(worldData.containsKey(sLocation)) {
+                    if (worldData.containsKey(sLocation)) {
                         worldData[sLocation]?.remove(key)
                     }
                 }
             }
-            
+
             Shining.pluginManager.callEvent(SLocationDataRemoveEvent(SLocation(sLocation), key))
         }
 
         fun clearData(world: String, sLocation: String) {
-            if(data.containsKey(world)) {
+            if (data.containsKey(world)) {
                 data[world]?.remove(sLocation)
             }
-            
+
             Shining.pluginManager.callEvent(SLocationDataClearEvent(SLocation(sLocation)))
         }
 
         fun getData(world: String, sLocation: String, key: String): String? {
-            if(data.containsKey(world)) {
+            if (data.containsKey(world)) {
                 data[world]?.let { worldData ->
-                    if(worldData.containsKey(sLocation)) {
+                    if (worldData.containsKey(sLocation)) {
                         worldData[sLocation]?.let {
                             return it[key]
                         }
@@ -115,35 +115,36 @@ class SLocationData(val world: String) : SAutoCoverSaveData(Shining.plugin, worl
         }
 
         fun getDataOrFail(world: String, sLocation: String, key: String): String {
-            if(data.containsKey(world)) {
+            if (data.containsKey(world)) {
                 data[world]?.let { worldData ->
-                    if(worldData.containsKey(sLocation)) {
+                    if (worldData.containsKey(sLocation)) {
                         worldData[sLocation]?.let {
-                            return it[key] ?: throw IllegalArgumentException("The SLocation '${toString()}' doesn't have data of $key.")
+                            return it[key]
+                                ?: throw IllegalArgumentException("The SLocation '${toString()}' doesn't have data of $key.")
                         }
                     }
                 }
             }
             throw IllegalArgumentException("The SLocation '${toString()}' doesn't have data of $key.")
         }
-        
-        
+
+
         private fun checkWorldData(world: String) {
-            if(!createdDataWorlds.contains(world)) {
+            if (!createdDataWorlds.contains(world)) {
                 createdDataWorlds += world
                 SLocationData(world)
             }
         }
 
         override fun init() {
-            Bukkit.getServer().worlds.forEach { 
+            Bukkit.getServer().worlds.forEach {
                 checkWorldData(it.name)
             }
-            
-            subscribeEvent<WorldLoadEvent> { 
+
+            subscribeEvent<WorldLoadEvent> {
                 checkWorldData(world.name)
             }
         }
     }
-    
+
 }

@@ -20,7 +20,7 @@ fun buildItem(item: Itemable, builder: ItemBuilder.() -> Unit = {}): ItemStack {
 }
 
 fun ItemStack.localize(languageNode: LanguageNode?): ItemStack {
-    when(languageNode) {
+    when (languageNode) {
         is TextNode -> {
             setName(languageNode.text)
         }
@@ -29,10 +29,10 @@ fun ItemStack.localize(languageNode: LanguageNode?): ItemStack {
             val list = LinkedList<String>()
             languageNode.list.filterIsInstance<TextNode>().mapTo(list) { it.text }
 
-            if(list.isNotEmpty()) {
+            if (list.isNotEmpty()) {
                 setName(list.removeFirst())
 
-                if(list.isNotEmpty()) {
+                if (list.isNotEmpty()) {
                     setLore(list)
                 }
             }
@@ -44,7 +44,7 @@ fun ItemStack.localize(languageNode: LanguageNode?): ItemStack {
             }
 
             languageNode.section.getStringList("lore").let {
-                if(it.isNotEmpty()) {
+                if (it.isNotEmpty()) {
                     setLore(it)
                 }
             }
@@ -55,7 +55,7 @@ fun ItemStack.localize(languageNode: LanguageNode?): ItemStack {
 }
 
 fun ItemStack.localize(languageNode: LanguageNode?, vararg args: String?): ItemStack {
-    when(languageNode) {
+    when (languageNode) {
         is TextNode -> {
             setName(languageNode.format(*args))
         }
@@ -64,10 +64,10 @@ fun ItemStack.localize(languageNode: LanguageNode?, vararg args: String?): ItemS
             val list = LinkedList<String>()
             languageNode.list.filterIsInstance<TextNode>().mapTo(list) { it.format(*args) }
 
-            if(list.isNotEmpty()) {
+            if (list.isNotEmpty()) {
                 setName(list.removeFirst())
 
-                if(list.isNotEmpty()) {
+                if (list.isNotEmpty()) {
                     setLore(list)
                 }
             }
@@ -79,7 +79,7 @@ fun ItemStack.localize(languageNode: LanguageNode?, vararg args: String?): ItemS
             }
 
             languageNode.section.getStringList("lore").let { loreList ->
-                if(loreList.isNotEmpty()) {
+                if (loreList.isNotEmpty()) {
                     setLore(loreList.map { it.formatArgs(*args) })
                 }
             }
@@ -90,7 +90,7 @@ fun ItemStack.localize(languageNode: LanguageNode?, vararg args: String?): ItemS
 }
 
 fun ItemStack.setName(name: String): ItemStack {
-    val meta = if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type)
+    val meta = if (hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type)
 
     meta?.setDisplayName(name.colored())
     itemMeta = meta
@@ -98,7 +98,7 @@ fun ItemStack.setName(name: String): ItemStack {
 }
 
 fun ItemStack.setLore(lore: List<String>): ItemStack {
-    val meta = if(hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type)
+    val meta = if (hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type)
     meta?.lore = lore.map { it.colored() }
     itemMeta = meta
     return this
@@ -122,7 +122,7 @@ fun ItemStack.addLore(vararg lore: String): ItemStack =
 fun ItemStack.insertLore(index: Int, lore: List<String>): ItemStack {
     val meta = getMeta()
     val existLore = meta.lore ?: ArrayList()
-    if(index in 0..existLore.size) {
+    if (index in 0..existLore.size) {
         existLore.addAll(index, lore.colored())
         meta.lore = existLore
         itemMeta = meta
@@ -150,7 +150,7 @@ fun ItemStack?.isItemSimilar(
     checkAmount: Boolean = true,
     checkDurability: Boolean = false
 ): Boolean {
-    return if(this == null) {
+    return if (this == null) {
         false
     } else if (type != item.type) {
         false
@@ -161,7 +161,7 @@ fun ItemStack?.isItemSimilar(
     } else if (hasItemMeta()) {
         val itemMeta = itemMeta ?: return true
 
-        if (item.hasItemMeta()){
+        if (item.hasItemMeta()) {
             val itemMeta2 = item.itemMeta ?: return true
             itemMeta.isMetaSimilar(itemMeta2, checkLore)
         } else false
@@ -190,7 +190,7 @@ fun ItemMeta.isMetaSimilar(itemMeta: ItemMeta, checkLore: Boolean = true): Boole
         val lore = lore ?: return true
         val lore2 = itemMeta.lore ?: return true
 
-        if(lore.isEmpty() && lore2.isEmpty()) return true
+        if (lore.isEmpty() && lore2.isEmpty()) return true
         lore.toString() == lore2.toString()
     } else !itemMeta.hasLore() && !hasLore()
 }
@@ -213,7 +213,7 @@ fun ItemStack.getLore(): MutableList<String> = itemMeta?.lore ?: mutableListOf()
 
 fun ItemStack.getDisplayName(default: String = ""): String {
     itemMeta?.apply {
-        if(hasDisplayName()) {
+        if (hasDisplayName()) {
             return displayName
         }
     }

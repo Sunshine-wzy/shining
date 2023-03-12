@@ -14,7 +14,7 @@ open class LazySerialDataPersistentContainer<T>(
 ) : SerialDataPersistentContainer<T>(serializer, tableName, database), LazyOperational {
     private val lazyOperationMap: ConcurrentHashMap<String, LazyOperation> = ConcurrentHashMap()
 
-    
+
     init {
         DataManager.registerLazy(this)
     }
@@ -33,7 +33,7 @@ open class LazySerialDataPersistentContainer<T>(
     @Suppress("UNCHECKED_CAST")
     override fun saveLazy() {
         lazyOperationMap.forEach { (key, operation) ->
-            when(operation) {
+            when (operation) {
                 is LazyOperation.Update<*> -> {
                     update(key, operation.value as T)
                 }
@@ -42,7 +42,7 @@ open class LazySerialDataPersistentContainer<T>(
                     delete(key)
                 }
             }
-            
+
             lazyOperationMap -= key
         }
     }

@@ -30,62 +30,62 @@ class TaskProject(
     val invSize: Int = 5
 ) : TaskInventory {
     private val holder = SProtectInventoryHolder(id)
-    
+
     val stageMap = HashMap<String, TaskStage>()
     val lastTaskInv = HashMap<UUID, TaskInventory>()
-    
+
     init {
 //        DataManager.sTaskData[projectName] = STaskData(this)
-        
-        if(isFirstJoinGive)
+
+        if (isFirstJoinGive)
             DataManager.firstJoinGiveOpenItems[id] = openItem
 
-        
+
         subscribeEvent<PlayerInteractEvent>(ignoreCancelled = false) {
             val item = item ?: return@subscribeEvent
 
-            if(hand == EquipmentSlot.HAND){
-                when(action) {
+            if (hand == EquipmentSlot.HAND) {
+                when (action) {
                     Action.LEFT_CLICK_BLOCK -> {
-                        if(item.isItemSimilar(openItem)){
+                        if (item.isItemSimilar(openItem)) {
                             isCancelled = true
 
                             openTaskInv(player)
                         }
                     }
-                    
+
                     Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK -> {
-                        if(item.isItemSimilar(openItem)){
+                        if (item.isItemSimilar(openItem)) {
                             isCancelled = true
 
                             lastTaskInv[player.uniqueId]?.let { lastInv ->
                                 lastInv.openTaskInv(player)
                                 val holder = player.openInventory.topInventory.holder
-                                if(holder is TaskInventoryHolder && holder.page > 1) {
+                                if (holder is TaskInventoryHolder && holder.page > 1) {
                                     holder.page = 1
-                                    if(player.isSneaking && player.isOp) {
+                                    if (player.isSneaking && player.isOp) {
                                         holder.isEditMode = true
-                                        
+
                                     }
                                 }
-                                
+
                                 return@subscribeEvent
                             }
 
                             openTaskInv(player)
                         }
                     }
-                    
+
                     else -> {}
                 }
             }
         }
-        
-        subscribeEvent<InventoryClickEvent> { 
-            if(inventory.holder == this@TaskProject.holder){
-                stageMap.values.forEach { 
+
+        subscribeEvent<InventoryClickEvent> {
+            if (inventory.holder == this@TaskProject.holder) {
+                stageMap.values.forEach {
                     val player = view.asPlayer()
-                    if(rawSlot == it.order && player.hasCompleteStage(it.predecessor)){
+                    if (rawSlot == it.order && player.hasCompleteStage(it.predecessor)) {
                         it.openTaskInv(player)
                     }
                 }
@@ -97,40 +97,41 @@ class TaskProject(
     override fun openTaskInv(player: Player, inv: Inventory) {
         lastTaskProject[player.uniqueId] = this
         lastTaskInv[player.uniqueId] = this
-        
+
         player.playSound(player.location, openSound, volume, pitch)
         player.openInventory(inv)
     }
-    
+
     override fun getTaskInv(player: Player): Inventory {
         val inv = Bukkit.createInventory(holder, invSize * 9, title)
         inv.createEdge(invSize, edgeItem)
         stageMap.values.forEach {
             val pre = it.predecessor
-            if(pre == null || player.hasCompleteStage(pre)){
+            if (pre == null || player.hasCompleteStage(pre)) {
                 inv.setItem(it.order, it.symbol)
             }
         }
 
         return inv
     }
-    
+
     fun getProgress(player: Player): TaskProgress {
         val uid = player.uniqueId.toString()
-        
+
         return player.getTaskProgress(id)
     }
 
     fun completeAllTask(player: Player, isSilent: Boolean = true) {
-        stageMap.values.forEach { 
+        stageMap.values.forEach {
             it.completeAllTask(player, isSilent)
         }
     }
-    
-    
+
+
     companion object {
         val lastTaskProject = HashMap<UUID, TaskProject>()
-        val editItem = SItem(Material.NETHER_STAR, "§f> §c编辑模式 §f<", "§a----------", "§a点我自定义任务！", "§a----------")
+        val editItem =
+            SItem(Material.NETHER_STAR, "§f> §c编辑模式 §f<", "§a----------", "§a点我自定义任务！", "§a----------")
     }
-    
+
 }

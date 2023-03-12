@@ -19,40 +19,40 @@ object PlayerDatabase {
     }
 
     operator fun get(player: String, key: String): String? {
-        return transaction { 
+        return transaction {
             PlayerData.slice(PlayerData.value)
                 .select {
                     (PlayerData.player eq player) and (PlayerData.key eq key)
                 }
                 .limit(1)
-                .firstNotNullOfOrNull { 
+                .firstNotNullOfOrNull {
                     it[PlayerData.value]
                 }
         }
     }
 
     operator fun set(player: String, key: String, data: String) {
-        transaction { 
-            if(get(player, key) == null) {
-                PlayerData.insert { 
+        transaction {
+            if (get(player, key) == null) {
+                PlayerData.insert {
                     it[this.player] = player
                     it[this.key] = key
                     it[this.value] = data
                 }
             } else {
-                PlayerData.update({(PlayerData.player eq player) and (PlayerData.key eq key)}) { 
+                PlayerData.update({ (PlayerData.player eq player) and (PlayerData.key eq key) }) {
                     it[value] = data
                 }
             }
         }
     }
-    
+
     fun delete(player: String, key: String) {
-        transaction { 
-            PlayerData.deleteWhere { 
+        transaction {
+            PlayerData.deleteWhere {
                 (this.player eq player) and (this.key eq key)
             }
         }
     }
-    
+
 }

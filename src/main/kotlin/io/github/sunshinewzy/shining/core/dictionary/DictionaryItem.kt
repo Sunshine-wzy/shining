@@ -12,16 +12,20 @@ open class DictionaryItem {
     val name: NamespacedId
     val item: ItemStack
     val behaviors: List<ItemBehavior>
-    
-    
+
+
     constructor(name: NamespacedId, item: ItemStack, behaviors: List<ItemBehavior>) {
         this.name = name
         this.item = item
         this.behaviors = behaviors
     }
-    
-    constructor(name: NamespacedId, item: ItemStack, vararg behaviors: ItemBehavior) : this(name, item, behaviors.toList())
-    
+
+    constructor(name: NamespacedId, item: ItemStack, vararg behaviors: ItemBehavior) : this(
+        name,
+        item,
+        behaviors.toList()
+    )
+
     constructor(item: ItemStack, behaviors: List<ItemBehavior>) {
         var theName = NamespacedId.NULL
         item.getDictionary { tag ->
@@ -31,23 +35,23 @@ open class DictionaryItem {
                 }
             }
         }
-        
+
         this.name = theName
         this.item = item
         this.behaviors = behaviors
     }
-    
+
     constructor(item: ItemStack, vararg behaviors: ItemBehavior) : this(item, behaviors.toList())
-    
-    
+
+
     fun hasName(): Boolean = name != NamespacedId.NULL
 
 
     companion object {
         const val DICTIONARY = "dictionary"
         const val NAME = "name"
-        
-        
+
+
         val ItemStack.dictionaryItem: DictionaryItem?
             get() = getDictionaryName()?.let {
                 DictionaryRegistry.get(it)
@@ -62,37 +66,37 @@ open class DictionaryItem {
                 NamespacedId.fromString(it)
             }
         }
-        
-        
+
+
         private fun ItemStack.setDictionary(key: String, value: Any): ItemStack {
             val tag = getItemTag()
-            val compound = tag[DICTIONARY]?.let { 
-                if(it is ItemTag) it
+            val compound = tag[DICTIONARY]?.let {
+                if (it is ItemTag) it
                 else null
             } ?: ItemTag()
             compound.put(key, value)
             tag[DICTIONARY] = compound
             return setItemTag(tag)
         }
-        
+
         private fun ItemStack.getDictionary(key: String): ItemTagData? {
             getItemTag()[DICTIONARY]?.let { tag ->
-                if(tag is ItemTag) {
+                if (tag is ItemTag) {
                     return tag[key]
                 }
             }
-            
+
             return null
         }
-        
+
         private fun ItemStack.getDictionary(action: (tag: ItemTag) -> Unit) {
             getItemTag()[DICTIONARY]?.let { tag ->
-                if(tag is ItemTag) {
+                if (tag is ItemTag) {
                     action(tag)
                 }
             }
         }
-        
+
     }
-    
+
 }

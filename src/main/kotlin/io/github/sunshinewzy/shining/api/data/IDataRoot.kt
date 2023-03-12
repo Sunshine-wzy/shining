@@ -8,5 +8,5 @@ interface IDataRoot : IData {
     val container: IDataContainer
 
     var options: DataRootOptions
-    
+
 }

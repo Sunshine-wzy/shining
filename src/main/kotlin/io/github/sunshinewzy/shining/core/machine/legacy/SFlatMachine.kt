@@ -33,11 +33,11 @@ abstract class SFlatMachine(
     val ingredients: Map<Char, SBlock>
 ) : Registrable {
     val flatMachines = HashMap<SLocation, SFlatMachineInformation>()
-    
+
     val structure = FlatCoordSBlockMap()
     val verticalStructure = FlatCoordSBlockMap()
     val otherStructure = FlatCoordSBlockMap()
-    
+
     val centerBlock = shapeStructure(shape, ingredients, structure, verticalStructure, otherStructure)
 
 
@@ -45,7 +45,7 @@ abstract class SFlatMachine(
         SFlatMachineData(plugin, this)
 
         val typeList = centerBlockTypes[centerBlock.type]
-        if(typeList != null) {
+        if (typeList != null) {
             typeList += this
         } else centerBlockTypes[centerBlock.type] = arrayListOf(this)
     }
@@ -78,7 +78,7 @@ abstract class SFlatMachine(
 
     fun getData(sLocation: SLocation, key: String): Any? {
         flatMachines[sLocation]?.data?.let { data ->
-            if(data.containsKey(key)) {
+            if (data.containsKey(key)) {
                 return data[key]
             }
         }
@@ -86,13 +86,14 @@ abstract class SFlatMachine(
     }
 
     fun getDataOrFail(sLocation: SLocation, key: String): Any =
-        getData(sLocation, key) ?: throw IllegalArgumentException("The SLocation '${toString()}' doesn't have SFlatMachine($id) data of $key.")
+        getData(sLocation, key)
+            ?: throw IllegalArgumentException("The SLocation '${toString()}' doesn't have SFlatMachine($id) data of $key.")
 
     inline fun <reified T> getDataByType(sLocation: SLocation, key: String): T? {
         flatMachines[sLocation]?.data?.let { data ->
-            if(data.containsKey(key)) {
+            if (data.containsKey(key)) {
                 data[key]?.let {
-                    if(it is T) {
+                    if (it is T) {
                         return it
                     }
                 }
@@ -103,7 +104,7 @@ abstract class SFlatMachine(
 
     inline fun <reified T> getDataByTypeOrFail(sLocation: SLocation, key: String): T {
         getDataOrFail(sLocation, key).let {
-            if(it is T) {
+            if (it is T) {
                 return it
             }
         }
@@ -120,7 +121,6 @@ abstract class SFlatMachine(
     }
 
 
-
     companion object : Initable {
         /**
          * 所有机器的位置
@@ -133,51 +133,51 @@ abstract class SFlatMachine(
             subscribeEvent<PlayerInteractEvent> {
                 val clickedBlock = clickedBlock ?: return@subscribeEvent
 
-                if(action == Action.RIGHT_CLICK_BLOCK && hand == EquipmentSlot.HAND && clickedBlock.type != Material.AIR && !player.isSneaking) {
+                if (action == Action.RIGHT_CLICK_BLOCK && hand == EquipmentSlot.HAND && clickedBlock.type != Material.AIR && !player.isSneaking) {
                     val loc = clickedBlock.location
-                    
+
                     val sFlatMachine = judge(loc, player)
-                    if(sFlatMachine != null) {
+                    if (sFlatMachine != null) {
                         sFlatMachine.onClick(loc.toSLocation(), this)
                         Shining.pluginManager.callEvent(SFlatMachineUseEvent(sFlatMachine, loc, player))
-                        
+
                         isCancelled = true
                     }
-                    
+
                 }
             }
 
         }
 
         fun judge(loc: Location, player: Player): SFlatMachine? {
-            if(loc.block.type !in centerBlockTypes.keys) return null
-            
+            if (loc.block.type !in centerBlockTypes.keys) return null
+
             val sLoc = loc.toSLocation()
             val machine = loc.getSFlatMachine()
-            
-            if(machine != null) {
+
+            if (machine != null) {
                 machine.flatMachines[sLoc]?.face?.let {
-                    return if(judgeStructure(loc, machine, it) == BlockFace.SELF) {
+                    return if (judgeStructure(loc, machine, it) == BlockFace.SELF) {
                         removeMachine(loc)
                         null
                     } else machine
                 }
             } else {
-                centerBlockTypes[loc.block.type]?.let { list -> 
-                    for(sFlatMachine in list) {
+                centerBlockTypes[loc.block.type]?.let { list ->
+                    for (sFlatMachine in list) {
                         val face = judgeStructure(loc, sFlatMachine)
-                        if(face != BlockFace.SELF) {
+                        if (face != BlockFace.SELF) {
                             addMachine(loc, sFlatMachine, player, face)
-                            
+
                             return sFlatMachine
                         }
                     }
                 }
             }
-            
+
             return null
         }
-        
+
         fun judgeStructure(
             loc: Location,
             sFlatMachine: SFlatMachine,
@@ -187,43 +187,43 @@ abstract class SFlatMachine(
             sFlatMachine.verticalStructure.forEach { (coord, sBlock) ->
                 theLoc = loc.addClone(coord.y)
 
-                if(sBlock.type != Material.AIR && !sBlock.isSimilar(theLoc))
+                if (sBlock.type != Material.AIR && !sBlock.isSimilar(theLoc))
                     return BlockFace.SELF
             }
 
-            if(face != BlockFace.SELF) {
+            if (face != BlockFace.SELF) {
                 var flag = true
-                
-                for((coord, sBlock) in sFlatMachine.otherStructure) {
+
+                for ((coord, sBlock) in sFlatMachine.otherStructure) {
                     theLoc = loc.addClone(coord, face)
 
-                    if(sBlock.type != Material.AIR && !sBlock.isSimilar(theLoc)) {
+                    if (sBlock.type != Material.AIR && !sBlock.isSimilar(theLoc)) {
                         flag = false
                         break
                     }
                 }
 
-                return if(flag) face else BlockFace.SELF
+                return if (flag) face else BlockFace.SELF
             }
-            
-            for(theFace in listOf(BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH, BlockFace.NORTH)) {
+
+            for (theFace in listOf(BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH, BlockFace.NORTH)) {
                 var flag = true
-                
-                for((coord, sBlock) in sFlatMachine.otherStructure) {
+
+                for ((coord, sBlock) in sFlatMachine.otherStructure) {
                     theLoc = loc.addClone(coord, theFace)
 
-                    if(sBlock.type != Material.AIR && !sBlock.isSimilar(theLoc)) {
+                    if (sBlock.type != Material.AIR && !sBlock.isSimilar(theLoc)) {
                         flag = false
                         break
                     }
                 }
-                
-                if(flag) return theFace
+
+                if (flag) return theFace
             }
-            
+
             return BlockFace.SELF
         }
-        
+
         fun shapeStructure(
             shape: String,
             ingredients: Map<Char, SBlock>,
@@ -234,44 +234,54 @@ abstract class SFlatMachine(
             val lines = shape.split("\n")
             val tempStructure = FlatCoordSBlockMap()
             var center: SFlatCoord? = null
-            
+
             var y = -1
-            for(i in lines.lastIndex downTo 0) {
+            for (i in lines.lastIndex downTo 0) {
                 y++
                 val line = lines[i]
 
                 line.forEachIndexed forEachX@{ x, char ->
-                    if(char == ' ') return@forEachX
+                    if (char == ' ') return@forEachX
 
                     val sBlock = ingredients[char] ?: throw NoIngredientException(shape, char)
                     tempStructure[SFlatCoord(x, y)] = sBlock
 
-                    if(char == 'x') {
-                        if(center == null) {
+                    if (char == 'x') {
+                        if (center == null) {
                             center = SFlatCoord(x, y)
-                        } else throw MachineStructureException(shape, "The center block (marked as 'x') cannot exist more than one.")
+                        } else throw MachineStructureException(
+                            shape,
+                            "The center block (marked as 'x') cannot exist more than one."
+                        )
                     }
                 }
             }
-            
-            if(center == null) {
+
+            if (center == null) {
                 throw MachineStructureException(shape, "The structure must have a center block which is marked as 'x'.")
             }
 
             tempStructure.forEach { (coord, sBlock) ->
                 val resCoord = SFlatCoord(coord.x - center!!.x, coord.y - center!!.y)
-                
+
                 structure[resCoord] = sBlock
-                if(resCoord.x == 0) {
+                if (resCoord.x == 0) {
                     verticalStructure[resCoord] = sBlock
                 } else otherStructure[resCoord] = sBlock
             }
-            
-            return structure[SFlatCoord(0, 0)] ?: throw MachineStructureException(shape, "Cannot find the center block.")
+
+            return structure[SFlatCoord(0, 0)] ?: throw MachineStructureException(
+                shape,
+                "Cannot find the center block."
+            )
         }
 
 
-        fun addMachine(sLocation: SLocation, sFlatMachine: SFlatMachine, information: SFlatMachineInformation = SFlatMachineInformation()) {
+        fun addMachine(
+            sLocation: SLocation,
+            sFlatMachine: SFlatMachine,
+            information: SFlatMachineInformation = SFlatMachineInformation()
+        ) {
             allFlatMachines[sLocation] = sFlatMachine
             sFlatMachine.flatMachines[sLocation] = information
         }
@@ -328,12 +338,12 @@ data class SFlatMachineInformation(
             val information = SFlatMachineInformation()
 
             map["owner"]?.let {
-                if(it is String)
+                if (it is String)
                     information.owner = it
             }
-            
-            map["face"]?.let { 
-                if(it is String)
+
+            map["face"]?.let {
+                if (it is String)
                     information.face = BlockFace.valueOf(it)
             }
 

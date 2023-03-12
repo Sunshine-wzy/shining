@@ -14,13 +14,13 @@ class Namespace private constructor(val name: String) {
             "Invalid namespace. Must be [a-z0-9_-]: $name"
         }
     }
-    
-    
-    override fun equals(other: Any?): Boolean {
-        if(this === other) return true
-        if(other !is Namespace) return false
 
-        if(name != other.name) return false
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Namespace) return false
+
+        if (name != other.name) return false
 
         return true
     }
@@ -36,16 +36,16 @@ class Namespace private constructor(val name: String) {
 
     companion object {
         private val cache = ConcurrentHashMap<String, Namespace>()
-        
+
         val VALID_NAMESPACE = Pattern.compile("[a-z0-9_-]+")
 
-        
+
         @JvmStatic
         operator fun get(name: String): Namespace {
-            cache[name]?.let { 
+            cache[name]?.let {
                 return it
             }
-            
+
             val namespace = Namespace(name)
             cache[name] = namespace
             return namespace

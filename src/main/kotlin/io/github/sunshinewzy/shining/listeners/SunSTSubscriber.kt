@@ -19,55 +19,55 @@ object SunSTSubscriber : Initable {
         // 保护 holder 为 SProtectInventoryHolder 的物品栏
         subscribeEvent<InventoryClickEvent>(EventPriority.HIGHEST) {
             val holder = inventory.holder ?: return@subscribeEvent
-            
-            when(holder) {
+
+            when (holder) {
                 is SProtectInventoryHolder<*> -> {
                     isCancelled = true
                 }
-                
+
                 is SPartProtectInventoryHolder<*> -> {
                     isCancelled = true
-                    
-                    when(click) {
+
+                    when (click) {
                         ClickType.LEFT, ClickType.RIGHT, ClickType.CREATIVE, ClickType.SHIFT_LEFT -> {}
                         else -> return@subscribeEvent
                     }
-                    
+
                     clickedInventory?.holder?.let { topHolder ->
-                        if(topHolder is SCraftInventoryHolder<*>) {
-                            if(slot == topHolder.outputSlot) {
+                        if (topHolder is SCraftInventoryHolder<*>) {
+                            if (slot == topHolder.outputSlot) {
                                 isCancelled = false
                                 return@subscribeEvent
                             }
                         }
-                        
-                        if(topHolder is SPartProtectInventoryHolder<*>) {
-                            if(topHolder.allowClickSlots.contains(slot))
+
+                        if (topHolder is SPartProtectInventoryHolder<*>) {
+                            if (topHolder.allowClickSlots.contains(slot))
                                 isCancelled = false
-                            
+
                             return@subscribeEvent
                         }
                     }
-                    
-                    if(click != ClickType.SHIFT_LEFT) {
+
+                    if (click != ClickType.SHIFT_LEFT) {
                         isCancelled = false
                         return@subscribeEvent
                     }
                 }
             }
         }
-        
+
         subscribeEvent<InventoryDragEvent>(EventPriority.HIGHEST) {
             val holder = inventory.holder ?: return@subscribeEvent
 
-            when(holder) {
+            when (holder) {
                 is SProtectInventoryHolder<*> -> {
                     isCancelled = true
                 }
 
                 is SPartProtectInventoryHolder<*> -> {
                     rawSlots.forEach {
-                        if(!holder.allowClickSlots.contains(it)) {
+                        if (!holder.allowClickSlots.contains(it)) {
                             isCancelled = true
                             return@subscribeEvent
                         }
@@ -80,17 +80,17 @@ object SunSTSubscriber : Initable {
             val inv = view.topInventory
             val holder = inv.holder ?: return@subscribeEvent
 
-            if(holder is SCraftInventoryHolder<*>) {
+            if (holder is SCraftInventoryHolder<*>) {
                 val player = player as? Player ?: return@subscribeEvent
 
                 holder.allowClickSlots.forEach { order ->
                     inv.getItem(order)?.let {
-                        if(it.type != Material.AIR)
+                        if (it.type != Material.AIR)
                             player.giveItem(it)
                     }
                 }
             }
         }
-        
+
     }
 }

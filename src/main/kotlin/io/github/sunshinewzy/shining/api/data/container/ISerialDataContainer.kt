@@ -10,9 +10,9 @@ import io.github.sunshinewzy.shining.core.data.container.SerialDataContainer
 import java.io.OutputStream
 
 interface ISerialDataContainer : IDataContainer {
-    
+
     val objectMapper: ObjectMapper
-    
+
 
     /**
      * Get the requested [ISerialDataRoot] by [key].
@@ -25,21 +25,21 @@ interface ISerialDataContainer : IDataContainer {
      */
     override operator fun get(key: NamespacedId): ISerialDataRoot
 
-    
+
     fun serialize(generator: JsonGenerator): JsonGenerator
-    
-    fun <T: OutputStream> serialize(stream: T): T
-    
+
+    fun <T : OutputStream> serialize(stream: T): T
+
     @JsonValue
     fun serializeToJsonNode(): JsonNode
 
     fun serializeToString(): String
-    
+
     fun deserialize(source: JsonNode): Boolean
-    
+
     fun deserialize(source: String): Boolean
-    
-    
+
+
     companion object {
         @JvmStatic
         fun deserialize(
@@ -47,12 +47,12 @@ interface ISerialDataContainer : IDataContainer {
             objectMapper: ObjectMapper = ObjectMapper()
         ): ISerialDataContainer {
             return SerialDataContainer(objectMapper).also {
-                if(!it.deserialize(source)) {
+                if (!it.deserialize(source)) {
                     throw RuntimeException("Deserialization failed.")
                 }
             }
         }
-        
+
         @JvmStatic
         fun deserialize(
             source: String,

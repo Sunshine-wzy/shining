@@ -19,18 +19,19 @@ import taboolib.module.nms.ItemTagType.*
 object ItemTagDataSerializer : StdSerializer<ItemTagData>(ItemTagData::class.java) {
 
     override fun serialize(value: ItemTagData, gen: JsonGenerator, provider: SerializerProvider) {
-        when(value.type) {
+        when (value.type) {
             COMPOUND -> {
                 gen.writeStartObject()
-                if(value is ItemTag) {
-                    value.forEach { (key, data) -> 
+                if (value is ItemTag) {
+                    value.forEach { (key, data) ->
                         provider.defaultSerializeField(key, data, gen)
                     }
                 }
                 gen.writeEndObject()
             }
+
             LIST -> {
-                if(value is ItemTagList) {
+                if (value is ItemTagList) {
                     gen.writeStartArray()
                     value.forEach { data ->
                         provider.defaultSerializeValue(data, gen)
@@ -38,6 +39,7 @@ object ItemTagDataSerializer : StdSerializer<ItemTagData>(ItemTagData::class.jav
                     gen.writeEndArray()
                 }
             }
+
             BYTE -> gen.writeString("${value.asByte()}b")
             SHORT -> gen.writeString("${value.asShort()}s")
             INT -> gen.writeString("${value.asInt()}i")
@@ -50,20 +52,21 @@ object ItemTagDataSerializer : StdSerializer<ItemTagData>(ItemTagData::class.jav
             else -> {}
         }
     }
-    
+
 }
 
 object ItemTagDataDeserializer : StdDeserializer<ItemTagData>(ItemTagData::class.java) {
 
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): ItemTagData {
-        return when(val node = p.readValueAsTree<JsonNode>()) {
+        return when (val node = p.readValueAsTree<JsonNode>()) {
             is ArrayNode -> {
                 ItemTagList().also { tagList ->
-                    node.forEach { 
+                    node.forEach {
                         tagList.add(ctxt.readTreeAsValue(it, ItemTagData::class.java))
                     }
                 }
             }
+
             is ObjectNode -> {
                 ItemTag().also { tag ->
                     node.fields().forEach { (key, data) ->
@@ -71,12 +74,17 @@ object ItemTagDataDeserializer : StdDeserializer<ItemTagData>(ItemTagData::class
                     }
                 }
             }
+
             is ValueNode -> {
                 val str = node.asText()
                 if (str.endsWith(']')) {
                     when (val i = str.substring(str.length - 2, str.length - 1)) {
-                        "b" -> ItemTagData(str.substring(0, str.length - 2).split(",").map { Coerce.toByte(it) }.toByteArray())
-                        "i" -> ItemTagData(str.substring(0, str.length - 2).split(",").map { Coerce.toInteger(it) }.toIntArray())
+                        "b" -> ItemTagData(str.substring(0, str.length - 2).split(",").map { Coerce.toByte(it) }
+                            .toByteArray())
+
+                        "i" -> ItemTagData(str.substring(0, str.length - 2).split(",").map { Coerce.toInteger(it) }
+                            .toIntArray())
+
                         else -> error("unsupported array $node ($i)")
                     }
                 } else {
@@ -92,8 +100,9 @@ object ItemTagDataDeserializer : StdDeserializer<ItemTagData>(ItemTagData::class
                     }
                 }
             }
+
             else -> error("Unsupported json $node (${node.javaClass.simpleName})")
         }
     }
-    
+
 }

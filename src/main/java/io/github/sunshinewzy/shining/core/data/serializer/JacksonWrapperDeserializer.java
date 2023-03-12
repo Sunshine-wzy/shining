@@ -13,7 +13,7 @@ import java.io.IOException;
 public class JacksonWrapperDeserializer extends JsonDeserializer<JacksonWrapper<?>> implements ContextualDeserializer {
 
 	private JavaType type;
-	
+
 
 	@Override
 	public JacksonWrapper<?> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
@@ -23,14 +23,14 @@ public class JacksonWrapperDeserializer extends JsonDeserializer<JacksonWrapper<
 	@Override
 	public JsonDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property) {
 		JacksonWrapperDeserializer deserializer = new JacksonWrapperDeserializer();
-		
-		if(property == null) {
+
+		if (property == null) {
 			deserializer.type = ctxt.getContextualType().containedType(0);
 		} else {
 			deserializer.type = property.getType().containedType(0);
 		}
-		
+
 		return deserializer;
 	}
-	
+
 }

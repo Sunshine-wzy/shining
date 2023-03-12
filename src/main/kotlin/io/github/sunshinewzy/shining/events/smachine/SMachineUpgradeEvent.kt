@@ -11,13 +11,13 @@ class SMachineUpgradeEvent(
     val player: Player,
     val level: Short
 ) : SMachineEvent(sMachine) {
-    
+
     override fun getHandlers(): HandlerList = handlerList
 
 
     companion object {
         private val handlerList = HandlerList()
-        
+
         @JvmStatic
         fun getHandlerList(): HandlerList = handlerList
     }

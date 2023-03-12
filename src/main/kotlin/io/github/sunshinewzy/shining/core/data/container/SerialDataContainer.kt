@@ -18,8 +18,8 @@ class SerialDataContainer(
     override val objectMapper: ObjectMapper = ObjectMapper()
 ) : ISerialDataContainer {
     private val map: ConcurrentHashMap<NamespacedId, ISerialDataRoot> = ConcurrentHashMap()
-    
-    
+
+
     override fun get(key: NamespacedId): ISerialDataRoot {
         map[key]?.let { return it }
 
@@ -28,7 +28,7 @@ class SerialDataContainer(
 
     override fun serialize(generator: JsonGenerator): JsonGenerator {
         generator.writeStartObject()
-        map.forEach { (key, data) -> 
+        map.forEach { (key, data) ->
             generator.writeFieldName(key.toString())
             data.serialize(generator)
         }
@@ -46,7 +46,7 @@ class SerialDataContainer(
 
     override fun serializeToJsonNode(): JsonNode {
         val node = objectMapper.createObjectNode()
-        map.forEach { (key, data) -> 
+        map.forEach { (key, data) ->
             node.replace(key.toString(), data.serializeToJsonNode())
         }
         return node
@@ -59,14 +59,14 @@ class SerialDataContainer(
     }
 
     override fun deserialize(source: JsonNode): Boolean {
-        if(source !is ObjectNode) return false
+        if (source !is ObjectNode) return false
 
         source.fields().forEach { (key, node) ->
             NamespacedId.fromString(key)?.let {
                 map[it] = ISerialDataRoot.deserialize(node, key, this)
             } ?: return false
         }
-        
+
         return true
     }
 

@@ -60,45 +60,58 @@ import taboolib.platform.BukkitPlugin
     RuntimeDependency(value = "org.jetbrains.exposed:exposed-dao:0.41.1", isolated = true),
     RuntimeDependency(value = "org.jetbrains.exposed:exposed-jdbc:0.41.1", isolated = true),
     RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-core:2.14.1", transitive = false, isolated = true),
-    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-annotations:2.14.1", transitive = false, isolated = true),
-    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-databind:2.14.1", transitive = false, isolated = true),
-    RuntimeDependency(value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.14.1", transitive = false, isolated = true),
+    RuntimeDependency(
+        value = "com.fasterxml.jackson.core:jackson-annotations:2.14.1",
+        transitive = false,
+        isolated = true
+    ),
+    RuntimeDependency(
+        value = "com.fasterxml.jackson.core:jackson-databind:2.14.1",
+        transitive = false,
+        isolated = true
+    ),
+    RuntimeDependency(
+        value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.14.1",
+        transitive = false,
+        isolated = true
+    ),
     RuntimeDependency(value = "!com.zaxxer:HikariCP:4.0.3", isolated = true)
 )
 object Shining : Plugin(), ShiningPlugin {
     const val NAME = "shining"
     const val COLOR_NAME = "§eshining"
-    
+
     @Config
     lateinit var config: Configuration
         private set
     lateinit var database: Database
         private set
-    
+
     val plugin: BukkitPlugin by lazy { BukkitPlugin.getInstance() }
     val pluginManager: PluginManager by lazy { Bukkit.getPluginManager() }
+
     @get:JvmName("prefix")
     val prefix: String by lazy { config.getString("prefix")?.colored() ?: COLOR_NAME }
     val machineManager: IMachineManager by lazy { MachineManager }
-    val objectMapper: ObjectMapper = jsonMapper { 
+    val objectMapper: ObjectMapper = jsonMapper {
         addModule(SerializationModules.shining)
         addModule(SerializationModules.bukkit)
     }
     val scope: CoroutineScope by lazy { CoroutineScope(SupervisorJob()) }
-    
+
     private val namespace = Namespace[NAME.lowercase()]
-    
-    
+
+
     override fun onEnable() {
         registerSerialization()
         registerListeners()
         init()
-        
+
         val metrics = Metrics(10212, pluginVersion, Platform.BUKKIT)
-        
+
         info("Shining 加载成功！")
-        
-        if(System.getProperty("ShiningDebug") == "true")
+
+        if (System.getProperty("ShiningDebug") == "true")
             test()
     }
 
@@ -124,7 +137,7 @@ object Shining : Plugin(), ShiningPlugin {
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
-        
+
         SItem.initAction()
         DataManager.init()
         SMachineWrench.init()
@@ -133,42 +146,55 @@ object Shining : Plugin(), ShiningPlugin {
         SFlatMachine.init()
         SunSTMachineManager.register()
     }
-    
+
     private fun registerListeners() {
         SunSTSubscriber.init()
     }
-    
+
     private fun registerSerialization() {
         arrayOf(
             SBlock::class.java,
             TaskProgress::class.java,
             SMachineInformation::class.java, SSingleMachineInformation::class.java, SFlatMachineInformation::class.java,
             SMachineRecipe::class.java, SMachineRecipes::class.java
-        ).forEach { 
+        ).forEach {
             ConfigurationSerialization.registerClass(it)
         }
     }
-    
-    
+
+
     @ShiningTestApi
     private fun test() {
-        val stoneCategory = GuideCategory(NamespacedId(Shining, "stone_age"), ElementDescription("&f石器时代", "&d一切的起源"), SItem(Material.STONE))
-        
+        val stoneCategory = GuideCategory(
+            NamespacedId(Shining, "stone_age"),
+            ElementDescription("&f石器时代", "&d一切的起源"),
+            SItem(Material.STONE)
+        )
+
         val lockExperience = LockExperience(5)
-        
-        val stickItem = GuideItem(NamespacedId(Shining, "stick"), ElementDescription("&6工具的基石"), SItem(Material.STICK))
+
+        val stickItem =
+            GuideItem(NamespacedId(Shining, "stick"), ElementDescription("&6工具的基石"), SItem(Material.STICK))
         stickItem.registerLock(lockExperience)
         stoneCategory.registerElement(stickItem)
-        
-        val newStoneCategory = GuideCategory(NamespacedId(Shining, "new_stone_age"), ElementDescription("&a新石器时代", "&6刀耕火种"), SItem(Material.STONE_BRICKS))
+
+        val newStoneCategory = GuideCategory(
+            NamespacedId(Shining, "new_stone_age"),
+            ElementDescription("&a新石器时代", "&6刀耕火种"),
+            SItem(Material.STONE_BRICKS)
+        )
         newStoneCategory.registerDependency(stickItem)
         stoneCategory.registerElement(newStoneCategory)
         
-        val pickaxeItem = GuideItem(NamespacedId(Shining, "pickaxe"), ElementDescription("&e生产力提高"), SItem(Material.STONE_PICKAXE))
+        val pickaxeItem = GuideItem(
+            NamespacedId(Shining, "pickaxe"),
+            ElementDescription("&e生产力提高"),
+            SItem(Material.STONE_PICKAXE)
+        )
         newStoneCategory.registerElement(pickaxeItem)
-        
+
         ShiningGuide.registerElement(stoneCategory)
-        
+
         /*
         val stoneCategory = GuideCategory(NamespacedId(Shining, "STONE_AGE"), SItem(Material.STONE, "&f石器时代", "&d一切的起源"))
         val steamCategory = GuideCategory(NamespacedId(Shining, "STEAM_AGE"), SItem(Material.IRON_INGOT, "&e蒸汽时代", "&d第一次工业革命"))
@@ -199,38 +225,40 @@ object Shining : Plugin(), ShiningPlugin {
         ShiningGuide.registerElement(informationCateGory, 13)
         ShiningGuide.registerElement(steamCategory, 11)
         */
-        
-        val mapper = jsonMapper { 
+
+        val mapper = jsonMapper {
             addModule(SerializationModules.bukkit)
         }
-        
+
         subscribeEvent<PlayerInteractEvent>(ignoreCancelled = false) {
-            if(hand != EquipmentSlot.HAND) return@subscribeEvent
-            
-            if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+            if (hand != EquipmentSlot.HAND) return@subscribeEvent
+
+            if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
                 val item = player.inventory.itemInMainHand
-                when(item.type) {
+                when (item.type) {
                     Material.DIAMOND -> {
                         player.giveItem(ShiningGuide.getItem())
                     }
-                    
+
                     Material.EMERALD -> {
                         ShiningGuide.fireworkCongratulate(player)
                     }
-                    
+
                     Material.STICK -> {
                         clickedBlock?.let { block ->
-                            player.sendMessage("""
+                            player.sendMessage(
+                                """
                                 > Block
                                 ${block.type}
                                 ${block.data}
                                 ${block.blockData.asString}
-                            """.trimIndent())
+                            """.trimIndent()
+                            )
                         }
                     }
-                    
+
                     Material.AIR -> {}
-                    
+
                     else -> {
                         val json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item)
                         player.sendMessage(json)
@@ -240,9 +268,9 @@ object Shining : Plugin(), ShiningPlugin {
 //                        }
                     }
                 }
-                
+
             }
         }
     }
-    
+
 }

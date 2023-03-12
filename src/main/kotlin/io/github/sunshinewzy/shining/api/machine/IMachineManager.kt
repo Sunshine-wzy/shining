@@ -25,7 +25,7 @@ interface IMachineManager {
 
     /**
      * Register a [processor].
-     * 
+     *
      * The [processor] decides how to activate machines.
      */
     fun registerProcessor(processor: IMachineRegistrationProcessor)
@@ -39,5 +39,5 @@ interface IMachineManager {
      * Check whether the [processor] has already been registered.
      */
     fun isProcessorRegistered(processor: IMachineRegistrationProcessor): Boolean
-    
+
 }

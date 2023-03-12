@@ -10,7 +10,7 @@ class PlayerDataContainer(val player: String) {
     val source: MutableMap<String, String> = PlayerDatabase[player]
     val updateMap: MutableMap<String, Long> = ConcurrentHashMap()
 
-    
+
     operator fun set(key: String, value: Any) {
         source[key] = value.toString()
         save(key)
@@ -24,7 +24,7 @@ class PlayerDataContainer(val player: String) {
     operator fun get(key: String): String? {
         return source[key]
     }
-    
+
     fun delete(key: String) {
         source.remove(key)
         submitAsync { PlayerDatabase.delete(player, key) }
@@ -63,6 +63,6 @@ class PlayerDataContainer(val player: String) {
         private fun checkUpdate() {
             PlayerDatabaseHandler.dataContainer.values.forEach { it.checkUpdate() }
         }
-        
+
     }
 }

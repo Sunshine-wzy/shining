@@ -14,12 +14,12 @@ interface IDictionaryRegistry {
     fun getOrFail(name: NamespacedId): DictionaryItem
 
     fun getOrFail(item: ItemStack): DictionaryItem
-    
+
     fun getById(id: String): List<DictionaryItem>
-    
-    
+
+
     fun registerItem(name: NamespacedId, item: ItemStack, vararg behaviors: ItemBehavior): DictionaryItem
-    
+
     fun hasItem(name: NamespacedId): Boolean
-    
+
 }

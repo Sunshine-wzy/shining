@@ -21,9 +21,9 @@ abstract class SAutoCoverSaveData(
 
         try {
             config.save(file)
-        } catch (ex: IOException){
+        } catch (ex: IOException) {
             ex.printStackTrace()
         }
     }
-    
+
 }

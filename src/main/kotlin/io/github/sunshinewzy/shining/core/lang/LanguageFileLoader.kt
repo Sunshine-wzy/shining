@@ -26,12 +26,17 @@ object LanguageFileLoader {
         }
     }
     private val dateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm")
-    
-    
+
+
     @JvmOverloads
-    fun loadLanguageFiles(languageCode: Set<String>, classLoader: ClassLoader, path: String = "lang", checkMissingNodes: Boolean = true): Map<String, LanguageFile> {
+    fun loadLanguageFiles(
+        languageCode: Set<String>,
+        classLoader: ClassLoader,
+        path: String = "lang",
+        checkMissingNodes: Boolean = true
+    ): Map<String, LanguageFile> {
         val fileMap = HashMap<String, LanguageFile>()
-        
+
         languageCode.forEach { code ->
             classLoader.getResourceAsStream("$path/$code.yml")?.use { resourceAsStream ->
                 val nodes = HashMap<String, LanguageNode>()
@@ -57,7 +62,7 @@ object LanguageFileLoader {
                     }
                 }
                 nodes += exists
-                
+
                 fileMap[code.lowercase()] = LanguageFile(file, nodes).also {
                     // Watch the file change
                     if (isFileWatcherHook) {
@@ -70,7 +75,7 @@ object LanguageFileLoader {
                 }
             }
         }
-        
+
         return fileMap
     }
 
@@ -83,22 +88,24 @@ object LanguageFileLoader {
                         loadNode(it)
                     }
                 )
+
                 is ConfigurationSection -> nodeMap[node] = SectionNode(obj)
                 else -> warning("Unsupported language node: $node ($code)")
             }
         }
     }
-    
+
     fun loadNode(obj: Any?): LanguageNode? {
-        if(obj == null) return null
-        
+        if (obj == null) return null
+
         return when (obj) {
             is String -> TextNode(obj)
             is List<*> -> ListNode(
-                obj.mapNotNull { 
+                obj.mapNotNull {
                     loadNode(it)
                 }
             )
+
             is ConfigurationSection -> SectionNode(obj)
             else -> null
         }
@@ -106,7 +113,7 @@ object LanguageFileLoader {
 
     fun migrateFile(missingNodes: List<String>, configuration: Configuration, file: File) {
         submit(async = true) {
-            val builder = buildString { 
+            val builder = buildString {
                 appendLine("# ------------------------- #")
                 appendLine("#  UPDATE ${dateFormat.format(System.currentTimeMillis())}  #")
                 appendLine("# ------------------------- #")
@@ -118,7 +125,7 @@ object LanguageFileLoader {
                     }
                 }
             }
-            
+
             file.appendText("\n$builder")
         }
     }

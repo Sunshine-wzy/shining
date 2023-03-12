@@ -8,18 +8,18 @@ import taboolib.module.nms.ItemTagData
 
 object SerializationModules {
     val VERSION: Version = Version(2, 0, 0, null, "io.github.sunshinewzy", "Shining")
-    
-    
+
+
     val shining: SimpleModule = SimpleModule("Shining", VERSION).apply {
         addDeserializer(JacksonWrapper::class.java, JacksonWrapperDeserializer())
     }
-    
-    val bukkit: SimpleModule = SimpleModule("Bukkit", VERSION).apply { 
+
+    val bukkit: SimpleModule = SimpleModule("Bukkit", VERSION).apply {
         addSerializer(ItemStack::class.java, ItemStackSerializer)
         addDeserializer(ItemStack::class.java, ItemStackDeserializer)
-        
+
         addSerializer(ItemTagData::class.java, ItemTagDataSerializer)
         addDeserializer(ItemTagData::class.java, ItemTagDataDeserializer)
     }
-    
+
 }

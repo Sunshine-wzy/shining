@@ -15,29 +15,28 @@ class PlayerCreateMachineContext(
     var leftPosition: SPosition? = null,
     var rightPosition: SPosition? = null
 ) {
-    
-    
+
 
     fun checkSelect() {
-        if(isFinishedSelect()) {
-            
+        if (isFinishedSelect()) {
+
         }
-        
+
     }
-    
+
     fun isFinishedSelect(): Boolean =
         leftPosition != null && rightPosition != null
-    
+
     fun playParticle(player: Player) {
         leftPosition?.let { pos ->
             SParticle.aroundBlock(player, Particle.VILLAGER_HAPPY, pos)
         }
-        
+
         rightPosition?.let { pos ->
             SParticle.aroundBlock(player, Particle.VILLAGER_HAPPY, pos)
         }
-        
-        if(leftPosition != null && rightPosition != null) {
+
+        if (leftPosition != null && rightPosition != null) {
             val leftLoc = leftPosition?.toLocation() ?: return
             val rightLoc = rightPosition?.toLocation() ?: return
 
@@ -52,13 +51,12 @@ class PlayerCreateMachineContext(
             ).show()
         }
     }
-    
-    
-    
+
+
     enum class Status {
         SELECT_LEFT,
         SELECT_RIGHT,
 
     }
-    
+
 }

@@ -11,18 +11,18 @@ import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
 
 object PlayerListener {
-    
+
     @SubscribeEvent
     fun onPlayerJoin(e: PlayerJoinEvent) {
         val player = e.player
-        
+
         player.setupDataContainer()
-        
-        if(!player.hasPlayedBefore()) {
+
+        if (!player.hasPlayedBefore()) {
             player.giveItem(ShiningGuide.getItem())
         } else {
             player.letGuideTeam { team ->
-                if(player.uniqueId == team.captain) {
+                if (player.uniqueId == team.captain) {
                     submit(delay = 20) {
                         team.notifyCaptainApplication()
                     }
@@ -30,10 +30,10 @@ object PlayerListener {
             }
         }
     }
-    
+
     @SubscribeEvent
     fun onPlayerQuit(e: PlayerQuitEvent) {
         e.player.releaseDataContainer()
     }
-    
+
 }

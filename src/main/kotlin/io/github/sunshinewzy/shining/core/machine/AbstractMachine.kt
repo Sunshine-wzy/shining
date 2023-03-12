@@ -7,10 +7,10 @@ abstract class AbstractMachine(override val property: MachineProperty) : IMachin
     open fun register() {
 //        Shining.machineManager.register(this)
     }
-    
+
 
     override fun onTick() {}
 
     override fun onAsyncTick() {}
-    
+
 }

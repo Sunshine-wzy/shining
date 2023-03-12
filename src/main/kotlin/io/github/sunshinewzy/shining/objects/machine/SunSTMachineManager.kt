@@ -7,5 +7,5 @@ object SunSTMachineManager : Registrable {
     override fun register() {
         CraftingStation.register()
     }
-    
+
 }

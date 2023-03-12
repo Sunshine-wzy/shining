@@ -12,16 +12,16 @@ open class Search<T>(title: String) : Linked<T>(title) {
     private var searchMap: () -> Map<String, T> = { hashMapOf() }
     private var searchMapCache: Map<String, T> = emptyMap()
     private var searchText: String = ""
-    
-    
+
+
     fun searchMap(searchMap: () -> Map<String, T>) {
         this.searchMap = searchMap
     }
-    
+
     fun search(searchText: String) {
         this.searchText = searchText
     }
-    
+
     fun open(player: Player) {
         page(0)
         player.openInventory(build())
@@ -31,26 +31,26 @@ open class Search<T>(title: String) : Linked<T>(title) {
 
     override fun build(): Inventory {
         searchMapCache = searchMap()
-        
-        if(searchText != "") {
+
+        if (searchText != "") {
             val list = LinkedList<T>()
             searchMapCache.forEach { (key, value) ->
-                if(key.contains(searchText, true)) {
+                if (key.contains(searchText, true)) {
                     list += value
                 }
             }
-            
+
             elements { list }
         } else {
             elements { searchMapCache.values.toList() }
         }
-        
+
         return super.build()
     }
-    
-    
+
+
     companion object {
-        val allItemMap: Map<String, ItemStack> = Material.values().filter { it.isNotAir() && it.isItem }.associate { 
+        val allItemMap: Map<String, ItemStack> = Material.values().filter { it.isNotAir() && it.isItem }.associate {
             it.name to ItemStack(it)
         }
     }

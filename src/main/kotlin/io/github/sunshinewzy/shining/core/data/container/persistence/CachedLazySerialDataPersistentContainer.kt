@@ -12,10 +12,10 @@ open class CachedLazySerialDataPersistentContainer<T>(
     database: Database<*> = DataManager.sDatabase
 ) : LazySerialDataPersistentContainer<T>(serializer, tableName, database) {
     private val initCompleteSet = hashSetOf<String>()
-    
-    
+
+
     override fun init() {
-        
+
     }
 
 
@@ -23,15 +23,15 @@ open class CachedLazySerialDataPersistentContainer<T>(
         init(key)
         return super.get(key)
     }
-    
-    
+
+
     fun init(key: String) {
-        if(!initCompleteSet.contains(key)) {
+        if (!initCompleteSet.contains(key)) {
             submit(async = true) {
                 retrieve(key)?.let { dataMap[key] = Json.decodeFromString(serializer, it) }
             }
             initCompleteSet += key
         }
     }
-    
+
 }

@@ -14,7 +14,7 @@ interface ShiningPlugin {
      * underscores, and hyphens.
      */
     fun getNamespace(): Namespace = Namespace[getName().lowercase()]
-    
+
     fun getPrefix(): String = getName()
-    
+
 }

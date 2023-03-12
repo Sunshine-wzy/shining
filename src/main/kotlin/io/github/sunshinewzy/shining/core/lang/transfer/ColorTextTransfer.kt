@@ -8,5 +8,5 @@ object ColorTextTransfer : TextTransfer {
     override fun transfer(source: String): String {
         return source.colored()
     }
-    
+
 }

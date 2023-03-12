@@ -17,10 +17,10 @@ abstract class StringSerializer<T>(serialName: String) : KSerializer<T> {
     override fun deserialize(decoder: Decoder): T {
         return fromString(decoder.decodeString())
     }
-    
-    
+
+
     abstract fun toString(value: T): String
-    
+
     abstract fun fromString(source: String): T
-    
+
 }

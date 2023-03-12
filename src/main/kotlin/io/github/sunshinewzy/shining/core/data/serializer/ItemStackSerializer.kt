@@ -22,7 +22,7 @@ object ItemStackSerializer : StdSerializer<ItemStack>(ItemStack::class.java) {
         provider.defaultSerializeField("nbt", value.getItemTag(), gen)
         gen.writeEndObject()
     }
-    
+
 }
 
 object ItemStackDeserializer : StdDeserializer<ItemStack>(ItemStack::class.java) {
@@ -36,8 +36,8 @@ object ItemStackDeserializer : StdDeserializer<ItemStack>(ItemStack::class.java)
             val tag = ctxt.readTreeAsValue(node["nbt"], ItemTagData::class.java)
             return item.setItemTag(tag.asCompound())
         }
-        
+
         return item
     }
-    
+
 }

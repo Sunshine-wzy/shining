@@ -5,7 +5,7 @@ import org.bukkit.entity.Player
 import taboolib.common.platform.command.subCommand
 
 internal object CommandEditor {
-    
+
     val editor = subCommand {
         literal("chat") {
             literal("submit") {
@@ -19,15 +19,15 @@ internal object CommandEditor {
                     ChatEditor.cancel(sender)
                 }
             }
-            
+
             literal("mode") {
-                dynamic { 
-                    execute<Player> { sender, _, argument -> 
+                dynamic {
+                    execute<Player> { sender, _, argument ->
                         ChatEditor.getSession(sender)?.mode(sender, argument)
                     }
                 }
             }
         }
     }
-    
+
 }

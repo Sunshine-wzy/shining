@@ -13,7 +13,7 @@ class SFlatMachineData(
 ) : SAutoCoverSaveData(plugin, sFlatMachine.id, "SFlatMachine") {
 
     override fun YamlConfiguration.modifyConfig() {
-        sFlatMachine.flatMachines.forEach { (sLoc, information) -> 
+        sFlatMachine.flatMachines.forEach { (sLoc, information) ->
             set(sLoc.toString(), information)
         }
     }
@@ -25,6 +25,6 @@ class SFlatMachineData(
             SFlatMachine.addMachine(SLocation(sLoc), sFlatMachine, information)
         }
     }
-    
-    
+
+
 }

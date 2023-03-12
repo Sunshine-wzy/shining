@@ -21,7 +21,11 @@ inline fun <reified T> Player.openMultiPageMenu(title: String = "chest", builder
     }
 }
 
-inline fun <reified T> Player.openSearchMenu(title: String = "chest", searchText: String = "", builder: Search<T>.() -> Unit) {
+inline fun <reified T> Player.openSearchMenu(
+    title: String = "chest",
+    searchText: String = "",
+    builder: Search<T>.() -> Unit
+) {
     openMenu<Search<T>>(title) {
         buildMultiPage()
 
@@ -54,13 +58,13 @@ inline fun <reified T> Linked<T>.buildMultiPage() {
     onBuild(true, ShiningGuide.onBuildEdge)
 
     setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
-        if(hasPreviousPage) {
+        if (hasPreviousPage) {
             ShiningIcon.PAGE_PREVIOUS_GLASS_PANE.item
         } else ShiningIcon.EDGE.item
     }
 
     setNextPage(8 orderWith 6) { page, hasNextPage ->
-        if(hasNextPage) {
+        if (hasNextPage) {
             ShiningIcon.PAGE_NEXT_GLASS_PANE.item
         } else ShiningIcon.EDGE.item
     }

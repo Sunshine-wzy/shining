@@ -10,8 +10,8 @@ object MachineRegistry : IMachineRegistry {
 
     private val machinesByName: MutableMap<NamespacedId, IMachine> = ConcurrentHashMap()
     private val machinesById: MutableMap<String, MutableList<IMachine>> = ConcurrentHashMap()
-    
-    
+
+
     override fun get(name: NamespacedId): IMachine {
         return getOrNull(name)!!
     }
@@ -33,7 +33,7 @@ object MachineRegistry : IMachineRegistry {
     }
 
 
-    private fun <T: IMachine> register(machine: T): T {
+    private fun <T : IMachine> register(machine: T): T {
         val name = machine.property.id
         require(name !in machinesByName) { "Duplicate IMachine name: $name" }
 
@@ -42,5 +42,5 @@ object MachineRegistry : IMachineRegistry {
 
         return machine
     }
-    
+
 }

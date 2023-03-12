@@ -7,27 +7,27 @@ import taboolib.module.database.SQLite
 class ColumnBuilder(val name: String? = null) {
     private val sql = SQL()
     private val sqlite = SQLite()
-    
+
     init {
-        name?.let { 
+        name?.let {
             sql.name(it)
             sqlite.name(it)
         }
     }
-    
-    
+
+
     fun sql(func: SQL.() -> Unit) {
         func(sql)
     }
-    
+
     fun sqlite(func: SQLite.() -> Unit) {
         func(sqlite)
     }
-    
+
     fun getColumn(type: DatabaseType): Column =
-        when(type) {
+        when (type) {
             DatabaseType.SQL -> sql.getColumn()
             DatabaseType.SQLite -> sqlite.getColumn()
         }
-    
+
 }

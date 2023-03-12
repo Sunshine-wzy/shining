@@ -17,82 +17,82 @@ open class SerialDataPersistentContainer<T>(
     val database: Database<*> = DataManager.sDatabase
 ) {
     protected val table = database.get(tableName) {
-        build("key") { 
-            sql { 
+        build("key") {
+            sql {
                 type(ColumnTypeSQL.VARCHAR) {
                     options(ColumnOptionSQL.PRIMARY_KEY)
                 }
             }
-            
-            sqlite { 
+
+            sqlite {
                 type(ColumnTypeSQLite.TEXT) {
                     options(ColumnOptionSQLite.PRIMARY_KEY)
                 }
             }
         }
-        
+
         build("value") {
-            sql { 
+            sql {
                 type(ColumnTypeSQL.BLOB)
             }
-            
-            sqlite { 
+
+            sqlite {
                 type(ColumnTypeSQLite.BLOB)
             }
         }
     }
-    
+
     protected val dataMap = ConcurrentHashMap<String, T>()
-    
-    
+
+
     init {
         init()
     }
-    
-    
+
+
     open fun init() {
         dataMap += retrieve()
     }
-    
+
     open operator fun get(key: String): T? {
         return dataMap[key]
     }
-    
+
     open operator fun set(key: String, value: T) {
         dataMap[key] = value
         save(key)
     }
-    
+
     open fun remove(key: String) {
         dataMap -= key
-        
-        submit(async = true) { 
+
+        submit(async = true) {
             delete(key)
         }
     }
-    
-    
+
+
     fun save(key: String) {
         val obj = dataMap[key] ?: return
-        
+
         submit(async = true) {
             update(key, obj)
         }
     }
-    
+
     operator fun minusAssign(key: String) {
         remove(key)
     }
-    
+
     fun containsKey(key: String): Boolean =
         dataMap.containsKey(key)
-    
+
     fun getValues() =
         dataMap.values
-    
+
     fun getValueList() =
         getValues().toList()
-    
+
     // CRUD
     fun retrieve(): MutableMap<String, T> {
         return table.select(database.dataSource) {
@@ -107,15 +107,15 @@ open class SerialDataPersistentContainer<T>(
             rows("key", "value")
             where("key" eq key)
             limit(1)
-        }.firstOrNull { 
+        }.firstOrNull {
             getString("value")
         }
     }
-    
+
     fun update(key: String, value: T) {
         val string = Json.encodeToString(serializer, value)
-        
-        if(retrieve(key) == null) {
+
+        if (retrieve(key) == null) {
             table.insert(database.dataSource, "key", "value") {
                 value(key, string)
             }
@@ -126,14 +126,14 @@ open class SerialDataPersistentContainer<T>(
             }
         }
     }
-    
+
     fun delete(key: String) {
         table.delete(database.dataSource) {
             where("key" eq key)
         }
     }
-    
-    
+
+
     fun reload() {
         dataMap.clear()
         dataMap += retrieve()

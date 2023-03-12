@@ -14,19 +14,22 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 
 object ShiningItems {
-    
+
     val TOOL_BLOCK_INFO = NamespacedId(Shining, "tool-block_info").let { id ->
         DictionaryRegistry.registerItem(
             id, SItem(Material.WOODEN_SHOVEL, "§a方块信息查看器"),
             object : ItemBehavior() {
                 override fun onInteract(event: PlayerInteractEvent, player: Player, item: ItemStack, action: Action) {
                     val clickedBlock = event.clickedBlock ?: return
-                    if(event.hand == EquipmentSlot.HAND && action == Action.RIGHT_CLICK_BLOCK) { 
-                        player.sendMsg("§a方块信息查看器", "${clickedBlock.type}:${clickedBlock.state.data.toItemStack(1).durability}")
+                    if (event.hand == EquipmentSlot.HAND && action == Action.RIGHT_CLICK_BLOCK) {
+                        player.sendMsg(
+                            "§a方块信息查看器",
+                            "${clickedBlock.type}:${clickedBlock.state.data.toItemStack(1).durability}"
+                        )
                     }
                 }
             }
         )
     }
-    
+
 }

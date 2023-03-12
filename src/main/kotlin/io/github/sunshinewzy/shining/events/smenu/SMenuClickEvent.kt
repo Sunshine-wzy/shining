@@ -25,5 +25,5 @@ class SMenuClickEvent(
         @JvmStatic
         fun getHandlerList(): HandlerList = handlerList
     }
-    
+
 }

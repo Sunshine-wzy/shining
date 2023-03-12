@@ -21,10 +21,10 @@ import java.util.concurrent.ConcurrentHashMap
 
 object MachineCreator {
     private const val PERIOD = 20L   // tick
-    
+
     private val contextMap: MutableMap<Player, PlayerCreateMachineContext> = ConcurrentHashMap()
-    
-    
+
+
     fun create(player: Player) {
         player.openMenu<Basic>(player.asLangText("machine-creator-create-menu")) {
             rows(3)
@@ -42,44 +42,44 @@ object MachineCreator {
             onClick(lock = true)
         }
     }
-    
+
     fun select(player: Player) {
         player.sendLang("machine-creator-select")
         contextMap[player] = PlayerCreateMachineContext()
-        
+
     }
-    
-    
+
+
     @SubscribeEvent(EventPriority.HIGHEST)
     fun onPlayerInteract(event: PlayerInteractEvent) {
-        if(event.hand != EquipmentSlot.HAND) return
-        if(!event.action.isClickBlock()) return
-        
+        if (event.hand != EquipmentSlot.HAND) return
+        if (!event.action.isClickBlock()) return
+
         event.clickedBlock?.let { block ->
             val context = contextMap[event.player] ?: return
             val status = context.status
-            
-            if(status == Status.SELECT_LEFT && event.action == Action.LEFT_CLICK_BLOCK) {
+
+            if (status == Status.SELECT_LEFT && event.action == Action.LEFT_CLICK_BLOCK) {
                 context.leftPosition = block.location.position
                 context.checkSelect()
-            } else if(status == Status.SELECT_RIGHT && event.action == Action.RIGHT_CLICK_BLOCK) {
+            } else if (status == Status.SELECT_RIGHT && event.action == Action.RIGHT_CLICK_BLOCK) {
                 context.rightPosition = block.location.position
                 context.checkSelect()
             }
-            
-            
+
+
         }
-        
+
     }
-    
+
     @Awake
     fun particleDispatcher() {
-        submit(period = PERIOD, delay = PERIOD) { 
-            contextMap.forEach { (player, context) -> 
+        submit(period = PERIOD, delay = PERIOD) {
+            contextMap.forEach { (player, context) ->
                 context.playParticle(player)
             }
         }
     }
-    
-    
+
+
 }

@@ -9,7 +9,7 @@ import io.github.sunshinewzy.shining.objects.SFlatCoord
 infix fun Int.orderWith(y: Int): Int = (y - 1) * 9 + (this - 1)
 
 
-fun Int.toCoordinate(): SFlatCoord = SFlatCoord(this%9 + 1, this/9 + 1)
+fun Int.toCoordinate(): SFlatCoord = SFlatCoord(this % 9 + 1, this / 9 + 1)
 
 
 fun Int.toX(length: Int): Int = this % length + 1

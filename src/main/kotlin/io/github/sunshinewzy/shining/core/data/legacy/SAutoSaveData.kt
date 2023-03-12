@@ -12,7 +12,7 @@ import java.io.IOException
 
 /**
  * 自动保存, 可读可写 ,但不覆盖原有数据的配置文件
- * 
+ *
  * @param plugin 插件实例
  * @param name 保存的文件名
  * @param path 保存的路径(保存到 plugins/插件名/路径 下)
@@ -29,23 +29,23 @@ abstract class SAutoSaveData(
         if (path == "") "data/$name.yml"
         else "${path.replace("\\", "/")}/$name.yml"
     )
-    
-    
-    constructor(plugin: JavaPlugin, name: String, file: File): this(
+
+
+    constructor(plugin: JavaPlugin, name: String, file: File) : this(
         plugin,
         name,
         file.getDataPath(plugin)
     )
-    
+
     init {
         DataManager.allAutoSaveData.add(this)
-        
-        if(file.exists()){
+
+        if (file.exists()) {
             Bukkit.getScheduler().runTaskLater(Shining.plugin, Runnable {
                 load()
             }, 1)
         } else create()
-        
+
         Bukkit.getScheduler().runTaskTimer(Shining.plugin, Runnable {
             save()
         }, saveTime, saveTime)
@@ -55,8 +55,8 @@ abstract class SAutoSaveData(
     /**
      * 创建文件时调用
      */
-    open fun YamlConfiguration.createConfig() { }
-    
+    open fun YamlConfiguration.createConfig() {}
+
     /**
      * 保存文件前调用
      */
@@ -77,7 +77,7 @@ abstract class SAutoSaveData(
 
         try {
             config.save(file)
-        } catch (ex: IOException){
+        } catch (ex: IOException) {
             ex.printStackTrace()
         }
     }
@@ -88,10 +88,10 @@ abstract class SAutoSaveData(
     open fun save() {
         val config = getConfig()
         config.modifyConfig()
-        
+
         try {
             config.save(file)
-        } catch (ex: IOException){
+        } catch (ex: IOException) {
             ex.printStackTrace()
         }
     }
@@ -105,9 +105,9 @@ abstract class SAutoSaveData(
 
 
     override fun init() {
-        
+
     }
 
     fun getConfig(): YamlConfiguration = YamlConfiguration.loadConfiguration(file)
-    
+
 }

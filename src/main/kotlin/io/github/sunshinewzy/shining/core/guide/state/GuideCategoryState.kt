@@ -9,14 +9,14 @@ import taboolib.module.ui.type.Basic
 import java.util.*
 
 class GuideCategoryState(element: GuideCategory) : GuideElementState(element) {
-    
+
     val elements: MutableList<IGuideElement> = LinkedList()
 
 
     override fun openAdvancedEditor(player: Player) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-category-title")) {
-            
+
         }
     }
-    
+
 }

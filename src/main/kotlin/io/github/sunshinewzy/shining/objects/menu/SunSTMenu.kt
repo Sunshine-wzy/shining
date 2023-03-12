@@ -12,7 +12,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent
 import java.util.*
 
 object SunSTMenu {
-    
+
     val itemEditor = SMenu("ItemEdit", "物品编辑", 1)
         .setButton(3, 1, SItem(Material.NAME_TAG, "&e重命名"), "Rename") {
             val player = getPlayer()
@@ -21,25 +21,25 @@ object SunSTMenu {
             player.closeInventory()
         }
         .setButton(7, 1, SItem(Material.EMERALD, "&a编辑Lore"), "EditLore")
-    
-    
+
+
     private val itemEditNamePlayers = HashSet<UUID>()
-    
-    
+
+
     init {
-        subscribeEvent<AsyncPlayerChatEvent> { 
-            if(player.uniqueId in itemEditNamePlayers) {
-                if(message == ".") {
+        subscribeEvent<AsyncPlayerChatEvent> {
+            if (player.uniqueId in itemEditNamePlayers) {
+                if (message == ".") {
                     player.sendMsg(COLOR_NAME, "&c物品名称编辑已取消")
                 } else {
                     player.inventory.itemInMainHand.setName(message)
                     player.sendMsg(COLOR_NAME, "&a物品名称成功设置为: &f$message")
                 }
-                
+
                 isCancelled = true
                 itemEditNamePlayers -= player.uniqueId
             }
         }
     }
-    
+
 }

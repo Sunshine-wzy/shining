@@ -13,7 +13,7 @@ import java.util.*
 
 /**
  * 自带自动补全的指令
- * 
+ *
  * 使用前需要在 plugin.yml 中填写 [name] 指令的信息
  */
 open class SCommand(val name: String, val alias: String = name) : CommandExecutor, TabCompleter {
@@ -22,73 +22,73 @@ open class SCommand(val name: String, val alias: String = name) : CommandExecuto
     private var helper: (CommandSender, Int) -> Unit = { sender, page ->
         sender.sendSeparator()
         sender.sendMsg("&6&l$name &b命令指南 &d第 $page 页")
-        
+
         var end = page * 6
         val start = end - 6
-        
-        if(start in descriptions.indices) {
-            end = if(descriptions.size > end) end else descriptions.size
-            for(i in start until end) {
-                descriptions[i].let { 
-                    if(!it.second || (it.second && sender.isOp)) {
+
+        if (start in descriptions.indices) {
+            end = if (descriptions.size > end) end else descriptions.size
+            for (i in start until end) {
+                descriptions[i].let {
+                    if (!it.second || (it.second && sender.isOp)) {
                         sender.sendMsg(it.first)
                     }
                 }
             }
         }
-        
-        
+
+
         sender.sendSeparator()
     }
     private val descriptions = ArrayList<Pair<String, Boolean>>()
 
-    
+
     init {
         val pluginCommand = Bukkit.getPluginCommand(name)
-        
-        if(pluginCommand != null) {
+
+        if (pluginCommand != null) {
             pluginCommand.apply {
                 setExecutor(this@SCommand)
                 tabCompleter = this@SCommand
             }
         } else info("指令 /$name 初始化失败！")
-        
+
     }
-    
-    
+
+
     override fun onCommand(
         sender: CommandSender,
         cmd: Command,
         label: String,
         args: Array<out String>
     ): Boolean {
-        if(!cmd.name.equals(name, true)) return false
-        
-        if(args.isEmpty()) {
+        if (!cmd.name.equals(name, true)) return false
+
+        if (args.isEmpty()) {
             helper(sender, 1)
             return true
         }
-        
+
         val first = args.first().lowercase(Locale.getDefault())
-        
-        if(first.startsWith("?")){
+
+        if (first.startsWith("?")) {
             first.substring(1).toIntOrNull()?.let {
                 helper(sender, it)
                 return true
             }
         }
-        
-        if(commands.containsKey(first)){
+
+        if (commands.containsKey(first)) {
             val scWrapper = commands[first] ?: return false
-            if(scWrapper.second && !sender.isOp) {
+            if (scWrapper.second && !sender.isOp) {
                 sender.sendMsg(Shining.COLOR_NAME, "&c您没有使用该命令的权限！")
                 return false
             }
-            
+
             scWrapper.first(SCommandWrapper(sender, cmd, label, args.toLinkedList().also { it.removeFirst() }, first))
             return true
         }
-        
+
         return false
     }
 
@@ -134,7 +134,7 @@ open class SCommand(val name: String, val alias: String = name) : CommandExecuto
         return list
     }
 
-    
+
     fun addCommand(
         cmd: String,
         description: String = "",
@@ -144,15 +144,15 @@ open class SCommand(val name: String, val alias: String = name) : CommandExecuto
     ): SCommand {
         commands[cmd.lowercase(Locale.getDefault())] = wrapper to isOp
         descriptions += (format + description) to isOp
-        
+
         return this
     }
-    
+
     fun addDescription(description: String, isOp: Boolean = false): SCommand {
         descriptions += description to isOp
         return this
     }
-    
+
     fun addDescription(
         cmd: String,
         description: String,
@@ -174,9 +174,8 @@ open class SCommand(val name: String, val alias: String = name) : CommandExecuto
         this.helper = helper
         return this
     }
-    
-    
-    
+
+
     companion object {
         fun CommandSender.sendRepeatMsg(str: String, times: Int = 40) {
             val builder = StringBuilder()
@@ -188,5 +187,5 @@ open class SCommand(val name: String, val alias: String = name) : CommandExecuto
             sendRepeatMsg("=")
         }
     }
-    
+
 }

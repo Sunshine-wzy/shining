@@ -14,5 +14,5 @@ class SLocationDataClearEvent(sLocation: SLocation) : SLocationDataEvent(sLocati
         @JvmStatic
         fun getHandlerList(): HandlerList = handlerList
     }
-    
+
 }

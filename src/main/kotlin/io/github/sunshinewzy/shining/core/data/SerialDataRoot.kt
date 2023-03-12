@@ -19,11 +19,11 @@ class SerialDataRoot(
 
     override fun serialize(generator: JsonGenerator): JsonGenerator {
         generator.writeStartObject()
-        
+
         generator.writeObjectField(KEY_OPTIONS, options)
         generator.writeFieldName(KEY_DATA)
         super.serialize(generator)
-        
+
         generator.writeEndObject()
         return generator
     }
@@ -36,15 +36,15 @@ class SerialDataRoot(
     }
 
     override fun deserialize(source: JsonNode): Boolean {
-        if(source !is ObjectNode) return false
-        
+        if (source !is ObjectNode) return false
+
         this.options = objectMapper.treeToValue(source[KEY_OPTIONS], DataRootOptions::class.java) ?: return false
-        source[KEY_DATA]?.let { 
+        source[KEY_DATA]?.let {
             return super.deserialize(it)
         } ?: return false
     }
-    
-    
+
+
     companion object {
         const val KEY_OPTIONS = "options"
         const val KEY_DATA = "data"

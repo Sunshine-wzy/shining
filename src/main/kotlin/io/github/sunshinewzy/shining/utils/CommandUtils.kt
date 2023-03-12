@@ -7,9 +7,9 @@ import java.util.*
 fun CommandComponentDynamic.restrictUUID(): CommandComponentDynamic =
     restrict<ProxyCommandSender> { _, _, argument ->
         kotlin.runCatching { UUID.fromString(argument) }
-            .onSuccess { 
+            .onSuccess {
                 return@restrict true
             }
-        
+
         false
     }

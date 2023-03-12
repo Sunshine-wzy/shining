@@ -24,10 +24,10 @@ internal class CombinedGuideContext(
 ) : GuideContext {
     override fun <E : Element> get(key: Key<E>): E? {
         var cur = this
-        while(true) {
+        while (true) {
             cur.element[key]?.let { return it }
             val next = cur.left
-            if(next is CombinedGuideContext) {
+            if (next is CombinedGuideContext) {
                 cur = next
             } else {
                 return next[key]
@@ -48,11 +48,11 @@ internal class CombinedGuideContext(
         }
     }
 
-    
+
     private fun size(): Int {
         var cur = this
         var size = 2
-        while(true) {
+        while (true) {
             cur = cur.left as? CombinedGuideContext ?: return size
             size++
         }
@@ -63,17 +63,17 @@ internal class CombinedGuideContext(
 
     private fun containsAll(context: CombinedGuideContext): Boolean {
         var cur = context
-        while(true) {
-            if(!contains(cur.element)) return false
+        while (true) {
+            if (!contains(cur.element)) return false
             val next = cur.left
-            if(next is CombinedGuideContext) {
+            if (next is CombinedGuideContext) {
                 cur = next
             } else {
                 return contains(next as Element)
             }
         }
     }
-    
+
 
     override fun equals(other: Any?): Boolean =
         this === other || other is CombinedGuideContext && other.size() == size() && other.containsAll(this)
@@ -82,6 +82,6 @@ internal class CombinedGuideContext(
 
     override fun toString(): String =
         "[" + fold("") { acc, element ->
-            if(acc.isEmpty()) element.toString() else "$acc, $element"
+            if (acc.isEmpty()) element.toString() else "$acc, $element"
         } + "]"
 }

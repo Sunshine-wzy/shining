@@ -10,13 +10,13 @@ class SFlatMachineUseEvent(
     loc: Location,
     val player: Player
 ) : SFlatMachineEvent(sFlatMachine, loc) {
-    
+
     override fun getHandlers(): HandlerList = handlerList
 
 
     companion object {
         private val handlerList = HandlerList()
-        
+
         @JvmStatic
         fun getHandlerList(): HandlerList = handlerList
     }
