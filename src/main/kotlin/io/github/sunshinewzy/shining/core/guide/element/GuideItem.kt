@@ -8,8 +8,7 @@ import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-open class GuideItem(id: NamespacedId, description: ElementDescription, item: ItemStack) :
-    GuideElement(id, description, item) {
+open class GuideItem(id: NamespacedId, description: ElementDescription, item: ItemStack) : GuideElement(id, description, item) {
 
 
     override fun openMenu(player: Player, team: GuideTeam, context: GuideContext) {

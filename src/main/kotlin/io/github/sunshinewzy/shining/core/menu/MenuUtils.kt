@@ -2,9 +2,9 @@ package io.github.sunshinewzy.shining.core.menu
 
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.GuideContext
-import io.github.sunshinewzy.shining.core.guide.EmptyGuideContext
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
+import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.PlayerChatSubscriber
 import io.github.sunshinewzy.shining.utils.orderWith

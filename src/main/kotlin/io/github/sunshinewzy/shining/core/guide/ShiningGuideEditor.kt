@@ -23,10 +23,8 @@ object ShiningGuideEditor {
     private val editorMap: MutableMap<UUID, Boolean> = HashMap()
 
     private val itemEditor = NamespacedIdItem(Material.COMPARATOR, NamespacedId(Shining, "shining_guide-editor"))
-    private val itemCreateStateCopy =
-        NamespacedIdItem(Material.REDSTONE_LAMP, NamespacedId(Shining, "shining_guide-editor-create_state_copy"))
-    private val itemCreateStateNew =
-        NamespacedIdItem(Material.GLASS, NamespacedId(Shining, "shining_guide-editor-create_state_new"))
+    private val itemCreateStateCopy = NamespacedIdItem(Material.REDSTONE_LAMP, NamespacedId(Shining, "shining_guide-editor-create_state_copy"))
+    private val itemCreateStateNew = NamespacedIdItem(Material.GLASS, NamespacedId(Shining, "shining_guide-editor-create_state_new"))
 
     const val PERMISSION_EDIT = "shining.guide.edit"
 

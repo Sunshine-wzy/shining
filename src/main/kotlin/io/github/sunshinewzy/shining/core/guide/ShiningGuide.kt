@@ -10,6 +10,7 @@ import io.github.sunshinewzy.shining.core.dictionary.DictionaryRegistry
 import io.github.sunshinewzy.shining.core.dictionary.item.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.getGuideTeam
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.setupGuideTeam
+import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.lang.getDefaultLangText
 import io.github.sunshinewzy.shining.core.lang.item.LocalizedItem

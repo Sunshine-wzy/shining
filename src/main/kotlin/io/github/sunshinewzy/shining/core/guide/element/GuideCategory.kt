@@ -12,6 +12,7 @@ import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor.setEditor
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideSettings
+import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
@@ -47,7 +48,7 @@ open class GuideCategory(
             val dependencyLockedElements = LinkedList<IGuideElement>()
             val lockLockedElements = LinkedList<IGuideElement>()
             onGenerate { player, element, index, slot ->
-                if (ShiningGuideEditor.isEditModeEnabled(player)) {
+                if (context[GuideEditorContext]?.mode == true) {
                     return@onGenerate element.getSymbolByCondition(player, team, ElementCondition.UNLOCKED)
                 }
 
@@ -74,7 +75,7 @@ open class GuideCategory(
             }
 
             onClick { event, element ->
-                if (ShiningGuideEditor.isEditorEnabled(player)) {
+                if (context[GuideEditorContext] != null) {
                     ShiningGuideEditor.openEditMenu(player, team, element, this@GuideCategory)
                     return@onClick
                 }
@@ -92,7 +93,7 @@ open class GuideCategory(
                 element.open(event.clicker, team, this@GuideCategory, context)
             }
 
-            if (ShiningGuideEditor.isEditorEnabled(player)) {
+            if (context[GuideEditorContext] != null) {
                 onClick(lock = true) {
                     if (it.rawSlot in ShiningGuide.slotOrders && it.currentItem.isAir()) {
                         ShiningGuideEditor.openEditMenu(player, team, null, this@GuideCategory)

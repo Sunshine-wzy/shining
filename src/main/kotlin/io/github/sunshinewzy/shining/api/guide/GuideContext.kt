@@ -2,8 +2,8 @@ package io.github.sunshinewzy.shining.api.guide
 
 import io.github.sunshinewzy.shining.api.guide.GuideContext.Element
 import io.github.sunshinewzy.shining.api.guide.GuideContext.Key
-import io.github.sunshinewzy.shining.core.guide.CombinedGuideContext
-import io.github.sunshinewzy.shining.core.guide.EmptyGuideContext
+import io.github.sunshinewzy.shining.core.guide.context.CombinedGuideContext
+import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
 
 /**
  * Persistent context for shining guide. It is an indexed set of [Element] instances.
