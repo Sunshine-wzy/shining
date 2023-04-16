@@ -15,6 +15,9 @@ item-shining-shining_guide-settings-edit_mode:
 item-shining-shining_guide-editor:
   close: [ '&e编辑器', '&7已关闭', '', '&a> 点击开启' ]
   open: [ '&e编辑器', '&a已开启', '', '&c> 点击关闭' ]
+item-shining-shining_guide-selector:
+  close: [ '&e选择器', '&7已关闭', '', '&a> 点击开启' ]
+  open: [ '&e选择器', '&a已开启', '', '&c> 点击关闭' ]
 item-shining-shining_guide-editor-create_state_copy: '&b创建状态副本'
 item-shining-shining_guide-editor-create_state_new: '&a创建新状态'
 item-shining-shining_guide-editor-state-element-basic_editor: '&a基础状态编辑器'

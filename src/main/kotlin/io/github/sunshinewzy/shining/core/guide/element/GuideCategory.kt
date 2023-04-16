@@ -13,6 +13,7 @@ import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor.setEditor
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideSettings
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
+import io.github.sunshinewzy.shining.core.guide.context.GuideSelectElementsContext
 import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
@@ -51,7 +52,7 @@ open class GuideCategory(
                 if (context[GuideEditorContext]?.mode == true) {
                     return@onGenerate element.getSymbolByCondition(player, team, ElementCondition.UNLOCKED)
                 }
-
+ 
                 val condition = element.getCondition(team)
                 if (condition == ElementCondition.LOCKED_DEPENDENCY)
                     dependencyLockedElements += element
@@ -75,11 +76,21 @@ open class GuideCategory(
             }
 
             onClick { event, element ->
-                if (context[GuideEditorContext] != null) {
+                if (context[GuideEditorContext]?.isEditorEnabled() == true) {
                     ShiningGuideEditor.openEditMenu(player, team, element, this@GuideCategory)
                     return@onClick
                 }
-
+                
+                context[GuideSelectElementsContext]?.let { ctxt ->
+                    if (ctxt.mode) {
+                        if (ctxt.elements.contains(element)) {
+                            ctxt.elements.remove(element)
+                        } else if (ctxt.filter(element)) {
+                            ctxt.elements.add(element)
+                        }
+                    }
+                }
+                
                 if (element in dependencyLockedElements) return@onClick
 
                 if (element in lockLockedElements) {
@@ -93,7 +104,7 @@ open class GuideCategory(
                 element.open(event.clicker, team, this@GuideCategory, context)
             }
 
-            if (context[GuideEditorContext] != null) {
+            if (context[GuideEditorContext]?.isEditorEnabled() == true) {
                 onClick(lock = true) {
                     if (it.rawSlot in ShiningGuide.slotOrders && it.currentItem.isAir()) {
                         ShiningGuideEditor.openEditMenu(player, team, null, this@GuideCategory)
@@ -101,12 +112,12 @@ open class GuideCategory(
                 }
             }
 
-            setEditor(player) {
+            setEditor(player, context) {
                 openMenu(player, team, context)
             }
 
             if (this@GuideCategory !== ShiningGuide) {
-                set(2 orderWith 1, ShiningIcon.BACK_MENU.item) {
+                set(2 orderWith 1, ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player)) {
                     if (clickEvent().isShiftClick) {
                         ShiningGuide.openMainMenu(player, team, context)
                     } else {
@@ -116,8 +127,16 @@ open class GuideCategory(
             }
 
             if (team !== GuideTeam.CompletedTeam) {
-                set(5 orderWith 1, ShiningIcon.SETTINGS.item) {
+                set(5 orderWith 1, ShiningIcon.SETTINGS.getLanguageItem().toLocalizedItem(player)) {
                     ShiningGuideSettings.openSettingsMenu(player, team)
+                }
+            }
+            
+            // Select elements
+            context[GuideSelectElementsContext]?.let { ctxt ->
+                set(4 orderWith 1, ctxt.getSelectorItem(player)) {
+                    ctxt.switchMode()
+                    openMenu(player, team, context)
                 }
             }
         }

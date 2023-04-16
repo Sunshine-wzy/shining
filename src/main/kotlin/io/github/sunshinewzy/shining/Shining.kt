@@ -173,8 +173,7 @@ object Shining : Plugin(), ShiningPlugin {
 
         val lockExperience = LockExperience(5)
 
-        val stickItem =
-            GuideItem(NamespacedId(Shining, "stick"), ElementDescription("&6工具的基石"), SItem(Material.STICK))
+        val stickItem = GuideItem(NamespacedId(Shining, "stick"), ElementDescription("&6工具的基石"), SItem(Material.STICK))
         stickItem.registerLock(lockExperience)
         stoneCategory.registerElement(stickItem)
 
@@ -195,36 +194,6 @@ object Shining : Plugin(), ShiningPlugin {
 
         ShiningGuide.registerElement(stoneCategory)
 
-        /*
-        val stoneCategory = GuideCategory(NamespacedId(Shining, "STONE_AGE"), SItem(Material.STONE, "&f石器时代", "&d一切的起源"))
-        val steamCategory = GuideCategory(NamespacedId(Shining, "STEAM_AGE"), SItem(Material.IRON_INGOT, "&e蒸汽时代", "&d第一次工业革命"))
-        val electricalCategory = GuideCategory(NamespacedId(Shining, "ELECTRICAL_AGE"), SItem(Material.NETHERITE_INGOT, "&a电器时代", "&d第二次工业革命"))
-        val informationCateGory = GuideCategory(NamespacedId(Shining, "INFORMATION_AGE"), SItem(Material.DIAMOND, "&b信息时代", "&d技术爆炸"))
-        
-        steamCategory.registerDependency(stoneCategory)
-        electricalCategory.registerDependency(steamCategory)
-        informationCateGory.registerDependency(electricalCategory)
-        
-        val lockExperience = LockExperience(5)
-        
-        val newStoneCategory = GuideCategory(NamespacedId(Shining, "NEW_STONE_AGE"), SItem(Material.STONE_BRICKS, "&a新石器时代"))
-        val stickItem = GuideItem(NamespacedId(Shining, "STICK"), SItem(Material.STICK, "&6工具的基石"))
-        newStoneCategory.registerElement(stickItem)
-        stoneCategory.registerElement(newStoneCategory)
-        
-        val oldStoneCategory = GuideCategory(NamespacedId(Shining, "OLD_STONE_AGE"), SItem(Material.COBBLESTONE, "&7旧石器时代"))
-        stoneCategory.registerElement(oldStoneCategory)
-        
-        stickItem.registerLock(lockExperience)
-        newStoneCategory.registerLock(lockExperience)
-        newStoneCategory.registerLock(LockItem(SItem(Material.SNOWBALL, 3)))
-        oldStoneCategory.registerLock(LockExperience(10, false))
-        
-        ShiningGuide.registerElement(electricalCategory, 12)
-        ShiningGuide.registerElement(stoneCategory)
-        ShiningGuide.registerElement(informationCateGory, 13)
-        ShiningGuide.registerElement(steamCategory, 11)
-        */
 
         val mapper = jsonMapper {
             addModule(SerializationModules.bukkit)

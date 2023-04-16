@@ -51,7 +51,7 @@ enum class ShiningIcon(val item: ItemStack) : Itemable {
     SEARCH(NamespacedIdItem(Material.COMPASS, NamespacedId(Shining, "icon-search"))),
     CONFIRM(NamespacedIdItem(Material.SLIME_BALL, NamespacedId(Shining, "icon-confirm"))),
     CANCEL(NamespacedIdItem(Material.BARRIER, NamespacedId(Shining, "icon-cancel"))),
-    SETTINGS(NamespacedIdItem(Material.ENDER_EYE, NamespacedId(Shining, "icon-settings")))
+    SETTINGS(NamespacedIdItem(Material.ENDER_EYE, NamespacedId(Shining, "icon-settings"))),
 
     ;
 

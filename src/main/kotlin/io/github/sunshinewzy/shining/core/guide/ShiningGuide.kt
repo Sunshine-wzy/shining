@@ -11,6 +11,7 @@ import io.github.sunshinewzy.shining.core.dictionary.item.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.getGuideTeam
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.setupGuideTeam
 import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
+import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.lang.getDefaultLangText
 import io.github.sunshinewzy.shining.core.lang.item.LocalizedItem
@@ -110,7 +111,11 @@ object ShiningGuide : GuideCategory(
         playerLastOpenElementMap -= player.uniqueId
         soundOpen.playSound(player)
 
-        openMenu(player, team, context)
+        var ctxt = context
+        if (ctxt[GuideEditorContext] == null && ShiningGuideEditor.isEditModeEnabled(player)) {
+            ctxt += GuideEditorContext()
+        }
+        openMenu(player, team, ctxt)
     }
 
     @JvmOverloads
@@ -132,7 +137,11 @@ object ShiningGuide : GuideCategory(
     @JvmOverloads
     fun openLastElement(player: Player, team: GuideTeam, context: GuideContext = EmptyGuideContext) {
         playerLastOpenElementMap[player.uniqueId]?.let {
-            it.open(player, team, null, context)
+            var ctxt = context
+            if (ctxt[GuideEditorContext] == null && ShiningGuideEditor.isEditModeEnabled(player)) {
+                ctxt += GuideEditorContext()
+            }
+            it.open(player, team, null, ctxt)
             return
         }
 
@@ -144,13 +153,21 @@ object ShiningGuide : GuideCategory(
         playerLastOpenElementMap -= player.uniqueId
         soundOpen.playSound(player)
 
-        openMainMenu(player, GuideTeam.CompletedTeam, context)
+        var ctxt = context
+        if (ctxt[GuideEditorContext] == null) {
+            ctxt += GuideEditorContext(false)
+        }
+        openMainMenu(player, GuideTeam.CompletedTeam, ctxt)
     }
 
     @JvmOverloads
     fun openCompletedLastElement(player: Player, context: GuideContext = EmptyGuideContext) {
         playerLastOpenElementMap[player.uniqueId]?.let {
-            it.open(player, GuideTeam.CompletedTeam)
+            var ctxt = context
+            if (ctxt[GuideEditorContext] == null) {
+                ctxt += GuideEditorContext(false)
+            }
+            it.open(player, GuideTeam.CompletedTeam, null, ctxt)
             return
         }
 

@@ -55,11 +55,11 @@ abstract class GuideElement(
 
     override fun back(player: Player, team: GuideTeam, context: GuideContext) {
         previousElementMap[player.uniqueId]?.let {
-            it.open(player, team, null)
+            it.open(player, team, null, context)
             return
         }
 
-        ShiningGuide.openMainMenu(player)
+        ShiningGuide.openMainMenu(player, team, context)
     }
 
     override fun unlock(player: Player, team: GuideTeam): Boolean {
