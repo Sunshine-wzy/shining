@@ -10,7 +10,8 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 class GuideSelectElementsContext(
-    val filter: (IGuideElement) -> Boolean = { true }
+    val filter: (IGuideElement) -> Boolean = { true },
+    val callback: (GuideSelectElementsContext) -> Unit
 ) : AbstractGuideContextElement(GuideSelectElementsContext) {
     
     var mode: Boolean = false

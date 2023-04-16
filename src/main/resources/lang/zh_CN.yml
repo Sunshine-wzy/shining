@@ -16,8 +16,8 @@ item-shining-shining_guide-editor:
   close: [ '&e编辑器', '&7已关闭', '', '&a> 点击开启' ]
   open: [ '&e编辑器', '&a已开启', '', '&c> 点击关闭' ]
 item-shining-shining_guide-selector:
-  close: [ '&e选择器', '&7已关闭', '', '&a> 点击开启' ]
-  open: [ '&e选择器', '&a已开启', '', '&c> 点击关闭' ]
+  close: [ '&e选择器', '&7已关闭', '', '&a> 左键点击开启', '&b> 右键点击提交' ]
+  open: [ '&e选择器', '&a已开启', '', '&c> 左键点击关闭', '&b> 右键点击提交' ]
 item-shining-shining_guide-editor-create_state_copy: '&b创建状态副本'
 item-shining-shining_guide-editor-create_state_new: '&a创建新状态'
 item-shining-shining_guide-editor-state-element-basic_editor: '&a基础状态编辑器'
@@ -27,7 +27,8 @@ item-shining-shining_guide-editor-state-element-description_name: '&a名称'
 item-shining-shining_guide-editor-state-element-description_lore: '&b描述'
 item-shining-shining_guide-editor-state-element-dependencies: '&e依赖'
 item-shining-shining_guide-editor-state-element-locks: '&c锁'
-item-shining-shining_guide-editor-state-element-dependency-remove: '&c移除'
+item-shining-shining_guide-editor-lock-experience: ['&b所需经验', '', '&a> 当前']
+item-shining-shining_guide-editor-lock-item: ['&b所需物品', '', '&a↓ 当前 ↓']
 item-shining-icon-back_menu: [ '&c⇦ 返回', '', '&f左键：&7返回上一页', '&fShift + 左键：&7返回主菜单' ]
 item-shining-icon-back: '&b⇦ 返回'
 item-shining-icon-submit: '&a>> 点击以提交任务 <<'
@@ -47,6 +48,7 @@ item-shining-icon-search: '&a搜索'
 item-shining-icon-confirm: '&a确认'
 item-shining-icon-cancel: '&c取消'
 item-shining-icon-settings: '&e设置'
+item-shining-icon-remove: '&c移除'
 menu-shining_guide-title: 'Shining 指南'
 menu-shining_guide-settings-title: 'Shining 指南 - 设置'
 menu-shining_guide-element-unlock-fail: '&c您未达成解锁该元素的条件'
@@ -57,6 +59,9 @@ menu-shining_guide-element-symbol-locked_lock-need: '&7需要'
 menu-shining_guide-element-text-locked: '&4&l已锁定'
 menu-shining_guide-element-text-complete: '&a&l已完成'
 menu-shining_guide-lock-item-description: '&e物品'
+menu-shining_guide-lock-item-title: '&c物品锁'
+menu-shining_guide-lock-experience-description: '&b{0} 级经验'
+menu-shining_guide-lock-experience-title: '&c经验锁'
 menu-shining_guide-team-setup-title: 'Shining 指南 - 创建或加入队伍'
 menu-shining_guide-team-create-edit_symbol: '&f编辑队伍图标'
 menu-shining_guide-team-create-title: 'Shining 指南 - 创建队伍'
@@ -110,3 +115,4 @@ text-editor-chat-session-text_list-input: '&b点击输入'
 text-editor-chat-session-text_list-add: '&a点击添加'
 text-editor-chat-session-text_list-remove: '&c点击移除'
 text-editor-chat-session-text_list-index_out_of_bounds: '&c编辑的目标索引越界，请重新选择'
+text-editor-chat-session-item-input: '&b点击替换为手持物品'

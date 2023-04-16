@@ -14,6 +14,7 @@ import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.guide.element.GuideItem
 import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
+import io.github.sunshinewzy.shining.core.guide.lock.LockItem
 import io.github.sunshinewzy.shining.core.machine.MachineManager
 import io.github.sunshinewzy.shining.core.machine.legacy.*
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipe
@@ -36,6 +37,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.PluginManager
 import org.jetbrains.exposed.sql.Database
 import taboolib.common.env.RuntimeDependencies
@@ -184,6 +186,10 @@ object Shining : Plugin(), ShiningPlugin {
         )
         newStoneCategory.registerDependency(stickItem)
         stoneCategory.registerElement(newStoneCategory)
+        
+        stoneCategory.registerLock(lockExperience)
+        val lockItem = LockItem(ItemStack(Material.DIAMOND, 3))
+        stoneCategory.registerLock(lockItem)
         
         val pickaxeItem = GuideItem(
             NamespacedId(Shining, "pickaxe"),

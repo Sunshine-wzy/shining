@@ -4,9 +4,11 @@ import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.Itemable
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.lang.item.LanguageItem
+import io.github.sunshinewzy.shining.core.lang.item.LocalizedItem
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.objects.SItem
 import org.bukkit.Material
+import org.bukkit.command.CommandSender
 import org.bukkit.inventory.ItemStack
 import taboolib.platform.util.buildItem
 
@@ -52,12 +54,15 @@ enum class ShiningIcon(val item: ItemStack) : Itemable {
     CONFIRM(NamespacedIdItem(Material.SLIME_BALL, NamespacedId(Shining, "icon-confirm"))),
     CANCEL(NamespacedIdItem(Material.BARRIER, NamespacedId(Shining, "icon-cancel"))),
     SETTINGS(NamespacedIdItem(Material.ENDER_EYE, NamespacedId(Shining, "icon-settings"))),
-
+    REMOVE(NamespacedIdItem(Material.BARRIER, NamespacedId(Shining, "icon-remove"))),
+    
     ;
 
 
     override fun getItemStack(): ItemStack = item
 
     fun getLanguageItem(): LanguageItem = item as LanguageItem
-
+    
+    fun toLocalizedItem(sender: CommandSender): LocalizedItem = getLanguageItem().toLocalizedItem(sender)
+    
 }

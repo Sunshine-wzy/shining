@@ -1,6 +1,11 @@
 package io.github.sunshinewzy.shining.api.guide.lock
 
+import io.github.sunshinewzy.shining.core.guide.GuideTeam
+import io.github.sunshinewzy.shining.core.guide.state.GuideElementState
+import io.github.sunshinewzy.shining.objects.SItem
+import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 /**
  * @param description If the element is locked, it will be shown in the lore of the symbol.
@@ -23,14 +28,24 @@ abstract class ElementLock(
     abstract fun consume(player: Player)
 
     /**
+     * Opens an editor to edit the lock.
+     */
+    abstract fun openEditor(player: Player, team: GuideTeam, state: GuideElementState)
+    
+
+    /**
      * When the player attempted to unlock the element but failed, it would be run.
      *
-     * Override this function only when the [description] is not enough.
+     * Overrides this function only when the [description] is not enough.
      *
      * For example, you can create a menu to help the player understand the requirement he or she needs to meet.
      */
-    open fun tip(player: Player) {
+    open fun tip(player: Player) {}
 
-    }
-
+    /**
+     * Gets an icon which shows detailed information of the lock.
+     */
+    open fun getIcon(player: Player): ItemStack =
+        SItem(Material.TRIPWIRE_HOOK, description(player))
+    
 }

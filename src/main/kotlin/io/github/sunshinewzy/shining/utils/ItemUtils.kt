@@ -209,7 +209,9 @@ fun ItemStack.cloneRandomAmount(end: Int): ItemStack = randomAmount(1, end)
 
 fun ItemStack.getMeta(): ItemMeta = itemMeta ?: Bukkit.getItemFactory().getItemMeta(type)!!
 
-fun ItemStack.getLore(): MutableList<String> = itemMeta?.lore ?: mutableListOf()
+fun ItemStack.getLoreOrNull(): MutableList<String>? = itemMeta?.lore
+
+fun ItemStack.getLore(): MutableList<String> = getLoreOrNull() ?: mutableListOf()
 
 fun ItemStack.getDisplayName(default: String = ""): String {
     itemMeta?.apply {

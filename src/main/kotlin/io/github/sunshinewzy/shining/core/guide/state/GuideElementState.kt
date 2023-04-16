@@ -40,6 +40,17 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
     val dependencyMap: MutableMap<NamespacedId, IGuideElement> = HashMap()
     val locks: MutableList<ElementLock> = LinkedList()
 
+    
+    fun addDependency(element: IGuideElement) {
+        dependencyMap[element.getId()] = element
+    }
+    
+    fun addDependencies(elements: Collection<IGuideElement>) {
+        elements.forEach { 
+            addDependency(it)
+        }
+    }
+    
 
     abstract fun openAdvancedEditor(player: Player)
 
@@ -178,7 +189,10 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
             
             onClick(lock = true) {
                 if (it.rawSlot in ShiningGuide.slotOrders && it.currentItem.isAir()) {
-                    ShiningGuide.openCompletedMainMenu(player, GuideSelectElementsContext())
+                    ShiningGuide.openCompletedMainMenu(player, GuideSelectElementsContext { ctxt ->
+                        addDependencies(ctxt.elements)
+                        openDependenciesEditor(player, team)
+                    })
                 }
             }
         }
@@ -190,17 +204,17 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
 
             map(
                 "-B-------",
-                "- a     -",
+                "-    d  -",
                 "---------"
             )
 
             set('-', ShiningIcon.EDGE.item)
 
-            set('B', ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player)) {
+            set('B', ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
                 openDependenciesEditor(player, team)
             }
 
-            set('a', itemEditDependencyRemove.toLocalizedItem(player)) {
+            set('d', ShiningIcon.REMOVE.toLocalizedItem(player)) {
                 dependencyMap -= element.getId()
                 openDependenciesEditor(player, team)
             }
@@ -212,8 +226,24 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
     fun openLocksEditor(player: Player, team: GuideTeam) {
         player.openMultiPageMenu<ElementLock>(player.getLangText("menu-shining_guide-editor-state-basic-locks-title")) {
             elements { locks }
+            
+            onGenerate(async = true) { player, element, _, _ -> 
+                element.getIcon(player)
+            }
+            
+            onClick { _, element -> 
+                element.openEditor(player, team, this@GuideElementState)
+            }
 
+            set(2 orderWith 1, ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player)) {
+                openBasicEditor(player, team)
+            }
 
+            onClick(lock = true) {
+                if (it.rawSlot in ShiningGuide.slotOrders && it.currentItem.isAir()) {
+                    
+                }
+            }
         }
     }
 

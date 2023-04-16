@@ -81,13 +81,18 @@ open class GuideCategory(
                     return@onClick
                 }
                 
+                // Select elements
                 context[GuideSelectElementsContext]?.let { ctxt ->
-                    if (ctxt.mode) {
-                        if (ctxt.elements.contains(element)) {
-                            ctxt.elements.remove(element)
-                        } else if (ctxt.filter(element)) {
-                            ctxt.elements.add(element)
+                    if (event.clickEvent().isLeftClick) {
+                        if (ctxt.mode) {
+                            if (ctxt.elements.contains(element)) {
+                                ctxt.elements.remove(element)
+                            } else if (ctxt.filter(element)) {
+                                ctxt.elements.add(element)
+                            }
                         }
+                    } else if (event.clickEvent().isRightClick) {
+                        
                     }
                 }
                 
