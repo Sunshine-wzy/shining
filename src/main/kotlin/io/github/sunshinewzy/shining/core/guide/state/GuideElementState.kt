@@ -276,8 +276,6 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
         private val itemEditDependencies = NamespacedIdItem(Material.CHEST, NamespacedId(Shining, "shining_guide-editor-state-element-dependencies"))
         private val itemEditLocks = NamespacedIdItem(Material.TRIPWIRE_HOOK, NamespacedId(Shining, "shining_guide-editor-state-element-locks"))
 
-        private val itemEditDependencyRemove = NamespacedIdItem(Material.BARRIER, NamespacedId(Shining, "shining_guide-editor-state-element-dependency-remove"))
-
     }
 
 }

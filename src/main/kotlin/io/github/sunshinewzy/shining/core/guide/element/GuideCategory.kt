@@ -83,16 +83,12 @@ open class GuideCategory(
                 
                 // Select elements
                 context[GuideSelectElementsContext]?.let { ctxt ->
-                    if (event.clickEvent().isLeftClick) {
-                        if (ctxt.mode) {
-                            if (ctxt.elements.contains(element)) {
-                                ctxt.elements.remove(element)
-                            } else if (ctxt.filter(element)) {
-                                ctxt.elements.add(element)
-                            }
+                    if (ctxt.mode) {
+                        if (ctxt.elements.contains(element)) {
+                            ctxt.elements.remove(element)
+                        } else if (ctxt.filter(element)) {
+                            ctxt.elements.add(element)
                         }
-                    } else if (event.clickEvent().isRightClick) {
-                        
                     }
                 }
                 
@@ -140,8 +136,12 @@ open class GuideCategory(
             // Select elements
             context[GuideSelectElementsContext]?.let { ctxt ->
                 set(4 orderWith 1, ctxt.getSelectorItem(player)) {
-                    ctxt.switchMode()
-                    openMenu(player, team, context)
+                    if (clickEvent().isShiftClick) {
+                        ctxt.submit()
+                    } else {
+                        ctxt.switchMode()
+                        openMenu(player, team, context)
+                    }
                 }
             }
         }

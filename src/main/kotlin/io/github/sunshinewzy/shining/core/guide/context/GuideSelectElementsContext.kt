@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack
 
 class GuideSelectElementsContext(
     val filter: (IGuideElement) -> Boolean = { true },
-    val callback: (GuideSelectElementsContext) -> Unit
+    private val callback: (GuideSelectElementsContext) -> Unit
 ) : AbstractGuideContextElement(GuideSelectElementsContext) {
     
     var mode: Boolean = false
@@ -27,6 +27,10 @@ class GuideSelectElementsContext(
     fun switchMode(): Boolean {
         mode = !mode
         return mode
+    }
+    
+    fun submit() {
+        callback(this)
     }
     
     
