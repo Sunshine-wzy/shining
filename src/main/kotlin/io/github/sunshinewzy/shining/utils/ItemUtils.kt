@@ -90,16 +90,15 @@ fun ItemStack.localize(languageNode: LanguageNode?, vararg args: String?): ItemS
 }
 
 fun ItemStack.setName(name: String): ItemStack {
-    val meta = if (hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type)
-
-    meta?.setDisplayName(name.colored())
+    val meta = getMeta()
+    meta.setDisplayName(name.colored())
     itemMeta = meta
     return this
 }
 
 fun ItemStack.setLore(lore: List<String>): ItemStack {
-    val meta = if (hasItemMeta()) itemMeta else Bukkit.getItemFactory().getItemMeta(type)
-    meta?.lore = lore.map { it.colored() }
+    val meta = getMeta()
+    meta.lore = lore.map { it.colored() }
     itemMeta = meta
     return this
 }
@@ -213,12 +212,15 @@ fun ItemStack.getLoreOrNull(): MutableList<String>? = itemMeta?.lore
 
 fun ItemStack.getLore(): MutableList<String> = getLoreOrNull() ?: mutableListOf()
 
-fun ItemStack.getDisplayName(default: String = ""): String {
-    itemMeta?.apply {
-        if (hasDisplayName()) {
-            return displayName
+fun ItemStack.getDisplayNameOrNull(): String? {
+    itemMeta?.let {
+        if (it.hasDisplayName()) {
+            return it.displayName
         }
     }
-
-    return default
+    
+    return null
 }
+
+fun ItemStack.getDisplayName(default: String = ""): String =
+    getDisplayNameOrNull() ?: default

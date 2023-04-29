@@ -24,7 +24,7 @@ object ShiningCommand {
         createHelper()
     }
 
-    @CommandBody
+    @CommandBody(permissionDefault = PermissionDefault.OP)
     val item = CommandItem.item
 
     @CommandBody(permissionDefault = PermissionDefault.TRUE)

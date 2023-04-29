@@ -1,19 +1,28 @@
 package io.github.sunshinewzy.shining.utils
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
+import io.github.sunshinewzy.shining.core.editor.chat.type.Text
+import io.github.sunshinewzy.shining.core.editor.chat.type.TextList
+import io.github.sunshinewzy.shining.core.lang.getLangText
+import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
+import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
 import io.github.sunshinewzy.shining.core.menu.buildMultiPage
 import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import taboolib.common.platform.function.submit
 import taboolib.module.chat.colored
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 import taboolib.module.ui.type.Linked
 
 object ItemEditor {
+    private val itemEditLoreWithChatEditor = NamespacedIdItem(Material.EMERALD, NamespacedId(Shining, "editor-item-lore-chat_editor"))
+    private val itemEditLoreWithGUI = NamespacedIdItem(Material.PAINTING, NamespacedId(Shining, "editor-item-lore-gui"))
+    
     val wools = arrayListOf(
         Material.LIME_WOOL,
         Material.YELLOW_WOOL,
@@ -37,49 +46,67 @@ object ItemEditor {
 
 
     fun editItem(item: ItemStack, player: Player) {
-        player.openMenu<Basic>("物品编辑器") {
+        player.openMenu<Basic>(player.getLangText("menu-editor-item-title")) {
             rows(3)
 
             map(
                 "oooxxxxxx",
-                "o oxaxxbx",
+                "o oxaxbcx",
                 "oooxxxxxx"
             )
 
             set('o', ShiningIcon.EDGE.item)
             set('x', ShiningIcon.EDGE_GLASS_PANE.item)
-            set('a', ShiningIcon.RENAME.item)
-            set('b', ShiningIcon.EDIT_LORE.item)
+            set('a', ShiningIcon.RENAME.toLocalizedItem(player))
+            set('b', itemEditLoreWithChatEditor.toLocalizedItem(player))
+            set('c', itemEditLoreWithGUI.toLocalizedItem(player))
 
             onBuild { _, inventory ->
                 inventory.setItem(editItemOrder, item)
             }
 
             onClick('a') { event ->
-                PlayerChatSubscriber(player, "物品名称编辑") {
-                    item.setName(message)
-                    player.sendMsg(Shining.prefix, "&a物品名称编辑成功")
-
-                    submit {
+                player.openChatEditor<Text>(player.getLangText("menu-editor-item-name-title")) { 
+                    text(item.getDisplayNameOrNull())
+                    
+                    onSubmit { 
+                        item.setName(it)
+                    }
+                    
+                    onFinal { 
                         editItem(item, player)
                     }
-                    true
-                }.register()
-
-                player.sendMessage("§f[${Shining.prefix}§f] 请输入新的物品名称 (可用'§a&§f'表示颜色, 输入'§c.§f'以取消)")
-                player.closeInventory()
+                }
+            }
+            
+            onClick('b') {
+                editLoreWithChatEditor(item, player)
             }
 
-            onClick('b') { event ->
-                editLore(item, event.clicker)
+            onClick('c') {
+                editLoreWithGUI(item, player)
             }
 
             onClick(lock = true)
         }
     }
+    
+    fun editLoreWithChatEditor(item: ItemStack, player: Player) {
+        player.openChatEditor<TextList>(player.getLangText("menu-editor-item-lore-title")) { 
+            list(item.getLore())
+            
+            onSubmit { 
+                item.setLore(it)
+            }
+            
+            onFinal { 
+                editItem(item, player)
+            }
+        }
+    }
 
-    fun editLore(item: ItemStack, player: Player) {
-        player.openMenu<Linked<String>>("编辑 Lore") {
+    fun editLoreWithGUI(item: ItemStack, player: Player) {
+        player.openMenu<Linked<String>>(player.getLangText("menu-editor-item-lore-title")) {
             buildMultiPage()
 
             elements { item.getLore() }
@@ -95,51 +122,47 @@ object ItemEditor {
                 when (status) {
                     Status.EDIT -> {
                         event.currentItem?.itemMeta?.displayName?.let { displayName ->
-                            PlayerChatSubscriber(player, "物品Lore编辑") {
-                                item.itemMeta?.let { meta ->
-                                    meta.lore?.let { lore ->
-                                        val index = displayName.substring(2).toInt()
-                                        lore[index] = message.colored()
-                                        meta.lore = lore
-                                        item.itemMeta = meta
-                                        player.sendMsg(Shining.prefix, "&a物品Lore编辑成功")
+                            item.itemMeta?.let { meta ->
+                                meta.lore?.let { lore ->
+                                    val index = displayName.substring(2).toInt()
 
-                                        submit {
-                                            editLore(item, player)
+                                    player.openChatEditor<Text>(player.getLangText("menu-editor-item-lore-title")) {
+                                        text(lore[index])
+                                        
+                                        onSubmit { 
+                                            lore[index] = it.colored()
+                                            meta.lore = lore
+                                            item.itemMeta = meta
+                                        }
+                                        
+                                        onFinal { 
+                                            editLoreWithGUI(item, player)
                                         }
                                     }
                                 }
-
-                                true
-                            }.register()
-
-                            player.sendMessage("§f[${Shining.prefix}§f] 请输入新的Lore (可用'§a&§f'表示颜色, 输入'§c.§f'以取消)")
-                            player.closeInventory()
+                            }
                         }
                     }
 
                     Status.ADD -> {
                         event.currentItem?.itemMeta?.displayName?.let { displayName ->
-                            PlayerChatSubscriber(player, "添加物品Lore") {
-                                item.itemMeta?.let { meta ->
-                                    meta.lore?.let { lore ->
-                                        val index = displayName.substring(2).toInt()
-                                        lore.add(index, message.colored())
-                                        meta.lore = lore
-                                        item.itemMeta = meta
-                                        player.sendMsg(Shining.prefix, "&a物品Lore添加成功")
-
-                                        submit {
-                                            editLore(item, player)
+                            item.itemMeta?.let { meta ->
+                                meta.lore?.let { lore ->
+                                    val index = displayName.substring(2).toInt()
+                                    
+                                    player.openChatEditor<Text>(player.getLangText("menu-editor-item-lore-add")) { 
+                                        onSubmit {
+                                            lore.add(index, it.colored())
+                                            meta.lore = lore
+                                            item.itemMeta = meta
+                                        }
+                                        
+                                        onFinal { 
+                                            editLoreWithGUI(item, player)
                                         }
                                     }
                                 }
-
-                                true
-                            }.register()
-
-                            player.sendMessage("§f[${Shining.prefix}§f] 请输入要添加的Lore (可用'§a&§f'表示颜色, 输入'§c.§f'以取消)")
-                            player.closeInventory()
+                            }
                         }
                     }
 
@@ -151,10 +174,10 @@ object ItemEditor {
                                     lore.removeAt(index)
                                     meta.lore = lore
                                     item.itemMeta = meta
-                                    player.sendMsg(Shining.prefix, "&a物品Lore删除成功")
+                                    player.sendPrefixedLangText("menu-editor-item-lore-remove")
                                     player.closeInventory()
 
-                                    editLore(item, player)
+                                    editLoreWithGUI(item, player)
                                 }
                             }
                         }
@@ -166,23 +189,20 @@ object ItemEditor {
                 if (status == Status.ADD) {
                     val currentItem = event.currentItem
                     if (currentItem == null || currentItem.type == Material.AIR) {
-                        PlayerChatSubscriber(player, "添加物品Lore") {
-                            val meta = item.getMeta()
-                            val lore = meta.lore ?: mutableListOf()
-                            lore += message.colored()
-                            meta.lore = lore
-                            item.itemMeta = meta
-                            player.sendMsg(Shining.prefix, "&a物品Lore添加成功")
-
-                            submit {
-                                editLore(item, player)
+                        val meta = item.getMeta()
+                        val lore = meta.lore ?: mutableListOf()
+                        
+                        player.openChatEditor<Text>(player.getLangText("menu-editor-item-lore-add")) { 
+                            onSubmit {
+                                lore += it.colored()
+                                meta.lore = lore
+                                item.itemMeta = meta
                             }
-
-                            true
-                        }.register()
-
-                        player.sendMessage("§f[${Shining.prefix}§f] 请输入要添加的Lore (可用'§a&§f'表示颜色, 输入'§c.§f'以取消)")
-                        player.closeInventory()
+                            
+                            onFinal { 
+                                editLoreWithGUI(item, player)
+                            }
+                        }
                     }
                 }
             }
