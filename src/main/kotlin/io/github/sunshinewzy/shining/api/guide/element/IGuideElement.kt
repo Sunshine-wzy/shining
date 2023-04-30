@@ -47,7 +47,10 @@ interface IGuideElement {
     fun getCondition(team: GuideTeam): ElementCondition
 
     fun getSymbolByCondition(player: Player, team: GuideTeam, condition: ElementCondition): ItemStack
-
+    
+    fun getUnlockedSymbol(player: Player): ItemStack =
+        getSymbolByCondition(player, GuideTeam.CompletedTeam, ElementCondition.UNLOCKED)
+    
     fun isTeamCompleted(team: GuideTeam): Boolean
 
 }

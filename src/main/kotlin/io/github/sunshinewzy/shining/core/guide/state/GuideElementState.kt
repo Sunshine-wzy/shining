@@ -14,6 +14,7 @@ import io.github.sunshinewzy.shining.core.editor.chat.type.TextMap
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.context.GuideSelectElementsContext
+import io.github.sunshinewzy.shining.core.guide.context.GuideShortcutBarContext
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.onBackMenu
@@ -189,10 +190,15 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
             
             onClick(lock = true) {
                 if (it.rawSlot in ShiningGuide.slotOrders && it.currentItem.isAir()) {
-                    ShiningGuide.openCompletedMainMenu(player, GuideSelectElementsContext { ctxt ->
-                        addDependencies(ctxt.elements)
-                        openDependenciesEditor(player, team)
-                    })
+                    ShiningGuide.openCompletedMainMenu(
+                        player,
+                        GuideShortcutBarContext() + GuideSelectElementsContext({ element ->
+                            !dependencyMap.containsValue(element)
+                        }) { ctxt ->
+                            addDependencies(ctxt.elements)
+                            openDependenciesEditor(player, team)
+                        }
+                    )
                 }
             }
         }

@@ -50,8 +50,8 @@ open class GuideCategory(
             val dependencyLockedElements = LinkedList<IGuideElement>()
             val lockLockedElements = LinkedList<IGuideElement>()
             onGenerate { player, element, index, slot ->
-                if (context[GuideEditorContext]?.mode == true) {
-                    return@onGenerate element.getSymbolByCondition(player, team, ElementCondition.UNLOCKED)
+                if (context[GuideEditorContext]?.mode == true || team == GuideTeam.CompletedTeam) {
+                    return@onGenerate element.getUnlockedSymbol(player)
                 }
  
                 val condition = element.getCondition(team)
@@ -90,6 +90,15 @@ open class GuideCategory(
                         } else if (ctxt.filter(element)) {
                             ctxt.elements.add(element)
                         }
+
+                        // Update shortcut bar
+                        context[GuideShortcutBarContext]?.setItems(
+                            ctxt.elements.map {
+                                it.getUnlockedSymbol(player)
+                            }
+                        )
+                        openMenu(player, team, context)
+                        return@onClick
                     }
                 }
                 
@@ -141,7 +150,6 @@ open class GuideCategory(
                         ctxt.submit()
                     } else {
                         ctxt.switchMode()
-                        context[GuideShortcutBarContext]?.setItems(ctxt.elements.map { it.getSymbol() })
                         openMenu(player, team, context)
                     }
                 }
