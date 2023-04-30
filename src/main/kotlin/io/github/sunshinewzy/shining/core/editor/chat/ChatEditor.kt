@@ -42,6 +42,13 @@ object ChatEditor {
             session.final(player)
         }
     }
+    
+    fun update(player: Player) {
+        getSession(player)?.let { session ->
+            session.update(AsyncPlayerChatEvent(false, player, "", setOf()))
+            session.send(player)
+        }
+    }
 
     @SubscribeEvent(EventPriority.LOWEST)
     fun onAsyncPlayerChat(event: AsyncPlayerChatEvent) {

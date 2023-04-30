@@ -12,10 +12,8 @@ import taboolib.module.ui.type.Basic
 
 object ShiningGuideSettings {
 
-    private val itemTeamInfo =
-        NamespacedIdItem(Material.APPLE, NamespacedId(Shining, "shining_guide-settings-team_info"))
-    private val itemEditMode =
-        NamespacedIdItem(Material.COMPARATOR, NamespacedId(Shining, "shining_guide-settings-edit_mode"))
+    private val itemTeamInfo = NamespacedIdItem(Material.APPLE, NamespacedId(Shining, "shining_guide-settings-team_info"))
+    private val itemEditMode = NamespacedIdItem(Material.COMPARATOR, NamespacedId(Shining, "shining_guide-settings-edit_mode"))
     private val itemEditModeClose = itemEditMode.toStateItem("close")
     private val itemEditModeOpen = itemEditMode.toStateItem("open").shiny()
 
@@ -42,16 +40,13 @@ object ShiningGuideSettings {
             }
 
             if (player.hasPermission(ShiningGuideEditor.PERMISSION_EDIT)) {
-                if (ShiningGuideEditor.isEditModeEnabled(player)) {
-                    set('e', itemEditModeOpen.toLocalizedItem(player)) {
-                        ShiningGuideEditor.switchEditMode(player)
-                        openSettingsMenu(player, team)
-                    }
-                } else {
-                    set('e', itemEditModeClose.toLocalizedItem(player)) {
-                        ShiningGuideEditor.switchEditMode(player)
-                        openSettingsMenu(player, team)
-                    }
+                set(
+                    'e',
+                    if (ShiningGuideEditor.isEditModeEnabled(player)) itemEditModeOpen.toLocalizedItem(player)
+                    else itemEditModeClose.toLocalizedItem(player)
+                ) {
+                    ShiningGuideEditor.switchEditMode(player)
+                    openSettingsMenu(player, team)
                 }
             }
 

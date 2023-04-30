@@ -15,6 +15,8 @@ import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.context.GuideSelectElementsContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideShortcutBarContext
+import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
+import io.github.sunshinewzy.shining.core.guide.lock.LockItem
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.onBackMenu
@@ -184,7 +186,7 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
                 openDependencyEditor(player, team, element)
             }
 
-            set(2 orderWith 1, ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player)) {
+            set(2 orderWith 1, ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
                 openBasicEditor(player, team)
             }
             
@@ -193,6 +195,10 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
                     ShiningGuide.openCompletedMainMenu(
                         player,
                         GuideShortcutBarContext() + GuideSelectElementsContext({ element ->
+                            this@GuideElementState.element?.let { origin ->
+                                if (element === origin) return@GuideSelectElementsContext false
+                            }
+                            
                             !dependencyMap.containsValue(element)
                         }) { ctxt ->
                             addDependencies(ctxt.elements)
@@ -247,9 +253,41 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
 
             onClick(lock = true) {
                 if (it.rawSlot in ShiningGuide.slotOrders && it.currentItem.isAir()) {
-                    
+                    openCreateNewLockMenu(player, team)
                 }
             }
+        }
+    }
+    
+    fun openCreateNewLockMenu(player: Player, team: GuideTeam) {
+        player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-locks-create-title")) {
+            rows(3)
+
+            map(
+                "-B-------",
+                "-  a b  -",
+                "---------"
+            )
+
+            set('-', ShiningIcon.EDGE.item)
+
+            set('B', ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
+                openLocksEditor(player, team)
+            }
+
+            set('a', itemCreateLockExperience.toLocalizedItem(player)) {
+                val lock = LockExperience(1)
+                locks += lock
+                lock.openEditor(player, team, this@GuideElementState)
+            }
+            
+            set('b', itemCreateLockItem.toLocalizedItem(player)) {
+                val lock = LockItem(ItemStack(Material.AIR))
+                locks += lock
+                lock.openEditor(player, team, this@GuideElementState)
+            }
+
+            onClick(lock = true)
         }
     }
 
@@ -282,6 +320,9 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
         private val itemEditDependencies = NamespacedIdItem(Material.CHEST, NamespacedId(Shining, "shining_guide-editor-state-element-dependencies"))
         private val itemEditLocks = NamespacedIdItem(Material.TRIPWIRE_HOOK, NamespacedId(Shining, "shining_guide-editor-state-element-locks"))
 
+        private val itemCreateLockExperience = NamespacedIdItem(Material.EXPERIENCE_BOTTLE, NamespacedId(Shining, "shining_guide-editor-state-basic-locks-create-experience"))
+        private val itemCreateLockItem = NamespacedIdItem(Material.ITEM_FRAME, NamespacedId(Shining, "shining_guide-editor-state-basic-locks-create-item"))
+        
     }
 
 }

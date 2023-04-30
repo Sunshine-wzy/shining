@@ -18,12 +18,13 @@ class Item(name: String) : ChatEditorSession<ItemStack>(name) {
 
     override fun display(player: Player, json: TellrawJson) {
         json.append(
-            if (isCorrect) player.getLangText("text-editor-chat-content_correct", content.getName()).colored()
-            else player.getLangText("text-editor-chat-content_incorrect", content.getName()).colored()
-        )
+                if (isCorrect) player.getLangText("text-editor-chat-content_correct", "${content.getName()} x${content.amount}").colored()
+                else player.getLangText("text-editor-chat-content_incorrect", "${content.getName()} x${content.amount}").colored()
+            )
             .append("    ")
             .append("§7[§b#§7]")
             .hoverText(player.getLangText("text-editor-chat-session-item-input").colored())
+            .runCommand("/shiningapi editor chat update")
             .newLine()
             .append("§7|")
     }

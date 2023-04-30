@@ -27,8 +27,13 @@ item-shining-shining_guide-editor-state-element-description_name: '&a名称'
 item-shining-shining_guide-editor-state-element-description_lore: '&b描述'
 item-shining-shining_guide-editor-state-element-dependencies: '&e依赖'
 item-shining-shining_guide-editor-state-element-locks: '&c锁'
-item-shining-shining_guide-editor-lock-experience: ['&b所需经验', '', '&a> 当前']
-item-shining-shining_guide-editor-lock-item: ['&b所需物品', '', '&a↓ 当前 ↓']
+item-shining-shining_guide-editor-state-basic-locks-create-experience: '&b经验锁'
+item-shining-shining_guide-editor-state-basic-locks-create-item: '&e物品锁'
+item-shining-shining_guide-editor-lock-experience: [ '&b所需经验', '', '&a> 当前' ]
+item-shining-shining_guide-editor-lock-item: [ '&b所需物品', '', '&a↓ 当前 ↓' ]
+item-shining-shining_guide-editor-lock-is_consume:
+  close: [ '&e消耗模式', '&7已关闭', '', '&a> 点击开启' ]
+  open: [ '&e消耗模式', '&a已开启', '', '&c> 点击关闭' ]
 item-shining-icon-back_menu: [ '&c⇦ 返回', '', '&f左键：&7返回上一页', '&fShift + 左键：&7返回主菜单' ]
 item-shining-icon-back: '&b⇦ 返回'
 item-shining-icon-submit: '&a>> 点击以提交任务 <<'
@@ -49,8 +54,8 @@ item-shining-icon-confirm: '&a确认'
 item-shining-icon-cancel: '&c取消'
 item-shining-icon-settings: '&e设置'
 item-shining-icon-remove: '&c移除'
-item-shining-editor-item-lore-chat_editor: ['&a编辑Lore', '', '&7> 使用&eChatEditor']
-item-shining-editor-item-lore-gui: ['&a编辑Lore', '', '&7> 使用&bGUI']
+item-shining-editor-item-lore-chat_editor: [ '&a编辑Lore', '', '&7> 使用&eChatEditor' ]
+item-shining-editor-item-lore-gui: [ '&a编辑Lore', '', '&7> 使用&bGUI' ]
 menu-shining_guide-title: 'Shining 指南'
 menu-shining_guide-settings-title: 'Shining 指南 - 设置'
 menu-shining_guide-element-unlock-fail: '&c您未达成解锁该元素的条件'
@@ -101,6 +106,7 @@ menu-shining_guide-editor-state-title: 'Shining 指南 - 状态编辑'
 menu-shining_guide-editor-state-basic-title: 'Shining 指南 - 基础状态编辑'
 menu-shining_guide-editor-state-basic-dependencies-title: 'Shining 指南 - 依赖编辑'
 menu-shining_guide-editor-state-basic-locks-title: 'Shining 指南 - 锁编辑'
+menu-shining_guide-editor-state-basic-locks-create-title: 'Shining 指南 - 创建新锁'
 menu-shining_guide-editor-state-category-title: 'Shining 指南 - 类别状态编辑'
 menu-shining_guide-editor-state-current_lore: '&a> 当前:'
 menu-editor-item-title: '物品编辑器'

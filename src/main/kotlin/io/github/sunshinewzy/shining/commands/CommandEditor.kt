@@ -27,6 +27,12 @@ internal object CommandEditor {
                     }
                 }
             }
+            
+            literal("update") {
+                execute<Player> { sender, _, _ -> 
+                    ChatEditor.update(sender)
+                }
+            }
         }
     }
 

@@ -21,10 +21,16 @@ import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 
 class LockExperience(
-    var level: Int,
-    isConsume: Boolean = true
-) : ElementLock({ it.getLangText("menu-shining_guide-lock-experience-description", level.toString()) }, isConsume) {
-
+    level: Int,
+    isConsume: Boolean = true,
+    private val levelArray: IntArray = IntArray(1) { level }
+) : ElementLock({ it.getLangText("menu-shining_guide-lock-experience-description", levelArray[0].toString()) }, isConsume) {
+    
+    var level: Int
+        get() = levelArray[0]
+        set(value) { levelArray[0] = value }
+    
+    
     override fun check(player: Player): Boolean =
         player.level >= level
 
@@ -38,7 +44,7 @@ class LockExperience(
 
             map(
                 "-B-------",
-                "-  a d  -",
+                "- ca d  -",
                 "---------"
             )
 
@@ -46,6 +52,11 @@ class LockExperience(
 
             set('B', ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
                 state.openLocksEditor(player, team)
+            }
+            
+            set('c', if (isConsume) itemIsConsumeOpen.toLocalizedItem(player) else itemIsConsumeClose.toLocalizedItem(player)) {
+                switchIsConsume()
+                openEditor(player, team, state)
             }
             
             set('a', itemEditExperience.toLocalizedItem(player).clone().addLore(description(player))) {

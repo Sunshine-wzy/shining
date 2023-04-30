@@ -1,13 +1,19 @@
 package io.github.sunshinewzy.shining.api.guide.lock
 
+import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.state.GuideElementState
+import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.objects.SItem
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 /**
+ * The lock of elements in ShiningGuide.
+ * The element can be unlocked only when all conditions the lock requires are satisfied.
+ * 
  * @param description If the element is locked, it will be shown in the lore of the symbol.
  * @param isConsume If it is true, the lock will run [consume] when the player is unlocking the element.
  */
@@ -47,5 +53,16 @@ abstract class ElementLock(
      */
     open fun getIcon(player: Player): ItemStack =
         SItem(Material.TRIPWIRE_HOOK, description(player))
+    
+    
+    fun switchIsConsume(): Boolean =
+        (!isConsume).also { isConsume = it }
+    
+    
+    companion object {
+        val itemIsConsume = NamespacedIdItem(Material.APPLE, NamespacedId(Shining, "shining_guide-editor-lock-is_consume"))
+        val itemIsConsumeClose = itemIsConsume.toStateItem("close")
+        val itemIsConsumeOpen = itemIsConsume.toStateItem("open").shiny()
+    }
     
 }

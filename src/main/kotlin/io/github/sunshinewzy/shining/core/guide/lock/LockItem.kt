@@ -25,13 +25,16 @@ import taboolib.module.ui.type.Basic
 import taboolib.platform.util.buildItem
 
 class LockItem(
-    var item: ItemStack,
-    isConsume: Boolean = true
-) : ElementLock(
-    { "${it.getLangText("menu-shining_guide-lock-item-description")} ${item.getName(it)} x${item.amount}" },
-    isConsume
-) {
+    item: ItemStack,
+    isConsume: Boolean = true,
+    private val itemArray: Array<ItemStack> = Array(1) { item }
+) : ElementLock({ "${it.getLangText("menu-shining_guide-lock-item-description")} ${itemArray[0].getName(it)} x${itemArray[0].amount}" }, isConsume) {
 
+    var item: ItemStack
+        get() = itemArray[0]
+        set(value) { itemArray[0] = value }
+    
+    
     override fun check(player: Player): Boolean =
         player.inventory.containsItem(item)
 
@@ -45,7 +48,7 @@ class LockItem(
 
             map(
                 "-B-------",
-                "-  a d  -",
+                "- ca d  -",
                 "-  i    -",
                 "---------"
             )
@@ -54,6 +57,11 @@ class LockItem(
 
             set('B', ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
                 state.openLocksEditor(player, team)
+            }
+
+            set('c', if (isConsume) itemIsConsumeOpen.toLocalizedItem(player) else itemIsConsumeClose.toLocalizedItem(player)) {
+                switchIsConsume()
+                openEditor(player, team, state)
             }
             
             set('a', itemEditItem.toLocalizedItem(player)) {
