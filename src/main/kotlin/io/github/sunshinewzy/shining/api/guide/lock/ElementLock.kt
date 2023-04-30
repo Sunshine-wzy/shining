@@ -20,7 +20,7 @@ import org.bukkit.inventory.ItemStack
 abstract class ElementLock(
     var description: (Player) -> String,
     var isConsume: Boolean = true
-) {
+) : Cloneable {
     /**
      * If the element is locked, it will be run when the player is opening the guide.
      *
@@ -57,6 +57,9 @@ abstract class ElementLock(
     
     fun switchIsConsume(): Boolean =
         (!isConsume).also { isConsume = it }
+
+
+    public abstract override fun clone(): ElementLock
     
     
     companion object {

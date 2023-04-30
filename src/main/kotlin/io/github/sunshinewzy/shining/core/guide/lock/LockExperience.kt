@@ -92,6 +92,9 @@ class LockExperience(
             player.getLangText("menu-shining_guide-lock-experience-title"),
             description(player)
         )
+
+    override fun clone(): LockExperience =
+        LockExperience(level, isConsume)
     
     
     companion object {

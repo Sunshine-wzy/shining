@@ -20,7 +20,7 @@ import java.util.regex.Pattern
  * @param namespace namespace
  * @param id id
  */
-class NamespacedId(val namespace: Namespace, val id: String) {
+data class NamespacedId(val namespace: Namespace, val id: String) : Cloneable {
 
     init {
         check(VALID_ID.matcher(id).matches()) {

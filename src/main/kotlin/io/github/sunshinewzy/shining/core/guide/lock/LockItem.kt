@@ -117,6 +117,9 @@ class LockItem(
             
             colored()
         }
+
+    override fun clone(): LockItem =
+        LockItem(item, isConsume)
     
     
     companion object {

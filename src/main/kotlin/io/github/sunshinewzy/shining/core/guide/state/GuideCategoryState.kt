@@ -15,7 +15,7 @@ class GuideCategoryState(element: GuideCategory) : GuideElementState(element) {
 
     override fun openAdvancedEditor(player: Player) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-category-title")) {
-
+            
         }
     }
 

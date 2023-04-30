@@ -100,11 +100,11 @@ abstract class GuideElement(
     override fun saveToState(state: IGuideElementState): Boolean {
         if (state !is GuideElementState) return false
 
-        state.id = id
+        state.id = id.copy()
         state.descriptionName = description.name
         state.descriptionLore += description.lore
         state.dependencyMap += dependencyMap
-        state.locks += locks
+        locks.mapTo(state.locks) { it.clone() }
         return true
     }
 
