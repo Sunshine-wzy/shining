@@ -14,6 +14,7 @@ import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor.setEditor
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideSettings
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideSelectElementsContext
+import io.github.sunshinewzy.shining.core.guide.context.GuideShortcutBarContext
 import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
@@ -140,10 +141,14 @@ open class GuideCategory(
                         ctxt.submit()
                     } else {
                         ctxt.switchMode()
+                        context[GuideShortcutBarContext]?.setItems(ctxt.elements.map { it.getSymbol() })
                         openMenu(player, team, context)
                     }
                 }
             }
+            
+            // Shortcut bar
+            context[GuideShortcutBarContext]?.update(this)
         }
     }
 
