@@ -87,12 +87,12 @@ abstract class GuideElement(
     override fun update(state: IGuideElementState): Boolean {
         if (state !is GuideElementState) return false
 
-        state.id?.let { id = it }
-        state.descriptionName?.let { description = ElementDescription(it, state.descriptionLore) }
+        state.id?.let { id = it.copy() }
+        state.descriptionName?.let { description = ElementDescription(it, ArrayList(state.descriptionLore)) }
         dependencyMap.clear()
         dependencyMap += state.dependencyMap
         locks.clear()
-        locks += state.locks
+        state.locks.mapTo(locks) { it.clone() }
 
         return true
     }

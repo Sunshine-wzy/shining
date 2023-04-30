@@ -67,7 +67,7 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
 
             map(
                 "-B-------",
-                "-  a b  -",
+                "-u a b  -",
                 "---------"
             )
 
@@ -75,6 +75,10 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
 
             onBackMenu(player, team)
 
+            set('u', itemUpdate.toLocalizedItem(player)) {
+                update()
+            }
+            
             set('a', itemBasicEditor.toLocalizedItem(player)) {
                 openBasicEditor(player, team)
             }
@@ -311,6 +315,7 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
 
 
     companion object {
+        private val itemUpdate = NamespacedIdItem(Material.REDSTONE, NamespacedId(Shining, "shining_guide-editor-state-element-update"))
         private val itemBasicEditor = NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-editor-state-element-basic_editor"))
         private val itemAdvancedEditor = NamespacedIdItem(Material.DIAMOND, NamespacedId(Shining, "shining_guide-editor-state-element-advanced_editor"))
 
