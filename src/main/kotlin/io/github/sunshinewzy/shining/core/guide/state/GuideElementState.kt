@@ -67,7 +67,7 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
 
             map(
                 "-B-------",
-                "-u a b  -",
+                "-u a b s-",
                 "---------"
             )
 
@@ -85,6 +85,10 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
 
             set('b', itemAdvancedEditor.toLocalizedItem(player)) {
                 openAdvancedEditor(player)
+            }
+            
+            set('s', itemSaveToDraft.toLocalizedItem(player)) {
+                
             }
 
             onClick(lock = true)
@@ -316,9 +320,10 @@ abstract class GuideElementState(private var element: IGuideElement? = null) : I
 
     companion object {
         private val itemUpdate = NamespacedIdItem(Material.REDSTONE, NamespacedId(Shining, "shining_guide-editor-state-element-update"))
+        private val itemSaveToDraft = NamespacedIdItem(Material.CHEST, NamespacedId(Shining, "shining_guide-editor-state-element-save_to_draft"))
         private val itemBasicEditor = NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-editor-state-element-basic_editor"))
         private val itemAdvancedEditor = NamespacedIdItem(Material.DIAMOND, NamespacedId(Shining, "shining_guide-editor-state-element-advanced_editor"))
-
+        
         private val itemEditId = NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-editor-state-element-id"))
         private val itemEditDescriptionName = NamespacedIdItem(Material.APPLE, NamespacedId(Shining, "shining_guide-editor-state-element-description_name"))
         private val itemEditDescriptionLore = NamespacedIdItem(Material.BREAD, NamespacedId(Shining, "shining_guide-editor-state-element-description_lore"))
