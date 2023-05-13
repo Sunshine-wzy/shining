@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import io.github.sunshinewzy.shining.api.ShiningPlugin
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
@@ -154,6 +155,11 @@ object Shining : Plugin(), ShiningPlugin {
     }
 
     private fun registerSerialization() {
+        val ptv = BasicPolymorphicTypeValidator.builder()
+            .allowIfSubType("io.github.sunshinewzy.shining.core.guide.state")
+            .build()
+        objectMapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL)
+        
         arrayOf(
             SBlock::class.java,
             TaskProgress::class.java,

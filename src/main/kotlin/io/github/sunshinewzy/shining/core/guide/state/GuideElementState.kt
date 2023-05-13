@@ -34,14 +34,14 @@ import taboolib.module.ui.type.Basic
 import taboolib.platform.util.isAir
 import java.util.*
 
-abstract class GuideElementState(private var element: IGuideElement? = null) : IGuideElementState {
+abstract class GuideElementState(private var element: IGuideElement?) : IGuideElementState {
 
     var id: NamespacedId? = null
     var descriptionName: String? = null
     var descriptionLore: MutableList<String> = LinkedList()
 
-    val dependencyMap: MutableMap<NamespacedId, IGuideElement> = HashMap()
-    val locks: MutableList<ElementLock> = LinkedList()
+    var dependencyMap: MutableMap<NamespacedId, IGuideElement> = HashMap()
+    var locks: MutableList<ElementLock> = LinkedList()
 
     
     fun addDependency(element: IGuideElement) {

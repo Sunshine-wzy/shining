@@ -12,9 +12,9 @@ import taboolib.module.ui.type.Basic
 import taboolib.platform.util.isAir
 import java.util.*
 
-class GuideCategoryState(element: GuideCategory) : GuideElementState(element) {
+class GuideCategoryState @JvmOverloads constructor(element: GuideCategory? = null) : GuideElementState(element) {
 
-    val elements: MutableList<IGuideElement> = LinkedList()
+    var elements: MutableList<IGuideElement> = LinkedList()
 
 
     override fun openAdvancedEditor(player: Player) {
