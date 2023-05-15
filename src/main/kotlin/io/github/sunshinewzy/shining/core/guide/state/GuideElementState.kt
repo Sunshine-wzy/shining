@@ -34,7 +34,7 @@ import taboolib.module.ui.type.Basic
 import taboolib.platform.util.isAir
 import java.util.*
 
-abstract class GuideElementState(private var element: IGuideElement?) : IGuideElementState {
+abstract class GuideElementState(private var element: IGuideElement?) : IGuideElementState, Cloneable {
 
     var id: NamespacedId? = null
     var descriptionName: String? = null
@@ -52,6 +52,21 @@ abstract class GuideElementState(private var element: IGuideElement?) : IGuideEl
         elements.forEach { 
             addDependency(it)
         }
+    }
+
+    fun copyTo(state: GuideElementState): GuideElementState {
+        state.element = element
+        
+        id?.let { state.id = it }
+        descriptionName?.let { state.descriptionName = it }
+        state.descriptionLore.clear()
+        state.descriptionLore += descriptionLore
+        state.dependencyMap.clear()
+        state.dependencyMap += dependencyMap
+        state.locks.clear()
+        locks.mapTo(state.locks) { it.clone() }
+        
+        return state
     }
     
 

@@ -17,6 +17,14 @@ class GuideCategoryState @JvmOverloads constructor(element: GuideCategory? = nul
     var elements: MutableList<IGuideElement> = LinkedList()
 
 
+    override fun clone(): GuideCategoryState {
+        val state = GuideCategoryState()
+        copyTo(state)
+        
+        state.elements += elements
+        return state
+    }
+
     override fun openAdvancedEditor(player: Player) {
         player.openMultiPageMenu<IGuideElement>(player.getLangText("menu-shining_guide-editor-state-category-title")) {
             elements { elements }
