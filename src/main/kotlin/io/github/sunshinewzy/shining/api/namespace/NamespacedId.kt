@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.api.namespace
 
+import com.fasterxml.jackson.annotation.JsonCreator
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.ShiningPlugin
 import java.util.regex.Pattern
@@ -20,7 +21,7 @@ import java.util.regex.Pattern
  * @param namespace namespace
  * @param id id
  */
-data class NamespacedId(val namespace: Namespace, val id: String) : Cloneable {
+data class NamespacedId @JsonCreator constructor(val namespace: Namespace, val id: String) : Cloneable {
 
     init {
         check(VALID_ID.matcher(id).matches()) {

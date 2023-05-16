@@ -1,5 +1,8 @@
 package io.github.sunshinewzy.shining.core.guide.state
 
+import com.fasterxml.jackson.annotation.JsonGetter
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonSetter
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
@@ -34,15 +37,37 @@ import taboolib.module.ui.type.Basic
 import taboolib.platform.util.isAir
 import java.util.*
 
-abstract class GuideElementState(private var element: IGuideElement?) : IGuideElementState, Cloneable {
+abstract class GuideElementState(@JsonIgnore private var element: IGuideElement?) : IGuideElementState, Cloneable {
 
     var id: NamespacedId? = null
     var descriptionName: String? = null
     var descriptionLore: MutableList<String> = LinkedList()
 
+    @JsonIgnore
     var dependencyMap: MutableMap<NamespacedId, IGuideElement> = HashMap()
     var locks: MutableList<ElementLock> = LinkedList()
 
+    
+    @JsonGetter("dependencies")
+    fun getDependencyIds(): MutableSet<NamespacedId> {
+        return dependencyMap.keys
+    }
+    
+    @JsonSetter("dependencies")
+    fun setDependencyByIds(dependencyIds: MutableSet<NamespacedId>) {
+        
+    }
+    
+    @JsonGetter("element")
+    fun getElementId(): NamespacedId? {
+        return element?.getId()
+    }
+    
+    @JsonSetter("element")
+    fun setElementById(elementId: NamespacedId) {
+        
+    }
+    
     
     fun addDependency(element: IGuideElement) {
         dependencyMap[element.getId()] = element
