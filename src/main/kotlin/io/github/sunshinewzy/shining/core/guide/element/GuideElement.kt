@@ -213,6 +213,18 @@ abstract class GuideElement(
         locks += lock
     }
 
+    
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is GuideElement) return false
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+    
 
     companion object {
         const val TEXT_LOCKED = "menu-shining_guide-element-text-locked"
