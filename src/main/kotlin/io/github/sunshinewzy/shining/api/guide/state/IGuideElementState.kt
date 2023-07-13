@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.api.guide.state
 
+import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import org.bukkit.entity.Player
 
@@ -20,4 +21,6 @@ interface IGuideElementState {
      */
     fun openEditor(player: Player, team: GuideTeam)
 
+    fun toElement(): IGuideElement
+    
 }

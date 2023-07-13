@@ -113,9 +113,9 @@ open class SItem(item: ItemStack) : ItemStack(item) {
     }
 
     companion object {
-        private val itemActions =
-            HashMap<SItem, Pair<PlayerInteractEvent.() -> Boolean, ArrayList<PlayerInteractEvent.() -> Unit>>>()
+        private val itemActions = HashMap<SItem, Pair<PlayerInteractEvent.() -> Boolean, ArrayList<PlayerInteractEvent.() -> Unit>>>()
 
+        val AIR = ItemStack(Material.AIR)
         val items = HashMap<String, ItemStack>()
 
         internal fun initAction() {

@@ -32,13 +32,18 @@ import java.util.*
  * @param id to identify this [GuideCategory]
  * @param symbol to display this [GuideCategory] in guide
  */
-open class GuideCategory(
-    id: NamespacedId,
-    description: ElementDescription,
-    symbol: ItemStack
-) : GuideElement(id, description, symbol), IGuideElementContainer {
+open class GuideCategory : GuideElement, IGuideElementContainer {
     private val elements: MutableList<IGuideElement> = LinkedList()
 
+    
+    constructor(
+        id: NamespacedId,
+        description: ElementDescription,
+        symbol: ItemStack
+    ) : super(id, description, symbol)
+    
+    constructor() : super()
+    
 
     override fun openMenu(player: Player, team: GuideTeam, context: GuideContext) {
         player.openMenu<Linked<IGuideElement>>(player.getLangText(ShiningGuide.TITLE)) {

@@ -17,6 +17,9 @@ class GuideCategoryState @JvmOverloads constructor(element: GuideCategory? = nul
     var elements: MutableList<IGuideElement> = LinkedList()
 
 
+    override fun toElement(): IGuideElement =
+        GuideCategory().also { it.update(this) }
+
     override fun clone(): GuideCategoryState {
         val state = GuideCategoryState()
         copyTo(state)

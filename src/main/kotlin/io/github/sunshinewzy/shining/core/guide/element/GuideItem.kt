@@ -8,8 +8,12 @@ import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-open class GuideItem(id: NamespacedId, description: ElementDescription, item: ItemStack) : GuideElement(id, description, item) {
+open class GuideItem : GuideElement {
 
+    constructor(id: NamespacedId, description: ElementDescription, item: ItemStack) : super(id, description, item)
+    
+    constructor() : super()
+    
 
     override fun openMenu(player: Player, team: GuideTeam, context: GuideContext) {
         TODO("Not yet implemented")

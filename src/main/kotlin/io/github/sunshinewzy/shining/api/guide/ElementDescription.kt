@@ -13,4 +13,9 @@ class ElementDescription(val name: String, val lore: List<String>) {
     fun setOnItem(item: ItemStack): ItemStack =
         item.setNameAndLore(name, lore)
 
+    
+    companion object {
+        val NULL: ElementDescription = ElementDescription("", emptyList())
+    }
+    
 }

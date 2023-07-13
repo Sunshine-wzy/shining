@@ -1,6 +1,8 @@
 package io.github.sunshinewzy.shining.core.guide.element
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
+import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.data.database.column.jackson
 import org.jetbrains.exposed.dao.id.EntityID
@@ -9,39 +11,57 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.update
+import java.util.concurrent.ConcurrentHashMap
 
 object GuideElements : LongIdTable() {
     
     val key = text("key").uniqueIndex()
-    val element = jackson("element", Shining.objectMapper, GuideElement::class.java)
+    val element = jackson("element", Shining.objectMapper, IGuideElementState::class.java)
+    
+    private val cache: MutableMap<NamespacedId, IGuideElement> = ConcurrentHashMap()
     
     
-    fun insertElement(element: GuideElement): EntityID<Long> =
-        insertAndGetId { 
+    suspend fun getElement(id: NamespacedId): IGuideElement? {
+        cache[id]?.let { return it }
+        
+        return newSuspendedTransaction transaction@{
+            readElement(id)?.let {
+                cache[id] = it
+                return@transaction it
+            }
+
+            return@transaction null
+        }
+    }
+    
+    
+    private fun insertElement(element: IGuideElement): EntityID<Long> =
+        insertAndGetId {
             it[GuideElements.key] = element.getId().toString()
-            it[GuideElements.element] = element
+            it[GuideElements.element] = element.getState()
         }
     
-    fun updateElement(element: GuideElement): Int =
+    private fun updateElement(element: IGuideElement): Int =
         update({ GuideElements.key eq element.getId().toString() }) { 
-            it[GuideElements.element] = element
+            it[GuideElements.element] = element.getState()
         }
     
-    fun deleteElement(id: NamespacedId): Int =
+    private fun deleteElement(id: NamespacedId): Int =
         deleteWhere { 
             GuideElements.key eq id.toString()
         }
 
-    fun deleteElement(element: GuideElement): Int =
+    private fun deleteElement(element: IGuideElement): Int =
         deleteElement(element.getId())
     
-    fun getElement(id: NamespacedId): GuideElement? =
+    private fun readElement(id: NamespacedId): IGuideElement? =
         GuideElements
             .slice(GuideElements.element)
             .select { GuideElements.key eq id.toString() }
             .firstNotNullOfOrNull {
                 it[GuideElements.element]
-            }
+            }?.toElement()
     
 }

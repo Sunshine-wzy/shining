@@ -18,6 +18,7 @@ import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.context.GuideSelectElementsContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideShortcutBarContext
+import io.github.sunshinewzy.shining.core.guide.element.GuideElements
 import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
 import io.github.sunshinewzy.shining.core.lang.getLangText
@@ -54,8 +55,12 @@ abstract class GuideElementState(@JsonIgnore private var element: IGuideElement?
     }
     
     @JsonSetter("dependencies")
-    fun setDependencyByIds(dependencyIds: MutableSet<NamespacedId>) {
-        
+    suspend fun setDependencyByIds(dependencyIds: MutableSet<NamespacedId>) {
+        dependencyIds.forEach { id ->
+            GuideElements.getElement(id)?.let { 
+                dependencyMap[id] = it
+            }
+        }
     }
     
     @JsonGetter("element")
@@ -64,8 +69,10 @@ abstract class GuideElementState(@JsonIgnore private var element: IGuideElement?
     }
     
     @JsonSetter("element")
-    fun setElementById(elementId: NamespacedId) {
-        
+    suspend fun setElementById(elementId: NamespacedId) {
+        GuideElements.getElement(elementId)?.let { 
+            element = it
+        }
     }
     
     
