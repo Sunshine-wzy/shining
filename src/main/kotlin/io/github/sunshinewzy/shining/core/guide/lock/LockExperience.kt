@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.core.guide.lock
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
@@ -23,7 +24,7 @@ import taboolib.module.ui.type.Basic
 class LockExperience(
     level: Int,
     isConsume: Boolean = true,
-    private val levelArray: IntArray = IntArray(1) { level }
+    @JsonIgnore private val levelArray: IntArray = IntArray(1) { level }
 ) : ElementLock({ it.getLangText("menu-shining_guide-lock-experience-description", levelArray[0].toString()) }, isConsume) {
     
     var level: Int

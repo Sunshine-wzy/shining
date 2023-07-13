@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.api.guide.lock
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
@@ -18,7 +19,7 @@ import org.bukkit.inventory.ItemStack
  * @param isConsume If it is true, the lock will run [consume] when the player is unlocking the element.
  */
 abstract class ElementLock(
-    var description: (Player) -> String,
+    @JsonIgnore var description: (Player) -> String,
     var isConsume: Boolean = true
 ) : Cloneable {
     /**

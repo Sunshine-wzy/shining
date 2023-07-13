@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.core.guide.lock
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
@@ -27,7 +28,7 @@ import taboolib.platform.util.buildItem
 class LockItem(
     item: ItemStack,
     isConsume: Boolean = true,
-    private val itemArray: Array<ItemStack> = Array(1) { item }
+    @JsonIgnore private val itemArray: Array<ItemStack> = Array(1) { item }
 ) : ElementLock({ "${it.getLangText("menu-shining_guide-lock-item-description")} ${itemArray[0].getName(it)} x${itemArray[0].amount}" }, isConsume) {
 
     var item: ItemStack

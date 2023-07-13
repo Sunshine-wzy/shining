@@ -1,11 +1,20 @@
 package io.github.sunshinewzy.shining.core.guide.state
 
+import com.fasterxml.jackson.annotation.JsonGetter
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonSetter
+import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
+import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
+import io.github.sunshinewzy.shining.core.guide.element.GuideElements
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
+import io.github.sunshinewzy.shining.utils.putElement
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
@@ -14,8 +23,61 @@ import java.util.*
 
 class GuideCategoryState @JvmOverloads constructor(element: GuideCategory? = null) : GuideElementState(element) {
 
-    var elements: MutableList<IGuideElement> = LinkedList()
+    @JsonIgnore
+    var priorityToElements: TreeMap<Int, MutableList<IGuideElement>> =
+        TreeMap { o1, o2 -> o2 - o1 }
+    @JsonIgnore
+    var idToPriority: MutableMap<NamespacedId, Int> = HashMap()
+    
+    @JsonGetter("elements")
+    fun getElementsId(): TreeMap<Int, MutableList<NamespacedId>> {
+        val map = TreeMap<Int, MutableList<NamespacedId>> { o1, o2 -> o2 - o1 }
+        priorityToElements.forEach { (priority, list) -> 
+            map[priority] = list.mapTo(ArrayList()) { it.getId() }
+        }
+        return map
+    }
+    
+    @JsonSetter("elements")
+    fun setElementsById(map: TreeMap<Int, MutableList<NamespacedId>>) {
+        Shining.scope.launch(Dispatchers.IO) {
+            val newPriorityToElements = TreeMap<Int, MutableList<IGuideElement>> { o1, o2 -> o2 - o1 }
+            val newIdToPriority = HashMap<NamespacedId, Int>()
+            
+            map.forEach { (priority, list) ->
+                val elements = ArrayList<IGuideElement>()
+                list.forEach { id ->
+                    GuideElements.getElement(id)?.let {
+                        newIdToPriority[id] = priority
+                        elements += it
+                    }
+                }
+                newPriorityToElements[priority] = elements
+            }
+            
+            priorityToElements = newPriorityToElements
+            idToPriority = newIdToPriority
+        }
+    }
 
+    fun getElements(): List<IGuideElement> {
+        val list = ArrayList<IGuideElement>()
+        priorityToElements.forEach { (priority, elements) ->
+            list += elements
+        }
+        return list
+    }
+    
+    fun addElement(element: IGuideElement, priority: Int) {
+        priorityToElements.putElement(priority, element)
+        idToPriority[element.getId()] = priority
+    }
+    
+    fun removeElement(element: IGuideElement): Boolean {
+        val priority = idToPriority[element.getId()] ?: return false
+        return priorityToElements[priority]?.remove(element) ?: false
+    }
+    
 
     override fun toElement(): IGuideElement =
         GuideCategory().also { it.update(this) }
@@ -24,13 +86,14 @@ class GuideCategoryState @JvmOverloads constructor(element: GuideCategory? = nul
         val state = GuideCategoryState()
         copyTo(state)
         
-        state.elements += elements
+        state.priorityToElements += priorityToElements
+        state.idToPriority = idToPriority
         return state
     }
 
     override fun openAdvancedEditor(player: Player) {
         player.openMultiPageMenu<IGuideElement>(player.getLangText("menu-shining_guide-editor-state-category-title")) {
-            elements { elements }
+            elements { getElements() }
             
             onGenerate(true) { player, element, _, _ -> 
                 element.getUnlockedSymbol(player)
@@ -65,7 +128,7 @@ class GuideCategoryState @JvmOverloads constructor(element: GuideCategory? = nul
             }
 
             set('d', ShiningIcon.REMOVE.toLocalizedItem(player)) {
-                elements -= element
+                removeElement(element)
                 openAdvancedEditor(player)
             }
 

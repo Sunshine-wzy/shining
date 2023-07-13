@@ -4,7 +4,7 @@ import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
-import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
+import io.github.sunshinewzy.shining.api.guide.element.IGuideElementPriorityContainer
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
@@ -19,6 +19,7 @@ import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
+import io.github.sunshinewzy.shining.utils.putElement
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.module.ui.openMenu
@@ -32,9 +33,12 @@ import java.util.*
  * @param id to identify this [GuideCategory]
  * @param symbol to display this [GuideCategory] in guide
  */
-open class GuideCategory : GuideElement, IGuideElementContainer {
-    private val elements: MutableList<IGuideElement> = LinkedList()
-
+open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
+    
+    private val priorityToElements: TreeMap<Int, MutableList<IGuideElement>> =
+        TreeMap { o1, o2 -> o2 - o1 }
+    private val idToPriority: MutableMap<NamespacedId, Int> = HashMap()
+    
     
     constructor(
         id: NamespacedId,
@@ -50,7 +54,7 @@ open class GuideCategory : GuideElement, IGuideElementContainer {
             rows(6)
             slots(ShiningGuide.slotOrders)
 
-            elements { elements }
+            elements { getElements() }
 
             val dependencyLockedElements = LinkedList<IGuideElement>()
             val lockLockedElements = LinkedList<IGuideElement>()
@@ -169,7 +173,8 @@ open class GuideCategory : GuideElement, IGuideElementContainer {
         if (state !is GuideCategoryState) return false
         if (!super.saveToState(state)) return false
 
-        state.elements += elements
+        state.priorityToElements += priorityToElements
+        state.idToPriority += idToPriority
         return true
     }
 
@@ -180,14 +185,25 @@ open class GuideCategory : GuideElement, IGuideElementContainer {
         if (state !is GuideCategoryState) return false
         if (!super.update(state)) return false
 
-        elements.clear()
-        elements += state.elements
+        priorityToElements.clear()
+        priorityToElements += state.priorityToElements
+        idToPriority.clear()
+        idToPriority += state.idToPriority
         return true
     }
 
-    override fun registerElement(element: IGuideElement) {
-        elements += element
+    override fun registerElement(element: IGuideElement, priority: Int) {
+        priorityToElements.putElement(priority, element)
+        idToPriority[element.getId()] = priority
     }
-
+    
+    
+    fun getElements(): List<IGuideElement> {
+        val list = ArrayList<IGuideElement>()
+        priorityToElements.forEach { (priority, elements) -> 
+            list += elements
+        }
+        return list
+    }
 
 }

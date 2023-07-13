@@ -30,6 +30,8 @@ import io.github.sunshinewzy.shining.utils.addLore
 import io.github.sunshinewzy.shining.utils.getDisplayName
 import io.github.sunshinewzy.shining.utils.insertLore
 import io.github.sunshinewzy.shining.utils.orderWith
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -50,15 +52,17 @@ abstract class GuideElementState(@JsonIgnore private var element: IGuideElement?
 
     
     @JsonGetter("dependencies")
-    fun getDependencyIds(): MutableSet<NamespacedId> {
+    fun getDependenciesId(): MutableSet<NamespacedId> {
         return dependencyMap.keys
     }
     
     @JsonSetter("dependencies")
-    suspend fun setDependencyByIds(dependencyIds: MutableSet<NamespacedId>) {
-        dependencyIds.forEach { id ->
-            GuideElements.getElement(id)?.let { 
-                dependencyMap[id] = it
+    fun setDependenciesById(dependencyIds: MutableSet<NamespacedId>) {
+        Shining.scope.launch(Dispatchers.IO) {
+            dependencyIds.forEach { id ->
+                GuideElements.getElement(id)?.let {
+                    dependencyMap[id] = it
+                }
             }
         }
     }
