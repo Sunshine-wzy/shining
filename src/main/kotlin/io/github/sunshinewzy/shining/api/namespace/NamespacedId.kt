@@ -21,7 +21,7 @@ import java.util.regex.Pattern
  * @param namespace namespace
  * @param id id
  */
-data class NamespacedId @JsonCreator constructor(val namespace: Namespace, val id: String) : Cloneable {
+class NamespacedId @JsonCreator constructor(val namespace: Namespace, val id: String) {
 
     init {
         check(VALID_ID.matcher(id).matches()) {

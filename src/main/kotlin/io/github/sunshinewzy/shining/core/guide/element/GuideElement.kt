@@ -90,8 +90,10 @@ abstract class GuideElement(
     override fun update(state: IGuideElementState): Boolean {
         if (state !is GuideElementState) return false
 
-        state.id?.let { id = it.copy() }
+        state.id?.let { id = it }
         state.descriptionName?.let { description = ElementDescription(it, ArrayList(state.descriptionLore)) }
+        state.symbol?.let { symbol = it.clone() }
+        
         dependencyMap.clear()
         dependencyMap += state.dependencyMap
         locks.clear()
@@ -103,10 +105,12 @@ abstract class GuideElement(
     override fun saveToState(state: IGuideElementState): Boolean {
         if (state !is GuideElementState) return false
 
-        state.id = id.copy()
+        state.id = id
         state.descriptionName = description.name
         state.descriptionLore.clear()
         state.descriptionLore += description.lore
+        state.symbol = symbol.clone()
+        
         state.dependencyMap.clear()
         state.dependencyMap += dependencyMap
         state.locks.clear()
@@ -189,17 +193,9 @@ abstract class GuideElement(
 
                 locks.forEach {
                     lore += if (it.isConsume) {
-                        "${player.getLangText("menu-shining_guide-element-symbol-locked_lock-need_consume")} ${
-                            it.description(
-                                player
-                            )
-                        }"
+                        "${player.getLangText("menu-shining_guide-element-symbol-locked_lock-need_consume")} ${it.description(player)}"
                     } else {
-                        "${player.getLangText("menu-shining_guide-element-symbol-locked_lock-need")} ${
-                            it.description(
-                                player
-                            )
-                        }"
+                        "${player.getLangText("menu-shining_guide-element-symbol-locked_lock-need")} ${it.description(player)}"
                     }
                 }
 

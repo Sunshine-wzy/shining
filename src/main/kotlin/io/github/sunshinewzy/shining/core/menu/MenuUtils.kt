@@ -1,16 +1,16 @@
 package io.github.sunshinewzy.shining.core.menu
 
-import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
+import io.github.sunshinewzy.shining.core.editor.chat.type.Text
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
+import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
-import io.github.sunshinewzy.shining.utils.PlayerChatSubscriber
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import taboolib.common.platform.function.submit
 import taboolib.module.chat.uncolored
 import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
@@ -33,22 +33,20 @@ inline fun <reified T> Player.openSearchMenu(
         buildMultiPage()
 
         set(8 orderWith 1, ShiningIcon.SEARCH.item) {
-            PlayerChatSubscriber(this@openSearchMenu, "搜索") {
-                search(message.uncolored())
-
-                submit {
-                    open(player)
+            openChatEditor<Text>(getLangText("menu-search-prompt")) { 
+                text(searchText)
+                
+                onSubmit {
+                    search(it.uncolored())
                 }
-
-                true
-            }.register()
-
-            sendMessage("§f[${Shining.prefix}§f] 请输入要搜索的物品名 (输入'§c.§f'以取消)")
-            closeInventory()
+                
+                onFinal {
+                    open(this@openSearchMenu)
+                }
+            }
         }
 
         search(searchText)
-
         builder(this)
     }
 }

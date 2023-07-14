@@ -8,6 +8,7 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 
 object GuideDraftFolders : LongIdTable() {
     
+    val name = varchar("name", 50).index()
     val list = jackson("list", Shining.objectMapper, object : TypeReference<JacksonWrapper<HashSet<Pair<Char, Long>>>>() {})
     
 }

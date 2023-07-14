@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack
 import taboolib.module.nms.ItemTagData
 
 object SerializationModules {
-    val VERSION: Version = Version(2, 0, 0, null, "io.github.sunshinewzy", "Shining")
+    val VERSION: Version = Version(2, 0, 0, null, "io.github.sunshinewzy", "shining")
 
 
     val shining: SimpleModule = SimpleModule("Shining", VERSION).apply {

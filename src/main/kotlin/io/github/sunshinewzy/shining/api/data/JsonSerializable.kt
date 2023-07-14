@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.api.data
 
+import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import java.io.OutputStream
@@ -12,6 +13,7 @@ interface JsonSerializable {
 
     fun serializeToJsonNode(): JsonNode
 
+    @JsonValue
     fun serializeToString(): String
 
     fun deserialize(source: JsonNode): Boolean

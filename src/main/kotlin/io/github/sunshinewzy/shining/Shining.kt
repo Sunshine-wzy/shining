@@ -3,6 +3,7 @@ package io.github.sunshinewzy.shining
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator
 import com.fasterxml.jackson.module.kotlin.jsonMapper
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import io.github.sunshinewzy.shining.api.ShiningPlugin
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.machine.IMachineManager
@@ -63,21 +64,9 @@ import taboolib.platform.BukkitPlugin
     RuntimeDependency(value = "org.jetbrains.exposed:exposed-dao:0.41.1", isolated = true),
     RuntimeDependency(value = "org.jetbrains.exposed:exposed-jdbc:0.41.1", isolated = true),
     RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-core:2.14.1", transitive = false, isolated = true),
-    RuntimeDependency(
-        value = "com.fasterxml.jackson.core:jackson-annotations:2.14.1",
-        transitive = false,
-        isolated = true
-    ),
-    RuntimeDependency(
-        value = "com.fasterxml.jackson.core:jackson-databind:2.14.1",
-        transitive = false,
-        isolated = true
-    ),
-    RuntimeDependency(
-        value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.14.1",
-        transitive = false,
-        isolated = true
-    ),
+    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-annotations:2.14.1", transitive = false, isolated = true),
+    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-databind:2.14.1", transitive = false, isolated = true),
+    RuntimeDependency(value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.14.1", transitive = false, isolated = true),
     RuntimeDependency(value = "!com.zaxxer:HikariCP:4.0.3", isolated = true)
 )
 object Shining : Plugin(), ShiningPlugin {
@@ -97,8 +86,15 @@ object Shining : Plugin(), ShiningPlugin {
     val prefix: String by lazy { config.getString("prefix")?.colored() ?: COLOR_NAME }
     val machineManager: IMachineManager by lazy { MachineManager }
     val objectMapper: ObjectMapper = jsonMapper {
+        addModule(kotlinModule())
         addModule(SerializationModules.shining)
         addModule(SerializationModules.bukkit)
+    }.also { 
+        val ptv = BasicPolymorphicTypeValidator.builder()
+            .allowIfSubType("io.github.sunshinewzy.shining.api.guide.state")
+            .allowIfSubType("io.github.sunshinewzy.shining.core.guide.state")
+            .build()
+        it.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_CONCRETE_AND_ARRAYS)
     }
     val scope: CoroutineScope by lazy { CoroutineScope(SupervisorJob()) }
 

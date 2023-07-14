@@ -42,9 +42,10 @@ import java.util.*
 
 abstract class GuideElementState(@JsonIgnore private var element: IGuideElement?) : IGuideElementState, Cloneable {
 
-    var id: NamespacedId? = null
-    var descriptionName: String? = null
-    var descriptionLore: MutableList<String> = LinkedList()
+    override var id: NamespacedId? = null
+    override var descriptionName: String? = null
+    override var descriptionLore: MutableList<String> = LinkedList()
+    override var symbol: ItemStack? = null
 
     @JsonIgnore
     var dependencyMap: MutableMap<NamespacedId, IGuideElement> = HashMap()
@@ -93,10 +94,12 @@ abstract class GuideElementState(@JsonIgnore private var element: IGuideElement?
     fun copyTo(state: GuideElementState): GuideElementState {
         state.element = element
         
-        id?.let { state.id = it }
-        descriptionName?.let { state.descriptionName = it }
+        state.id = id
+        state.descriptionName = descriptionName
         state.descriptionLore.clear()
         state.descriptionLore += descriptionLore
+        state.symbol = symbol?.clone()
+        
         state.dependencyMap.clear()
         state.dependencyMap += dependencyMap
         state.locks.clear()
