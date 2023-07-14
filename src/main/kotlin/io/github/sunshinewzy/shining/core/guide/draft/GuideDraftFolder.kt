@@ -1,9 +1,14 @@
 package io.github.sunshinewzy.shining.core.guide.draft
 
+import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.draft.IGuideDraft
 import io.github.sunshinewzy.shining.core.data.JacksonWrapper
 import io.github.sunshinewzy.shining.core.lang.getLangText
+import io.github.sunshinewzy.shining.core.menu.onBack
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
+import io.github.sunshinewzy.shining.objects.item.ShiningIcon
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -25,14 +30,14 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
 
 
     override fun getSymbol(player: Player): ItemStack {
-        return buildItem(Material.PAPER) {
+        return buildItem(Material.BOOK) {
             this.name = this@GuideDraftFolder.name
             lore += player.getLangText("menu-shining_guide-draft-symbol-folder")
             colored()
         }
     }
 
-    suspend fun open(player: Player, previousFolder: GuideDraftFolder? = null) {
+    override suspend fun open(player: Player, previousFolder: GuideDraftFolder?) {
         if (previousFolder != null)
             previousFolderMap[player.uniqueId] = previousFolder
         
@@ -48,9 +53,36 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
             player.openMultiPageMenu<IGuideDraft> {
                 elements { subList }
                 
+                onGenerate(async = true) { player, element, _, _ -> 
+                    element.getSymbol(player)
+                }
                 
+                onClick { _, element -> 
+                    Shining.scope.launch(Dispatchers.IO) {
+                        element.open(player, this@GuideDraftFolder)
+                    }
+                }
+                
+                onBack(item = ShiningIcon.BACK_MENU.toLocalizedItem(player)) { 
+                    if (clickEvent().isShiftClick) {
+                        ShiningGuideDraft.openMainMenu(player)
+                    } else {
+                        back(player)
+                    }
+                }
             }
         }
+    }
+    
+    fun back(player: Player) {
+        previousFolderMap[player.uniqueId]?.let { 
+            Shining.scope.launch(Dispatchers.IO) {
+                it.open(player)
+            }
+            return
+        }
+        
+        ShiningGuideDraft.openMainMenu(player)
     }
 
     suspend fun add(pair: Pair<Char, Long>) {

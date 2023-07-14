@@ -33,13 +33,12 @@ object ShiningGuideEditor {
     @JvmOverloads
     fun openEditMenu(player: Player, team: GuideTeam, element: IGuideElement?, elementContainer: IGuideElementContainer? = null) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-title")) {
-            rows(6)
+            rows(5)
 
             map(
                 "-B-------",
-                "-ab     -",
                 "-       -",
-                "-       -",
+                "- a b   -",
                 "-       -",
                 "---------"
             )

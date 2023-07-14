@@ -37,6 +37,7 @@ item-shining-shining_guide-editor-lock-item: [ '&b所需物品', '', '&a↓ 当�
 item-shining-shining_guide-editor-lock-is_consume:
   close: [ '&e消耗模式', '&7已关闭', '', '&a> 点击开启' ]
   open: [ '&e消耗模式', '&a已开启', '', '&c> 点击关闭' ]
+item-shining-shining_guide-draft-editor-state: '&b状态'
 item-shining-icon-back_menu: [ '&c⇦ 返回', '', '&f左键：&7返回上一页', '&fShift + 左键：&7返回主菜单' ]
 item-shining-icon-back: '&b⇦ 返回'
 item-shining-icon-submit: '&a>> 点击以提交任务 <<'
@@ -113,8 +114,9 @@ menu-shining_guide-editor-state-basic-locks-create-title: 'Shining 指南 - 创�
 menu-shining_guide-editor-state-category-title: 'Shining 指南 - 类别状态编辑'
 menu-shining_guide-editor-state-category-element-title: '类别状态编辑 - 元素'
 menu-shining_guide-editor-state-current_lore: '&a> 当前:'
-menu-shining_guide-draft-symbol-folder: '&7 文件夹'
-menu-shining_guide-draft-symbol-draft: '&7 草稿'
+menu-shining_guide-draft-symbol-folder: '&7&l文件夹'
+menu-shining_guide-draft-symbol-draft: '&7&l草稿'
+menu-shining_guide-draft-editor-title: '草稿编辑'
 menu-search-prompt: '搜索'
 menu-editor-item-title: '物品编辑器'
 menu-editor-item-name-title: '物品名称编辑'

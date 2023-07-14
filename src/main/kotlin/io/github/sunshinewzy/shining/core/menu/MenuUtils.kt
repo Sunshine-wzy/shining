@@ -79,6 +79,15 @@ fun Basic.onBack(
     set(slot, item, onClick)
 }
 
+fun Basic.onBack(
+    player: Player,
+    slot: Int = 2 orderWith 1,
+    item: ItemStack = ShiningIcon.BACK.toLocalizedItem(player),
+    onClick: ClickEvent.() -> Unit
+) {
+    onBack(slot, item, onClick)
+}
+
 fun Basic.onBackMenu(player: Player, team: GuideTeam, context: GuideContext = EmptyGuideContext, slot: Char = 'B') {
     set(slot, ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player)) {
         if (clickEvent().isShiftClick) {

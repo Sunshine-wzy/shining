@@ -13,6 +13,7 @@ import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.setupGuideTe
 import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
+import io.github.sunshinewzy.shining.core.guide.settings.SoundSettings
 import io.github.sunshinewzy.shining.core.lang.getDefaultLangText
 import io.github.sunshinewzy.shining.core.lang.item.LocalizedItem
 import io.github.sunshinewzy.shining.objects.SCollection

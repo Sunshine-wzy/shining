@@ -30,9 +30,7 @@ import io.github.sunshinewzy.shining.utils.SReflect
 import io.github.sunshinewzy.shining.utils.ShiningTestApi
 import io.github.sunshinewzy.shining.utils.giveItem
 import io.github.sunshinewzy.shining.utils.subscribeEvent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.configuration.serialization.ConfigurationSerialization
@@ -53,6 +51,8 @@ import taboolib.module.configuration.Config
 import taboolib.module.configuration.Configuration
 import taboolib.module.metrics.Metrics
 import taboolib.platform.BukkitPlugin
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 @RuntimeDependencies(
     RuntimeDependency(value = "org.jetbrains.kotlin:kotlin-reflect:1.7.21", isolated = true),
@@ -129,6 +129,16 @@ object Shining : Plugin(), ShiningPlugin {
     override fun getPrefix(): String {
         return prefix
     }
+    
+    fun launchIO(
+        context: CoroutineContext = EmptyCoroutineContext,
+        start: CoroutineStart = CoroutineStart.DEFAULT,
+        block: suspend CoroutineScope.() -> Unit
+    ) {
+        if (context == EmptyCoroutineContext) scope.launch(Dispatchers.IO, start, block)
+        else scope.launch(context + Dispatchers.IO, start, block)
+    }
+    
 
     private fun init() {
         try {

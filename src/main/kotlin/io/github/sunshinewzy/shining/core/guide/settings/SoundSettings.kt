@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.core.guide
+package io.github.sunshinewzy.shining.core.guide.settings
 
 import org.bukkit.Location
 import org.bukkit.Sound

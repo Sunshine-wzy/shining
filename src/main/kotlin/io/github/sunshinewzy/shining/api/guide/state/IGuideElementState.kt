@@ -26,7 +26,7 @@ interface IGuideElementState {
     /**
      * Opens an editor to edit the state.
      */
-    fun openEditor(player: Player, team: GuideTeam)
+    fun openEditor(player: Player, team: GuideTeam = GuideTeam.CompletedTeam)
 
     fun toElement(): IGuideElement
     
