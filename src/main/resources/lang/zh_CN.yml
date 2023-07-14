@@ -29,6 +29,7 @@ item-shining-shining_guide-editor-state-element-description_name: '&a名称'
 item-shining-shining_guide-editor-state-element-description_lore: '&b描述'
 item-shining-shining_guide-editor-state-element-dependencies: '&e依赖'
 item-shining-shining_guide-editor-state-element-locks: '&c锁'
+item-shining-shining_guide-editor-state-category-priority: '&d优先级'
 item-shining-shining_guide-editor-state-basic-locks-create-experience: '&b经验锁'
 item-shining-shining_guide-editor-state-basic-locks-create-item: '&e物品锁'
 item-shining-shining_guide-editor-lock-experience: [ '&b所需经验', '', '&a> 当前' ]

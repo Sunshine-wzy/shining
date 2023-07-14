@@ -6,15 +6,20 @@ import com.fasterxml.jackson.annotation.JsonSetter
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
+import io.github.sunshinewzy.shining.core.editor.chat.type.Text
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.guide.element.GuideElements
 import io.github.sunshinewzy.shining.core.lang.getLangText
+import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
+import io.github.sunshinewzy.shining.utils.getDisplayName
 import io.github.sunshinewzy.shining.utils.putElement
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
@@ -74,7 +79,7 @@ class GuideCategoryState @JvmOverloads constructor(element: GuideCategory? = nul
     }
     
     fun removeElement(element: IGuideElement): Boolean {
-        val priority = idToPriority[element.getId()] ?: return false
+        val priority = idToPriority.remove(element.getId()) ?: return false
         return priorityToElements[priority]?.remove(element) ?: false
     }
     
@@ -87,7 +92,7 @@ class GuideCategoryState @JvmOverloads constructor(element: GuideCategory? = nul
         copyTo(state)
         
         state.priorityToElements += priorityToElements
-        state.idToPriority = idToPriority
+        state.idToPriority += idToPriority
         return state
     }
 
@@ -117,7 +122,7 @@ class GuideCategoryState @JvmOverloads constructor(element: GuideCategory? = nul
 
             map(
                 "-B-------",
-                "-    d  -",
+                "-  a d  -",
                 "---------"
             )
 
@@ -127,6 +132,28 @@ class GuideCategoryState @JvmOverloads constructor(element: GuideCategory? = nul
                 openAdvancedEditor(player)
             }
 
+            val priority = idToPriority[element.getId()]
+            set('a', itemEditPriority.toCurrentLocalizedItem(player, "&f$priority")) {
+                player.openChatEditor<Text>(itemEditPriority.toLocalizedItem(player).getDisplayName()) { 
+                    text(priority?.toString())
+                    
+                    predicate {
+                        it.toIntOrNull() != null
+                    }
+                    
+                    onSubmit { 
+                        if (priority != null) {
+                            removeElement(element)
+                        }
+                        addElement(element, it.toInt())
+                    }
+                    
+                    onFinal { 
+                        editElement(player, element)
+                    }
+                }
+            }
+
             set('d', ShiningIcon.REMOVE.toLocalizedItem(player)) {
                 removeElement(element)
                 openAdvancedEditor(player)
@@ -134,6 +161,11 @@ class GuideCategoryState @JvmOverloads constructor(element: GuideCategory? = nul
 
             onClick(lock = true)
         }
+    }
+    
+    
+    companion object {
+        private val itemEditPriority = NamespacedIdItem(Material.REPEATER, NamespacedId(Shining, "shining_guide-editor-state-category-priority"))
     }
 
 }

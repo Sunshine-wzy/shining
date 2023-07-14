@@ -57,6 +57,7 @@ class LockExperience(
             
             set('c', if (isConsume) itemIsConsumeOpen.toLocalizedItem(player) else itemIsConsumeClose.toLocalizedItem(player)) {
                 switchIsConsume()
+                
                 openEditor(player, team, state)
             }
             

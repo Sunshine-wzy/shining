@@ -105,8 +105,11 @@ abstract class GuideElement(
 
         state.id = id.copy()
         state.descriptionName = description.name
+        state.descriptionLore.clear()
         state.descriptionLore += description.lore
+        state.dependencyMap.clear()
         state.dependencyMap += dependencyMap
+        state.locks.clear()
         locks.mapTo(state.locks) { it.clone() }
         return true
     }
