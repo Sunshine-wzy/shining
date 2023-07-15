@@ -48,7 +48,7 @@ abstract class GuideElement(
         if (previousElement != null)
             previousElementMap[player.uniqueId] = previousElement
 
-        ShiningGuide.playerLastOpenElementMap[player.uniqueId] = this
+        ShiningGuide.recordLastOpenElement(player, this)
 
         ShiningGuide.soundOpen.playSound(player)    // TODO: Allow every element to customize the open sound
         openMenu(player, team, context)

@@ -48,7 +48,7 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
 
             map(
                 "-B-------",
-                "-  a d  -",
+                "- a b d -",
                 "---------"
             )
 
@@ -72,6 +72,10 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                 }
             }
             
+            set('b', itemMoveFolder.toLocalizedItem(player)) {
+                
+            }
+            
             if (previousFolder != null) {
                 set('d', ShiningIcon.REMOVE.toLocalizedItem(player)) {
                     Shining.launchIO {
@@ -87,7 +91,10 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
     
 
     companion object : LongEntityClass<GuideDraft>(GuideDrafts) {
+        
         private val itemEditState = NamespacedIdItem(Material.REDSTONE_LAMP, NamespacedId(Shining, "shining_guide-draft-editor-state"))
+        private val itemMoveFolder = NamespacedIdItem(Material.IRON_BOOTS, NamespacedId(Shining, "shining_guide-draft-editor-move_folder"))
+    
     }
     
 }

@@ -55,6 +55,7 @@ enum class ShiningIcon(val item: ItemStack) : Itemable {
     CANCEL(NamespacedIdItem(Material.BARRIER, NamespacedId(Shining, "icon-cancel"))),
     SETTINGS(NamespacedIdItem(Material.ENDER_EYE, NamespacedId(Shining, "icon-settings"))),
     REMOVE(NamespacedIdItem(Material.BARRIER, NamespacedId(Shining, "icon-remove"))),
+    SELECT_MODE(NamespacedIdItem(Material.ARROW, NamespacedId(Shining, "icon-select_mode")))
     
     ;
 
@@ -64,5 +65,11 @@ enum class ShiningIcon(val item: ItemStack) : Itemable {
     fun getLanguageItem(): LanguageItem = item as LanguageItem
     
     fun toLocalizedItem(sender: CommandSender): LocalizedItem = getLanguageItem().toLocalizedItem(sender)
+    
+    fun toStateItem(state: String): LanguageItem = getLanguageItem().toStateItem(state)
+    
+    fun toStateLocalizedItem(state: String, sender: CommandSender): LocalizedItem = toStateItem(state).toLocalizedItem(sender)
+    
+    fun toStateShinyLocalizedItem(state: String, sender: CommandSender): LocalizedItem = toStateItem(state).shiny().toLocalizedItem(sender)
     
 }

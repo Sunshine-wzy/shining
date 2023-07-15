@@ -24,7 +24,6 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Linked
-import taboolib.platform.util.isAir
 import java.util.*
 
 /**
@@ -126,7 +125,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
 
             if (context[GuideEditorContext]?.isEditorEnabled() == true) {
                 onClick(lock = true) {
-                    if (it.rawSlot in ShiningGuide.slotOrders && it.currentItem.isAir()) {
+                    if (ShiningGuide.isClickEmptySlot(it)) {
                         ShiningGuideEditor.openEditMenu(player, team, null, this@GuideCategory)
                     }
                 }

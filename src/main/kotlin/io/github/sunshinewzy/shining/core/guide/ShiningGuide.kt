@@ -60,10 +60,10 @@ object ShiningGuide : GuideCategory(
             }
         )
     }
+    private val playerLastOpenElementMap: MutableMap<UUID, IGuideElement> = HashMap()
 
 
     val soundOpen: SoundSettings = SoundSettings(Sound.ENTITY_HORSE_ARMOR, 1.2f)
-
 
     val onBuildEdge: (Player, Inventory) -> Unit = { player, inv ->
         edgeOrders.forEach { index ->
@@ -82,13 +82,10 @@ object ShiningGuide : GuideCategory(
         }
     }
 
-
     const val TITLE = "menu-shining_guide-title"
-
 
     val edgeOrders = (((1 orderWith 1)..(9 orderWith 1)) + ((1 orderWith 6)..(9 orderWith 6)))
     val slotOrders = ((1 orderWith 2)..(9 orderWith 5)).toList()
-    val playerLastOpenElementMap = HashMap<UUID, IGuideElement>()
 
 
     @JvmOverloads
@@ -175,12 +172,13 @@ object ShiningGuide : GuideCategory(
         openCompletedMainMenu(player, context)
     }
 
-//    /**
-//     * @param tier Higher tier will make this [element] appear further down in the guide
-//     */
-//    fun registerElement(element: IGuideElement, tier: Int = 10) {
-//        elementMap.getOrPut(tier) { ArrayList() }.add(element)
-//    }
+    fun recordLastOpenElement(uuid: UUID, element: IGuideElement) {
+        playerLastOpenElementMap[uuid] = element
+    }
+    
+    fun recordLastOpenElement(player: Player, element: IGuideElement) {
+        recordLastOpenElement(player.uniqueId, element)
+    }
 
     fun fireworkCongratulate(player: Player) {
         val firework = player.world.spawnEntity(player.location, EntityType.FIREWORK) as Firework
@@ -196,5 +194,8 @@ object ShiningGuide : GuideCategory(
     fun getItem(): ItemStack {
         return guideItem.item.clone()
     }
+    
+    fun isClickEmptySlot(event: ClickEvent): Boolean =
+        event.rawSlot in slotOrders && event.currentItem.isAir()
 
 }

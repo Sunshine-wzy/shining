@@ -2,13 +2,19 @@ package io.github.sunshinewzy.shining.core.guide.draft
 
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.draft.IGuideDraft
+import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
+import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.data.JacksonWrapper
+import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
+import io.github.sunshinewzy.shining.core.editor.chat.type.Text
+import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.lang.getLangText
+import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.onBack
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import io.github.sunshinewzy.shining.utils.getDisplayName
+import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -17,6 +23,8 @@ import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import taboolib.common.platform.function.submit
+import taboolib.module.ui.openMenu
+import taboolib.module.ui.type.Basic
 import taboolib.platform.util.buildItem
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -43,14 +51,14 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
         
         ShiningGuideDraft.recordLastOpenFolder(player, this)
         
-        openMenu(player)
+        openMenu(player, previousFolder)
     }
     
-    suspend fun openMenu(player: Player) {
+    suspend fun openMenu(player: Player, previousFolder: GuideDraftFolder? = null) {
         val subList = getSubList()
 
         submit {
-            player.openMultiPageMenu<IGuideDraft> {
+            player.openMultiPageMenu<IGuideDraft>(player.getLangText("menu-shining_guide-draft-title")) {
                 elements { subList }
                 
                 onGenerate(async = true) { player, element, _, _ -> 
@@ -58,7 +66,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                 }
                 
                 onClick { _, element -> 
-                    Shining.scope.launch(Dispatchers.IO) {
+                    Shining.launchIO {
                         element.open(player, this@GuideDraftFolder)
                     }
                 }
@@ -70,13 +78,164 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                         back(player)
                     }
                 }
+                
+                if (previousFolder != null) {
+                    set(8 orderWith 1, ShiningIcon.REMOVE.toLocalizedItem(player)) {
+                        Shining.launchIO { 
+                            previousFolder.removeFolder(id.value)
+                            newSuspendedTransaction { 
+                                delete()
+                            }
+                        }
+                    }
+                }
             }
+        }
+    }
+
+    suspend fun openSaveMenu(player: Player, state: IGuideElementState, previousFolder: GuideDraftFolder? = null) {
+        if (previousFolder != null)
+            previousFolderMap[player.uniqueId] = previousFolder
+        ShiningGuideDraft.recordLastOpenFolder(player, this)
+        val folders = getSubFolders()
+
+        submit {
+            player.openMultiPageMenu<GuideDraftFolder>(player.getLangText("menu-shining_guide-draft-title")) {
+                elements { folders }
+                
+                onGenerate(async = true) { player, element, _, _ -> 
+                    element.getSymbol(player)
+                }
+                
+                onClick { event, element -> 
+                    if (ShiningGuideDraft.isPlayerSelectModeEnabled(player)) {
+                        Shining.launchIO { 
+                            newSuspendedTransaction {
+                                GuideDraft.new { this.state = state }
+                                    .also { element.addDraft(it.id.value) }
+                            }
+                        }
+                    } else {
+                        Shining.launchIO {
+                            element.openSaveMenu(player, state, this@GuideDraftFolder)
+                        }
+                    }
+                }
+                
+                if (ShiningGuideDraft.isPlayerSelectModeEnabled(player)) {
+                    onClick(lock = true) { event ->
+                        if (ShiningGuide.isClickEmptySlot(event)) {
+                            Shining.launchIO { 
+                                newSuspendedTransaction { 
+                                    GuideDraft.new { this.state = state }
+                                        .also { addDraft(it.id.value) }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Select mode button
+                set(
+                    5 orderWith 1,
+                    if (ShiningGuideDraft.isPlayerSelectModeEnabled(player)) ShiningIcon.SELECT_MODE.toStateShinyLocalizedItem("open", player)
+                    else ShiningIcon.SELECT_MODE.toStateLocalizedItem("close", player)
+                ) {
+                    ShiningGuideDraft.switchPlayerSelectMode(player)
+                    Shining.launchIO {
+                        openSaveMenu(player, state)
+                    }
+                }
+                
+                set(7 orderWith 1, itemEditFolder.toLocalizedItem(player)) {
+                    openFolderEditor(player, state)
+                }
+                
+                set(8 orderWith 1, itemCreateFolder.toLocalizedItem(player)) {
+                    Shining.launchIO { 
+                        newSuspendedTransaction {
+                            GuideDraftFolder.new {
+                                name = ""
+                                list = JacksonWrapper(HashSet())
+                            }.also { 
+                                submit {
+                                    it.openFolderEditor(player, state)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                onBack(item = ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
+                    if (clickEvent().isShiftClick) {
+                        ShiningGuideDraft.openMainMenu(player)
+                    } else {
+                        previousFolderMap[player.uniqueId]?.let {
+                            Shining.launchIO {
+                                it.openSaveMenu(player, state)
+                            }
+                            return@onBack
+                        }
+
+                        ShiningGuideDraft.openMainSaveMenu(player, state)
+                    }
+                }
+            }
+        }
+    }
+    
+    fun openFolderEditor(player: Player, state: IGuideElementState) {
+        player.openMenu<Basic>(itemCreateFolder.toLocalizedItem(player).getDisplayName()) { 
+            rows(3)
+
+            map(
+                "-B-------",
+                "-   a   -",
+                "---------"
+            )
+
+            set('-', ShiningIcon.EDGE.item)
+            
+            set('B', ShiningIcon.BACK.toLocalizedItem(player)) {
+                Shining.launchIO {
+                    openSaveMenu(player, state)
+                }
+            }
+            
+            val itemRename = ShiningIcon.RENAME.toLocalizedItem(player)
+            set('a', itemRename) {
+                Shining.launchIO { 
+                    newSuspendedTransaction {
+                        player.openChatEditor<Text>(itemRename.getDisplayName()) {
+                            text(this@GuideDraftFolder.name)
+                            
+                            predicate { 
+                                it != MAIN
+                            }
+                            
+                            onSubmit { 
+                                Shining.launchIO { 
+                                    newSuspendedTransaction {
+                                        this@GuideDraftFolder.name = it
+                                    }
+                                }
+                            }
+                            
+                            onFinal { 
+                                openFolderEditor(player, state)
+                            }
+                        }
+                    }
+                }
+            }
+            
+            onClick(lock = true)
         }
     }
     
     fun back(player: Player) {
         previousFolderMap[player.uniqueId]?.let { 
-            Shining.scope.launch(Dispatchers.IO) {
+            Shining.launchIO {
                 it.open(player)
             }
             return
@@ -166,6 +325,21 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
         subList += pair.second
         return subList
     }
+
+    suspend fun getSubFolders(): MutableList<GuideDraftFolder> {
+        return newSuspendedTransaction {
+            val folders = ArrayList<GuideDraftFolder>()
+
+            list.value.forEach { pair ->
+                if (pair.first == Type.FOLDER.character) {
+                    GuideDraftFolder.findById(pair.second)?.let {
+                        folders += it
+                    }
+                }
+            }
+            folders
+        }
+    }
     
     
     enum class Type(val character: Char) {
@@ -179,8 +353,11 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
         const val MAIN = "main"
         
         private var mainFolder: GuideDraftFolder? = null
-
-
+        
+        private val itemEditFolder = NamespacedIdItem(Material.COMPARATOR, NamespacedId(Shining, "shining_guide-draft-folder-editor"))
+        private val itemCreateFolder = NamespacedIdItem(Material.WRITABLE_BOOK, NamespacedId(Shining, "shining_guide-draft-folder-create"))
+        
+        
         suspend fun getMainFolderOrNull(): GuideDraftFolder? {
             mainFolder?.let { return it }
             
