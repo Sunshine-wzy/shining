@@ -83,6 +83,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                                 name = ""
                                 list = JacksonWrapper(HashSet())
                             }.also {
+                                addFolder(it.id.value)
                                 submit {
                                     it.openFolderEditor(player, null)
                                 }
@@ -167,6 +168,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                                 name = ""
                                 list = JacksonWrapper(HashSet())
                             }.also { 
+                                addFolder(it.id.value)
                                 submit {
                                     it.openFolderEditor(player, state)
                                 }
@@ -216,23 +218,26 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
             set('a', itemRename) {
                 Shining.launchIO { 
                     newSuspendedTransaction {
-                        player.openChatEditor<Text>(itemRename.getDisplayName()) {
-                            text(this@GuideDraftFolder.name)
-                            
-                            predicate { 
-                                it != MAIN
-                            }
-                            
-                            onSubmit { 
-                                Shining.launchIO { 
-                                    newSuspendedTransaction {
-                                        this@GuideDraftFolder.name = it
+                        val theName = this@GuideDraftFolder.name
+                        submit {
+                            player.openChatEditor<Text>(itemRename.getDisplayName()) {
+                                text(theName)
+
+                                predicate {
+                                    it != MAIN
+                                }
+
+                                onSubmit {
+                                    Shining.launchIO {
+                                        newSuspendedTransaction {
+                                            this@GuideDraftFolder.name = it
+                                        }
                                     }
                                 }
-                            }
-                            
-                            onFinal { 
-                                openFolderEditor(player, state)
+
+                                onFinal {
+                                    openFolderEditor(player, state)
+                                }
                             }
                         }
                     }

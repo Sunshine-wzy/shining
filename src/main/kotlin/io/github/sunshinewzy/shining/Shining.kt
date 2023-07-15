@@ -94,7 +94,7 @@ object Shining : Plugin(), ShiningPlugin {
             .allowIfSubType("io.github.sunshinewzy.shining.api.guide.state")
             .allowIfSubType("io.github.sunshinewzy.shining.core.guide.state")
             .build()
-        it.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_CONCRETE_AND_ARRAYS)
+        it.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE)
     }
     val scope: CoroutineScope by lazy { CoroutineScope(SupervisorJob()) }
 
@@ -161,11 +161,6 @@ object Shining : Plugin(), ShiningPlugin {
     }
 
     private fun registerSerialization() {
-        val ptv = BasicPolymorphicTypeValidator.builder()
-            .allowIfSubType("io.github.sunshinewzy.shining.core.guide.state")
-            .build()
-        objectMapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL)
-        
         arrayOf(
             SBlock::class.java,
             TaskProgress::class.java,

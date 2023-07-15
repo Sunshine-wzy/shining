@@ -9,6 +9,9 @@ import io.github.sunshinewzy.shining.core.data.database.player.PlayerData
 import io.github.sunshinewzy.shining.core.data.legacy.SAutoSaveData
 import io.github.sunshinewzy.shining.core.data.legacy.internal.SunSTPlayerData
 import io.github.sunshinewzy.shining.core.guide.GuideTeams
+import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftFolders
+import io.github.sunshinewzy.shining.core.guide.draft.GuideDrafts
+import io.github.sunshinewzy.shining.core.guide.element.GuideElements
 import io.github.sunshinewzy.shining.core.task.TaskProgress
 import io.github.sunshinewzy.shining.interfaces.Initable
 import org.bukkit.configuration.file.YamlConfiguration
@@ -81,7 +84,9 @@ object DataManager : Initable {
 
         transaction {
             SchemaUtils.createMissingTablesAndColumns(
-                GuideTeams, PlayerData
+                GuideTeams, PlayerData,
+                GuideElements,
+                GuideDrafts, GuideDraftFolders
             )
         }
 
