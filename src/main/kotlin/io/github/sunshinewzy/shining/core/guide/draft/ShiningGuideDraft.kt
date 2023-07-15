@@ -20,7 +20,7 @@ object ShiningGuideDraft {
         }
     }
     
-    fun openLastDraft(player: Player) {
+    fun openLastMenu(player: Player) {
         playerLastOpenFolderMap[player.uniqueId]?.let { 
             Shining.launchIO {
                 it.open(player)

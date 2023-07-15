@@ -134,8 +134,8 @@ object Shining : Plugin(), ShiningPlugin {
         context: CoroutineContext = EmptyCoroutineContext,
         start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit
-    ) {
-        if (context == EmptyCoroutineContext) scope.launch(Dispatchers.IO, start, block)
+    ): Job {
+        return if (context == EmptyCoroutineContext) scope.launch(Dispatchers.IO, start, block)
         else scope.launch(context + Dispatchers.IO, start, block)
     }
     

@@ -8,6 +8,7 @@ import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
+import io.github.sunshinewzy.shining.utils.addLore
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -49,6 +50,76 @@ inline fun <reified T> Player.openSearchMenu(
         search(searchText)
         builder(this)
     }
+}
+
+class ConfirmMenuBuilder {
+    var confirmAction: ClickEvent.() -> Unit = {}
+        private set
+    var cancelAction: ClickEvent.() -> Unit = {}
+        private set
+    var finalAction: ClickEvent.() -> Unit = {}
+        private set
+    var buildAction: Basic.() -> Unit = {}
+        private set
+    
+    fun onConfirm(action: ClickEvent.() -> Unit) {
+        confirmAction = action
+    }
+    
+    fun onCancel(action: ClickEvent.() -> Unit) {
+        cancelAction = action
+    }
+    
+    fun onFinal(action: ClickEvent.() -> Unit) {
+        finalAction = action
+    }
+    
+    fun onBuild(action: Basic.() -> Unit) {
+        buildAction = action
+    }
+}
+
+inline fun Player.openConfirmMenu(
+    title: String = "chest",
+    description: String = "",
+    builder: ConfirmMenuBuilder.() -> Unit
+) {
+    val menuBuilder = ConfirmMenuBuilder()
+    builder(menuBuilder)
+    
+    openMenu<Basic>(title) { 
+        rows(3)
+
+        map(
+            "---------",
+            "-  a b  -",
+            "---------"
+        )
+
+        set('-', ShiningIcon.EDGE.item)
+        
+        set('a', ShiningIcon.CONFIRM.toLocalizedItem(this@openConfirmMenu).clone().addLore(description)) {
+            menuBuilder.confirmAction(this)
+            menuBuilder.finalAction(this)
+        }
+        
+        set('b', ShiningIcon.CANCEL.toLocalizedItem(this@openConfirmMenu).clone().addLore(description)) {
+            menuBuilder.cancelAction(this)
+            menuBuilder.finalAction(this)
+        }
+        
+        onClick(lock = true)
+        
+        menuBuilder.buildAction(this)
+    }
+}
+
+inline fun Player.openConfirmMenu(description: String, builder: ConfirmMenuBuilder.() -> Unit) {
+    openConfirmMenu("${getLangText("menu-confirm-title")} $description", description, builder)
+}
+
+inline fun Player.openDeleteConfirmMenu(builder: ConfirmMenuBuilder.() -> Unit) {
+    openConfirmMenu(this.getLangText("menu-confirm-delete"), builder)
 }
 
 
