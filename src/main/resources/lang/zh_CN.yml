@@ -12,6 +12,7 @@ item-shining-shining_guide-settings-team_info: '&b队伍信息'
 item-shining-shining_guide-settings-edit_mode:
   close: [ '&e编辑模式', '&c&l已关闭', '', '&a> 点击开启' ]
   open: [ '&e编辑模式', '&a&l已开启', '', '&c> 点击关闭' ]
+item-shining-shining_guide-settings-draft_box: '&e草稿箱'
 item-shining-shining_guide-editor:
   close: [ '&e编辑器', '&c&l已关闭', '', '&a> 点击开启' ]
   open: [ '&e编辑器', '&a&l已开启', '', '&c> 点击关闭' ]

@@ -17,10 +17,9 @@ import io.github.sunshinewzy.shining.core.guide.settings.SoundSettings
 import io.github.sunshinewzy.shining.core.lang.getDefaultLangText
 import io.github.sunshinewzy.shining.core.lang.item.LocalizedItem
 import io.github.sunshinewzy.shining.objects.SCollection
+import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.bukkit.FireworkEffect
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -90,12 +89,12 @@ object ShiningGuide : GuideCategory(
 
     @JvmOverloads
     fun openMainMenu(player: Player, context: GuideContext = EmptyGuideContext) {
-        Shining.scope.launch(Dispatchers.IO) {
+        ShiningDispatchers.launchSQL {
             val team = player.getGuideTeam() ?: kotlin.run {
                 submit {
                     player.setupGuideTeam()
                 }
-                return@launch
+                return@launchSQL
             }
 
             submit {
@@ -118,12 +117,12 @@ object ShiningGuide : GuideCategory(
 
     @JvmOverloads
     fun openLastElement(player: Player, context: GuideContext = EmptyGuideContext) {
-        Shining.scope.launch(Dispatchers.IO) {
+        ShiningDispatchers.launchSQL {
             val team = player.getGuideTeam() ?: kotlin.run {
                 submit {
                     player.setupGuideTeam()
                 }
-                return@launch
+                return@launchSQL
             }
 
             submit {

@@ -102,8 +102,7 @@ object DataManager : Initable {
         config.jdbcUrl = host.connectionUrl
         when (host) {
             is HostSQL -> {
-                config.driverClassName =
-                    settingsFile.getString("DefaultSettings.DriverClassName", "com.mysql.jdbc.Driver")
+                config.driverClassName = settingsFile.getString("DefaultSettings.DriverClassName", "com.mysql.jdbc.Driver")
                 config.username = host.user
                 config.password = host.password
             }

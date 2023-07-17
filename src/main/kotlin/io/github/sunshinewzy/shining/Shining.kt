@@ -1,7 +1,6 @@
 package io.github.sunshinewzy.shining
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import io.github.sunshinewzy.shining.api.ShiningPlugin
@@ -17,6 +16,8 @@ import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.guide.element.GuideItem
 import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
+import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
+import io.github.sunshinewzy.shining.core.guide.state.GuideItemState
 import io.github.sunshinewzy.shining.core.machine.MachineManager
 import io.github.sunshinewzy.shining.core.machine.legacy.*
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipe
@@ -30,7 +31,9 @@ import io.github.sunshinewzy.shining.utils.SReflect
 import io.github.sunshinewzy.shining.utils.ShiningTestApi
 import io.github.sunshinewzy.shining.utils.giveItem
 import io.github.sunshinewzy.shining.utils.subscribeEvent
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.configuration.serialization.ConfigurationSerialization
@@ -51,8 +54,6 @@ import taboolib.module.configuration.Config
 import taboolib.module.configuration.Configuration
 import taboolib.module.metrics.Metrics
 import taboolib.platform.BukkitPlugin
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 
 @RuntimeDependencies(
     RuntimeDependency(value = "org.jetbrains.kotlin:kotlin-reflect:1.7.21", isolated = true),
@@ -89,14 +90,8 @@ object Shining : Plugin(), ShiningPlugin {
         addModule(kotlinModule())
         addModule(SerializationModules.shining)
         addModule(SerializationModules.bukkit)
-    }.also { 
-        val ptv = BasicPolymorphicTypeValidator.builder()
-            .allowIfSubType("io.github.sunshinewzy.shining.api.guide.state")
-            .allowIfSubType("io.github.sunshinewzy.shining.core.guide.state")
-            .build()
-        it.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE)
     }
-    val scope: CoroutineScope by lazy { CoroutineScope(SupervisorJob()) }
+    val coroutineScope: CoroutineScope by lazy { CoroutineScope(SupervisorJob()) }
 
     private val namespace = Namespace[NAME.lowercase()]
 
@@ -115,7 +110,7 @@ object Shining : Plugin(), ShiningPlugin {
     }
 
     override fun onDisable() {
-        scope.cancel()
+        coroutineScope.cancel()
     }
 
     override fun getName(): String {
@@ -128,15 +123,6 @@ object Shining : Plugin(), ShiningPlugin {
 
     override fun getPrefix(): String {
         return prefix
-    }
-    
-    fun launchIO(
-        context: CoroutineContext = EmptyCoroutineContext,
-        start: CoroutineStart = CoroutineStart.DEFAULT,
-        block: suspend CoroutineScope.() -> Unit
-    ): Job {
-        return if (context == EmptyCoroutineContext) scope.launch(Dispatchers.IO, start, block)
-        else scope.launch(context + Dispatchers.IO, start, block)
     }
     
 
@@ -161,6 +147,8 @@ object Shining : Plugin(), ShiningPlugin {
     }
 
     private fun registerSerialization() {
+        objectMapper.registerSubtypes(GuideCategoryState::class.java, GuideItemState::class.java)
+        
         arrayOf(
             SBlock::class.java,
             TaskProgress::class.java,

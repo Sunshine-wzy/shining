@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.api.namespace
 
 import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonValue
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.ShiningPlugin
 import java.util.regex.Pattern
@@ -21,7 +22,7 @@ import java.util.regex.Pattern
  * @param namespace namespace
  * @param id id
  */
-class NamespacedId @JsonCreator constructor(val namespace: Namespace, val id: String) {
+class NamespacedId(val namespace: Namespace, val id: String) {
 
     init {
         check(VALID_ID.matcher(id).matches()) {
@@ -69,6 +70,7 @@ class NamespacedId @JsonCreator constructor(val namespace: Namespace, val id: St
         return true
     }
 
+    @JsonValue
     override fun toString(): String {
         return "${namespace.name}:$id"
     }
@@ -151,6 +153,7 @@ class NamespacedId @JsonCreator constructor(val namespace: Namespace, val id: St
          * @return the created NamespacedId. null if invalid
          * @see .fromString
          */
+        @JsonCreator
         fun fromString(id: String): NamespacedId? {
             return fromString(id, null)
         }

@@ -6,6 +6,7 @@ import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
+import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -58,14 +59,14 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                 if (clickEvent().isShiftClick || previousFolder == null) {
                     ShiningGuideDraft.openMainMenu(player)
                 } else {
-                    Shining.launchIO {
+                    ShiningDispatchers.launchSQL {
                         previousFolder.open(player)
                     }
                 }
             }
             
             set('a', itemEditState.toLocalizedItem(player)) {
-                Shining.launchIO { 
+                ShiningDispatchers.launchSQL { 
                     newSuspendedTransaction { 
                         state.openEditor(player)
                     }
@@ -78,7 +79,7 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
             
             if (previousFolder != null) {
                 set('d', ShiningIcon.REMOVE.toLocalizedItem(player)) {
-                    Shining.launchIO {
+                    ShiningDispatchers.launchSQL {
                         previousFolder.removeDraft(id.value)
                         newSuspendedTransaction {
                             delete()

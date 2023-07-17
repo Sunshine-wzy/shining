@@ -26,13 +26,12 @@ import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.onBackMenu
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
+import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.addLore
 import io.github.sunshinewzy.shining.utils.getDisplayName
 import io.github.sunshinewzy.shining.utils.insertLore
 import io.github.sunshinewzy.shining.utils.orderWith
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -60,7 +59,7 @@ abstract class GuideElementState(@JsonIgnore private var element: IGuideElement?
     
     @JsonSetter("dependencies")
     fun setDependenciesById(dependencyIds: MutableSet<NamespacedId>) {
-        Shining.scope.launch(Dispatchers.IO) {
+        ShiningDispatchers.launchSQL {
             dependencyIds.forEach { id ->
                 GuideElements.getElement(id)?.let {
                     dependencyMap[id] = it

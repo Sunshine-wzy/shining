@@ -1,5 +1,7 @@
 package io.github.sunshinewzy.shining.api.namespace
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonValue
 import java.util.concurrent.ConcurrentHashMap
 import java.util.regex.Pattern
 
@@ -7,7 +9,7 @@ import java.util.regex.Pattern
  * The [name] of namespace may only contain lowercase alphanumeric characters, periods,
  * underscores, and hyphens.
  */
-class Namespace private constructor(val name: String) {
+class Namespace private constructor(@JsonValue val name: String) {
 
     init {
         check(VALID_NAMESPACE.matcher(name).matches()) {
@@ -41,6 +43,7 @@ class Namespace private constructor(val name: String) {
 
 
         @JvmStatic
+        @JsonCreator
         operator fun get(name: String): Namespace {
             cache[name]?.let {
                 return it

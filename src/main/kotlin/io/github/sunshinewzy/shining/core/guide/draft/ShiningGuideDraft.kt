@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.shining.core.guide.draft
 
-import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
+import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -15,14 +15,14 @@ object ShiningGuideDraft {
     fun openMainMenu(player: Player) {
         playerLastOpenFolderMap -= player.uniqueId
         
-        Shining.launchIO { 
+        ShiningDispatchers.launchSQL { 
             GuideDraftFolder.getMainFolder().open(player)
         }
     }
     
     fun openLastMenu(player: Player) {
         playerLastOpenFolderMap[player.uniqueId]?.let { 
-            Shining.launchIO {
+            ShiningDispatchers.launchSQL {
                 it.open(player)
             }
             return
@@ -34,14 +34,14 @@ object ShiningGuideDraft {
     fun openMainSaveMenu(player: Player, state: IGuideElementState) {
         playerLastOpenFolderMap -= player.uniqueId
         
-        Shining.launchIO { 
+        ShiningDispatchers.launchSQL { 
             GuideDraftFolder.getMainFolder().openSaveMenu(player, state)
         }
     }
     
     fun openLastSaveMenu(player: Player, state: IGuideElementState) {
         playerLastOpenFolderMap[player.uniqueId]?.let {
-            Shining.launchIO {
+            ShiningDispatchers.launchSQL {
                 it.openSaveMenu(player, state)
             }
             return

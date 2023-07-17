@@ -13,6 +13,7 @@ import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.onBack
 import io.github.sunshinewzy.shining.core.menu.openDeleteConfirmMenu
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
+import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.getDisplayName
 import io.github.sunshinewzy.shining.utils.orderWith
@@ -67,7 +68,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                 }
                 
                 onClick { _, element -> 
-                    Shining.launchIO {
+                    ShiningDispatchers.launchSQL {
                         element.open(player, this@GuideDraftFolder)
                     }
                 }
@@ -77,26 +78,30 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                 }
 
                 set(8 orderWith 1, itemCreateFolder.toLocalizedItem(player)) {
-                    Shining.launchIO {
+                    ShiningDispatchers.launchSQL {
                         newSuspendedTransaction {
                             GuideDraftFolder.new {
                                 name = ""
                                 list = JacksonWrapper(HashSet())
                             }.also {
-                                addFolder(it.id.value)
-                                submit {
-                                    it.openFolderEditor(player, null)
+                                ShiningDispatchers.launchSQL {
+                                    addFolder(it.id.value)
+                                    submit {
+                                        it.openFolderEditor(player, null)
+                                    }
                                 }
                             }
                         }
                     }
                 }
                 
-                onBack(item = ShiningIcon.BACK_MENU.toLocalizedItem(player)) { 
-                    if (clickEvent().isShiftClick) {
-                        ShiningGuideDraft.openMainMenu(player)
-                    } else {
-                        back(player)
+                if (this@GuideDraftFolder !== mainFolder) {
+                    onBack(item = ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
+                        if (clickEvent().isShiftClick) {
+                            ShiningGuideDraft.openMainMenu(player)
+                        } else {
+                            back(player)
+                        }
                     }
                 }
             }
@@ -119,14 +124,18 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                 
                 onClick { event, element -> 
                     if (ShiningGuideDraft.isPlayerSelectModeEnabled(player)) {
-                        Shining.launchIO { 
+                        ShiningDispatchers.launchSQL { 
                             newSuspendedTransaction {
                                 GuideDraft.new { this.state = state }
-                                    .also { element.addDraft(it.id.value) }
+                                    .also { 
+                                        ShiningDispatchers.launchSQL {
+                                            element.addDraft(it.id.value)
+                                        }
+                                    }
                             }
                         }
                     } else {
-                        Shining.launchIO {
+                        ShiningDispatchers.launchSQL {
                             element.openSaveMenu(player, state, this@GuideDraftFolder)
                         }
                     }
@@ -135,7 +144,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                 if (ShiningGuideDraft.isPlayerSelectModeEnabled(player)) {
                     onClick(lock = true) { event ->
                         if (ShiningGuide.isClickEmptySlot(event)) {
-                            Shining.launchIO { 
+                            ShiningDispatchers.launchSQL { 
                                 newSuspendedTransaction { 
                                     GuideDraft.new { this.state = state }
                                         .also { addDraft(it.id.value) }
@@ -152,7 +161,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                     else ShiningIcon.SELECT_MODE.toStateLocalizedItem("close", player)
                 ) {
                     ShiningGuideDraft.switchPlayerSelectMode(player)
-                    Shining.launchIO {
+                    ShiningDispatchers.launchSQL {
                         openSaveMenu(player, state)
                     }
                 }
@@ -162,33 +171,37 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                 }
                 
                 set(8 orderWith 1, itemCreateFolder.toLocalizedItem(player)) {
-                    Shining.launchIO { 
+                    ShiningDispatchers.launchSQL { 
                         newSuspendedTransaction {
                             GuideDraftFolder.new {
                                 name = ""
                                 list = JacksonWrapper(HashSet())
                             }.also { 
-                                addFolder(it.id.value)
-                                submit {
-                                    it.openFolderEditor(player, state)
+                                ShiningDispatchers.launchSQL {
+                                    addFolder(it.id.value)
+                                    submit {
+                                        it.openFolderEditor(player, state)
+                                    }
                                 }
                             }
                         }
                     }
                 }
 
-                onBack(item = ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
-                    if (clickEvent().isShiftClick) {
-                        ShiningGuideDraft.openMainMenu(player)
-                    } else {
-                        previousFolderMap[player.uniqueId]?.let {
-                            Shining.launchIO {
-                                it.openSaveMenu(player, state)
+                if (this@GuideDraftFolder !== mainFolder) {
+                    onBack(item = ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
+                        if (clickEvent().isShiftClick) {
+                            ShiningGuideDraft.openMainMenu(player)
+                        } else {
+                            previousFolderMap[player.uniqueId]?.let {
+                                ShiningDispatchers.launchSQL {
+                                    it.openSaveMenu(player, state)
+                                }
+                                return@onBack
                             }
-                            return@onBack
-                        }
 
-                        ShiningGuideDraft.openMainSaveMenu(player, state)
+                            ShiningGuideDraft.openMainSaveMenu(player, state)
+                        }
                     }
                 }
             }
@@ -208,7 +221,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
             set('-', ShiningIcon.EDGE.item)
             
             set('B', ShiningIcon.BACK.toLocalizedItem(player)) {
-                Shining.launchIO {
+                ShiningDispatchers.launchSQL {
                     if (state == null) open(player)
                     else openSaveMenu(player, state)
                 }
@@ -216,7 +229,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
             
             val itemRename = ShiningIcon.RENAME.toLocalizedItem(player)
             set('a', itemRename) {
-                Shining.launchIO { 
+                ShiningDispatchers.launchSQL { 
                     newSuspendedTransaction {
                         val theName = this@GuideDraftFolder.name
                         submit {
@@ -228,7 +241,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                                 }
 
                                 onSubmit {
-                                    Shining.launchIO {
+                                    ShiningDispatchers.launchSQL {
                                         newSuspendedTransaction {
                                             this@GuideDraftFolder.name = it
                                         }
@@ -257,7 +270,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
     fun openDeleteFolderConfirmMenu(player: Player, state: IGuideElementState?, previousFolder: GuideDraftFolder) {
         player.openDeleteConfirmMenu { 
             onConfirm { 
-                Shining.launchIO {
+                ShiningDispatchers.launchSQL {
                     delete(previousFolder)
                     if (state == null) open(player)
                     else openSaveMenu(player, state)
@@ -265,7 +278,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
             }
             
             onCancel { 
-                Shining.launchIO {
+                ShiningDispatchers.launchSQL {
                     if (state == null) open(player)
                     else openSaveMenu(player, state)
                 }
@@ -275,7 +288,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
     
     fun back(player: Player) {
         previousFolderMap[player.uniqueId]?.let { 
-            Shining.launchIO {
+            ShiningDispatchers.launchSQL {
                 it.open(player)
             }
             return

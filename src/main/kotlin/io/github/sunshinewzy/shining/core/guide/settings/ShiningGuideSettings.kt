@@ -5,6 +5,7 @@ import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
+import io.github.sunshinewzy.shining.core.guide.draft.ShiningGuideDraft
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
@@ -19,7 +20,8 @@ object ShiningGuideSettings {
     private val itemEditMode = NamespacedIdItem(Material.COMPARATOR, NamespacedId(Shining, "shining_guide-settings-edit_mode"))
     private val itemEditModeClose = itemEditMode.toStateItem("close")
     private val itemEditModeOpen = itemEditMode.toStateItem("open").shiny()
-
+    private val itemDraftBox = NamespacedIdItem(Material.BOOKSHELF, NamespacedId(Shining, "shining_guide-settings-draft_box"))
+    
 
     fun openSettingsMenu(player: Player, team: GuideTeam) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-settings-title")) {
@@ -28,7 +30,7 @@ object ShiningGuideSettings {
             map(
                 "-B-------",
                 "-a     e-",
-                "-       -",
+                "-      f-",
                 "-       -",
                 "-       -",
                 "---------"
@@ -50,6 +52,12 @@ object ShiningGuideSettings {
                 ) {
                     ShiningGuideEditor.switchEditMode(player)
                     openSettingsMenu(player, team)
+                }
+                
+                if (ShiningGuideEditor.isEditModeEnabled(player)) {
+                    set('f', itemDraftBox.toLocalizedItem(player)) {
+                        ShiningGuideDraft.openLastMenu(player)
+                    }
                 }
             }
 

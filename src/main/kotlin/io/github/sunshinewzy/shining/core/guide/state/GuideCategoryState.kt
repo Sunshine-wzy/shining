@@ -14,11 +14,10 @@ import io.github.sunshinewzy.shining.core.guide.element.GuideElements
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
+import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.getDisplayName
 import io.github.sunshinewzy.shining.utils.putElement
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import taboolib.module.ui.openMenu
@@ -45,7 +44,7 @@ class GuideCategoryState @JvmOverloads constructor(element: GuideCategory? = nul
     
     @JsonSetter("elements")
     fun setElementsById(map: TreeMap<Int, MutableList<NamespacedId>>) {
-        Shining.scope.launch(Dispatchers.IO) {
+        ShiningDispatchers.launchSQL {
             val newPriorityToElements = TreeMap<Int, MutableList<IGuideElement>> { o1, o2 -> o2 - o1 }
             val newIdToPriority = HashMap<NamespacedId, Int>()
             

@@ -11,10 +11,10 @@ import io.github.sunshinewzy.shining.core.menu.Search
 import io.github.sunshinewzy.shining.core.menu.onBack
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.core.menu.openSearchMenu
+import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -374,7 +374,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
          * The [block] will be run asynchronously by [Dispatchers.IO] if the player is in a guide team.
          */
         fun Player.letGuideTeam(block: (team: GuideTeam) -> Unit) {
-            Shining.scope.launch(Dispatchers.IO) {
+            ShiningDispatchers.launchSQL {
                 getGuideTeam()?.also(block)
             }
         }
@@ -383,7 +383,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
          * The [block] will be run asynchronously by [Dispatchers.IO] if the player is in a guide team, or it will send a warning message [PLAYER_NOT_IN_TEAM] to the player.
          */
         fun Player.letGuideTeamOrWarn(block: (team: GuideTeam) -> Unit) {
-            Shining.scope.launch(Dispatchers.IO) {
+            ShiningDispatchers.launchSQL {
                 getGuideTeam()?.also(block) ?: sendPrefixedLangText(PLAYER_NOT_IN_TEAM)
             }
         }
@@ -471,7 +471,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
                 onClick('d') {
                     if (name.isNotBlank()) {
-                        Shining.scope.launch(Dispatchers.IO) {
+                        ShiningDispatchers.launchSQL {
                             if (create(this@createGuideTeam, name, symbol)) {
                                 sendPrefixedLangText("menu-shining_guide-team-create-success", Shining.prefix, name)
                                 submit {
@@ -494,7 +494,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         }
 
         private fun Player.joinGuideTeam() {
-            Shining.scope.launch(Dispatchers.IO) {
+            ShiningDispatchers.launchSQL {
                 val applyTeam = getDataContainer()[GUIDE_TEAM_APPLY]
                 val teams = newSuspendedTransaction {
                     val allTeam = all().limit(100)
