@@ -179,8 +179,8 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
         return true
     }
 
-    override fun getState(): GuideCategoryState =
-        GuideCategoryState(this).also { saveToState(it) }
+    override fun getState(): IGuideElementState =
+        GuideCategoryState().correlateElement(this)
 
     override fun update(state: IGuideElementState): Boolean {
         if (state !is GuideCategoryState) return false

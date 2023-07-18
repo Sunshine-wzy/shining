@@ -40,8 +40,10 @@ import taboolib.module.ui.type.Basic
 import taboolib.platform.util.isAir
 import java.util.*
 
-abstract class GuideElementState(@JsonIgnore private var element: IGuideElement?) : IGuideElementState, Cloneable {
+abstract class GuideElementState : IGuideElementState, Cloneable {
 
+    @JsonIgnore
+    override var element: IGuideElement? = null
     override var id: NamespacedId? = null
     override var descriptionName: String? = null
     override var descriptionLore: MutableList<String> = LinkedList()

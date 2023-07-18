@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap
 class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
     
     var name: String by GuideDraftFolders.name
-    var list: JacksonWrapper<HashSet<Pair<Char, Long>>> by GuideDraftFolders.list
+    var list: JacksonWrapper<HashSet<GuideDraftFolderNode>> by GuideDraftFolders.list
 
     private val previousFolderMap: MutableMap<UUID, GuideDraftFolder> = ConcurrentHashMap()
 
@@ -297,38 +297,38 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
         ShiningGuideDraft.openMainMenu(player)
     }
 
-    suspend fun add(pair: Pair<Char, Long>) {
+    suspend fun add(node: GuideDraftFolderNode) {
         newSuspendedTransaction { 
             list.value.let { 
-                it += pair
+                it += node
                 list = JacksonWrapper(it)
             }
         }
     }
     
     suspend fun add(type: Char, index: Long) {
-        add(type to index)
+        add(GuideDraftFolderNode(type, index))
     }
     
     suspend fun add(type: Type, index: Long) {
-        add(type.character to index)
+        add(GuideDraftFolderNode(type.character, index))
     }
     
-    suspend fun remove(pair: Pair<Char, Long>) {
+    suspend fun remove(node: GuideDraftFolderNode) {
         newSuspendedTransaction { 
             list.value.let { 
-                it -= pair
+                it -= node
                 list = JacksonWrapper(it)
             }
         }
     }
     
     suspend fun remove(type: Char, index: Long) {
-        remove(type to index)
+        remove(GuideDraftFolderNode(type, index))
     }
     
     suspend fun remove(type: Type, index: Long) {
-        remove(type.character to index)
+        remove(GuideDraftFolderNode(type.character, index))
     }
     
     suspend fun addDraft(index: Long) {
@@ -366,16 +366,16 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
             val folderSet = HashSet<GuideDraftFolder>()
             val draftSet = HashSet<GuideDraft>()
             
-            list.value.forEach { pair -> 
-                when (pair.first) {
+            list.value.forEach { node -> 
+                when (node.type) {
                     Type.FOLDER.character -> {
-                        GuideDraftFolder.findById(pair.second)?.let { 
+                        GuideDraftFolder.findById(node.index)?.let { 
                             folderSet += it
                         }
                     }
                     
                     Type.DRAFT.character -> {
-                        GuideDraft.findById(pair.second)?.let { 
+                        GuideDraft.findById(node.index)?.let { 
                             draftSet += it
                         }
                     }
@@ -397,9 +397,9 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
         return newSuspendedTransaction {
             val folders = ArrayList<GuideDraftFolder>()
 
-            list.value.forEach { pair ->
-                if (pair.first == Type.FOLDER.character) {
-                    GuideDraftFolder.findById(pair.second)?.let {
+            list.value.forEach { node ->
+                if (node.type == Type.FOLDER.character) {
+                    GuideDraftFolder.findById(node.index)?.let {
                         folders += it
                     }
                 }

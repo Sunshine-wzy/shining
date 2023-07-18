@@ -36,6 +36,19 @@ object GuideElements : LongIdTable() {
         }
     }
     
+    @Suppress("UNCHECKED_CAST")
+    suspend fun <T: IGuideElement> getElementByType(id: NamespacedId, type: Class<T>): T? {
+        val theElement = getElement(id) ?: return null
+        if (type.isInstance(theElement)) return theElement as T
+        return null
+    }
+    
+    suspend inline fun <reified T: IGuideElement> getElementByType(id: NamespacedId): T? {
+        val theElement = getElement(id) ?: return null
+        if (theElement is T) return theElement
+        return null
+    }
+    
     
     private fun insertElement(element: IGuideElement): EntityID<Long> =
         insertAndGetId {

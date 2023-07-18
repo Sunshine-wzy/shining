@@ -25,13 +25,14 @@ import taboolib.module.ui.type.Basic
 import taboolib.platform.util.isAir
 import java.util.*
 
-class GuideCategoryState @JvmOverloads constructor(element: GuideCategory? = null) : GuideElementState(element) {
-
+class GuideCategoryState : GuideElementState() {
+    
     @JsonIgnore
     var priorityToElements: TreeMap<Int, MutableList<IGuideElement>> =
         TreeMap { o1, o2 -> o2 - o1 }
     @JsonIgnore
     var idToPriority: MutableMap<NamespacedId, Int> = HashMap()
+    
     
     @JsonGetter("elements")
     fun getElementsId(): TreeMap<Int, MutableList<NamespacedId>> {
@@ -83,7 +84,7 @@ class GuideCategoryState @JvmOverloads constructor(element: GuideCategory? = nul
     }
     
 
-    override fun toElement(): IGuideElement =
+    override fun toElement(): GuideCategory =
         GuideCategory().also { it.update(this) }
 
     override fun clone(): GuideCategoryState {

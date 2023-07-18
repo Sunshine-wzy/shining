@@ -13,10 +13,11 @@ import org.bukkit.inventory.ItemStack
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.CLASS,
     include = JsonTypeInfo.As.PROPERTY,
-    property = "@type"
+    property = "@class"
 )
 interface IGuideElementState {
 
+    var element: IGuideElement?
     var id: NamespacedId?
     var descriptionName: String?
     var descriptionLore: MutableList<String>
@@ -35,5 +36,11 @@ interface IGuideElementState {
     fun openEditor(player: Player, team: GuideTeam = GuideTeam.CompletedTeam)
 
     fun toElement(): IGuideElement
+    
+    fun correlateElement(element: IGuideElement): IGuideElementState {
+        this.element = element
+        element.saveToState(this)
+        return this
+    }
     
 }

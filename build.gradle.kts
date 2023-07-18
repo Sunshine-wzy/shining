@@ -76,10 +76,10 @@ dependencies {
     compileOnly("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
 
-    compileOnly("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
-    compileOnly("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
-    compileOnly("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-    compileOnly("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+    taboo("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
+    taboo("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
+    taboo("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+    taboo("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
 
     compileOnly("com.zaxxer:HikariCP:4.0.3")
 

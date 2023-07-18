@@ -154,6 +154,7 @@ class NamespacedId(val namespace: Namespace, val id: String) {
          * @see .fromString
          */
         @JsonCreator
+        @JvmStatic
         fun fromString(id: String): NamespacedId? {
             return fromString(id, null)
         }

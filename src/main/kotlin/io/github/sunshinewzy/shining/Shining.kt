@@ -16,8 +16,6 @@ import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.guide.element.GuideItem
 import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
-import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
-import io.github.sunshinewzy.shining.core.guide.state.GuideItemState
 import io.github.sunshinewzy.shining.core.machine.MachineManager
 import io.github.sunshinewzy.shining.core.machine.legacy.*
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipe
@@ -64,10 +62,6 @@ import taboolib.platform.BukkitPlugin
     RuntimeDependency(value = "org.jetbrains.exposed:exposed-core:0.41.1", isolated = true),
     RuntimeDependency(value = "org.jetbrains.exposed:exposed-dao:0.41.1", isolated = true),
     RuntimeDependency(value = "org.jetbrains.exposed:exposed-jdbc:0.41.1", isolated = true),
-    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-core:2.14.1", transitive = false, isolated = true),
-    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-annotations:2.14.1", transitive = false, isolated = true),
-    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-databind:2.14.1", transitive = false, isolated = true),
-    RuntimeDependency(value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.14.1", transitive = false, isolated = true),
     RuntimeDependency(value = "!com.zaxxer:HikariCP:4.0.3", isolated = true)
 )
 object Shining : Plugin(), ShiningPlugin {
@@ -147,7 +141,7 @@ object Shining : Plugin(), ShiningPlugin {
     }
 
     private fun registerSerialization() {
-        objectMapper.registerSubtypes(GuideCategoryState::class.java, GuideItemState::class.java)
+//        objectMapper.registerSubtypes(GuideCategoryState::class.java, GuideItemState::class.java)
         
         arrayOf(
             SBlock::class.java,
