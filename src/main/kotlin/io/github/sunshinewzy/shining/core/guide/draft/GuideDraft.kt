@@ -68,13 +68,16 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
             set('a', itemEditState.toLocalizedItem(player)) {
                 ShiningDispatchers.launchSQL { 
                     newSuspendedTransaction { 
-                        state.openEditor(player)
+                        val state = state
+                        submit {
+                            state.openEditor(player)
+                        }
                     }
                 }
             }
             
             set('b', itemMoveFolder.toLocalizedItem(player)) {
-                
+                // TODO: move folder
             }
             
             if (previousFolder != null) {
