@@ -23,6 +23,12 @@ object GuideElements : LongIdTable() {
     private val cache: MutableMap<NamespacedId, IGuideElement> = ConcurrentHashMap()
     
     
+    suspend fun getState(id: NamespacedId): IGuideElementState? {
+        return newSuspendedTransaction { 
+            readState(id)
+        }
+    }
+    
     suspend fun getElement(id: NamespacedId): IGuideElement? {
         cache[id]?.let { return it }
         
@@ -49,6 +55,30 @@ object GuideElements : LongIdTable() {
         return null
     }
     
+    suspend fun saveElement(element: IGuideElement, isCheckExists: Boolean = false, actionBeforeInsert: () -> Unit = {}): Boolean {
+        val existsCache = cache.containsKey(element.getId())
+        if (isCheckExists && existsCache)
+            return false
+        
+        return newSuspendedTransaction transaction@{
+            val existsSQL = containsElement(element)
+            if (isCheckExists && existsSQL)
+                return@transaction false
+
+            actionBeforeInsert()
+            if (existsSQL) {
+                updateElement(element)
+            } else {
+                insertElement(element)
+            }
+
+            if (!existsCache) {
+                cache[element.getId()] = element
+            }
+            true
+        }
+    }
+    
     
     private fun insertElement(element: IGuideElement): EntityID<Long> =
         insertAndGetId {
@@ -69,12 +99,24 @@ object GuideElements : LongIdTable() {
     private fun deleteElement(element: IGuideElement): Int =
         deleteElement(element.getId())
     
-    private fun readElement(id: NamespacedId): IGuideElement? =
+    private fun readState(id: NamespacedId): IGuideElementState? =
         GuideElements
             .slice(GuideElements.element)
             .select { GuideElements.key eq id.toString() }
             .firstNotNullOfOrNull {
                 it[GuideElements.element]
-            }?.toElement()
+            }
+    
+    private fun readElement(id: NamespacedId): IGuideElement? =
+        readState(id)?.toElement()
+    
+    private fun containsElement(id: NamespacedId): Boolean =
+        GuideElements
+            .slice(GuideElements.key)
+            .select { GuideElements.key eq id.toString() }
+            .firstOrNull() != null
+    
+    private fun containsElement(element: IGuideElement): Boolean =
+        containsElement(element.getId())
     
 }

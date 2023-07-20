@@ -13,6 +13,7 @@ import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.setupGuideTe
 import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
+import io.github.sunshinewzy.shining.core.guide.element.GuideElements
 import io.github.sunshinewzy.shining.core.guide.settings.SoundSettings
 import io.github.sunshinewzy.shining.core.lang.getDefaultLangText
 import io.github.sunshinewzy.shining.core.lang.item.LocalizedItem
@@ -31,6 +32,8 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
 import taboolib.common.platform.function.submit
 import taboolib.module.ui.ClickEvent
 import taboolib.platform.util.isAir
@@ -86,6 +89,17 @@ object ShiningGuide : GuideCategory(
     val edgeOrders = (((1 orderWith 1)..(9 orderWith 1)) + ((1 orderWith 6)..(9 orderWith 6)))
     val slotOrders = ((1 orderWith 2)..(9 orderWith 5)).toList()
 
+    
+    @Awake(LifeCycle.ENABLE)
+    fun init() {
+        ShiningDispatchers.launchSQL {
+            val state = GuideElements.getState(getId()) ?: return@launchSQL
+            submit { 
+                update(state)
+            }
+        }
+    }
+    
 
     @JvmOverloads
     fun openMainMenu(player: Player, context: GuideContext = EmptyGuideContext) {

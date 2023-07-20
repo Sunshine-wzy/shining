@@ -24,6 +24,7 @@ import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
+import io.github.sunshinewzy.shining.core.lang.sendLangText
 import io.github.sunshinewzy.shining.core.menu.onBackMenu
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
@@ -35,6 +36,7 @@ import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.function.submit
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 import taboolib.platform.util.isAir
@@ -116,6 +118,29 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
     override fun update(): Boolean =
         element?.update(this) ?: false
+    
+    fun updateAndSave(player: Player?) {
+        element?.let { element ->
+            id?.let { id ->
+                if (id == element.getId()) {
+                    update()
+                    ShiningDispatchers.launchSQL {
+                        GuideElements.saveElement(element)
+                        player?.sendLangText("text-shining_guide-editor-state-element-update-succeed")
+                    }
+                } else {
+                    ShiningDispatchers.launchSQL {
+                        if (
+                            GuideElements.saveElement(element, true) {
+                                submit { update() }
+                            }
+                        ) player?.sendLangText("text-shining_guide-editor-state-element-update-succeed")
+                        else player?.sendLangText("text-shining_guide-editor-state-element-update-fail")
+                    }
+                }
+            }
+        }
+    }
 
     override fun openEditor(player: Player, team: GuideTeam) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-title")) {
@@ -132,7 +157,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             onBackMenu(player, team)
 
             set('u', itemUpdate.toLocalizedItem(player)) {
-                update()
+                updateAndSave(player)
             }
             
             set('a', itemBasicEditor.toLocalizedItem(player)) {
