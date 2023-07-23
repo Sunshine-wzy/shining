@@ -18,6 +18,8 @@ import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.context.GuideSelectElementsContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideShortcutBarContext
+import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftOnlyFoldersContext
+import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftSaveContext
 import io.github.sunshinewzy.shining.core.guide.draft.ShiningGuideDraft
 import io.github.sunshinewzy.shining.core.guide.element.GuideElements
 import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
@@ -169,7 +171,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             }
             
             set('s', itemSaveToDraft.toLocalizedItem(player)) {
-                ShiningGuideDraft.openLastSaveMenu(player, this@GuideElementState)
+                ShiningGuideDraft.openLastSelectMenu(player, GuideDraftOnlyFoldersContext + GuideDraftSaveContext(this@GuideElementState))
             }
 
             onClick(lock = true)

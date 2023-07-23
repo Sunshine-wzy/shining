@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.core.guide.draft
 
-import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
+import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import org.bukkit.entity.Player
 import java.util.*
@@ -31,23 +31,23 @@ object ShiningGuideDraft {
         openMainMenu(player)
     }
     
-    fun openMainSaveMenu(player: Player, state: IGuideElementState) {
+    fun openMainSelectMenu(player: Player, context: GuideContext) {
         playerLastOpenFolderMap -= player.uniqueId
         
         ShiningDispatchers.launchSQL { 
-            GuideDraftFolder.getMainFolder().openSaveMenu(player, state)
+            GuideDraftFolder.getMainFolder().openSelectMenu(player, context)
         }
     }
     
-    fun openLastSaveMenu(player: Player, state: IGuideElementState) {
+    fun openLastSelectMenu(player: Player, context: GuideContext) {
         playerLastOpenFolderMap[player.uniqueId]?.let {
             ShiningDispatchers.launchSQL {
-                it.openSaveMenu(player, state)
+                it.openSelectMenu(player, context)
             }
             return
         }
 
-        openMainSaveMenu(player, state)
+        openMainSelectMenu(player, context)
     }
     
     fun recordLastOpenFolder(uuid: UUID, folder: GuideDraftFolder) {

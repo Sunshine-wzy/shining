@@ -76,11 +76,11 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                 }
             }
             
-            set('b', itemMoveFolder.toLocalizedItem(player)) {
-                // TODO: move folder
-            }
-            
             if (previousFolder != null) {
+                set('b', itemMoveFolder.toLocalizedItem(player)) {
+                    ShiningGuideDraft.openLastSelectMenu(player, GuideDraftOnlyFoldersContext + GuideDraftMoveFolderContext(this@GuideDraft, previousFolder))
+                }
+                
                 set('d', ShiningIcon.REMOVE.toLocalizedItem(player)) {
                     ShiningDispatchers.launchSQL {
                         previousFolder.removeDraft(id.value)
@@ -93,7 +93,19 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
         }
     }
     
+    override suspend fun delete(previousFolder: GuideDraftFolder) {
+        previousFolder.removeDraft(id.value)
+        newSuspendedTransaction { 
+            delete()
+        }
+    }
 
+    override suspend fun move(previousFolder: GuideDraftFolder, newFolder: GuideDraftFolder) {
+        previousFolder.removeDraft(id.value)
+        newFolder.addDraft(id.value)
+    }
+
+    
     companion object : LongEntityClass<GuideDraft>(GuideDrafts) {
         
         private val itemEditState = NamespacedIdItem(Material.REDSTONE_LAMP, NamespacedId(Shining, "shining_guide-draft-editor-state"))

@@ -60,7 +60,8 @@ object ShiningGuideEditor {
             }
             
             set('c', itemLoadFromDraftBox.toLocalizedItem(player)) {
-                
+                // TODO: Load element from draft box
+//                ShiningGuideDraft.openLastSelectMenu(player, )
             }
 
             onClick(lock = true)

@@ -10,4 +10,8 @@ interface IGuideDraft {
 
     suspend fun open(player: Player, previousFolder: GuideDraftFolder? = null)
     
+    suspend fun delete(previousFolder: GuideDraftFolder)
+    
+    suspend fun move(previousFolder: GuideDraftFolder, newFolder: GuideDraftFolder)
+    
 }
