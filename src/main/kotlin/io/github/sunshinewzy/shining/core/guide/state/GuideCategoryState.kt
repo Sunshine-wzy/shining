@@ -28,7 +28,7 @@ import java.util.*
 class GuideCategoryState : GuideElementState() {
     
     @JsonIgnore
-    var priorityToElements: TreeMap<Int, MutableList<IGuideElement>> =
+    var priorityToElements: TreeMap<Int, MutableSet<IGuideElement>> =
         TreeMap { o1, o2 -> o2 - o1 }
     @JsonIgnore
     var idToPriority: MutableMap<NamespacedId, Int> = HashMap()
@@ -46,11 +46,11 @@ class GuideCategoryState : GuideElementState() {
     @JsonSetter("elements")
     fun setElementsById(map: TreeMap<Int, MutableList<NamespacedId>>) {
         ShiningDispatchers.launchSQL {
-            val newPriorityToElements = TreeMap<Int, MutableList<IGuideElement>> { o1, o2 -> o2 - o1 }
+            val newPriorityToElements = TreeMap<Int, MutableSet<IGuideElement>> { o1, o2 -> o2 - o1 }
             val newIdToPriority = HashMap<NamespacedId, Int>()
             
             map.forEach { (priority, list) ->
-                val elements = ArrayList<IGuideElement>()
+                val elements = HashSet<IGuideElement>()
                 list.forEach { id ->
                     GuideElements.getElement(id)?.let {
                         newIdToPriority[id] = priority

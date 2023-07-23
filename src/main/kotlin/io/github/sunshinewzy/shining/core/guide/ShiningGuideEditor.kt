@@ -26,7 +26,8 @@ object ShiningGuideEditor {
     private val itemEditor = NamespacedIdItem(Material.COMPARATOR, NamespacedId(Shining, "shining_guide-editor"))
     private val itemCreateStateCopy = NamespacedIdItem(Material.REDSTONE_LAMP, NamespacedId(Shining, "shining_guide-editor-create_state_copy"))
     private val itemCreateStateNew = NamespacedIdItem(Material.GLASS, NamespacedId(Shining, "shining_guide-editor-create_state_new"))
-
+    private val itemLoadFromDraftBox = NamespacedIdItem(Material.BOOKSHELF, NamespacedId(Shining, "shining_guide-editor-load_from_draft_box"))
+    
     const val PERMISSION_EDIT = "shining.guide.edit"
 
 
@@ -38,7 +39,7 @@ object ShiningGuideEditor {
             map(
                 "-B-------",
                 "-       -",
-                "- a b   -",
+                "- a b c -",
                 "-       -",
                 "---------"
             )
@@ -55,6 +56,10 @@ object ShiningGuideEditor {
             }
 
             set('b', itemCreateStateNew.toLocalizedItem(player)) {
+                
+            }
+            
+            set('c', itemLoadFromDraftBox.toLocalizedItem(player)) {
                 
             }
 

@@ -21,6 +21,7 @@ item-shining-shining_guide-selector:
   open: [ '&e选择器', '&a&l已开启', '', '&c> 点击关闭', '&b> Shift点击提交' ]
 item-shining-shining_guide-editor-create_state_copy: '&b创建状态副本'
 item-shining-shining_guide-editor-create_state_new: '&a创建新状态'
+item-shining-shining_guide-editor-load_from_draft_box: '&e从草稿箱载入'
 item-shining-shining_guide-editor-state-element-update: '&e状态更新'
 item-shining-shining_guide-editor-state-element-save_to_draft: '&e保存为草稿'
 item-shining-shining_guide-editor-state-element-basic_editor: '&a基础状态编辑器'

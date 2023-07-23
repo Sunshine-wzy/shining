@@ -52,5 +52,5 @@ interface IGuideElement {
         getSymbolByCondition(player, GuideTeam.CompletedTeam, ElementCondition.UNLOCKED)
     
     fun isTeamCompleted(team: GuideTeam): Boolean
-
+    
 }

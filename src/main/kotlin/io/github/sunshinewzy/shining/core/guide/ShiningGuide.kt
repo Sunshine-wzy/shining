@@ -90,7 +90,7 @@ object ShiningGuide : GuideCategory(
     val slotOrders = ((1 orderWith 2)..(9 orderWith 5)).toList()
 
     
-    @Awake(LifeCycle.ENABLE)
+    @Awake(LifeCycle.ACTIVE)
     fun init() {
         ShiningDispatchers.launchSQL {
             val state = GuideElements.getState(getId()) ?: return@launchSQL

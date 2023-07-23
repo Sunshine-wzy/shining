@@ -34,7 +34,7 @@ import java.util.*
  */
 open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
     
-    private val priorityToElements: TreeMap<Int, MutableList<IGuideElement>> =
+    private val priorityToElements: TreeMap<Int, MutableSet<IGuideElement>> =
         TreeMap { o1, o2 -> o2 - o1 }
     private val idToPriority: MutableMap<NamespacedId, Int> = HashMap()
     

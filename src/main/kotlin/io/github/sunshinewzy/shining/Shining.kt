@@ -129,11 +129,13 @@ object Shining : Plugin(), ShiningPlugin {
 
         SItem.initAction()
         DataManager.init()
+        
         SMachineWrench.init()
         SLocationData.init()
         SSingleMachine.init()
         SFlatMachine.init()
         SunSTMachineManager.register()
+        
     }
 
     private fun registerListeners() {
@@ -141,8 +143,6 @@ object Shining : Plugin(), ShiningPlugin {
     }
 
     private fun registerSerialization() {
-//        objectMapper.registerSubtypes(GuideCategoryState::class.java, GuideItemState::class.java)
-        
         arrayOf(
             SBlock::class.java,
             TaskProgress::class.java,
