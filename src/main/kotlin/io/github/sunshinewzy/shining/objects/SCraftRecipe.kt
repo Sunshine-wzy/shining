@@ -123,7 +123,7 @@ sealed class SCraftRecipe(
 
         @JvmStatic
         fun addRecipe(recipe: SCraftRecipe) {
-            recipes.putElement(recipe.input.typeHash(), recipe)
+            recipes.putListElement(recipe.input.typeHash(), recipe)
         }
 
         @JvmStatic

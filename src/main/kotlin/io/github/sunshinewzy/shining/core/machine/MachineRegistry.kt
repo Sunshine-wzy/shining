@@ -3,7 +3,7 @@ package io.github.sunshinewzy.shining.core.machine
 import io.github.sunshinewzy.shining.api.machine.IMachine
 import io.github.sunshinewzy.shining.api.machine.IMachineRegistry
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.utils.putElement
+import io.github.sunshinewzy.shining.utils.putListElement
 import java.util.concurrent.ConcurrentHashMap
 
 object MachineRegistry : IMachineRegistry {
@@ -38,7 +38,7 @@ object MachineRegistry : IMachineRegistry {
         require(name !in machinesByName) { "Duplicate IMachine name: $name" }
 
         machinesByName[name] = machine
-        machinesById.putElement(name.id, machine)
+        machinesById.putListElement(name.id, machine)
 
         return machine
     }

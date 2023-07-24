@@ -6,6 +6,8 @@ import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
+import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftLoadContext
+import io.github.sunshinewzy.shining.core.guide.draft.ShiningGuideDraft
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.LanguageItem
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
@@ -60,8 +62,7 @@ object ShiningGuideEditor {
             }
             
             set('c', itemLoadFromDraftBox.toLocalizedItem(player)) {
-                // TODO: Load element from draft box
-//                ShiningGuideDraft.openLastSelectMenu(player, )
+                ShiningGuideDraft.openLastSelectMenu(player, GuideDraftLoadContext(team, element, elementContainer))
             }
 
             onClick(lock = true)

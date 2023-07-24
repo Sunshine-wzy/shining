@@ -6,6 +6,7 @@ import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
+import io.github.sunshinewzy.shining.core.menu.openDeleteConfirmMenu
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import org.bukkit.Material
@@ -70,7 +71,11 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                     newSuspendedTransaction { 
                         val state = state
                         submit {
-                            state.openEditor(player)
+                            state.openEditor(player) {
+                                set('B', ShiningIcon.BACK.toLocalizedItem(player)) {
+                                    this@GuideDraft.openMenu(player, previousFolder)
+                                }
+                            }
                         }
                     }
                 }
@@ -78,17 +83,33 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
             
             if (previousFolder != null) {
                 set('b', itemMoveFolder.toLocalizedItem(player)) {
-                    ShiningGuideDraft.openLastSelectMenu(player, GuideDraftOnlyFoldersContext + GuideDraftMoveFolderContext(this@GuideDraft, previousFolder))
+                    ShiningGuideDraft.openLastSelectMenu(player, GuideDraftOnlyFoldersContext.INSTANCE + GuideDraftMoveFolderContext(this@GuideDraft, previousFolder))
                 }
                 
                 set('d', ShiningIcon.REMOVE.toLocalizedItem(player)) {
-                    ShiningDispatchers.launchSQL {
-                        previousFolder.removeDraft(id.value)
-                        newSuspendedTransaction {
-                            delete()
-                        }
-                    }
+                    openDeleteDraftConfirmMenu(player, previousFolder)
                 }
+            }
+            
+            onClick(lock = true)
+        }
+    }
+    
+    private fun openDeleteDraftConfirmMenu(player: Player, previousFolder: GuideDraftFolder) {
+        player.openDeleteConfirmMenu { 
+            onConfirm {
+                ShiningDispatchers.launchSQL {
+                    previousFolder.removeDraft(id.value)
+                    newSuspendedTransaction {
+                        delete()
+                    }
+
+                    previousFolder.open(player)
+                }
+            }
+            
+            onCancel { 
+                openMenu(player, previousFolder)
             }
         }
     }

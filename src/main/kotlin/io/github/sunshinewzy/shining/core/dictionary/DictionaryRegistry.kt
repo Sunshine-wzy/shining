@@ -5,7 +5,7 @@ import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.dictionary.DictionaryItem.Companion.dictionaryItem
 import io.github.sunshinewzy.shining.core.dictionary.DictionaryItem.Companion.setDictionaryName
 import io.github.sunshinewzy.shining.core.dictionary.item.behavior.ItemBehavior
-import io.github.sunshinewzy.shining.utils.putElement
+import io.github.sunshinewzy.shining.utils.putListElement
 import org.bukkit.inventory.ItemStack
 import java.util.concurrent.ConcurrentHashMap
 
@@ -50,7 +50,7 @@ object DictionaryRegistry : IDictionaryRegistry {
         require(name !in itemsByName) { "Duplicate DictionaryItem name: $name" }
 
         itemsByName[name] = item
-        itemsById.putElement(name.id, item)
+        itemsById.putListElement(name.id, item)
 
         return item
     }

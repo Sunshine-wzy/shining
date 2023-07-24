@@ -17,7 +17,7 @@ import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.getDisplayName
-import io.github.sunshinewzy.shining.utils.putElement
+import io.github.sunshinewzy.shining.utils.putSetElement
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import taboolib.module.ui.openMenu
@@ -74,7 +74,7 @@ class GuideCategoryState : GuideElementState() {
     }
     
     fun addElement(element: IGuideElement, priority: Int) {
-        priorityToElements.putElement(priority, element)
+        priorityToElements.putSetElement(priority, element)
         idToPriority[element.getId()] = priority
     }
     

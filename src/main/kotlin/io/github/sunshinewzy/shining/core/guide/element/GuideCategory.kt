@@ -19,7 +19,7 @@ import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
-import io.github.sunshinewzy.shining.utils.putElement
+import io.github.sunshinewzy.shining.utils.putSetElement
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.module.ui.openMenu
@@ -194,7 +194,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
     }
 
     override fun registerElement(element: IGuideElement, priority: Int) {
-        priorityToElements.putElement(priority, element)
+        priorityToElements.putSetElement(priority, element)
         idToPriority[element.getId()] = priority
     }
     

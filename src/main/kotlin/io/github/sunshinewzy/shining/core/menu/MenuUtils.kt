@@ -12,6 +12,7 @@ import io.github.sunshinewzy.shining.utils.addLore
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.module.chat.colored
 import taboolib.module.chat.uncolored
 import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
@@ -115,11 +116,11 @@ inline fun Player.openConfirmMenu(
 }
 
 inline fun Player.openConfirmMenu(description: String, builder: ConfirmMenuBuilder.() -> Unit) {
-    openConfirmMenu("${getLangText("menu-confirm-title")} $description", description, builder)
+    openConfirmMenu("${getLangText("menu-confirm-title").colored()} $description", description, builder)
 }
 
 inline fun Player.openDeleteConfirmMenu(builder: ConfirmMenuBuilder.() -> Unit) {
-    openConfirmMenu(this.getLangText("menu-confirm-delete"), builder)
+    openConfirmMenu(this.getLangText("menu-confirm-delete").colored(), builder)
 }
 
 
@@ -160,7 +161,7 @@ fun Basic.onBack(
 }
 
 fun Basic.onBackMenu(player: Player, team: GuideTeam, context: GuideContext = EmptyGuideContext, slot: Char = 'B') {
-    set(slot, ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player)) {
+    set(slot, ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
         if (clickEvent().isShiftClick) {
             ShiningGuide.openMainMenu(player, team, context)
         } else {
