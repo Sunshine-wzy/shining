@@ -5,6 +5,7 @@ import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
+import io.github.sunshinewzy.shining.core.guide.state.GuideItemState
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -23,4 +24,12 @@ open class GuideItem : GuideElement {
         TODO("Not yet implemented")
     }
 
+    override fun update(state: IGuideElementState): Boolean {
+        if (state !is GuideItemState) return false
+        if (!super.update(state)) return false
+        
+        
+        
+        return true
+    }
 }

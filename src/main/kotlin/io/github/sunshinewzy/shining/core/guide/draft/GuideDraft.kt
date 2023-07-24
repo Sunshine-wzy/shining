@@ -4,6 +4,7 @@ import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.draft.IGuideDraft
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.guide.state.GuideElementStateEditorContext
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.openDeleteConfirmMenu
@@ -71,11 +72,11 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                     newSuspendedTransaction { 
                         val state = state
                         submit {
-                            state.openEditor(player) {
+                            state.openEditor(player, context = GuideElementStateEditorContext.Back {
                                 set('B', ShiningIcon.BACK.toLocalizedItem(player)) {
                                     this@GuideDraft.openMenu(player, previousFolder)
                                 }
-                            }
+                            })
                         }
                     }
                 }

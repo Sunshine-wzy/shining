@@ -1,7 +1,9 @@
 package io.github.sunshinewzy.shining.api.guide.lock
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.state.GuideElementState
@@ -18,6 +20,10 @@ import org.bukkit.inventory.ItemStack
  * @param description If the element is locked, it will be shown in the lore of the symbol.
  * @param isConsume If it is true, the lock will run [consume] when the player is unlocking the element.
  */
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.CLASS,
+    include = JsonTypeInfo.As.PROPERTY
+)
 abstract class ElementLock(
     @JsonIgnore var description: (Player) -> String,
     var isConsume: Boolean = true
@@ -37,7 +43,7 @@ abstract class ElementLock(
     /**
      * Opens an editor to edit the lock.
      */
-    abstract fun openEditor(player: Player, team: GuideTeam, state: GuideElementState)
+    abstract fun openEditor(player: Player, team: GuideTeam, state: GuideElementState, context: GuideContext)
     
 
     /**

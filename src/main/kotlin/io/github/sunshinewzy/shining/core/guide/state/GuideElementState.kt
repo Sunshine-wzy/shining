@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSetter
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
+import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
@@ -16,6 +17,7 @@ import io.github.sunshinewzy.shining.core.editor.chat.type.TextList
 import io.github.sunshinewzy.shining.core.editor.chat.type.TextMap
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
+import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideSelectElementsContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideShortcutBarContext
 import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftOnlyFoldersContext
@@ -27,17 +29,15 @@ import io.github.sunshinewzy.shining.core.guide.lock.LockItem
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.lang.sendLangText
+import io.github.sunshinewzy.shining.core.menu.onBackMenu
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
-import io.github.sunshinewzy.shining.utils.addLore
-import io.github.sunshinewzy.shining.utils.getDisplayName
-import io.github.sunshinewzy.shining.utils.insertLore
-import io.github.sunshinewzy.shining.utils.orderWith
+import io.github.sunshinewzy.shining.utils.*
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import taboolib.common.platform.function.submit
+import taboolib.common.util.sync
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 import taboolib.platform.util.isAir
@@ -127,23 +127,23 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
                     update()
                     ShiningDispatchers.launchSQL {
                         GuideElements.saveElement(element)
-                        player?.sendLangText("text-shining_guide-editor-state-element-update-succeed")
+                        player?.sendLangText("text-shining_guide-editor-state-element-update-success")
                     }
                 } else {
                     ShiningDispatchers.launchSQL {
                         if (
-                            GuideElements.saveElement(element, true) {
-                                submit { update() }
+                            GuideElements.saveElement(element, true, id) {
+                                sync { update() }
                             }
-                        ) player?.sendLangText("text-shining_guide-editor-state-element-update-succeed")
-                        else player?.sendLangText("text-shining_guide-editor-state-element-update-fail")
+                        ) player?.sendLangText("text-shining_guide-editor-state-element-update-success")
+                        else player?.sendLangText("text-shining_guide-editor-state-element-update-failure")
                     }
                 }
             }
         }
     }
 
-    override fun openEditor(player: Player, team: GuideTeam, builder: Basic.() -> Unit) {
+    override fun openEditor(player: Player, team: GuideTeam, context: GuideContext) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-title")) {
             rows(3)
 
@@ -160,7 +160,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             }
             
             set('a', itemBasicEditor.toLocalizedItem(player)) {
-                openBasicEditor(player, team, builder)
+                openBasicEditor(player, team, context)
             }
 
             set('b', itemAdvancedEditor.toLocalizedItem(player)) {
@@ -168,16 +168,22 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             }
             
             set('s', itemSaveToDraft.toLocalizedItem(player)) {
-                ShiningGuideDraft.openLastSelectMenu(player, GuideDraftOnlyFoldersContext.INSTANCE + GuideDraftSaveContext(this@GuideElementState, team))
+                ShiningGuideDraft.openLastSelectMenu(player, GuideDraftOnlyFoldersContext.INSTANCE + GuideDraftSaveContext(this@GuideElementState, team, context))
             }
 
             onClick(lock = true)
             
-            builder(this)
+            context[GuideElementStateEditorContext.Back]?.let { 
+                it.onBack(this)
+            } ?: onBackMenu(player, team)
+            
+            context[GuideElementStateEditorContext.Builder]?.let { 
+                it.builder(this)
+            }
         }
     }
 
-    open fun openBasicEditor(player: Player, team: GuideTeam, builder: Basic.() -> Unit) {
+    open fun openBasicEditor(player: Player, team: GuideTeam, context: GuideContext) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-title")) {
             rows(3)
 
@@ -190,7 +196,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             set('-', ShiningIcon.EDGE.item)
 
             set('B', ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player)) {
-                openEditor(player, team, builder)
+                openEditor(player, team, context)
             }
 
             set('a', itemEditId.toCurrentLocalizedItem(player, "&f$id")) {
@@ -217,7 +223,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
                     }
 
                     onFinal {
-                        openBasicEditor(player, team, builder)
+                        openBasicEditor(player, team, context)
                     }
                 }
             }
@@ -231,7 +237,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
                     }
 
                     onFinal {
-                        openBasicEditor(player, team, builder)
+                        openBasicEditor(player, team, context)
                     }
                 }
             }
@@ -245,17 +251,17 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
                     }
 
                     onFinal {
-                        openBasicEditor(player, team, builder)
+                        openBasicEditor(player, team, context)
                     }
                 }
             }
 
             set('d', itemEditDependencies.toLocalizedItem(player)) {
-                openDependenciesEditor(player, team, builder)
+                openDependenciesEditor(player, team, context)
             }
 
             set('e', itemEditLocks.toLocalizedItem(player)) {
-                openLocksEditor(player, team, builder)
+                openLocksEditor(player, team, context)
             }
 
             onClick(lock = true)
@@ -263,7 +269,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
     }
 
 
-    fun openDependenciesEditor(player: Player, team: GuideTeam, builder: Basic.() -> Unit) {
+    fun openDependenciesEditor(player: Player, team: GuideTeam, context: GuideContext) {
         player.openMultiPageMenu<IGuideElement>(player.getLangText("menu-shining_guide-editor-state-basic-dependencies-title")) {
             elements { dependencyMap.values.toList() }
 
@@ -273,11 +279,11 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             }
 
             onClick { event, element ->
-                openDependencyEditor(player, team, element, builder)
+                openDependencyEditor(player, team, element, context)
             }
 
             set(2 orderWith 1, ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
-                openBasicEditor(player, team, builder)
+                openBasicEditor(player, team, context)
             }
             
             onClick(lock = true) {
@@ -292,7 +298,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
                             !dependencyMap.containsValue(element)
                         }) { ctxt ->
                             addDependencies(ctxt.elements)
-                            openDependenciesEditor(player, team, builder)
+                            openDependenciesEditor(player, team, context)
                         }
                     )
                 }
@@ -300,7 +306,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
         }
     }
 
-    fun openDependencyEditor(player: Player, team: GuideTeam, element: IGuideElement, builder: Basic.() -> Unit) {
+    fun openDependencyEditor(player: Player, team: GuideTeam, element: IGuideElement, context: GuideContext) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-dependencies-title")) {
             rows(3)
 
@@ -313,19 +319,19 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             set('-', ShiningIcon.EDGE.item)
 
             set('B', ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
-                openDependenciesEditor(player, team, builder)
+                openDependenciesEditor(player, team, context)
             }
 
             set('d', ShiningIcon.REMOVE.toLocalizedItem(player)) {
                 dependencyMap -= element.getId()
-                openDependenciesEditor(player, team, builder)
+                openDependenciesEditor(player, team, context)
             }
 
             onClick(lock = true)
         }
     }
 
-    fun openLocksEditor(player: Player, team: GuideTeam, builder: Basic.() -> Unit) {
+    fun openLocksEditor(player: Player, team: GuideTeam, context: GuideContext = EmptyGuideContext) {
         player.openMultiPageMenu<ElementLock>(player.getLangText("menu-shining_guide-editor-state-basic-locks-title")) {
             elements { locks }
             
@@ -334,22 +340,22 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             }
             
             onClick { _, element -> 
-                element.openEditor(player, team, this@GuideElementState)
+                element.openEditor(player, team, this@GuideElementState, context)
             }
 
             set(2 orderWith 1, ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player)) {
-                openBasicEditor(player, team, builder)
+                openBasicEditor(player, team, context)
             }
 
             onClick(lock = true) {
                 if (it.rawSlot in ShiningGuide.slotOrders && it.currentItem.isAir()) {
-                    openCreateNewLockMenu(player, team, builder)
+                    openCreateNewLockMenu(player, team, context)
                 }
             }
         }
     }
     
-    fun openCreateNewLockMenu(player: Player, team: GuideTeam, builder: Basic.() -> Unit) {
+    fun openCreateNewLockMenu(player: Player, team: GuideTeam, context: GuideContext) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-locks-create-title")) {
             rows(3)
 
@@ -362,44 +368,26 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             set('-', ShiningIcon.EDGE.item)
 
             set('B', ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
-                openLocksEditor(player, team, builder)
+                openLocksEditor(player, team, context)
             }
 
             set('a', itemCreateLockExperience.toLocalizedItem(player)) {
                 val lock = LockExperience(1)
                 locks += lock
-                lock.openEditor(player, team, this@GuideElementState)
+                lock.openEditor(player, team, this@GuideElementState, context)
             }
             
             set('b', itemCreateLockItem.toLocalizedItem(player)) {
                 val lock = LockItem(ItemStack(Material.AIR))
                 locks += lock
-                lock.openEditor(player, team, this@GuideElementState)
+                lock.openEditor(player, team, this@GuideElementState, context)
             }
 
             onClick(lock = true)
         }
     }
-
-
-    protected fun ItemStack.addCurrentLore(player: Player, currentLore: String?): ItemStack {
-        return addLore("", player.getLangText("menu-shining_guide-editor-state-current_lore"), currentLore ?: "null")
-    }
-
-    protected fun ItemStack.addCurrentLore(player: Player, currentLore: List<String>): ItemStack {
-        addLore("", player.getLangText("menu-shining_guide-editor-state-current_lore"))
-        return addLore(currentLore)
-    }
-
-    protected fun NamespacedIdItem.toCurrentLocalizedItem(player: Player, currentLore: String?): ItemStack {
-        return toLocalizedItem(player).clone().addCurrentLore(player, currentLore)
-    }
-
-    protected fun NamespacedIdItem.toCurrentLocalizedItem(player: Player, currentLore: List<String>): ItemStack {
-        return toLocalizedItem(player).clone().addCurrentLore(player, currentLore)
-    }
-
-
+    
+    
     companion object {
         private val itemUpdate = NamespacedIdItem(Material.REDSTONE, NamespacedId(Shining, "shining_guide-editor-state-element-update"))
         private val itemSaveToDraft = NamespacedIdItem(Material.CHEST, NamespacedId(Shining, "shining_guide-editor-state-element-save_to_draft"))

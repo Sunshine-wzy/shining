@@ -7,7 +7,8 @@ import io.github.sunshinewzy.shining.core.guide.context.AbstractGuideContextElem
 
 class GuideDraftSaveContext(
     val state: IGuideElementState,
-    val team: GuideTeam
+    val team: GuideTeam,
+    val context: GuideContext
 ) : AbstractGuideContextElement(GuideDraftSaveContext) {
     
     companion object : GuideContext.Key<GuideDraftSaveContext>

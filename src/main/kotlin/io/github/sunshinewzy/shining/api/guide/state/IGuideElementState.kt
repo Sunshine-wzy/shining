@@ -1,13 +1,13 @@
 package io.github.sunshinewzy.shining.api.guide.state
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
-import io.github.sunshinewzy.shining.core.menu.onBackMenu
+import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import taboolib.module.ui.type.Basic
 
 /**
  * Represents a captured state of an element, which can describe properties of the element.
@@ -35,7 +35,7 @@ interface IGuideElementState {
     /**
      * Opens an editor to edit the state.
      */
-    fun openEditor(player: Player, team: GuideTeam = GuideTeam.CompletedTeam, builder: Basic.() -> Unit = { onBackMenu(player, team) })
+    fun openEditor(player: Player, team: GuideTeam = GuideTeam.CompletedTeam, context: GuideContext = EmptyGuideContext)
 
     fun toElement(): IGuideElement
     

@@ -3,10 +3,13 @@ package io.github.sunshinewzy.shining.utils
 import io.github.sunshinewzy.shining.api.Itemable
 import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
 import io.github.sunshinewzy.shining.core.lang.formatArgs
+import io.github.sunshinewzy.shining.core.lang.getLangText
+import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.lang.node.ListNode
 import io.github.sunshinewzy.shining.core.lang.node.SectionNode
 import io.github.sunshinewzy.shining.core.lang.node.TextNode
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import taboolib.module.chat.colored
@@ -224,3 +227,21 @@ fun ItemStack.getDisplayNameOrNull(): String? {
 
 fun ItemStack.getDisplayName(default: String = ""): String =
     getDisplayNameOrNull() ?: default
+
+
+fun ItemStack.addCurrentLore(player: Player, currentLore: String?): ItemStack {
+    return addLore("", player.getLangText("menu-utils-item-current_lore"), currentLore ?: "null")
+}
+
+fun ItemStack.addCurrentLore(player: Player, currentLore: List<String>): ItemStack {
+    addLore("", player.getLangText("menu-utils-item-current_lore"))
+    return addLore(currentLore)
+}
+
+fun NamespacedIdItem.toCurrentLocalizedItem(player: Player, currentLore: String?): ItemStack {
+    return toLocalizedItem(player).clone().addCurrentLore(player, currentLore)
+}
+
+fun NamespacedIdItem.toCurrentLocalizedItem(player: Player, currentLore: List<String>): ItemStack {
+    return toLocalizedItem(player).clone().addCurrentLore(player, currentLore)
+}

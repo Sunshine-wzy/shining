@@ -55,17 +55,18 @@ object GuideElements : LongIdTable() {
         return null
     }
     
-    suspend fun saveElement(element: IGuideElement, isCheckExists: Boolean = false, actionBeforeInsert: () -> Unit = {}): Boolean {
-        val existsCache = cache.containsKey(element.getId())
+    suspend fun saveElement(element: IGuideElement, isCheckExists: Boolean = false, checkId: NamespacedId = element.getId(), actionBeforeInsert: () -> Boolean = { true }): Boolean {
+        val existsCache = cache.containsKey(checkId)
         if (isCheckExists && existsCache)
             return false
         
         return newSuspendedTransaction transaction@{
-            val existsSQL = containsElement(element)
+            val existsSQL = containsElement(checkId)
             if (isCheckExists && existsSQL)
                 return@transaction false
 
-            actionBeforeInsert()
+            if (!actionBeforeInsert()) return@transaction false
+            
             if (existsSQL) {
                 updateElement(element)
             } else {
@@ -73,7 +74,7 @@ object GuideElements : LongIdTable() {
             }
 
             if (!existsCache) {
-                cache[element.getId()] = element
+                cache[checkId] = element
             }
             true
         }

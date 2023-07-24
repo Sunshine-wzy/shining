@@ -10,6 +10,7 @@ import io.github.sunshinewzy.shining.core.editor.chat.type.Text
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
 import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
+import io.github.sunshinewzy.shining.core.guide.element.GuideElements
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
@@ -20,6 +21,7 @@ import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.getDisplayName
 import io.github.sunshinewzy.shining.utils.orderWith
+import io.github.sunshinewzy.shining.utils.toCurrentLocalizedItem
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -28,6 +30,7 @@ import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import taboolib.common.platform.function.submit
+import taboolib.common.util.sync
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 import taboolib.platform.util.buildItem
@@ -143,7 +146,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                                             }
                                         
                                         submit { 
-                                            ctxt.state.openEditor(player, ctxt.team)
+                                            ctxt.state.openEditor(player, ctxt.team, ctxt.context)
                                         }
                                     }
                                 }
@@ -165,13 +168,42 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                                     val state = newSuspendedTransaction { 
                                         element.state
                                     }
+                                    val theId = state.id ?: return@launchSQL
                                     
                                     submit {
                                         if (ctxt.element != null) {
-                                            if (ctxt.element.update(state)) {
-                                                player.sendPrefixedLangText("text-shining_guide-draft-load-success")
+                                            if (ctxt.element.getId() == theId) {
+                                                if (ctxt.element.update(state)) {
+                                                    ShiningDispatchers.launchSQL { 
+                                                        GuideElements.saveElement(ctxt.element)
+                                                        player.sendPrefixedLangText("text-shining_guide-draft-load-success")
+                                                    }
+                                                } else {
+                                                    player.sendPrefixedLangText("text-shining_guide-draft-load-failure-mismatching", Shining.prefix, ctxt.element.javaClass.simpleName, state.javaClass.simpleName)
+                                                }
                                             } else {
-                                                player.sendPrefixedLangText("text-shining_guide-draft-load-failure-mismatching", Shining.prefix, ctxt.element.javaClass.simpleName, state.javaClass.simpleName)
+                                                ShiningDispatchers.launchSQL { 
+                                                    var isUpdate = true
+                                                    if (
+                                                        GuideElements.saveElement(ctxt.element, true, theId) {
+                                                            sync {
+                                                                if (ctxt.element.update(state)) {
+                                                                    ShiningDispatchers.launchSQL {
+                                                                        GuideElements.saveElement(ctxt.element)
+                                                                    }
+                                                                    true
+                                                                } else {
+                                                                    player.sendPrefixedLangText("text-shining_guide-draft-load-failure-mismatching", Shining.prefix, ctxt.element.javaClass.simpleName, state.javaClass.simpleName)
+                                                                    false
+                                                                }
+                                                            }.also { isUpdate = it }
+                                                        }
+                                                    ) {
+                                                        player.sendPrefixedLangText("text-shining_guide-draft-load-success")
+                                                    } else if (isUpdate) {
+                                                        player.sendPrefixedLangText("text-shining_guide-draft-load-failure-duplication")
+                                                    }
+                                                }
                                             }
                                         } else if (ctxt.elementContainer != null) {
                                             ctxt.elementContainer.registerElement(state.toElement())
@@ -211,7 +243,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                                             }
                                         
                                         submit { 
-                                            ctxt.state.openEditor(player, ctxt.team)
+                                            ctxt.state.openEditor(player, ctxt.team, ctxt.context)
                                         }
                                     }
                                 }
@@ -285,30 +317,31 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
     }
     
     fun openFolderEditor(player: Player, context: GuideContext = EmptyGuideContext) {
-        player.openMenu<Basic>(itemCreateFolder.toLocalizedItem(player).getDisplayName()) { 
-            rows(3)
+        ShiningDispatchers.launchSQL { 
+            newSuspendedTransaction {
+                val theName = this@GuideDraftFolder.name
+                
+                submit {
+                    player.openMenu<Basic>(itemCreateFolder.toLocalizedItem(player).getDisplayName()) {
+                        rows(3)
 
-            map(
-                "-B-------",
-                "-  a d  -",
-                "---------"
-            )
+                        map(
+                            "-B-------",
+                            "-  a d  -",
+                            "---------"
+                        )
 
-            set('-', ShiningIcon.EDGE.item)
-            
-            set('B', ShiningIcon.BACK.toLocalizedItem(player)) {
-                ShiningDispatchers.launchSQL {
-                    if (context === EmptyGuideContext) open(player)
-                    else openSelectMenu(player, context)
-                }
-            }
-            
-            val itemRename = ShiningIcon.RENAME.toLocalizedItem(player)
-            set('a', itemRename) {
-                ShiningDispatchers.launchSQL { 
-                    newSuspendedTransaction {
-                        val theName = this@GuideDraftFolder.name
-                        submit {
+                        set('-', ShiningIcon.EDGE.item)
+
+                        set('B', ShiningIcon.BACK.toLocalizedItem(player)) {
+                            ShiningDispatchers.launchSQL {
+                                if (context === EmptyGuideContext) open(player)
+                                else openSelectMenu(player, context)
+                            }
+                        }
+
+                        val itemRename = ShiningIcon.RENAME.getNamespacedIdItem().toCurrentLocalizedItem(player, theName)
+                        set('a', itemRename) {
                             player.openChatEditor<Text>(itemRename.getDisplayName()) {
                                 text(theName)
 
@@ -329,17 +362,17 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                                 }
                             }
                         }
+
+                        previousFolderMap[player.uniqueId]?.let { previousFolder ->
+                            set('d', ShiningIcon.REMOVE.toLocalizedItem(player)) {
+                                openDeleteFolderConfirmMenu(player, context, previousFolder)
+                            }
+                        }
+
+                        onClick(lock = true)
                     }
                 }
             }
-            
-            previousFolderMap[player.uniqueId]?.let { previousFolder ->
-                set('d', ShiningIcon.REMOVE.toLocalizedItem(player)) {
-                    openDeleteFolderConfirmMenu(player, context, previousFolder)
-                }
-            }
-            
-            onClick(lock = true)
         }
     }
     

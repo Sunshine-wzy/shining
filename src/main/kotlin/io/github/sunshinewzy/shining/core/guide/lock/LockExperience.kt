@@ -2,6 +2,7 @@ package io.github.sunshinewzy.shining.core.guide.lock
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
@@ -39,7 +40,7 @@ class LockExperience(
         player.level -= level
     }
 
-    override fun openEditor(player: Player, team: GuideTeam, state: GuideElementState) {
+    override fun openEditor(player: Player, team: GuideTeam, state: GuideElementState, context: GuideContext) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-lock-experience-title").colored()) {
             rows(3)
 
@@ -52,13 +53,13 @@ class LockExperience(
             set('-', ShiningIcon.EDGE.item)
 
             set('B', ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
-                state.openLocksEditor(player, team)
+                state.openLocksEditor(player, team, context)
             }
             
             set('c', if (isConsume) itemIsConsumeOpen.toLocalizedItem(player) else itemIsConsumeClose.toLocalizedItem(player)) {
                 switchIsConsume()
                 
-                openEditor(player, team, state)
+                openEditor(player, team, state, context)
             }
             
             set('a', itemEditExperience.toLocalizedItem(player).clone().addLore(description(player))) {
@@ -74,7 +75,7 @@ class LockExperience(
                     }
                     
                     onFinal { 
-                        openEditor(player, team, state)
+                        openEditor(player, team, state, context)
                     }
                 }
             }

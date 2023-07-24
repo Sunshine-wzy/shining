@@ -99,12 +99,12 @@ inline fun Player.openConfirmMenu(
 
         set('-', ShiningIcon.EDGE.item)
         
-        set('a', ShiningIcon.CONFIRM.toLocalizedItem(this@openConfirmMenu).clone().addLore(description)) {
+        set('a', ShiningIcon.CONFIRM.toLocalizedItem(this@openConfirmMenu).clone().addLore("&f$description")) {
             menuBuilder.confirmAction(this)
             menuBuilder.finalAction(this)
         }
         
-        set('b', ShiningIcon.CANCEL.toLocalizedItem(this@openConfirmMenu).clone().addLore(description)) {
+        set('b', ShiningIcon.CANCEL.toLocalizedItem(this@openConfirmMenu).clone().addLore("&f$description")) {
             menuBuilder.cancelAction(this)
             menuBuilder.finalAction(this)
         }
