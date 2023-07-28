@@ -23,7 +23,7 @@ import io.github.sunshinewzy.shining.core.guide.context.GuideShortcutBarContext
 import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftOnlyFoldersContext
 import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftSaveContext
 import io.github.sunshinewzy.shining.core.guide.draft.ShiningGuideDraft
-import io.github.sunshinewzy.shining.core.guide.element.GuideElements
+import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
 import io.github.sunshinewzy.shining.core.lang.getLangText
@@ -37,6 +37,7 @@ import io.github.sunshinewzy.shining.utils.*
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.function.submit
 import taboolib.common.util.sync
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
@@ -64,11 +65,9 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
     
     @JsonSetter("dependencies")
     fun setDependenciesById(dependencyIds: MutableSet<NamespacedId>) {
-        ShiningDispatchers.launchSQL {
-            dependencyIds.forEach { id ->
-                GuideElements.getElement(id)?.let {
-                    dependencyMap[id] = it
-                }
+        dependencyIds.forEach { id ->
+            GuideElementRegistry.getElement(id)?.let {
+                dependencyMap[id] = it
             }
         }
     }
@@ -79,9 +78,12 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
     }
     
     @JsonSetter("element")
-    suspend fun setElementById(elementId: NamespacedId) {
-        GuideElements.getElement(elementId)?.let { 
-            element = it
+    fun setElementById(elementId: NamespacedId?) {
+        if (elementId == null) return
+        submit {
+            GuideElementRegistry.getElement(elementId)?.let {
+                element = it
+            }
         }
     }
     
@@ -125,14 +127,14 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             id?.let { id ->
                 if (id == element.getId()) {
                     update()
-                    ShiningDispatchers.launchSQL {
-                        GuideElements.saveElement(element)
+                    ShiningDispatchers.launchDB {
+                        GuideElementRegistry.saveElement(element)
                         player?.sendLangText("text-shining_guide-editor-state-element-update-success")
                     }
                 } else {
-                    ShiningDispatchers.launchSQL {
+                    ShiningDispatchers.launchDB {
                         if (
-                            GuideElements.saveElement(element, true, id) {
+                            GuideElementRegistry.saveElement(element, true, id) {
                                 sync { update() }
                             }
                         ) player?.sendLangText("text-shining_guide-editor-state-element-update-success")
@@ -155,8 +157,10 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
             set('-', ShiningIcon.EDGE.item)
             
-            set('u', itemUpdate.toLocalizedItem(player)) {
-                updateAndSave(player)
+            if (element != null) {
+                set('u', itemUpdate.toLocalizedItem(player)) {
+                    updateAndSave(player)
+                }
             }
             
             set('a', itemBasicEditor.toLocalizedItem(player)) {

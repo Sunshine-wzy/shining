@@ -11,16 +11,15 @@ import io.github.sunshinewzy.shining.core.data.legacy.internal.SunSTPlayerData
 import io.github.sunshinewzy.shining.core.guide.GuideTeams
 import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftFolders
 import io.github.sunshinewzy.shining.core.guide.draft.GuideDrafts
-import io.github.sunshinewzy.shining.core.guide.element.GuideElements
+import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.task.TaskProgress
-import io.github.sunshinewzy.shining.interfaces.Initable
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import taboolib.common.LifeCycle
 import taboolib.common.io.newFile
 import taboolib.common.platform.Awake
@@ -37,7 +36,7 @@ import javax.sql.DataSource
 import io.github.sunshinewzy.shining.core.data.database.Database as SDatabase
 
 
-object DataManager : Initable {
+object DataManager {
     private val dir = getDataFolder()
     private val allReloadData = ArrayList<SAutoSaveData>()
     private val lazyOperations = arrayListOf<LazyOperational>()
@@ -62,8 +61,7 @@ object DataManager : Initable {
     val autoSavePeriod: Long by lazy { Shining.config.getLong("auto_save_period", 6000L) }
 
 
-    override fun init() {
-
+    suspend fun init() {
         if (Shining.config.getBoolean("database.enable")) {
             val hostSQL = HostSQL(databaseConfig)
             database = Database.connect(createDataSource(hostSQL))
@@ -82,10 +80,10 @@ object DataManager : Initable {
 
         TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
 
-        transaction {
+        newSuspendedTransaction {
             SchemaUtils.createMissingTablesAndColumns(
                 GuideTeams, PlayerData,
-                GuideElements,
+                GuideElementRegistry,
                 GuideDrafts, GuideDraftFolders
             )
         }

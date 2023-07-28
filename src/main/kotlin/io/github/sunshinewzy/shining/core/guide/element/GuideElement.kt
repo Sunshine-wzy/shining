@@ -203,6 +203,8 @@ abstract class GuideElement(
             }
         }
 
+    override fun register(): IGuideElement =
+        GuideElementRegistry.getElement(id) ?: this
 
     fun getTeamData(team: GuideTeam): ElementTeamData =
         teamDataMap.getOrPut(team.id) { ElementTeamData() }

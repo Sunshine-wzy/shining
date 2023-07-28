@@ -23,4 +23,6 @@ open class GuideMachine : GuideElement {
         TODO("Not yet implemented")
     }
 
+    override fun register(): GuideMachine = super.register() as GuideMachine
+    
 }

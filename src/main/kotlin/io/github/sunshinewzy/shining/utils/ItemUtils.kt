@@ -230,7 +230,7 @@ fun ItemStack.getDisplayName(default: String = ""): String =
 
 
 fun ItemStack.addCurrentLore(player: Player, currentLore: String?): ItemStack {
-    return addLore("", player.getLangText("menu-utils-item-current_lore"), currentLore ?: "null")
+    return addLore("", player.getLangText("menu-utils-item-current_lore"), "&f$currentLore")
 }
 
 fun ItemStack.addCurrentLore(player: Player, currentLore: List<String>): ItemStack {

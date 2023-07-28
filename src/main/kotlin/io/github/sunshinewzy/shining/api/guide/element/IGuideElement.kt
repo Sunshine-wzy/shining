@@ -52,5 +52,14 @@ interface IGuideElement {
         getSymbolByCondition(player, GuideTeam.CompletedTeam, ElementCondition.UNLOCKED)
     
     fun isTeamCompleted(team: GuideTeam): Boolean
+
+    /**
+     * Register the element
+     * 
+     * @return If there is the same id in [io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry],
+     * it will return [io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry.getElement]
+     * with parameter id by [getId]
+     */
+    fun register(): IGuideElement
     
 }

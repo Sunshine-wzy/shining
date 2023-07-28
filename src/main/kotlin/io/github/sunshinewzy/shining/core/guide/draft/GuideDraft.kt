@@ -61,14 +61,14 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                 if (clickEvent().isShiftClick || previousFolder == null) {
                     ShiningGuideDraft.openMainMenu(player)
                 } else {
-                    ShiningDispatchers.launchSQL {
+                    ShiningDispatchers.launchDB {
                         previousFolder.open(player)
                     }
                 }
             }
             
             set('a', itemEditState.toLocalizedItem(player)) {
-                ShiningDispatchers.launchSQL { 
+                ShiningDispatchers.launchDB { 
                     newSuspendedTransaction { 
                         val state = state
                         submit {
@@ -99,7 +99,7 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
     private fun openDeleteDraftConfirmMenu(player: Player, previousFolder: GuideDraftFolder) {
         player.openDeleteConfirmMenu { 
             onConfirm {
-                ShiningDispatchers.launchSQL {
+                ShiningDispatchers.launchDB {
                     previousFolder.removeDraft(id.value)
                     newSuspendedTransaction {
                         delete()

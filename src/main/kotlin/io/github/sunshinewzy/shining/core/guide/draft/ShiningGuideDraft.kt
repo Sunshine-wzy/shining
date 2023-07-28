@@ -15,14 +15,14 @@ object ShiningGuideDraft {
     fun openMainMenu(player: Player) {
         playerLastOpenFolderMap -= player.uniqueId
         
-        ShiningDispatchers.launchSQL { 
+        ShiningDispatchers.launchDB { 
             GuideDraftFolder.getMainFolder().open(player)
         }
     }
     
     fun openLastMenu(player: Player) {
         playerLastOpenFolderMap[player.uniqueId]?.let { 
-            ShiningDispatchers.launchSQL {
+            ShiningDispatchers.launchDB {
                 it.open(player)
             }
             return
@@ -34,14 +34,14 @@ object ShiningGuideDraft {
     fun openMainSelectMenu(player: Player, context: GuideContext) {
         playerLastOpenFolderMap -= player.uniqueId
         
-        ShiningDispatchers.launchSQL { 
+        ShiningDispatchers.launchDB { 
             GuideDraftFolder.getMainFolder().openSelectMenu(player, context)
         }
     }
     
     fun openLastSelectMenu(player: Player, context: GuideContext) {
         playerLastOpenFolderMap[player.uniqueId]?.let {
-            ShiningDispatchers.launchSQL {
+            ShiningDispatchers.launchDB {
                 it.openSelectMenu(player, context)
             }
             return

@@ -197,8 +197,9 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
         priorityToElements.putSetElement(priority, element)
         idToPriority[element.getId()] = priority
     }
-    
-    
+
+    override fun register(): GuideCategory = super.register() as GuideCategory
+
     fun getElements(): List<IGuideElement> {
         val list = ArrayList<IGuideElement>()
         priorityToElements.forEach { (priority, elements) -> 

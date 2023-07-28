@@ -10,11 +10,10 @@ import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
 import io.github.sunshinewzy.shining.core.editor.chat.type.Text
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
-import io.github.sunshinewzy.shining.core.guide.element.GuideElements
+import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
-import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.getDisplayName
 import io.github.sunshinewzy.shining.utils.putSetElement
@@ -46,24 +45,22 @@ class GuideCategoryState : GuideElementState() {
     
     @JsonSetter("elements")
     fun setElementsById(map: TreeMap<Int, MutableList<NamespacedId>>) {
-        ShiningDispatchers.launchSQL {
-            val newPriorityToElements = TreeMap<Int, MutableSet<IGuideElement>> { o1, o2 -> o2 - o1 }
-            val newIdToPriority = HashMap<NamespacedId, Int>()
-            
-            map.forEach { (priority, list) ->
-                val elements = HashSet<IGuideElement>()
-                list.forEach { id ->
-                    GuideElements.getElement(id)?.let {
-                        newIdToPriority[id] = priority
-                        elements += it
-                    }
+        val newPriorityToElements = TreeMap<Int, MutableSet<IGuideElement>> { o1, o2 -> o2 - o1 }
+        val newIdToPriority = HashMap<NamespacedId, Int>()
+
+        map.forEach { (priority, list) ->
+            val elements = HashSet<IGuideElement>()
+            list.forEach { id ->
+                GuideElementRegistry.getElement(id)?.let {
+                    newIdToPriority[id] = priority
+                    elements += it
                 }
-                newPriorityToElements[priority] = elements
             }
-            
-            priorityToElements = newPriorityToElements
-            idToPriority = newIdToPriority
+            newPriorityToElements[priority] = elements
         }
+
+        priorityToElements = newPriorityToElements
+        idToPriority = newIdToPriority
     }
 
     fun getElements(): List<IGuideElement> {

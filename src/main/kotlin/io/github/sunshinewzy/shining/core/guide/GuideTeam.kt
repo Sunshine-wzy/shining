@@ -374,7 +374,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
          * The [block] will be run asynchronously by [Dispatchers.IO] if the player is in a guide team.
          */
         fun Player.letGuideTeam(block: (team: GuideTeam) -> Unit) {
-            ShiningDispatchers.launchSQL {
+            ShiningDispatchers.launchDB {
                 getGuideTeam()?.also(block)
             }
         }
@@ -383,7 +383,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
          * The [block] will be run asynchronously by [Dispatchers.IO] if the player is in a guide team, or it will send a warning message [PLAYER_NOT_IN_TEAM] to the player.
          */
         fun Player.letGuideTeamOrWarn(block: (team: GuideTeam) -> Unit) {
-            ShiningDispatchers.launchSQL {
+            ShiningDispatchers.launchDB {
                 getGuideTeam()?.also(block) ?: sendPrefixedLangText(PLAYER_NOT_IN_TEAM)
             }
         }
@@ -471,7 +471,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
                 onClick('d') {
                     if (name.isNotBlank()) {
-                        ShiningDispatchers.launchSQL {
+                        ShiningDispatchers.launchDB {
                             if (create(this@createGuideTeam, name, symbol)) {
                                 sendPrefixedLangText("menu-shining_guide-team-create-success", Shining.prefix, name)
                                 submit {
@@ -494,7 +494,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         }
 
         private fun Player.joinGuideTeam() {
-            ShiningDispatchers.launchSQL {
+            ShiningDispatchers.launchDB {
                 val applyTeam = getDataContainer()[GUIDE_TEAM_APPLY]
                 val teams = newSuspendedTransaction {
                     val allTeam = all().limit(100)

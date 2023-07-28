@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import io.github.sunshinewzy.shining.api.ShiningPlugin
+import io.github.sunshinewzy.shining.api.event.ShiningDataLoadingCompleteEvent
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.machine.IMachineManager
 import io.github.sunshinewzy.shining.api.namespace.Namespace
@@ -13,6 +14,7 @@ import io.github.sunshinewzy.shining.core.data.SerializationModules
 import io.github.sunshinewzy.shining.core.data.legacy.internal.SLocationData
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
+import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.element.GuideItem
 import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
@@ -23,12 +25,13 @@ import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipes
 import io.github.sunshinewzy.shining.core.task.TaskProgress
 import io.github.sunshinewzy.shining.listeners.SunSTSubscriber
 import io.github.sunshinewzy.shining.objects.SItem
+import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.legacy.SBlock
 import io.github.sunshinewzy.shining.objects.machine.SunSTMachineManager
 import io.github.sunshinewzy.shining.utils.SReflect
 import io.github.sunshinewzy.shining.utils.ShiningTestApi
 import io.github.sunshinewzy.shining.utils.giveItem
-import io.github.sunshinewzy.shining.utils.subscribeEvent
+import io.github.sunshinewzy.shining.utils.registerBukkitListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -47,6 +50,7 @@ import taboolib.common.platform.Platform
 import taboolib.common.platform.Plugin
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.pluginVersion
+import taboolib.common.platform.function.submit
 import taboolib.module.chat.colored
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.Configuration
@@ -127,15 +131,23 @@ object Shining : Plugin(), ShiningPlugin {
             ex.printStackTrace()
         }
 
-        SItem.initAction()
-        DataManager.init()
+        // Load data
+        ShiningDispatchers.launchDB {
+            DataManager.init()
+            GuideElementRegistry.init()
+            ShiningGuide.init()
+            
+            submit { 
+                pluginManager.callEvent(ShiningDataLoadingCompleteEvent())
+            }
+        }
         
+        SItem.initAction()
         SMachineWrench.init()
         SLocationData.init()
         SSingleMachine.init()
         SFlatMachine.init()
         SunSTMachineManager.register()
-        
     }
 
     private fun registerListeners() {
@@ -156,61 +168,62 @@ object Shining : Plugin(), ShiningPlugin {
 
     @ShiningTestApi
     private fun test() {
-        val stoneCategory = GuideCategory(
-            NamespacedId(Shining, "stone_age"),
-            ElementDescription("&f石器时代", "&d一切的起源"),
-            SItem(Material.STONE)
-        )
+        registerBukkitListener<ShiningDataLoadingCompleteEvent> {
+            val stoneCategory = GuideCategory(
+                NamespacedId(Shining, "stone_age"),
+                ElementDescription("&f石器时代", "&d一切的起源"),
+                SItem(Material.STONE)
+            ).register()
 
-        val lockExperience = LockExperience(5)
+            val lockExperience = LockExperience(5)
 
-        val stickItem = GuideItem(NamespacedId(Shining, "stick"), ElementDescription("&6工具的基石"), SItem(Material.STICK))
-        stickItem.registerLock(lockExperience)
-        stoneCategory.registerElement(stickItem)
+            val stickItem = GuideItem(NamespacedId(Shining, "stick"), ElementDescription("&6工具的基石"), SItem(Material.STICK)).register()
+            stickItem.registerLock(lockExperience)
+            stoneCategory.registerElement(stickItem)
 
-        val newStoneCategory = GuideCategory(
-            NamespacedId(Shining, "new_stone_age"),
-            ElementDescription("&a新石器时代", "&6刀耕火种"),
-            SItem(Material.STONE_BRICKS)
-        )
-        newStoneCategory.registerDependency(stickItem)
-        stoneCategory.registerElement(newStoneCategory)
-        
-        stoneCategory.registerLock(lockExperience)
-        val lockItem = LockItem(ItemStack(Material.DIAMOND, 3))
-        stoneCategory.registerLock(lockItem)
-        
-        val pickaxeItem = GuideItem(
-            NamespacedId(Shining, "pickaxe"),
-            ElementDescription("&e生产力提高"),
-            SItem(Material.STONE_PICKAXE)
-        )
-        newStoneCategory.registerElement(pickaxeItem)
+            val newStoneCategory = GuideCategory(
+                NamespacedId(Shining, "new_stone_age"),
+                ElementDescription("&a新石器时代", "&6刀耕火种"),
+                SItem(Material.STONE_BRICKS)
+            ).register()
+            newStoneCategory.registerDependency(stickItem)
+            stoneCategory.registerElement(newStoneCategory)
 
-        ShiningGuide.registerElement(stoneCategory)
+            stoneCategory.registerLock(lockExperience)
+            val lockItem = LockItem(ItemStack(Material.DIAMOND, 3))
+            stoneCategory.registerLock(lockItem)
 
+            val pickaxeItem = GuideItem(
+                NamespacedId(Shining, "pickaxe"),
+                ElementDescription("&e生产力提高"),
+                SItem(Material.STONE_PICKAXE)
+            ).register()
+            newStoneCategory.registerElement(pickaxeItem)
+
+            ShiningGuide.registerElement(stoneCategory)
+        }
 
         val mapper = jsonMapper {
             addModule(SerializationModules.bukkit)
         }
 
-        subscribeEvent<PlayerInteractEvent>(ignoreCancelled = false) {
-            if (hand != EquipmentSlot.HAND) return@subscribeEvent
+        registerBukkitListener<PlayerInteractEvent>(ignoreCancelled = false) listener@{ event ->
+            if (event.hand != EquipmentSlot.HAND) return@listener
 
-            if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-                val item = player.inventory.itemInMainHand
+            if (event.action == Action.RIGHT_CLICK_AIR || event.action == Action.RIGHT_CLICK_BLOCK) {
+                val item = event.player.inventory.itemInMainHand
                 when (item.type) {
                     Material.DIAMOND -> {
-                        player.giveItem(ShiningGuide.getItem())
+                        event.player.giveItem(ShiningGuide.getItem())
                     }
 
                     Material.EMERALD -> {
-                        ShiningGuide.fireworkCongratulate(player)
+                        ShiningGuide.fireworkCongratulate(event.player)
                     }
 
                     Material.STICK -> {
-                        clickedBlock?.let { block ->
-                            player.sendMessage(
+                        event.clickedBlock?.let { block ->
+                            event.player.sendMessage(
                                 """
                                 > Block
                                 ${block.type}
@@ -225,7 +238,7 @@ object Shining : Plugin(), ShiningPlugin {
 
                     else -> {
                         val json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item)
-                        player.sendMessage(json)
+                        event.player.sendMessage(json)
 //                        player.openMenu<Basic> { 
 //                            rows(3)
 //                            set(5 orderWith 2, mapper.readValue(json, ItemStack::class.java))

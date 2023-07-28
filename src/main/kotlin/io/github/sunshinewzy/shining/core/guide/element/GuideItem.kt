@@ -32,4 +32,7 @@ open class GuideItem : GuideElement {
         
         return true
     }
+
+    override fun register(): GuideItem = super.register() as GuideItem
+    
 }
