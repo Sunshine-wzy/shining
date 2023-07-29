@@ -27,36 +27,30 @@ import java.util.*
 
 class GuideCategoryState : GuideElementState() {
     
-    @JsonIgnore
-    var priorityToElements: TreeMap<Int, MutableSet<IGuideElement>> =
+    @get:JsonGetter("elements")
+    @field:JsonIgnore
+    var priorityToElements: TreeMap<Int, MutableSet<NamespacedId>> =
         TreeMap { o1, o2 -> o2 - o1 }
     @JsonIgnore
     var idToPriority: MutableMap<NamespacedId, Int> = HashMap()
     
     
-    @JsonGetter("elements")
-    fun getElementsId(): TreeMap<Int, MutableList<NamespacedId>> {
-        val map = TreeMap<Int, MutableList<NamespacedId>> { o1, o2 -> o2 - o1 }
-        priorityToElements.forEach { (priority, list) -> 
-            map[priority] = list.mapTo(ArrayList()) { it.getId() }
+    fun setPriorityToElementsByMap(map: TreeMap<Int, MutableSet<IGuideElement>>) {
+        map.forEach { (priority, list) -> 
+            priorityToElements[priority] = list.mapTo(HashSet()) { it.getId() }
         }
-        return map
     }
     
     @JsonSetter("elements")
-    fun setElementsById(map: TreeMap<Int, MutableList<NamespacedId>>) {
-        val newPriorityToElements = TreeMap<Int, MutableSet<IGuideElement>> { o1, o2 -> o2 - o1 }
+    fun setElementsById(map: TreeMap<Int, MutableSet<NamespacedId>>) {
+        val newPriorityToElements = TreeMap<Int, MutableSet<NamespacedId>> { o1, o2 -> o2 - o1 }
         val newIdToPriority = HashMap<NamespacedId, Int>()
 
         map.forEach { (priority, list) ->
-            val elements = HashSet<IGuideElement>()
             list.forEach { id ->
-                GuideElementRegistry.getElement(id)?.let {
-                    newIdToPriority[id] = priority
-                    elements += it
-                }
+                newIdToPriority[id] = priority
             }
-            newPriorityToElements[priority] = elements
+            newPriorityToElements[priority] = list
         }
 
         priorityToElements = newPriorityToElements
@@ -65,20 +59,28 @@ class GuideCategoryState : GuideElementState() {
 
     fun getElements(): List<IGuideElement> {
         val list = ArrayList<IGuideElement>()
-        priorityToElements.forEach { (priority, elements) ->
-            list += elements
+        priorityToElements.forEach { (priority, ids) ->
+            ids.mapNotNullTo(list) {
+                GuideElementRegistry.getElement(it)
+            }
         }
         return list
     }
     
+    fun getPriorityToElementMapTo(map: MutableMap<Int, MutableSet<IGuideElement>>): MutableMap<Int, MutableSet<IGuideElement>> {
+        TODO()
+    }
+    
     fun addElement(element: IGuideElement, priority: Int) {
-        priorityToElements.putSetElement(priority, element)
-        idToPriority[element.getId()] = priority
+        val id = element.getId()
+        priorityToElements.putSetElement(priority, id)
+        idToPriority[id] = priority
     }
     
     fun removeElement(element: IGuideElement): Boolean {
-        val priority = idToPriority.remove(element.getId()) ?: return false
-        return priorityToElements[priority]?.remove(element) ?: false
+        val id = element.getId()
+        val priority = idToPriority.remove(id) ?: return false
+        return priorityToElements[priority]?.remove(id) ?: false
     }
     
 

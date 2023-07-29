@@ -95,7 +95,7 @@ abstract class GuideElement(
         state.symbol?.let { symbol = it.clone() }
         
         dependencyMap.clear()
-        dependencyMap += state.dependencyMap
+        state.getDependencyElementMapTo(dependencyMap)
         locks.clear()
         state.locks.mapTo(locks) { it.clone() }
 
@@ -111,8 +111,8 @@ abstract class GuideElement(
         state.descriptionLore += description.lore
         state.symbol = symbol.clone()
         
-        state.dependencyMap.clear()
-        state.dependencyMap += dependencyMap
+        state.dependencies.clear()
+        state.dependencies += dependencyMap.keys
         state.locks.clear()
         locks.mapTo(state.locks) { it.clone() }
         return true
@@ -203,8 +203,9 @@ abstract class GuideElement(
             }
         }
 
-    override fun register(): IGuideElement =
-        GuideElementRegistry.getElement(id) ?: this
+    override fun register(): GuideElement {
+        return GuideElementRegistry.register(this)
+    }
 
     fun getTeamData(team: GuideTeam): ElementTeamData =
         teamDataMap.getOrPut(team.id) { ElementTeamData() }

@@ -17,8 +17,18 @@ object GuideElementRegistry : LongIdTable() {
     val key = text("key").uniqueIndex()
     val element = jackson("element", Shining.objectMapper, IGuideElementState::class.java)
     
-    private val cache: MutableMap<NamespacedId, IGuideElement> = ConcurrentHashMap()
+    private val stateCache: MutableMap<NamespacedId, IGuideElementState> = ConcurrentHashMap()
+    private val elementCache: MutableMap<NamespacedId, IGuideElement> = ConcurrentHashMap()
     
+    
+    fun <T: IGuideElement> register(element: T): T {
+        val id = element.getId()
+        stateCache[id]?.let { state ->
+            element.update(state)
+        }
+        elementCache[id] = element
+        return element
+    }
     
     suspend fun init() {
         newSuspendedTransaction { 
@@ -26,19 +36,17 @@ object GuideElementRegistry : LongIdTable() {
                 .slice(GuideElementRegistry.element)
                 .selectAll()
                 .forEach { 
-                    val theElement = it[GuideElementRegistry.element].toElement()
-                    cache[theElement.getId()] = theElement
+                    val state = it[GuideElementRegistry.element]
+                    state.id?.let { id ->
+                        stateCache[id] = state
+                    }
                 }
         }
     }
     
-    suspend fun getState(id: NamespacedId): IGuideElementState? {
-        return newSuspendedTransaction { 
-            readState(id)
-        }
-    }
+    fun getState(id: NamespacedId): IGuideElementState? = stateCache[id]
     
-    fun getElement(id: NamespacedId): IGuideElement? = cache[id]
+    fun getElement(id: NamespacedId): IGuideElement? = elementCache[id]
     
     @Suppress("UNCHECKED_CAST")
     fun <T: IGuideElement> getElementByType(id: NamespacedId, type: Class<T>): T? {
@@ -60,7 +68,7 @@ object GuideElementRegistry : LongIdTable() {
         getElementOrDefault(default.getId(), default)
     
     suspend fun saveElement(element: IGuideElement, isCheckExists: Boolean = false, checkId: NamespacedId = element.getId(), actionBeforeInsert: () -> Boolean = { true }): Boolean {
-        val existsCache = cache.containsKey(checkId)
+        val existsCache = elementCache.containsKey(checkId)
         if (isCheckExists && existsCache)
             return false
         
@@ -78,7 +86,7 @@ object GuideElementRegistry : LongIdTable() {
             }
 
             if (!existsCache) {
-                cache[checkId] = element
+                elementCache[checkId] = element
             }
             true
         }

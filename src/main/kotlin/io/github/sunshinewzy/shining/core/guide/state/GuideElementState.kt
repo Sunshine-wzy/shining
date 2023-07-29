@@ -1,8 +1,5 @@
 package io.github.sunshinewzy.shining.core.guide.state
 
-import com.fasterxml.jackson.annotation.JsonGetter
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonSetter
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.GuideContext
@@ -33,11 +30,13 @@ import io.github.sunshinewzy.shining.core.menu.onBackMenu
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
-import io.github.sunshinewzy.shining.utils.*
+import io.github.sunshinewzy.shining.utils.getDisplayName
+import io.github.sunshinewzy.shining.utils.insertLore
+import io.github.sunshinewzy.shining.utils.orderWith
+import io.github.sunshinewzy.shining.utils.toCurrentLocalizedItem
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import taboolib.common.platform.function.submit
 import taboolib.common.util.sync
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
@@ -46,50 +45,17 @@ import java.util.*
 
 abstract class GuideElementState : IGuideElementState, Cloneable {
 
-    @JsonIgnore
-    override var element: IGuideElement? = null
     override var id: NamespacedId? = null
     override var descriptionName: String? = null
     override var descriptionLore: MutableList<String> = LinkedList()
     override var symbol: ItemStack? = null
 
-    @JsonIgnore
-    var dependencyMap: MutableMap<NamespacedId, IGuideElement> = HashMap()
+    var dependencies: MutableSet<NamespacedId> = HashSet()
     var locks: MutableList<ElementLock> = LinkedList()
-
-    
-    @JsonGetter("dependencies")
-    fun getDependenciesId(): MutableSet<NamespacedId> {
-        return dependencyMap.keys
-    }
-    
-    @JsonSetter("dependencies")
-    fun setDependenciesById(dependencyIds: MutableSet<NamespacedId>) {
-        dependencyIds.forEach { id ->
-            GuideElementRegistry.getElement(id)?.let {
-                dependencyMap[id] = it
-            }
-        }
-    }
-    
-    @JsonGetter("element")
-    fun getElementId(): NamespacedId? {
-        return element?.getId()
-    }
-    
-    @JsonSetter("element")
-    fun setElementById(elementId: NamespacedId?) {
-        if (elementId == null) return
-        submit {
-            GuideElementRegistry.getElement(elementId)?.let {
-                element = it
-            }
-        }
-    }
     
     
     fun addDependency(element: IGuideElement) {
-        dependencyMap[element.getId()] = element
+        dependencies += element.getId()
     }
     
     fun addDependencies(elements: Collection<IGuideElement>) {
@@ -99,16 +65,14 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
     }
 
     fun copyTo(state: GuideElementState): GuideElementState {
-        state.element = element
-        
         state.id = id
         state.descriptionName = descriptionName
         state.descriptionLore.clear()
         state.descriptionLore += descriptionLore
         state.symbol = symbol?.clone()
         
-        state.dependencyMap.clear()
-        state.dependencyMap += dependencyMap
+        state.dependencies.clear()
+        state.dependencies += dependencies
         state.locks.clear()
         locks.mapTo(state.locks) { it.clone() }
         
@@ -120,10 +84,10 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
 
     override fun update(): Boolean =
-        element?.update(this) ?: false
+        getElement()?.update(this) ?: false
     
     fun updateAndSave(player: Player?) {
-        element?.let { element ->
+        getElement()?.let { element ->
             id?.let { id ->
                 if (id == element.getId()) {
                     update()
@@ -144,6 +108,22 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             }
         }
     }
+    
+    fun getDependencyElements(): List<IGuideElement> =
+        dependencies.mapNotNull { 
+            GuideElementRegistry.getElement(it)
+        }
+    
+    fun getDependencyElementMapTo(map: MutableMap<NamespacedId, IGuideElement>): MutableMap<NamespacedId, IGuideElement> {
+        dependencies.forEach { id ->
+            GuideElementRegistry.getElement(id)?.let {
+                map[id] = it
+            }
+        }
+        return map
+    }
+    
+    fun getDependencyElementMap(): Map<NamespacedId, IGuideElement> = getDependencyElementMapTo(HashMap())
 
     override fun openEditor(player: Player, team: GuideTeam, context: GuideContext) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-title")) {
@@ -157,7 +137,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
             set('-', ShiningIcon.EDGE.item)
             
-            if (element != null) {
+            if (getElement() != null) {
                 set('u', itemUpdate.toLocalizedItem(player)) {
                     updateAndSave(player)
                 }
@@ -275,7 +255,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
     fun openDependenciesEditor(player: Player, team: GuideTeam, context: GuideContext) {
         player.openMultiPageMenu<IGuideElement>(player.getLangText("menu-shining_guide-editor-state-basic-dependencies-title")) {
-            elements { dependencyMap.values.toList() }
+            elements { getDependencyElements() }
 
             onGenerate(async = true) { player, element, index, slot ->
                 element.getSymbolByCondition(player, GuideTeam.CompletedTeam, ElementCondition.UNLOCKED)
@@ -295,11 +275,11 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
                     ShiningGuide.openCompletedMainMenu(
                         player,
                         GuideShortcutBarContext() + GuideSelectElementsContext({ element ->
-                            this@GuideElementState.element?.let { origin ->
+                            this@GuideElementState.getElement()?.let { origin ->
                                 if (element === origin) return@GuideSelectElementsContext false
                             }
                             
-                            !dependencyMap.containsValue(element)
+                            !dependencies.contains(element.getId())
                         }) { ctxt ->
                             addDependencies(ctxt.elements)
                             openDependenciesEditor(player, team, context)
@@ -327,7 +307,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             }
 
             set('d', ShiningIcon.REMOVE.toLocalizedItem(player)) {
-                dependencyMap -= element.getId()
+                dependencies -= element.getId()
                 openDependenciesEditor(player, team, context)
             }
 

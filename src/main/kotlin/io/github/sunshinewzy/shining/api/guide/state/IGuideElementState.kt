@@ -6,6 +6,7 @@ import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
+import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -19,7 +20,6 @@ import org.bukkit.inventory.ItemStack
 )
 interface IGuideElementState {
 
-    var element: IGuideElement?
     var id: NamespacedId?
     var descriptionName: String?
     var descriptionLore: MutableList<String>
@@ -37,10 +37,26 @@ interface IGuideElementState {
      */
     fun openEditor(player: Player, team: GuideTeam = GuideTeam.CompletedTeam, context: GuideContext = EmptyGuideContext)
 
+    /**
+     * Creates a new element from this state.
+     */
     fun toElement(): IGuideElement
-    
+
+    /**
+     * Gets the element by [id] from [GuideElementRegistry].
+     */
+    fun getElement(): IGuideElement? = id?.let {
+        GuideElementRegistry.getElement(it)
+    }
+
+    /**
+     * Correlates the [element] with this state.
+     * 
+     * It will set the [id] to the id of the [element],
+     * and save the state of the [element] to this state.
+     */
     fun correlateElement(element: IGuideElement): IGuideElementState {
-        this.element = element
+        this.id = element.getId()
         element.saveToState(this)
         return this
     }

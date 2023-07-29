@@ -173,7 +173,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
         if (!super.saveToState(state)) return false
 
         state.priorityToElements.clear()
-        state.priorityToElements += priorityToElements
+        state.setPriorityToElementsByMap(priorityToElements)
         state.idToPriority.clear()
         state.idToPriority += idToPriority
         return true
@@ -187,7 +187,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
         if (!super.update(state)) return false
 
         priorityToElements.clear()
-        priorityToElements += state.priorityToElements
+        //TODO: priorityToElements += state.priorityToElements
         idToPriority.clear()
         idToPriority += state.idToPriority
         return true
@@ -198,7 +198,10 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
         idToPriority[element.getId()] = priority
     }
 
-    override fun register(): GuideCategory = super.register() as GuideCategory
+    override fun register(): GuideCategory {
+        getElements().forEach { it.register() }
+        return super.register() as GuideCategory
+    }
 
     fun getElements(): List<IGuideElement> {
         val list = ArrayList<IGuideElement>()
