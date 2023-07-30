@@ -42,6 +42,8 @@ import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 import taboolib.platform.util.isAir
 import java.util.*
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 abstract class GuideElementState : IGuideElementState, Cloneable {
 
@@ -52,6 +54,9 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
     var dependencies: MutableSet<NamespacedId> = HashSet()
     var locks: MutableList<ElementLock> = LinkedList()
+    
+    private val elementDelegate: ElementDelegate = ElementDelegate()
+    private var element: IGuideElement? by elementDelegate
     
     
     fun addDependency(element: IGuideElement) {
@@ -84,10 +89,10 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
 
     override fun update(): Boolean =
-        getElement()?.update(this) ?: false
+        element?.update(this) ?: false
     
     fun updateAndSave(player: Player?) {
-        getElement()?.let { element ->
+        element?.let { element ->
             id?.let { id ->
                 if (id == element.getId()) {
                     update()
@@ -108,6 +113,8 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             }
         }
     }
+    
+    fun updateElement(): IGuideElement? = elementDelegate.update()
     
     fun getDependencyElements(): List<IGuideElement> =
         dependencies.mapNotNull { 
@@ -137,7 +144,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
             set('-', ShiningIcon.EDGE.item)
             
-            if (getElement() != null) {
+            if (element != null) {
                 set('u', itemUpdate.toLocalizedItem(player)) {
                     updateAndSave(player)
                 }
@@ -275,7 +282,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
                     ShiningGuide.openCompletedMainMenu(
                         player,
                         GuideShortcutBarContext() + GuideSelectElementsContext({ element ->
-                            this@GuideElementState.getElement()?.let { origin ->
+                            this@GuideElementState.element?.let { origin ->
                                 if (element === origin) return@GuideSelectElementsContext false
                             }
                             
@@ -369,6 +376,28 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
             onClick(lock = true)
         }
+    }
+    
+    
+    inner class ElementDelegate : ReadWriteProperty<GuideElementState, IGuideElement?> {
+        
+        private var elementCache: IGuideElement? = null
+
+        
+        override fun getValue(thisRef: GuideElementState, property: KProperty<*>): IGuideElement? {
+            if (elementCache == null) elementCache = getElement()
+            return elementCache
+        }
+
+        override fun setValue(thisRef: GuideElementState, property: KProperty<*>, value: IGuideElement?) {
+            elementCache = value
+        }
+
+        fun update(): IGuideElement? {
+            elementCache = getElement()
+            return elementCache
+        }
+        
     }
     
     

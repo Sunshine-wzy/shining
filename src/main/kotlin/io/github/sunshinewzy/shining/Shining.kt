@@ -173,11 +173,11 @@ object Shining : Plugin(), ShiningPlugin {
                 NamespacedId(Shining, "stone_age"),
                 ElementDescription("&f石器时代", "&d一切的起源"),
                 SItem(Material.STONE)
-            ).register()
+            )
 
             val lockExperience = LockExperience(5)
 
-            val stickItem = GuideItem(NamespacedId(Shining, "stick"), ElementDescription("&6工具的基石"), SItem(Material.STICK)).register()
+            val stickItem = GuideItem(NamespacedId(Shining, "stick"), ElementDescription("&6工具的基石"), SItem(Material.STICK))
             stickItem.registerLock(lockExperience)
             stoneCategory.registerElement(stickItem)
 
@@ -185,7 +185,7 @@ object Shining : Plugin(), ShiningPlugin {
                 NamespacedId(Shining, "new_stone_age"),
                 ElementDescription("&a新石器时代", "&6刀耕火种"),
                 SItem(Material.STONE_BRICKS)
-            ).register()
+            )
             newStoneCategory.registerDependency(stickItem)
             stoneCategory.registerElement(newStoneCategory)
 
@@ -197,9 +197,10 @@ object Shining : Plugin(), ShiningPlugin {
                 NamespacedId(Shining, "pickaxe"),
                 ElementDescription("&e生产力提高"),
                 SItem(Material.STONE_PICKAXE)
-            ).register()
+            )
             newStoneCategory.registerElement(pickaxeItem)
 
+            stoneCategory.register()
             ShiningGuide.registerElement(stoneCategory)
         }
 

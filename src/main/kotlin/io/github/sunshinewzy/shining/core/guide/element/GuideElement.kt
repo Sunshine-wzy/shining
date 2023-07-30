@@ -106,6 +106,7 @@ abstract class GuideElement(
         if (state !is GuideElementState) return false
 
         state.id = id
+        state.updateElement()
         state.descriptionName = description.name
         state.descriptionLore.clear()
         state.descriptionLore += description.lore

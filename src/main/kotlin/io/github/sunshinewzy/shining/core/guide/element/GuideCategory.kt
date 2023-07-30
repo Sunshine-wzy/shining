@@ -187,7 +187,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
         if (!super.update(state)) return false
 
         priorityToElements.clear()
-        //TODO: priorityToElements += state.priorityToElements
+        state.getPriorityToElementMapTo(priorityToElements)
         idToPriority.clear()
         idToPriority += state.idToPriority
         return true

@@ -68,8 +68,18 @@ class GuideCategoryState : GuideElementState() {
     }
     
     fun getPriorityToElementMapTo(map: MutableMap<Int, MutableSet<IGuideElement>>): MutableMap<Int, MutableSet<IGuideElement>> {
-        TODO()
+        priorityToElements.forEach { (priority, ids) -> 
+            val list = HashSet<IGuideElement>()
+            ids.mapNotNullTo(list) {
+                GuideElementRegistry.getElement(it)
+            }
+            map[priority] = list
+        }
+        return map
     }
+    
+    fun getPriorityToElementMap(): Map<Int, MutableSet<IGuideElement>> =
+        getPriorityToElementMapTo(HashMap())
     
     fun addElement(element: IGuideElement, priority: Int) {
         val id = element.getId()

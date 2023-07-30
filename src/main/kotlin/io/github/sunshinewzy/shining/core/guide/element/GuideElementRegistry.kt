@@ -23,7 +23,7 @@ object GuideElementRegistry : LongIdTable() {
     
     fun <T: IGuideElement> register(element: T): T {
         val id = element.getId()
-        stateCache[id]?.let { state ->
+        getState(id)?.let { state ->
             element.update(state)
         }
         elementCache[id] = element
@@ -46,7 +46,15 @@ object GuideElementRegistry : LongIdTable() {
     
     fun getState(id: NamespacedId): IGuideElementState? = stateCache[id]
     
-    fun getElement(id: NamespacedId): IGuideElement? = elementCache[id]
+    fun getElement(id: NamespacedId): IGuideElement? {
+        elementCache[id]?.let { return it }
+        stateCache[id]?.let {
+            val element = it.toElement()
+            elementCache[id] = element
+            return element
+        }
+        return null
+    }
     
     @Suppress("UNCHECKED_CAST")
     fun <T: IGuideElement> getElementByType(id: NamespacedId, type: Class<T>): T? {
