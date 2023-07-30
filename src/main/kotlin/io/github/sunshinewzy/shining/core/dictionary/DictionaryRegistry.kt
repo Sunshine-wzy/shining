@@ -2,8 +2,6 @@ package io.github.sunshinewzy.shining.core.dictionary
 
 import io.github.sunshinewzy.shining.api.dictionary.IDictionaryRegistry
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.dictionary.DictionaryItem.Companion.dictionaryItem
-import io.github.sunshinewzy.shining.core.dictionary.DictionaryItem.Companion.setDictionaryName
 import io.github.sunshinewzy.shining.core.dictionary.item.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.utils.putListElement
 import org.bukkit.inventory.ItemStack

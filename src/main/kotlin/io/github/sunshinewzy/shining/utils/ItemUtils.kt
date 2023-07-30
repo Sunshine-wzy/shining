@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.utils
 
+import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.Itemable
 import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
 import io.github.sunshinewzy.shining.core.lang.formatArgs
@@ -13,6 +14,10 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import taboolib.module.chat.colored
+import taboolib.module.nms.ItemTag
+import taboolib.module.nms.ItemTagData
+import taboolib.module.nms.getItemTag
+import taboolib.module.nms.setItemTag
 import taboolib.platform.util.ItemBuilder
 import taboolib.platform.util.buildItem
 import java.util.*
@@ -244,4 +249,35 @@ fun NamespacedIdItem.toCurrentLocalizedItem(player: Player, currentLore: String?
 
 fun NamespacedIdItem.toCurrentLocalizedItem(player: Player, currentLore: List<String>): ItemStack {
     return toLocalizedItem(player).clone().addCurrentLore(player, currentLore)
+}
+
+
+fun ItemStack.getShiningNBT(): ItemTag? = getItemTag()[Shining.NAME] as? ItemTag
+
+@JvmOverloads
+fun ItemStack.setShiningNBT(key: String, value: ItemTagData, isDeep: Boolean = false): ItemStack {
+    val tag = getItemTag()
+    val shiningTag = (tag[Shining.NAME] as? ItemTag) ?: ItemTag()
+    if (isDeep) shiningTag.putDeep(key, value)
+    else shiningTag[key] = value
+    tag[Shining.NAME] = shiningTag
+    return setItemTag(tag)
+}
+
+@JvmOverloads
+fun ItemStack.setShiningNBT(key: String, value: Any, isDeep: Boolean = false): ItemStack {
+    val tag = getItemTag()
+    val shiningTag = (tag[Shining.NAME] as? ItemTag) ?: ItemTag()
+    if (isDeep) shiningTag.putDeep(key, value)
+    else shiningTag.put(key, value)
+    tag[Shining.NAME] = shiningTag
+    return setItemTag(tag)
+}
+
+fun ItemStack.setShiningNBT(action: (ItemTag) -> Unit): ItemStack {
+    val tag = getItemTag()
+    val shiningTag = (tag[Shining.NAME] as? ItemTag) ?: ItemTag()
+    action(shiningTag)
+    tag[Shining.NAME] = shiningTag
+    return setItemTag(tag)
 }

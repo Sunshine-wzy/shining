@@ -40,8 +40,10 @@ object ShiningGuideSettings {
 
             set('B', ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player), ShiningGuide.onClickBack)
 
-            set('a', itemTeamInfo.toLocalizedItem(player)) {
-                team.openInfoMenu(player)
+            if (team !== GuideTeam.CompletedTeam) {
+                set('a', itemTeamInfo.toLocalizedItem(player)) {
+                    team.openInfoMenu(player)
+                }
             }
 
             if (player.hasPermission(ShiningGuideEditor.PERMISSION_EDIT)) {

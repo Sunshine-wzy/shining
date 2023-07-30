@@ -145,10 +145,8 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
                 }
             }
 
-            if (team !== GuideTeam.CompletedTeam) {
-                set(5 orderWith 1, ShiningIcon.SETTINGS.getLanguageItem().toLocalizedItem(player)) {
-                    ShiningGuideSettings.openSettingsMenu(player, team)
-                }
+            set(5 orderWith 1, ShiningIcon.SETTINGS.getLanguageItem().toLocalizedItem(player)) {
+                ShiningGuideSettings.openSettingsMenu(player, team)
             }
             
             // Select elements

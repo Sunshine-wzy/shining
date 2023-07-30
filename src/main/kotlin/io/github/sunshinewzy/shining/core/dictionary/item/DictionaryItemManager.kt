@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.core.dictionary.item
 
-import io.github.sunshinewzy.shining.core.dictionary.DictionaryItem.Companion.dictionaryItem
+import io.github.sunshinewzy.shining.core.dictionary.dictionaryItem
 import io.github.sunshinewzy.shining.core.dictionary.item.behavior.ItemBehavior
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
