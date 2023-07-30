@@ -4,6 +4,7 @@ import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.draft.IGuideDraft
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.data.JacksonWrapper
 import io.github.sunshinewzy.shining.core.guide.state.GuideElementStateEditorContext
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
@@ -25,15 +26,16 @@ import taboolib.platform.util.buildItem
 
 class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
     
-    var state: IGuideElementState by GuideDrafts.state
+    var state: JacksonWrapper<IGuideElementState> by GuideDrafts.state
 
 
     override fun getSymbol(player: Player): ItemStack {
         return transaction {
-            buildItem(state.symbol ?: ItemStack(Material.PAPER)) {
-                name = state.descriptionName
+            val theState = state.value
+            buildItem(theState.symbol ?: ItemStack(Material.PAPER)) {
+                name = theState.descriptionName
                 lore.addAll(0, listOf(player.getLangText("menu-shining_guide-draft-symbol-draft"), ""))
-                lore.addAll(2, state.descriptionLore)
+                lore.addAll(2, theState.descriptionLore)
                 colored()
             }
         }
@@ -72,11 +74,11 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                     newSuspendedTransaction { 
                         val state = state
                         submit {
-                            state.openEditor(player, context = GuideElementStateEditorContext.Back {
+                            state.value.openEditor(player, context = GuideElementStateEditorContext.Back {
                                 set('B', ShiningIcon.BACK.toLocalizedItem(player)) {
                                     this@GuideDraft.openMenu(player, previousFolder)
                                 }
-                            })
+                            } + GuideElementStateEditorContext.Save(this@GuideDraft))
                         }
                     }
                 }
@@ -125,6 +127,14 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
     override suspend fun move(previousFolder: GuideDraftFolder, newFolder: GuideDraftFolder) {
         previousFolder.removeDraft(id.value)
         newFolder.addDraft(id.value)
+    }
+    
+    suspend fun updateState() {
+        newSuspendedTransaction { 
+            state.value.let { 
+                state = JacksonWrapper(it)
+            }
+        }
     }
 
     

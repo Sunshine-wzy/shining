@@ -11,6 +11,7 @@ object SerializationModules {
 
 
     val shining: SimpleModule = SimpleModule("Shining", VERSION).apply {
+        addSerializer(JacksonWrapper::class.java, JacksonWrapperSerializer)
         addDeserializer(JacksonWrapper::class.java, JacksonWrapperDeserializer())
     }
 

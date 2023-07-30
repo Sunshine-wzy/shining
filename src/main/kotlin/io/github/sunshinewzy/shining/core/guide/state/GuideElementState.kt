@@ -138,11 +138,12 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
     override fun openEditor(player: Player, team: GuideTeam, context: GuideContext) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-title")) {
-            rows(3)
+            rows(4)
 
             map(
                 "-B-------",
-                "-u a b s-",
+                "-  a b  -",
+                "- u s d -",
                 "---------"
             )
 
@@ -162,7 +163,15 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
                 openAdvancedEditor(player)
             }
             
-            set('s', itemSaveToDraft.toLocalizedItem(player)) {
+            context[GuideElementStateEditorContext.Save]?.let { ctxt ->
+                set('s', itemSave.toLocalizedItem(player)) {
+                    ShiningDispatchers.launchDB { 
+                        ctxt.draft.updateState()
+                    }
+                }
+            }
+            
+            set('d', itemSaveToDraft.toLocalizedItem(player)) {
                 ShiningGuideDraft.openLastSelectMenu(player, GuideDraftOnlyFoldersContext.INSTANCE + GuideDraftSaveContext(this@GuideElementState, team, context))
             }
 
@@ -407,7 +416,8 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
     
     companion object {
         private val itemUpdate = NamespacedIdItem(Material.REDSTONE, NamespacedId(Shining, "shining_guide-editor-state-element-update"))
-        private val itemSaveToDraft = NamespacedIdItem(Material.CHEST, NamespacedId(Shining, "shining_guide-editor-state-element-save_to_draft"))
+        private val itemSave = NamespacedIdItem(Material.CHEST, NamespacedId(Shining, "shining_guide-editor-state-element-save"))
+        private val itemSaveToDraft = NamespacedIdItem(Material.PAPER, NamespacedId(Shining, "shining_guide-editor-state-element-save_as_draft"))
         private val itemBasicEditor = NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-editor-state-element-basic_editor"))
         private val itemAdvancedEditor = NamespacedIdItem(Material.DIAMOND, NamespacedId(Shining, "shining_guide-editor-state-element-advanced_editor"))
         

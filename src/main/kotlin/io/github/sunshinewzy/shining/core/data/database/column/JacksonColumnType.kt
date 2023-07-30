@@ -9,10 +9,10 @@ import org.jetbrains.exposed.sql.TextColumnType
 
 class JacksonColumnType(
     private val objectMapper: ObjectMapper,
-    typeConstructor: ObjectMapper.() -> JavaType
+    val type: JavaType
 ) : TextColumnType() {
-
-    val type: JavaType = typeConstructor(objectMapper)
+    
+    constructor(objectMapper: ObjectMapper, typeConstructor: ObjectMapper.() -> JavaType) : this(objectMapper, typeConstructor(objectMapper))
 
 
     override fun valueFromDB(value: Any): Any {
@@ -43,12 +43,14 @@ class JacksonColumnType(
 }
 
 
+fun <T> Table.jackson(name: String, objectMapper: ObjectMapper, type: JavaType): Column<T> =
+    registerColumn(name, JacksonColumnType(objectMapper, type))
+
 fun <T> Table.jackson(
     name: String,
     objectMapper: ObjectMapper,
     typeConstructor: ObjectMapper.() -> JavaType
-): Column<T> =
-    registerColumn(name, JacksonColumnType(objectMapper, typeConstructor))
+): Column<T> = registerColumn(name, JacksonColumnType(objectMapper, typeConstructor))
 
 fun <T> Table.jackson(name: String, objectMapper: ObjectMapper, type: Class<T>): Column<T> =
     jackson(name, objectMapper) {

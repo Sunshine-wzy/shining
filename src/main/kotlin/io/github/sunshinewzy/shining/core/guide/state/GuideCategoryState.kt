@@ -22,7 +22,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
-import taboolib.platform.util.isAir
 import java.util.*
 
 class GuideCategoryState : GuideElementState() {
@@ -123,8 +122,8 @@ class GuideCategoryState : GuideElementState() {
             }
             
             onClick(lock = true) { event ->
-                if (event.rawSlot in ShiningGuide.slotOrders && event.currentItem.isAir()) {
-                    
+                if (ShiningGuide.isClickEmptySlot(event)) {
+                    TODO()
                 }
             }
         }

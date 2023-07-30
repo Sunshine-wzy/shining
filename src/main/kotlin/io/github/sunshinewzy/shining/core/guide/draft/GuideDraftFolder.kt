@@ -143,7 +143,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                             if (element is GuideDraftFolder) {
                                 ShiningDispatchers.launchDB {
                                     newSuspendedTransaction {
-                                        GuideDraft.new { this.state = ctxt.state }
+                                        GuideDraft.new { this.state = JacksonWrapper(ctxt.state) }
                                             .also {
                                                 ShiningDispatchers.launchDB {
                                                     newSuspendedTransaction {
@@ -173,7 +173,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                             if (element is GuideDraft) {
                                 ShiningDispatchers.launchDB { 
                                     val state = newSuspendedTransaction { 
-                                        element.state
+                                        element.state.value
                                     }
                                     val theId = state.id ?: return@launchDB
                                     
@@ -242,7 +242,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                             context[GuideDraftSaveContext]?.let { ctxt ->
                                 ShiningDispatchers.launchDB {
                                     newSuspendedTransaction {
-                                        GuideDraft.new { this.state = ctxt.state }
+                                        GuideDraft.new { this.state = JacksonWrapper(ctxt.state) }
                                             .also { 
                                                 ShiningDispatchers.launchDB {
                                                     newSuspendedTransaction {
