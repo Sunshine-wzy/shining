@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.core.guide.state
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.GuideContext
@@ -47,6 +48,9 @@ import kotlin.reflect.KProperty
 
 abstract class GuideElementState : IGuideElementState, Cloneable {
 
+    private val elementDelegate: ElementDelegate = ElementDelegate()
+    
+    override var element: IGuideElement? by elementDelegate
     override var id: NamespacedId? = null
     override var descriptionName: String? = null
     override var descriptionLore: MutableList<String> = LinkedList()
@@ -54,9 +58,6 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
     var dependencies: MutableSet<NamespacedId> = HashSet()
     var locks: MutableList<ElementLock> = LinkedList()
-    
-    private val elementDelegate: ElementDelegate = ElementDelegate()
-    private var element: IGuideElement? by elementDelegate
     
     
     fun addDependency(element: IGuideElement) {
@@ -116,11 +117,13 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
     
     fun updateElement(): IGuideElement? = elementDelegate.update()
     
+    @JsonIgnore
     fun getDependencyElements(): List<IGuideElement> =
         dependencies.mapNotNull { 
             GuideElementRegistry.getElement(it)
         }
     
+    @JsonIgnore
     fun getDependencyElementMapTo(map: MutableMap<NamespacedId, IGuideElement>): MutableMap<NamespacedId, IGuideElement> {
         dependencies.forEach { id ->
             GuideElementRegistry.getElement(id)?.let {
@@ -130,6 +133,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
         return map
     }
     
+    @JsonIgnore
     fun getDependencyElementMap(): Map<NamespacedId, IGuideElement> = getDependencyElementMapTo(HashMap())
 
     override fun openEditor(player: Player, team: GuideTeam, context: GuideContext) {
@@ -385,7 +389,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
         
         override fun getValue(thisRef: GuideElementState, property: KProperty<*>): IGuideElement? {
-            if (elementCache == null) elementCache = getElement()
+            if (elementCache == null) elementCache = getElementById()
             return elementCache
         }
 
@@ -394,7 +398,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
         }
 
         fun update(): IGuideElement? {
-            elementCache = getElement()
+            elementCache = getElementById()
             return elementCache
         }
         

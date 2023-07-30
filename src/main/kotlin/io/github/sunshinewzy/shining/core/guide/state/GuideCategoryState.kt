@@ -35,6 +35,7 @@ class GuideCategoryState : GuideElementState() {
     var idToPriority: MutableMap<NamespacedId, Int> = HashMap()
     
     
+    @JsonIgnore
     fun setPriorityToElementsByMap(map: TreeMap<Int, MutableSet<IGuideElement>>) {
         map.forEach { (priority, list) -> 
             priorityToElements[priority] = list.mapTo(HashSet()) { it.getId() }
@@ -57,6 +58,7 @@ class GuideCategoryState : GuideElementState() {
         idToPriority = newIdToPriority
     }
 
+    @JsonIgnore
     fun getElements(): List<IGuideElement> {
         val list = ArrayList<IGuideElement>()
         priorityToElements.forEach { (priority, ids) ->
@@ -67,6 +69,7 @@ class GuideCategoryState : GuideElementState() {
         return list
     }
     
+    @JsonIgnore
     fun getPriorityToElementMapTo(map: MutableMap<Int, MutableSet<IGuideElement>>): MutableMap<Int, MutableSet<IGuideElement>> {
         priorityToElements.forEach { (priority, ids) -> 
             val list = HashSet<IGuideElement>()
@@ -78,6 +81,7 @@ class GuideCategoryState : GuideElementState() {
         return map
     }
     
+    @JsonIgnore
     fun getPriorityToElementMap(): Map<Int, MutableSet<IGuideElement>> =
         getPriorityToElementMapTo(HashMap())
     

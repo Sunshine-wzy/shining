@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.api.guide.state
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
@@ -20,6 +21,9 @@ import org.bukkit.inventory.ItemStack
 )
 interface IGuideElementState {
 
+    @get:JsonIgnore
+    @set:JsonIgnore
+    var element: IGuideElement?
     var id: NamespacedId?
     var descriptionName: String?
     var descriptionLore: MutableList<String>
@@ -41,11 +45,12 @@ interface IGuideElementState {
      * Creates a new element from this state.
      */
     fun toElement(): IGuideElement
-
+    
     /**
      * Gets the element by [id] from [GuideElementRegistry].
      */
-    fun getElement(): IGuideElement? = id?.let {
+    @JsonIgnore
+    fun getElementById(): IGuideElement? = id?.let {
         GuideElementRegistry.getElement(it)
     }
 
@@ -56,7 +61,6 @@ interface IGuideElementState {
      * and save the state of the [element] to this state.
      */
     fun correlateElement(element: IGuideElement): IGuideElementState {
-        this.id = element.getId()
         element.saveToState(this)
         return this
     }
