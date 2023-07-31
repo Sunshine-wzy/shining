@@ -235,7 +235,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                                             player.sendPrefixedLangText("text-shining_guide-draft-load-failure-null")
                                         }
                                         
-                                        ShiningGuideEditor.openEditMenu(player, ctxt.team, ctxt.element, ctxt.elementContainer)
+                                        ShiningGuideEditor.openEditor(player, ctxt.team, ctxt.element, ctxt.elementContainer)
                                     }
                                 }
                             }

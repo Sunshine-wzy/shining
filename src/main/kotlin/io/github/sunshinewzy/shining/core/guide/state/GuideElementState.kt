@@ -89,7 +89,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
     }
     
 
-    abstract fun openAdvancedEditor(player: Player)
+    abstract fun openAdvancedEditor(player: Player, team: GuideTeam, context: GuideContext)
 
 
     override fun update(): Boolean =
@@ -175,7 +175,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             }
 
             set('b', itemAdvancedEditor.toLocalizedItem(player)) {
-                openAdvancedEditor(player)
+                openAdvancedEditor(player, team, context)
             }
             
             context[GuideElementStateEditorContext.Save]?.let { ctxt ->
@@ -357,7 +357,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
                 openDependencyEditor(player, team, element, context)
             }
 
-            set(2 orderWith 1, ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
+            set(2 orderWith 1, ShiningIcon.BACK.toLocalizedItem(player)) {
                 openBasicEditor(player, team, context)
             }
             

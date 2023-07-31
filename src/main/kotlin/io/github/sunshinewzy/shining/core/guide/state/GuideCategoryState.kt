@@ -4,15 +4,18 @@ import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSetter
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
 import io.github.sunshinewzy.shining.core.editor.chat.type.Text
+import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
+import io.github.sunshinewzy.shining.core.menu.onBack
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.getDisplayName
@@ -70,12 +73,32 @@ class GuideCategoryState : GuideElementState() {
     
     @JsonIgnore
     fun getPriorityToElementMapTo(map: MutableMap<Int, MutableSet<IGuideElement>>): MutableMap<Int, MutableSet<IGuideElement>> {
-        priorityToElements.forEach { (priority, ids) -> 
-            val list = map[priority] ?: HashSet<IGuideElement>()
-            ids.mapNotNullTo(list) {
-                GuideElementRegistry.getElement(it)
+        if (map.isEmpty()) {
+            priorityToElements.forEach { (priority, ids) ->
+                val list = HashSet<IGuideElement>()
+                ids.mapNotNullTo(list) {
+                    GuideElementRegistry.getElement(it)
+                }
+                map[priority] = list
             }
-            map[priority] = list
+        } else {
+            val mergeMap = HashMap<IGuideElement, Int>()
+            map.forEach { (priority, elementSet) -> 
+                elementSet.forEach { 
+                    mergeMap[it] = priority
+                }
+            }
+            priorityToElements.forEach { (priority, ids) -> 
+                ids.forEach { id ->
+                    GuideElementRegistry.getElement(id)?.let { 
+                        mergeMap[it] = priority
+                    }
+                }
+            }
+            map.clear()
+            mergeMap.forEach { (theElement, priority) -> 
+                map.putSetElement(priority, theElement)
+            }
         }
         return map
     }
@@ -109,7 +132,7 @@ class GuideCategoryState : GuideElementState() {
         return state
     }
 
-    override fun openAdvancedEditor(player: Player) {
+    override fun openAdvancedEditor(player: Player, team: GuideTeam, context: GuideContext) {
         player.openMultiPageMenu<IGuideElement>(player.getLangText("menu-shining_guide-editor-state-category-title")) {
             elements { getElements() }
             
@@ -118,7 +141,7 @@ class GuideCategoryState : GuideElementState() {
             }
             
             onClick { _, element -> 
-                editElement(player, element)
+                editElement(player, team, context, element)
             }
             
             onClick(lock = true) { event ->
@@ -126,10 +149,14 @@ class GuideCategoryState : GuideElementState() {
                     TODO()
                 }
             }
+            
+            onBack(player) { 
+                openEditor(player, team, context)
+            }
         }
     }
     
-    fun editElement(player: Player, element: IGuideElement) {
+    fun editElement(player: Player, team: GuideTeam, context: GuideContext, element: IGuideElement) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-category-element-title")) { 
             rows(3)
 
@@ -142,7 +169,7 @@ class GuideCategoryState : GuideElementState() {
             set('-', ShiningIcon.EDGE.item)
 
             set('B', ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
-                openAdvancedEditor(player)
+                openAdvancedEditor(player, team, context)
             }
 
             val priority = idToPriority[element.getId()]
@@ -162,14 +189,14 @@ class GuideCategoryState : GuideElementState() {
                     }
                     
                     onFinal { 
-                        editElement(player, element)
+                        editElement(player, team, context, element)
                     }
                 }
             }
 
             set('d', ShiningIcon.REMOVE.toLocalizedItem(player)) {
                 removeElement(element)
-                openAdvancedEditor(player)
+                openAdvancedEditor(player, team, context)
             }
 
             onClick(lock = true)

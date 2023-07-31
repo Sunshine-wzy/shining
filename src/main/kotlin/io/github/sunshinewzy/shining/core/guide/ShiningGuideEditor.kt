@@ -4,6 +4,7 @@ import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
+import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftLoadContext
@@ -13,6 +14,7 @@ import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.LanguageItem
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.onBackMenu
+import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.Material
@@ -35,7 +37,7 @@ object ShiningGuideEditor {
 
 
     @JvmOverloads
-    fun openEditMenu(player: Player, team: GuideTeam, element: IGuideElement?, elementContainer: IGuideElementContainer? = null) {
+    fun openEditor(player: Player, team: GuideTeam, element: IGuideElement?, elementContainer: IGuideElementContainer? = null) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-title")) {
             rows(5)
 
@@ -69,6 +71,12 @@ object ShiningGuideEditor {
             }
 
             onClick(lock = true)
+        }
+    }
+    
+    fun openCreateStateEditor(player: Player) {
+        player.openMultiPageMenu<IGuideElementState>(player.getLangText("")) { 
+            
         }
     }
 

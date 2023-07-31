@@ -235,7 +235,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                 }
             }
 
-            onBack {
+            onBack(player) {
                 openManageMenu(player)
             }
 
@@ -463,7 +463,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                             element
                         }
 
-                        onBack {
+                        onBack(this@createGuideTeam) {
                             createGuideTeam(name, symbol)
                         }
                     }
@@ -545,7 +545,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                             }
                         }
 
-                        onBack {
+                        onBack(this@joinGuideTeam) {
                             setupGuideTeam()
                         }
 

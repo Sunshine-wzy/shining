@@ -86,7 +86,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
 
             onClick { event, element ->
                 if (context[GuideEditorContext]?.isEditorEnabled() == true) {
-                    ShiningGuideEditor.openEditMenu(player, team, element, this@GuideCategory)
+                    ShiningGuideEditor.openEditor(player, team, element, this@GuideCategory)
                     return@onClick
                 }
                 
@@ -126,7 +126,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
             if (context[GuideEditorContext]?.isEditorEnabled() == true) {
                 onClick(lock = true) {
                     if (ShiningGuide.isClickEmptySlot(it)) {
-                        ShiningGuideEditor.openEditMenu(player, team, null, this@GuideCategory)
+                        ShiningGuideEditor.openEditor(player, team, null, this@GuideCategory)
                     }
                 }
             }
