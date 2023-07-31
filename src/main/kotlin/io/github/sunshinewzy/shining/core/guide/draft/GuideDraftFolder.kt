@@ -177,7 +177,8 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                                     
                                     submit {
                                         if (ctxt.element != null) {
-                                            if (ctxt.element.getId() == theId) {
+                                            val oldId = ctxt.element.getId()
+                                            if (oldId == theId) {
                                                 if (ctxt.element.update(state)) {
                                                     ShiningDispatchers.launchDB { 
                                                         GuideElementRegistry.saveElement(ctxt.element)
@@ -201,18 +202,35 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                                                             }.also { isUpdate = it }
                                                         }
                                                     ) {
-                                                        player.sendPrefixedLangText("text-shining_guide-draft-load-success")
+                                                        ctxt.elementContainer?.let { container ->
+                                                            submit {
+                                                                container.updateElementId(ctxt.element, oldId)
+                                                                ShiningDispatchers.launchDB { 
+                                                                    if (GuideElementRegistry.saveElement(container))
+                                                                        player.sendPrefixedLangText("text-shining_guide-draft-load-success")
+                                                                    else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_container")
+                                                                }
+                                                            }
+                                                        } ?: player.sendPrefixedLangText("text-shining_guide-draft-load-success")
                                                     } else if (isUpdate) {
                                                         player.sendPrefixedLangText("text-shining_guide-draft-load-failure-duplication")
                                                     }
                                                 }
                                             }
                                         } else if (ctxt.elementContainer != null) {
-                                            ctxt.elementContainer.registerElement(state.toElement())
+                                            val theElement = state.toElement()
                                             ShiningDispatchers.launchDB { 
-                                                GuideElementRegistry.saveElement(ctxt.elementContainer)
+                                                if (GuideElementRegistry.saveElement(theElement, true)) {
+                                                    submit {
+                                                        ctxt.elementContainer.registerElement(theElement)
+                                                        ShiningDispatchers.launchDB {
+                                                            if (GuideElementRegistry.saveElement(ctxt.elementContainer))
+                                                                player.sendPrefixedLangText("text-shining_guide-draft-load-success")
+                                                            else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_container")
+                                                        }
+                                                    }
+                                                } else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_element")
                                             }
-                                            player.sendPrefixedLangText("text-shining_guide-draft-load-success")
                                         } else {
                                             player.sendPrefixedLangText("text-shining_guide-draft-load-failure-null")
                                         }

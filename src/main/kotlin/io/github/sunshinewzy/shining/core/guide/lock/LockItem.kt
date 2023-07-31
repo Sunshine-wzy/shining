@@ -66,8 +66,9 @@ class LockItem(
                 openEditor(player, team, state, context)
             }
             
-            set('a', itemEditItem.toLocalizedItem(player)) {
-                player.openChatEditor<Item>(itemEditItem.toLocalizedItem(player).getDisplayName()) { 
+            val theItemEditItem = itemEditItem.toLocalizedItem(player)
+            set('a', theItemEditItem) {
+                player.openChatEditor<Item>(theItemEditItem.getDisplayName()) { 
                     item(item)
                     
                     onSubmit { 

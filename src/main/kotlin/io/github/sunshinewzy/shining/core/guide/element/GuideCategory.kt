@@ -208,5 +208,11 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
         }
         return list
     }
+    
+    override fun updateElementId(element: IGuideElement, oldId: NamespacedId) {
+        idToPriority.remove(oldId)?.let { 
+            idToPriority[element.getId()] = it
+        }
+    }
 
 }

@@ -35,7 +35,7 @@ abstract class GuideElement(
     private val teamDataMap: MutableMap<EntityID<Int>, ElementTeamData> = HashMap()
 
     
-    constructor() : this(NamespacedId.NULL, ElementDescription.NULL, SItem.AIR)
+    constructor() : this(NamespacedId.NULL, ElementDescription.NULL, ItemStack(Material.STONE))
 
 
     override fun getId(): NamespacedId = id

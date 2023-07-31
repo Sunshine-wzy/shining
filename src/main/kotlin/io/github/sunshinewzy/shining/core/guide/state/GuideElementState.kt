@@ -5,11 +5,13 @@ import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
+import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
 import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
+import io.github.sunshinewzy.shining.core.editor.chat.type.Item
 import io.github.sunshinewzy.shining.core.editor.chat.type.Text
 import io.github.sunshinewzy.shining.core.editor.chat.type.TextList
 import io.github.sunshinewzy.shining.core.editor.chat.type.TextMap
@@ -26,7 +28,6 @@ import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
-import io.github.sunshinewzy.shining.core.lang.sendLangText
 import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
 import io.github.sunshinewzy.shining.core.menu.onBackMenu
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
@@ -94,25 +95,35 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
     override fun update(): Boolean =
         element?.update(this) ?: false
     
-    fun updateAndSave(player: Player?) {
-        element?.let { element ->
-            id?.let { id ->
-                if (id == element.getId()) {
-                    update()
-                    ShiningDispatchers.launchDB {
-                        GuideElementRegistry.saveElement(element)
-                        player?.sendLangText("text-shining_guide-editor-state-element-update-success")
+    fun updateAndSave(player: Player?, elementContainer: IGuideElementContainer?) {
+        val element = element ?: return
+        val id = id ?: return
+        val oldId = element.getId()
+        
+        if (id == oldId) {
+            update()
+            ShiningDispatchers.launchDB {
+                GuideElementRegistry.saveElement(element)
+                player?.sendPrefixedLangText("text-shining_guide-editor-state-element-update-success")
+            }
+        } else {
+            ShiningDispatchers.launchDB {
+                if (
+                    GuideElementRegistry.saveElement(element, true, id) {
+                        sync { update() }
                     }
-                } else {
-                    ShiningDispatchers.launchDB {
-                        if (
-                            GuideElementRegistry.saveElement(element, true, id) {
-                                sync { update() }
+                ) {
+                    elementContainer?.let { container ->
+                        submit {
+                            container.updateElementId(element, oldId)
+                            ShiningDispatchers.launchDB { 
+                                if (GuideElementRegistry.saveElement(container))
+                                    player?.sendPrefixedLangText("text-shining_guide-editor-state-element-update-success")
+                                else player?.sendPrefixedLangText("text-shining_guide-editor-state-element-update-failure")
                             }
-                        ) player?.sendLangText("text-shining_guide-editor-state-element-update-success")
-                        else player?.sendLangText("text-shining_guide-editor-state-element-update-failure")
-                    }
-                }
+                        }
+                    } ?: player?.sendPrefixedLangText("text-shining_guide-editor-state-element-update-success")
+                } else player?.sendPrefixedLangText("text-shining_guide-editor-state-element-update-failure")
             }
         }
     }
@@ -151,9 +162,11 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
             set('-', ShiningIcon.EDGE.item)
             
-            if (element != null) {
+            val contextUpdate = context[GuideElementStateEditorContext.Update]
+            val theElement = element
+            if (theElement != null && (contextUpdate != null || theElement.getId() == id)) {
                 set('u', itemUpdate.toLocalizedItem(player)) {
-                    updateAndSave(player)
+                    updateAndSave(player, contextUpdate?.elementContainer)
                 }
             }
             
@@ -173,20 +186,20 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
                     }
                 }
                 
-                if (element != null) {
+                if (theElement != null && (contextUpdate != null || theElement.getId() == id)) {
                     set('t', itemSaveAndUpdate.toLocalizedItem(player)) {
                         ShiningDispatchers.launchDB {
                             ctxt.draft.updateState()
                             player.sendPrefixedLangText("text-shining_guide-editor-state-element-save-success")
                             submit {
-                                updateAndSave(player)
+                                updateAndSave(player, context[GuideElementStateEditorContext.Update]?.elementContainer)
                             }
                         }
                     }
                 }
             }
             
-            set('d', itemSaveToDraft.toLocalizedItem(player)) {
+            set('d', itemSaveAsDraft.toLocalizedItem(player)) {
                 ShiningGuideDraft.openLastSelectMenu(player, GuideDraftOnlyFoldersContext.INSTANCE + GuideDraftSaveContext(this@GuideElementState, team, context))
             }
 
@@ -204,11 +217,12 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
     open fun openBasicEditor(player: Player, team: GuideTeam, context: GuideContext) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-title")) {
-            rows(3)
+            rows(4)
 
             map(
                 "-B-------",
-                "- abcde -",
+                "- a b c -",
+                "- d e f -",
                 "---------"
             )
 
@@ -274,12 +288,16 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
                     }
                 }
             }
+            
+            set('d', itemEditSymbol.toLocalizedItem(player)) {
+                openSymbolEditor(player, team, context)
+            }
 
-            set('d', itemEditDependencies.toLocalizedItem(player)) {
+            set('e', itemEditDependencies.toLocalizedItem(player)) {
                 openDependenciesEditor(player, team, context)
             }
 
-            set('e', itemEditLocks.toLocalizedItem(player)) {
+            set('f', itemEditLocks.toLocalizedItem(player)) {
                 openLocksEditor(player, team, context)
             }
 
@@ -287,6 +305,44 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
         }
     }
 
+    
+    fun openSymbolEditor(player: Player, team: GuideTeam, context: GuideContext) {
+        player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-symbol-title")) { 
+            rows(4)
+            
+            map(
+                "-B-------",
+                "-   a   -",
+                "-   i   -",
+                "---------"
+            )
+            
+            set('-', ShiningIcon.EDGE.item)
+            
+            set('B', ShiningIcon.BACK.toLocalizedItem(player)) {
+                openBasicEditor(player, team, context)
+            }
+            
+            val theItemEditSymbolCurrent = itemEditSymbolCurrent.toLocalizedItem(player)
+            set('a', theItemEditSymbolCurrent) {
+                player.openChatEditor<Item>(theItemEditSymbolCurrent.getDisplayName()) { 
+                    item(symbol)
+                    
+                    onSubmit { 
+                        symbol = it
+                    }
+                    
+                    onFinal { 
+                        openSymbolEditor(player, team, context)
+                    }
+                }
+            }
+
+            symbol?.let { set('i', it) }
+            
+            onClick(lock = true)
+        }
+    }
 
     fun openDependenciesEditor(player: Player, team: GuideTeam, context: GuideContext) {
         player.openMultiPageMenu<IGuideElement>(player.getLangText("menu-shining_guide-editor-state-basic-dependencies-title")) {
@@ -337,7 +393,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
             set('-', ShiningIcon.EDGE.item)
 
-            set('B', ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
+            set('B', ShiningIcon.BACK.toLocalizedItem(player)) {
                 openDependenciesEditor(player, team, context)
             }
 
@@ -433,13 +489,15 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
         private val itemUpdate = NamespacedIdItem(Material.REDSTONE, NamespacedId(Shining, "shining_guide-editor-state-element-update"))
         private val itemSave = NamespacedIdItem(Material.CHEST, NamespacedId(Shining, "shining_guide-editor-state-element-save"))
         private val itemSaveAndUpdate = NamespacedIdItem(Material.REDSTONE_TORCH, NamespacedId(Shining, "shining_guide-editor-state-element-save_and_update"))
-        private val itemSaveToDraft = NamespacedIdItem(Material.PAPER, NamespacedId(Shining, "shining_guide-editor-state-element-save_as_draft"))
+        private val itemSaveAsDraft = NamespacedIdItem(Material.PAPER, NamespacedId(Shining, "shining_guide-editor-state-element-save_as_draft"))
         private val itemBasicEditor = NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-editor-state-element-basic_editor"))
         private val itemAdvancedEditor = NamespacedIdItem(Material.DIAMOND, NamespacedId(Shining, "shining_guide-editor-state-element-advanced_editor"))
         
         private val itemEditId = NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-editor-state-element-id"))
         private val itemEditDescriptionName = NamespacedIdItem(Material.APPLE, NamespacedId(Shining, "shining_guide-editor-state-element-description_name"))
         private val itemEditDescriptionLore = NamespacedIdItem(Material.BREAD, NamespacedId(Shining, "shining_guide-editor-state-element-description_lore"))
+        private val itemEditSymbol = NamespacedIdItem(Material.EMERALD, NamespacedId(Shining, "shining_guide-editor-state-element-symbol"))
+        private val itemEditSymbolCurrent = NamespacedIdItem(Material.EMERALD, NamespacedId(Shining, "shining_guide-editor-state-element-symbol-current"))
         private val itemEditDependencies = NamespacedIdItem(Material.CHEST, NamespacedId(Shining, "shining_guide-editor-state-element-dependencies"))
         private val itemEditLocks = NamespacedIdItem(Material.TRIPWIRE_HOOK, NamespacedId(Shining, "shining_guide-editor-state-element-locks"))
 

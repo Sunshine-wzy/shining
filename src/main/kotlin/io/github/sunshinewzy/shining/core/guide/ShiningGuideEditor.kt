@@ -8,6 +8,7 @@ import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftLoadContext
 import io.github.sunshinewzy.shining.core.guide.draft.ShiningGuideDraft
+import io.github.sunshinewzy.shining.core.guide.state.GuideElementStateEditorContext
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.LanguageItem
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
@@ -53,7 +54,9 @@ object ShiningGuideEditor {
             if (element != null) {
                 set('a', itemCreateStateCopy.toLocalizedItem(player)) {
                     val state = element.getState()
-                    state.openEditor(player, team)
+                    if (elementContainer != null) {
+                        state.openEditor(player, team, GuideElementStateEditorContext.Update(elementContainer))
+                    } else state.openEditor(player, team)
                 }
             }
 
