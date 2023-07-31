@@ -87,7 +87,7 @@ abstract class GuideElement(
         return true
     }
 
-    override fun update(state: IGuideElementState): Boolean {
+    override fun update(state: IGuideElementState, isMerge: Boolean): Boolean {
         if (state !is GuideElementState) return false
 
         state.id?.let { id = it }

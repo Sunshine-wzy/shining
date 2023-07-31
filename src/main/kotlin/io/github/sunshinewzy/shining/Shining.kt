@@ -135,9 +135,10 @@ object Shining : Plugin(), ShiningPlugin {
         ShiningDispatchers.launchDB {
             DataManager.init()
             GuideElementRegistry.init()
-            ShiningGuide.init()
             
-            submit { 
+            submit {
+                ShiningGuide.init()
+                
                 pluginManager.callEvent(ShiningDataLoadingCompleteEvent())
             }
         }
@@ -202,6 +203,14 @@ object Shining : Plugin(), ShiningPlugin {
 
             stoneCategory.register()
             ShiningGuide.registerElement(stoneCategory)
+            
+            val bronzeAge = GuideCategory(
+                NamespacedId(Shining, "bronze_age"),
+                ElementDescription("&6青铜时代"),
+                SItem(Material.BRICKS)
+            )
+            bronzeAge.register()
+            ShiningGuide.registerElement(bronzeAge)
         }
 
         val mapper = jsonMapper {

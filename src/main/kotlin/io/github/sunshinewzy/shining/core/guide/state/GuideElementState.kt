@@ -241,7 +241,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
                     predicate {
                         when (index) {
                             "namespace" -> Namespace.VALID_NAMESPACE.matcher(it).matches()
-                            "id" -> NamespacedId.VALID_ID.matcher(it).matches()
+                            "id" -> NamespacedId.VALID_ID.matcher(it).matches() && it != "shining_guide"
                             else -> false
                         }
                     }

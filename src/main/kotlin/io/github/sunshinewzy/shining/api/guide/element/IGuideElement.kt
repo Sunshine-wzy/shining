@@ -42,7 +42,9 @@ interface IGuideElement {
 
     fun getState(): IGuideElementState
 
-    fun update(state: IGuideElementState): Boolean
+    fun update(state: IGuideElementState, isMerge: Boolean): Boolean
+    
+    fun update(state: IGuideElementState): Boolean = update(state, false)
 
     fun getCondition(team: GuideTeam): ElementCondition
 

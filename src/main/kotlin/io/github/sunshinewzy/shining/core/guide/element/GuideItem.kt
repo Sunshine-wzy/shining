@@ -24,9 +24,9 @@ open class GuideItem : GuideElement {
         TODO("Not yet implemented")
     }
 
-    override fun update(state: IGuideElementState): Boolean {
+    override fun update(state: IGuideElementState, isMerge: Boolean): Boolean {
         if (state !is GuideItemState) return false
-        if (!super.update(state)) return false
+        if (!super.update(state, isMerge)) return false
         
         
         

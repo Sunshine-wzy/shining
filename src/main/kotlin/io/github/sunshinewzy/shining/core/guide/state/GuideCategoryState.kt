@@ -71,7 +71,7 @@ class GuideCategoryState : GuideElementState() {
     @JsonIgnore
     fun getPriorityToElementMapTo(map: MutableMap<Int, MutableSet<IGuideElement>>): MutableMap<Int, MutableSet<IGuideElement>> {
         priorityToElements.forEach { (priority, ids) -> 
-            val list = HashSet<IGuideElement>()
+            val list = map[priority] ?: HashSet<IGuideElement>()
             ids.mapNotNullTo(list) {
                 GuideElementRegistry.getElement(it)
             }

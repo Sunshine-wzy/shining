@@ -25,7 +25,7 @@ object GuideElementRegistry : LongIdTable() {
     fun <T: IGuideElement> register(element: T): T {
         val id = element.getId()
         getState(id)?.let { state ->
-            element.update(state)
+            element.update(state, true)
         }
         elementCache[id] = element
         return element

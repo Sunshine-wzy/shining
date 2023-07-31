@@ -180,13 +180,15 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
     override fun getState(): IGuideElementState =
         GuideCategoryState().correlateElement(this)
 
-    override fun update(state: IGuideElementState): Boolean {
+    override fun update(state: IGuideElementState, isMerge: Boolean): Boolean {
         if (state !is GuideCategoryState) return false
-        if (!super.update(state)) return false
+        if (!super<GuideElement>.update(state, isMerge)) return false
 
-        priorityToElements.clear()
+        if (!isMerge) {
+            priorityToElements.clear()
+            idToPriority.clear()
+        }
         state.getPriorityToElementMapTo(priorityToElements)
-        idToPriority.clear()
         idToPriority += state.idToPriority
         return true
     }

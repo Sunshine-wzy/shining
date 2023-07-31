@@ -88,10 +88,9 @@ object ShiningGuide : GuideCategory(
     val slotOrders = ((1 orderWith 2)..(9 orderWith 5)).toList()
 
     
-    suspend fun init() {
-        val state = GuideElementRegistry.getState(getId()) ?: return
-        submit {
-            update(state)
+    fun init() {
+        GuideElementRegistry.getState(getId())?.let { 
+            update(it)
         }
     }
     
