@@ -27,6 +27,7 @@ import io.github.sunshinewzy.shining.core.guide.lock.LockItem
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.lang.sendLangText
+import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
 import io.github.sunshinewzy.shining.core.menu.onBackMenu
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
@@ -38,6 +39,7 @@ import io.github.sunshinewzy.shining.utils.toCurrentLocalizedItem
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.function.submit
 import taboolib.common.util.sync
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
@@ -143,7 +145,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             map(
                 "-B-------",
                 "-  a b  -",
-                "- u s d -",
+                "- ust d -",
                 "---------"
             )
 
@@ -167,6 +169,19 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
                 set('s', itemSave.toLocalizedItem(player)) {
                     ShiningDispatchers.launchDB { 
                         ctxt.draft.updateState()
+                        player.sendPrefixedLangText("text-shining_guide-editor-state-element-save-success")
+                    }
+                }
+                
+                if (element != null) {
+                    set('t', itemSaveAndUpdate.toLocalizedItem(player)) {
+                        ShiningDispatchers.launchDB {
+                            ctxt.draft.updateState()
+                            player.sendPrefixedLangText("text-shining_guide-editor-state-element-save-success")
+                            submit {
+                                updateAndSave(player)
+                            }
+                        }
                     }
                 }
             }
@@ -316,7 +331,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
             map(
                 "-B-------",
-                "-    d  -",
+                "-   d   -",
                 "---------"
             )
 
@@ -417,6 +432,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
     companion object {
         private val itemUpdate = NamespacedIdItem(Material.REDSTONE, NamespacedId(Shining, "shining_guide-editor-state-element-update"))
         private val itemSave = NamespacedIdItem(Material.CHEST, NamespacedId(Shining, "shining_guide-editor-state-element-save"))
+        private val itemSaveAndUpdate = NamespacedIdItem(Material.REDSTONE_TORCH, NamespacedId(Shining, "shining_guide-editor-state-element-save_and_update"))
         private val itemSaveToDraft = NamespacedIdItem(Material.PAPER, NamespacedId(Shining, "shining_guide-editor-state-element-save_as_draft"))
         private val itemBasicEditor = NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-editor-state-element-basic_editor"))
         private val itemAdvancedEditor = NamespacedIdItem(Material.DIAMOND, NamespacedId(Shining, "shining_guide-editor-state-element-advanced_editor"))

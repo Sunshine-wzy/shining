@@ -172,9 +172,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                         context[GuideDraftLoadContext]?.let { ctxt ->
                             if (element is GuideDraft) {
                                 ShiningDispatchers.launchDB { 
-                                    val state = newSuspendedTransaction { 
-                                        element.state.value
-                                    }
+                                    val state = newSuspendedTransaction { element.state.value }
                                     val theId = state.id ?: return@launchDB
                                     
                                     submit {
@@ -195,9 +193,6 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                                                         GuideElementRegistry.saveElement(ctxt.element, true, theId) {
                                                             sync {
                                                                 if (ctxt.element.update(state)) {
-                                                                    ShiningDispatchers.launchDB {
-                                                                        GuideElementRegistry.saveElement(ctxt.element)
-                                                                    }
                                                                     true
                                                                 } else {
                                                                     player.sendPrefixedLangText("text-shining_guide-draft-load-failure-mismatching", Shining.prefix, ctxt.element.javaClass.simpleName, state.javaClass.simpleName)
@@ -214,6 +209,9 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                                             }
                                         } else if (ctxt.elementContainer != null) {
                                             ctxt.elementContainer.registerElement(state.toElement())
+                                            ShiningDispatchers.launchDB { 
+                                                GuideElementRegistry.saveElement(ctxt.elementContainer)
+                                            }
                                             player.sendPrefixedLangText("text-shining_guide-draft-load-success")
                                         } else {
                                             player.sendPrefixedLangText("text-shining_guide-draft-load-failure-null")
@@ -224,13 +222,9 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                                 }
                             }
                         }
-                    } else {
-                        if (element is GuideDraftFolder) {
-                            ShiningDispatchers.launchDB {
-                                element.openSelectMenu(player, context, this@GuideDraftFolder)
-                            }
-                        } else if (element is GuideDraft) {
-                            element.openMenu(player, this@GuideDraftFolder)
+                    } else if (element is GuideDraftFolder) {
+                        ShiningDispatchers.launchDB {
+                            element.openSelectMenu(player, context, this@GuideDraftFolder)
                         }
                     }
                 }

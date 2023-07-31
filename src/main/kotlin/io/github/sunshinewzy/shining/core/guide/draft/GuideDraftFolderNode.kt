@@ -22,7 +22,22 @@ class GuideDraftFolderNode {
         this.index = list[1].toLong()
     }
 
+    
     @JsonValue
     override fun toString(): String = "$type:$index"
     
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is GuideDraftFolderNode) return false
+
+        if (type != other.type) return false
+        return index == other.index
+    }
+
+    override fun hashCode(): Int {
+        var result = type.hashCode()
+        result = 31 * result + index.hashCode()
+        return result
+    }
+
 }

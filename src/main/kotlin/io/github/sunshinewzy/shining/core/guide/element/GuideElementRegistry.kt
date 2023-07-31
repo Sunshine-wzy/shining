@@ -10,6 +10,7 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.concurrent.ConcurrentHashMap
 
 object GuideElementRegistry : LongIdTable() {
@@ -76,25 +77,31 @@ object GuideElementRegistry : LongIdTable() {
         getElementOrDefault(default.getId(), default)
     
     suspend fun saveElement(element: IGuideElement, isCheckExists: Boolean = false, checkId: NamespacedId = element.getId(), actionBeforeInsert: () -> Boolean = { true }): Boolean {
+        val oldId = element.getId()
         val existsCache = elementCache.containsKey(checkId)
         if (isCheckExists && existsCache)
             return false
         
         return newSuspendedTransaction transaction@{
-            val existsSQL = containsElement(checkId)
-            if (isCheckExists && existsSQL)
+            val existsDB = containsElement(checkId)
+            if (isCheckExists && existsDB)
                 return@transaction false
 
             if (!actionBeforeInsert()) return@transaction false
             
-            if (existsSQL) {
+            if (existsDB) {
                 updateElement(element)
             } else {
                 insertElement(element)
+                if (isCheckExists && checkId != oldId) {
+                    transaction {
+                        deleteElement(oldId)
+                    }
+                }
             }
 
             if (!existsCache) {
-                elementCache[checkId] = element
+                elementCache[element.getId()] = element
             }
             true
         }
