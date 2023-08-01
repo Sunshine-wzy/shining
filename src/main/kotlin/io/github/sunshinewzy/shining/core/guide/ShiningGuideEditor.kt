@@ -5,23 +5,28 @@ import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
 import io.github.sunshinewzy.shining.api.guide.state.GuideElementStateRegistry
+import io.github.sunshinewzy.shining.api.guide.state.IGuideElementContainerState
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.guide.context.GuideEditModeContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
-import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftLoadContext
+import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftContext
 import io.github.sunshinewzy.shining.core.guide.draft.ShiningGuideDraft
-import io.github.sunshinewzy.shining.core.guide.state.GuideElementStateEditorContext
+import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.LanguageItem
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
+import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
 import io.github.sunshinewzy.shining.core.menu.onBack
 import io.github.sunshinewzy.shining.core.menu.onBackMenu
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
+import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.function.submit
 import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
@@ -40,49 +45,54 @@ object ShiningGuideEditor {
 
 
     @JvmOverloads
-    fun openEditor(player: Player, team: GuideTeam, element: IGuideElement?, elementContainer: IGuideElementContainer? = null) {
+    fun openEditor(
+        player: Player,
+        team: GuideTeam,
+        context: GuideContext,
+        element: IGuideElement?,
+        elementContainer: IGuideElementContainer? = null,
+        elementContainerState: IGuideElementContainerState? = null
+    ) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-title")) {
-            rows(5)
+            rows(3)
 
             map(
                 "-B-------",
-                "-       -",
                 "- a b c -",
-                "-       -",
                 "---------"
             )
 
             set('-', ShiningIcon.EDGE.item)
 
-            onBackMenu(player, team)
+            context[GuideEditorContext.Back]?.let { 
+                onBack(player) { it.onBack(this) }
+            } ?: onBackMenu(player, team)
 
             if (element != null) {
                 set('a', itemCreateStateCopy.toLocalizedItem(player)) {
                     val state = element.getState()
                     if (elementContainer != null) {
-                        state.openEditor(player, team, GuideElementStateEditorContext.Update(elementContainer))
+                        state.openEditor(player, team, GuideEditorContext.Update(elementContainer))
                     } else state.openEditor(player, team)
                 }
             }
 
             set('b', itemCreateStateNew.toLocalizedItem(player)) {
-                openCreateStateEditor(player, GuideElementStateEditorContext.Back {
-                    onBack(player) {
-                        openEditor(player, team, element, elementContainer)
-                    }
-                })
+                openCreateNewStateEditor(player, GuideEditorContext.Back {
+                    openEditor(player, team, context, element, elementContainer, elementContainerState)
+                }, elementContainer, elementContainerState)
             }
             
             set('c', itemLoadFromDraftBox.toLocalizedItem(player)) {
-                ShiningGuideDraft.openLastSelectMenu(player, GuideDraftLoadContext(team, element, elementContainer))
+                ShiningGuideDraft.openLastSelectMenu(player, GuideDraftContext.Load(team, context, element, elementContainer, elementContainerState))
             }
 
             onClick(lock = true)
         }
     }
     
-    fun openCreateStateEditor(player: Player, context: GuideContext) {
-        player.openMultiPageMenu<Pair<Class<out IGuideElementState>, ItemStack>>(player.getLangText("")) { 
+    fun openCreateNewStateEditor(player: Player, context: GuideContext, elementContainer: IGuideElementContainer?, elementContainerState: IGuideElementContainerState?) {
+        player.openMultiPageMenu<Pair<Class<out IGuideElementState>, ItemStack>>(player.getLangText("menu-shining_guide-editor-create_new_state-title")) { 
             elements { GuideElementStateRegistry.getRegisteredClassPairList() }
             
             onGenerate { _, element, _, _ -> 
@@ -90,17 +100,44 @@ object ShiningGuideEditor {
             }
             
             onClick { _, element -> 
-                element.first.newInstance().openEditor(player, context = GuideElementStateEditorContext.Back {
-                    set('B', ShiningIcon.BACK.toLocalizedItem(player)) {
-                        openCreateStateEditor(player, context)
+                val state = element.first.newInstance()
+                state.openEditor(player, context = GuideEditorContext.Back {
+                    openCreateNewStateEditor(player, context, elementContainer, elementContainerState)
+                    
+                    if (elementContainer != null) {
+                        val theElement = state.toElement()
+                        ShiningDispatchers.launchDB {
+                            if (GuideElementRegistry.saveElement(theElement, true)) {
+                                submit {
+                                    elementContainer.registerElement(theElement)
+                                    ShiningDispatchers.launchDB {
+                                        if (GuideElementRegistry.saveElement(elementContainer))
+                                            player.sendPrefixedLangText("text-shining_guide-draft-load-success")
+                                        else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_container")
+                                    }
+                                }
+                            } else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_element")
+                        }
+                    } else if (elementContainerState != null) {
+                        val theElement = state.toElement()
+                        ShiningDispatchers.launchDB {
+                            if (GuideElementRegistry.saveElement(theElement, true)) {
+                                submit {
+                                    elementContainerState.addElement(theElement)
+                                    player.sendPrefixedLangText("text-shining_guide-draft-load-success")
+                                }
+                            } else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_element")
+                        }
                     }
                 })
             }
 
-            context[GuideElementStateEditorContext.Back]?.onBack
+            context[GuideEditorContext.Back]?.let { 
+                onBack(player) { it.onBack(this) }
+            }
         }
     }
-
+    
 
     fun isEditModeEnabled(player: Player): Boolean =
         editModeMap.getOrDefault(player.uniqueId, false)
@@ -117,7 +154,7 @@ object ShiningGuideEditor {
         item: LanguageItem = itemEditor,
         onClick: ClickEvent.() -> Unit = {}
     ) {
-        val editorContext = context[GuideEditorContext] ?: return
+        val editorContext = context[GuideEditModeContext] ?: return
         if (!editorContext.mode) return
         
         set(

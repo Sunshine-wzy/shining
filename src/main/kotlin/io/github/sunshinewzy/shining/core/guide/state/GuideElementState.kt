@@ -18,10 +18,10 @@ import io.github.sunshinewzy.shining.core.editor.chat.type.TextMap
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
+import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideSelectElementsContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideShortcutBarContext
-import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftOnlyFoldersContext
-import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftSaveContext
+import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftContext
 import io.github.sunshinewzy.shining.core.guide.draft.ShiningGuideDraft
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
@@ -29,6 +29,7 @@ import io.github.sunshinewzy.shining.core.guide.lock.LockItem
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
+import io.github.sunshinewzy.shining.core.menu.onBack
 import io.github.sunshinewzy.shining.core.menu.onBackMenu
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
@@ -57,7 +58,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
     override var id: NamespacedId? = null
     override var descriptionName: String? = null
     override var descriptionLore: MutableList<String> = LinkedList()
-    override var symbol: ItemStack? = null
+    override var symbol: ItemStack = ItemStack(Material.STONE)
 
     var dependencies: MutableSet<NamespacedId> = HashSet()
     var locks: MutableList<ElementLock> = LinkedList()
@@ -78,7 +79,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
         state.descriptionName = descriptionName
         state.descriptionLore.clear()
         state.descriptionLore += descriptionLore
-        state.symbol = symbol?.clone()
+        state.symbol = symbol.clone()
         
         state.dependencies.clear()
         state.dependencies += dependencies
@@ -162,7 +163,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
             set('-', ShiningIcon.EDGE.item)
             
-            val contextUpdate = context[GuideElementStateEditorContext.Update]
+            val contextUpdate = context[GuideEditorContext.Update]
             val theElement = element
             if (theElement != null && (contextUpdate != null || theElement.getId() == id)) {
                 set('u', itemUpdate.toLocalizedItem(player)) {
@@ -178,7 +179,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
                 openAdvancedEditor(player, team, context)
             }
             
-            context[GuideElementStateEditorContext.Save]?.let { ctxt ->
+            context[GuideEditorContext.Save]?.let { ctxt ->
                 set('s', itemSave.toLocalizedItem(player)) {
                     ShiningDispatchers.launchDB { 
                         ctxt.draft.updateState()
@@ -192,7 +193,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
                             ctxt.draft.updateState()
                             player.sendPrefixedLangText("text-shining_guide-editor-state-element-save-success")
                             submit {
-                                updateAndSave(player, context[GuideElementStateEditorContext.Update]?.elementContainer)
+                                updateAndSave(player, context[GuideEditorContext.Update]?.elementContainer)
                             }
                         }
                     }
@@ -200,16 +201,16 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             }
             
             set('d', itemSaveAsDraft.toLocalizedItem(player)) {
-                ShiningGuideDraft.openLastSelectMenu(player, GuideDraftOnlyFoldersContext.INSTANCE + GuideDraftSaveContext(this@GuideElementState, team, context))
+                ShiningGuideDraft.openLastSelectMenu(player, GuideDraftContext.OnlyFolders.INSTANCE + GuideDraftContext.Save(this@GuideElementState, team, context))
             }
 
             onClick(lock = true)
             
-            context[GuideElementStateEditorContext.Back]?.let { 
-                it.onBack(this)
+            context[GuideEditorContext.Back]?.let { 
+                onBack(player) { it.onBack(this) }
             } ?: onBackMenu(player, team)
             
-            context[GuideElementStateEditorContext.Builder]?.let { 
+            context[GuideEditorContext.Builder]?.let { 
                 it.builder(this)
             }
         }
@@ -236,7 +237,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
                 player.openChatEditor<TextMap>(itemEditId.toLocalizedItem(player).getDisplayName()) {
                     id?.also {
                         map(mapOf("namespace" to it.namespace.toString(), "id" to it.id))
-                    } ?: map("namespace", "id")
+                    } ?: map(mapOf("namespace" to "shining", "id" to ""))
 
                     predicate {
                         when (index) {

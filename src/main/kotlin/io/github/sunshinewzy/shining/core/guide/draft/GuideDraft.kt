@@ -5,7 +5,7 @@ import io.github.sunshinewzy.shining.api.guide.draft.IGuideDraft
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.data.JacksonWrapper
-import io.github.sunshinewzy.shining.core.guide.state.GuideElementStateEditorContext
+import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.openDeleteConfirmMenu
@@ -74,11 +74,9 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                     newSuspendedTransaction { 
                         val state = state
                         submit {
-                            state.value.openEditor(player, context = GuideElementStateEditorContext.Back {
-                                set('B', ShiningIcon.BACK.toLocalizedItem(player)) {
-                                    this@GuideDraft.openMenu(player, previousFolder)
-                                }
-                            } + GuideElementStateEditorContext.Save(this@GuideDraft))
+                            state.value.openEditor(player, context = GuideEditorContext.Back {
+                                this@GuideDraft.openMenu(player, previousFolder)
+                            } + GuideEditorContext.Save(this@GuideDraft))
                         }
                     }
                 }
@@ -86,7 +84,7 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
             
             if (previousFolder != null) {
                 set('b', itemMoveFolder.toLocalizedItem(player)) {
-                    ShiningGuideDraft.openLastSelectMenu(player, GuideDraftOnlyFoldersContext.INSTANCE + GuideDraftMoveFolderContext(this@GuideDraft, previousFolder))
+                    ShiningGuideDraft.openLastSelectMenu(player, GuideDraftContext.OnlyFolders.INSTANCE + GuideDraftContext.MoveFolder(this@GuideDraft, previousFolder))
                 }
                 
                 set('d', ShiningIcon.REMOVE.toLocalizedItem(player)) {

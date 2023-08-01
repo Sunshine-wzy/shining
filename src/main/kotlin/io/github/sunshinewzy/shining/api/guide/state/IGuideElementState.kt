@@ -27,7 +27,7 @@ interface IGuideElementState {
     var id: NamespacedId?
     var descriptionName: String?
     var descriptionLore: MutableList<String>
-    var symbol: ItemStack?
+    var symbol: ItemStack
     
     /**
      * Updates the state to the element if exists.

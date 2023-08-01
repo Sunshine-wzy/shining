@@ -11,7 +11,7 @@ import io.github.sunshinewzy.shining.core.dictionary.item.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.getGuideTeam
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.setupGuideTeam
 import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
-import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
+import io.github.sunshinewzy.shining.core.guide.context.GuideEditModeContext
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.settings.SoundSettings
@@ -117,8 +117,8 @@ object ShiningGuide : GuideCategory(
         soundOpen.playSound(player)
 
         var ctxt = context
-        if (ctxt[GuideEditorContext] == null && ShiningGuideEditor.isEditModeEnabled(player)) {
-            ctxt += GuideEditorContext()
+        if (ctxt[GuideEditModeContext] == null && ShiningGuideEditor.isEditModeEnabled(player)) {
+            ctxt += GuideEditModeContext()
         }
         openMenu(player, team, ctxt)
     }
@@ -143,8 +143,8 @@ object ShiningGuide : GuideCategory(
     fun openLastElement(player: Player, team: GuideTeam, context: GuideContext = EmptyGuideContext) {
         playerLastOpenElementMap[player.uniqueId]?.let {
             var ctxt = context
-            if (ctxt[GuideEditorContext] == null && ShiningGuideEditor.isEditModeEnabled(player)) {
-                ctxt += GuideEditorContext()
+            if (ctxt[GuideEditModeContext] == null && ShiningGuideEditor.isEditModeEnabled(player)) {
+                ctxt += GuideEditModeContext()
             }
             it.open(player, team, null, ctxt)
             return
@@ -159,8 +159,8 @@ object ShiningGuide : GuideCategory(
         soundOpen.playSound(player)
 
         var ctxt = context
-        if (ctxt[GuideEditorContext] == null) {
-            ctxt += GuideEditorContext(false)
+        if (ctxt[GuideEditModeContext] == null) {
+            ctxt += GuideEditModeContext(false)
         }
         openMainMenu(player, GuideTeam.CompletedTeam, ctxt)
     }
@@ -169,8 +169,8 @@ object ShiningGuide : GuideCategory(
     fun openCompletedLastElement(player: Player, context: GuideContext = EmptyGuideContext) {
         playerLastOpenElementMap[player.uniqueId]?.let {
             var ctxt = context
-            if (ctxt[GuideEditorContext] == null) {
-                ctxt += GuideEditorContext(false)
+            if (ctxt[GuideEditModeContext] == null) {
+                ctxt += GuideEditModeContext(false)
             }
             it.open(player, GuideTeam.CompletedTeam, null, ctxt)
             return

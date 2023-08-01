@@ -92,7 +92,7 @@ abstract class GuideElement(
 
         state.id?.let { id = it }
         state.descriptionName?.let { description = ElementDescription(it, ArrayList(state.descriptionLore)) }
-        state.symbol?.let { symbol = it.clone() }
+        state.symbol.let { symbol = it.clone() }
         
         dependencyMap.clear()
         state.getDependencyElementMapTo(dependencyMap)

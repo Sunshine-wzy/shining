@@ -118,6 +118,8 @@ menu-shining_guide-team-info-symbol: [ '&d队伍: &f{0}', '', '&a>> 点击修改
 menu-shining_guide-team-info-captain: [ '&e队长: &f{0}' ]
 menu-shining_guide-team-player_not_in_team: '&c您不在队伍中'
 menu-shining_guide-editor-title: 'Shining 指南 - 编辑器'
+menu-shining_guide-editor-create_new_state-title: 'Shining 指南 - 创建新状态'
+menu-shining_guide-editor-load_state-title: 'Shining 指南 - 载入状态'
 menu-shining_guide-editor-state-title: 'Shining 指南 - 状态编辑'
 menu-shining_guide-editor-state-basic-title: 'Shining 指南 - 基础状态编辑'
 menu-shining_guide-editor-state-basic-symbol-title: 'Shining 指南 - 图标编辑'

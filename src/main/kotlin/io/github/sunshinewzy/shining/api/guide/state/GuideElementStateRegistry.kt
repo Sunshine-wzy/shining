@@ -16,7 +16,7 @@ object GuideElementStateRegistry {
     }
     
     fun register(classes: Map<Class<out IGuideElementState>, ItemStack>) {
-        stateClassMap.forEach { (clazz, symbol) -> 
+        classes.forEach { (clazz, symbol) -> 
             symbol.setName("&f${clazz.simpleName}")
         }
         stateClassMap += classes

@@ -126,7 +126,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
             previousFolderMap[player.uniqueId] = previousFolder
         ShiningGuideDraft.recordLastOpenFolder(player, this)
 
-        val subList = context[GuideDraftOnlyFoldersContext]
+        val subList = context[GuideDraftContext.OnlyFolders]
             ?.let { getSubFolders() } ?: getSubList()
 
         submit {
@@ -139,7 +139,8 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                 
                 onClick { event, element -> 
                     if (ShiningGuideDraft.isPlayerSelectModeEnabled(player)) {
-                        context[GuideDraftSaveContext]?.let { ctxt ->
+                        
+                        context[GuideDraftContext.Save]?.let { ctxt ->
                             if (element is GuideDraftFolder) {
                                 ShiningDispatchers.launchDB {
                                     newSuspendedTransaction {
@@ -160,7 +161,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                             }
                         }
                         
-                        context[GuideDraftMoveFolderContext]?.let { ctxt ->
+                        context[GuideDraftContext.MoveFolder]?.let { ctxt ->
                             if (element is GuideDraftFolder) {
                                 ShiningDispatchers.launchDB {
                                     ctxt.draft.move(ctxt.previousFolder, element)
@@ -169,7 +170,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                             }
                         }
                         
-                        context[GuideDraftLoadContext]?.let { ctxt ->
+                        context[GuideDraftContext.Load]?.let { ctxt ->
                             if (element is GuideDraft) {
                                 ShiningDispatchers.launchDB { 
                                     val state = newSuspendedTransaction { element.state.value }
@@ -231,15 +232,26 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                                                     }
                                                 } else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_element")
                                             }
+                                        } else if (ctxt.elementContainerState != null) {
+                                            val theElement = state.toElement()
+                                            ShiningDispatchers.launchDB { 
+                                                if (GuideElementRegistry.saveElement(theElement, true)) {
+                                                    submit { 
+                                                        ctxt.elementContainerState.addElement(theElement)
+                                                        player.sendPrefixedLangText("text-shining_guide-draft-load-success")
+                                                    }
+                                                } else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_element")
+                                            }
                                         } else {
                                             player.sendPrefixedLangText("text-shining_guide-draft-load-failure-null")
                                         }
                                         
-                                        ShiningGuideEditor.openEditor(player, ctxt.team, ctxt.element, ctxt.elementContainer)
+                                        ShiningGuideEditor.openEditor(player, ctxt.team, ctxt.context, ctxt.element, ctxt.elementContainer)
                                     }
                                 }
                             }
                         }
+                        
                     } else if (element is GuideDraftFolder) {
                         ShiningDispatchers.launchDB {
                             element.openSelectMenu(player, context, this@GuideDraftFolder)
@@ -251,7 +263,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                 if (ShiningGuideDraft.isPlayerSelectModeEnabled(player)) {
                     onClick(lock = true) { event ->
                         if (ShiningGuide.isClickEmptySlot(event)) {
-                            context[GuideDraftSaveContext]?.let { ctxt ->
+                            context[GuideDraftContext.Save]?.let { ctxt ->
                                 ShiningDispatchers.launchDB {
                                     newSuspendedTransaction {
                                         GuideDraft.new { this.state = JacksonWrapper(ctxt.state) }
@@ -270,7 +282,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                                 }
                             }
                             
-                            context[GuideDraftMoveFolderContext]?.let { ctxt ->
+                            context[GuideDraftContext.MoveFolder]?.let { ctxt ->
                                 ShiningDispatchers.launchDB {
                                     ctxt.draft.move(ctxt.previousFolder, this@GuideDraftFolder)
                                     ctxt.draft.open(player, ctxt.previousFolder)

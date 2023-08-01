@@ -6,11 +6,14 @@ import com.fasterxml.jackson.annotation.JsonSetter
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
+import io.github.sunshinewzy.shining.api.guide.state.IGuideElementPriorityContainerState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
 import io.github.sunshinewzy.shining.core.editor.chat.type.Text
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
+import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
+import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.lang.getLangText
@@ -27,7 +30,7 @@ import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 import java.util.*
 
-class GuideCategoryState : GuideElementState() {
+class GuideCategoryState : GuideElementState(), IGuideElementPriorityContainerState {
     
     @get:JsonGetter("elements")
     @field:JsonIgnore
@@ -107,14 +110,12 @@ class GuideCategoryState : GuideElementState() {
     fun getPriorityToElementMap(): Map<Int, MutableSet<IGuideElement>> =
         getPriorityToElementMapTo(HashMap())
     
-    fun addElement(element: IGuideElement, priority: Int) {
-        val id = element.getId()
+    override fun addElement(id: NamespacedId, priority: Int) {
         priorityToElements.putSetElement(priority, id)
         idToPriority[id] = priority
     }
     
-    fun removeElement(element: IGuideElement): Boolean {
-        val id = element.getId()
+    override fun removeElement(id: NamespacedId): Boolean {
         val priority = idToPriority.remove(id) ?: return false
         return priorityToElements[priority]?.remove(id) ?: false
     }
@@ -146,7 +147,11 @@ class GuideCategoryState : GuideElementState() {
             
             onClick(lock = true) { event ->
                 if (ShiningGuide.isClickEmptySlot(event)) {
-                    TODO()
+                    ShiningGuideEditor.openEditor(
+                        player, team, GuideEditorContext.Back {
+                            openAdvancedEditor(player, team, context)
+                        }, null, null, this@GuideCategoryState
+                    )
                 }
             }
             
