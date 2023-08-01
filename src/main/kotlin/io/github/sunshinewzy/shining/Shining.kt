@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.kotlin.kotlinModule
 import io.github.sunshinewzy.shining.api.ShiningPlugin
 import io.github.sunshinewzy.shining.api.event.ShiningDataLoadingCompleteEvent
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
+import io.github.sunshinewzy.shining.api.guide.state.GuideElementStateRegistry
 import io.github.sunshinewzy.shining.api.machine.IMachineManager
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
@@ -18,6 +19,8 @@ import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.element.GuideItem
 import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
+import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
+import io.github.sunshinewzy.shining.core.guide.state.GuideItemState
 import io.github.sunshinewzy.shining.core.machine.MachineManager
 import io.github.sunshinewzy.shining.core.machine.legacy.*
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipe
@@ -95,8 +98,6 @@ object Shining : Plugin(), ShiningPlugin {
 
 
     override fun onEnable() {
-        registerSerialization()
-        registerListeners()
         init()
 
         val metrics = Metrics(19323, pluginVersion, Platform.BUKKIT)
@@ -125,6 +126,10 @@ object Shining : Plugin(), ShiningPlugin {
     
 
     private fun init() {
+        registerSerialization()
+        registerListeners()
+        registerGuideElementStateClasses()
+        
         try {
             SReflect.init()
         } catch (ex: Exception) {
@@ -151,10 +156,6 @@ object Shining : Plugin(), ShiningPlugin {
         SunSTMachineManager.register()
     }
 
-    private fun registerListeners() {
-        SunSTSubscriber.init()
-    }
-
     private fun registerSerialization() {
         arrayOf(
             SBlock::class.java,
@@ -164,6 +165,19 @@ object Shining : Plugin(), ShiningPlugin {
         ).forEach {
             ConfigurationSerialization.registerClass(it)
         }
+    }
+
+    private fun registerListeners() {
+        SunSTSubscriber.init()
+    }
+    
+    private fun registerGuideElementStateClasses() {
+        GuideElementStateRegistry.register(
+            mapOf(
+                GuideItemState::class.java to ItemStack(Material.STICK),
+                GuideCategoryState::class.java to ItemStack(Material.BOOK)
+            )
+        )
     }
 
 

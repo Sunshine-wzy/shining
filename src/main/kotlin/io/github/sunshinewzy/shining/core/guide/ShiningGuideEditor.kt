@@ -4,6 +4,7 @@ import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
+import io.github.sunshinewzy.shining.api.guide.state.GuideElementStateRegistry
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
@@ -13,12 +14,14 @@ import io.github.sunshinewzy.shining.core.guide.state.GuideElementStateEditorCon
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.LanguageItem
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
+import io.github.sunshinewzy.shining.core.menu.onBack
 import io.github.sunshinewzy.shining.core.menu.onBackMenu
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
@@ -63,7 +66,11 @@ object ShiningGuideEditor {
             }
 
             set('b', itemCreateStateNew.toLocalizedItem(player)) {
-                
+                openCreateStateEditor(player, GuideElementStateEditorContext.Back {
+                    onBack(player) {
+                        openEditor(player, team, element, elementContainer)
+                    }
+                })
             }
             
             set('c', itemLoadFromDraftBox.toLocalizedItem(player)) {
@@ -74,9 +81,23 @@ object ShiningGuideEditor {
         }
     }
     
-    fun openCreateStateEditor(player: Player) {
-        player.openMultiPageMenu<IGuideElementState>(player.getLangText("")) { 
+    fun openCreateStateEditor(player: Player, context: GuideContext) {
+        player.openMultiPageMenu<Pair<Class<out IGuideElementState>, ItemStack>>(player.getLangText("")) { 
+            elements { GuideElementStateRegistry.getRegisteredClassPairList() }
             
+            onGenerate { _, element, _, _ -> 
+                element.second
+            }
+            
+            onClick { _, element -> 
+                element.first.newInstance().openEditor(player, context = GuideElementStateEditorContext.Back {
+                    set('B', ShiningIcon.BACK.toLocalizedItem(player)) {
+                        openCreateStateEditor(player, context)
+                    }
+                })
+            }
+
+            context[GuideElementStateEditorContext.Back]?.onBack
         }
     }
 

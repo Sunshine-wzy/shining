@@ -1,10 +1,10 @@
 package io.github.sunshinewzy.shining.core.guide.element
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.data.database.column.jackson
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.data.database.column.jackson
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
@@ -34,10 +34,10 @@ object GuideElementRegistry : LongIdTable() {
     suspend fun init() {
         newSuspendedTransaction { 
             GuideElementRegistry
-                .slice(GuideElementRegistry.element)
+                .slice(element)
                 .selectAll()
                 .forEach { 
-                    val state = it[GuideElementRegistry.element]
+                    val state = it[element]
                     state.id?.let { id ->
                         stateCache[id] = state
                     }
@@ -110,18 +110,18 @@ object GuideElementRegistry : LongIdTable() {
     
     private fun insertElement(element: IGuideElement): EntityID<Long> =
         insertAndGetId {
-            it[GuideElementRegistry.key] = element.getId().toString()
+            it[key] = element.getId().toString()
             it[GuideElementRegistry.element] = element.getState()
         }
     
     private fun updateElement(element: IGuideElement): Int =
-        update({ GuideElementRegistry.key eq element.getId().toString() }) { 
+        update({ key eq element.getId().toString() }) { 
             it[GuideElementRegistry.element] = element.getState()
         }
     
     private fun deleteElement(id: NamespacedId): Int =
         deleteWhere { 
-            GuideElementRegistry.key eq id.toString()
+            key eq id.toString()
         }
 
     private fun deleteElement(element: IGuideElement): Int =
@@ -129,10 +129,10 @@ object GuideElementRegistry : LongIdTable() {
     
     private fun readState(id: NamespacedId): IGuideElementState? =
         GuideElementRegistry
-            .slice(GuideElementRegistry.element)
-            .select { GuideElementRegistry.key eq id.toString() }
+            .slice(element)
+            .select { key eq id.toString() }
             .firstNotNullOfOrNull {
-                it[GuideElementRegistry.element]
+                it[element]
             }
     
     private fun readElement(id: NamespacedId): IGuideElement? =
@@ -140,8 +140,8 @@ object GuideElementRegistry : LongIdTable() {
     
     private fun containsElement(id: NamespacedId): Boolean =
         GuideElementRegistry
-            .slice(GuideElementRegistry.key)
-            .select { GuideElementRegistry.key eq id.toString() }
+            .slice(key)
+            .select { key eq id.toString() }
             .firstOrNull() != null
     
     private fun containsElement(element: IGuideElement): Boolean =
