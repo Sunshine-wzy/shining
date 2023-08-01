@@ -11,6 +11,7 @@ import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.addLore
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.entity.Player
+import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import taboolib.module.chat.colored
 import taboolib.module.chat.uncolored
@@ -18,10 +19,11 @@ import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 import taboolib.module.ui.type.Linked
+import taboolib.platform.util.isAir
 
 inline fun <reified T> Player.openMultiPageMenu(title: String = "chest", builder: Linked<T>.() -> Unit) {
     openMenu<Linked<T>>(title) {
-        buildMultiPage()
+        buildMultiPage(this@openMultiPageMenu)
         builder(this)
     }
 }
@@ -32,7 +34,7 @@ inline fun <reified T> Player.openSearchMenu(
     builder: Search<T>.() -> Unit
 ) {
     openMenu<Search<T>>(title) {
-        buildMultiPage()
+        buildMultiPage(this@openSearchMenu)
 
         set(8 orderWith 1, ShiningIcon.SEARCH.item) {
             openChatEditor<Text>(getLangText("menu-search-prompt")) { 
@@ -124,22 +126,34 @@ inline fun Player.openDeleteConfirmMenu(builder: ConfirmMenuBuilder.() -> Unit) 
 }
 
 
-inline fun <reified T> Linked<T>.buildMultiPage() {
+fun <T> Linked<T>.buildMultiPage(player: Player) {
     rows(6)
     slots(ShiningGuide.slotOrders)
 
-    onBuild(true, ShiningGuide.onBuildEdge)
+    onBuild(false, ShiningGuide.onBuildEdge)
 
-    setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
-        if (hasPreviousPage) {
-            ShiningIcon.PAGE_PREVIOUS_GLASS_PANE.item
-        } else ShiningIcon.EDGE.item
+    setPreviousPage(2 orderWith 6) { _, hasPreviousPage ->
+        if (hasPreviousPage) ShiningIcon.PAGE_PREVIOUS_GLASS_PANE.toLocalizedItem(player)
+        else ShiningIcon.EDGE.item
     }
 
-    setNextPage(8 orderWith 6) { page, hasNextPage ->
-        if (hasNextPage) {
-            ShiningIcon.PAGE_NEXT_GLASS_PANE.item
-        } else ShiningIcon.EDGE.item
+    setNextPage(8 orderWith 6) { _, hasNextPage ->
+        if (hasNextPage) ShiningIcon.PAGE_NEXT_GLASS_PANE.toLocalizedItem(player)
+        else ShiningIcon.EDGE.item
+    }
+}
+
+fun <T> Linked<T>.onBuildEdge(edgeOrders: Collection<Int>, action: ((Player, Inventory) -> Unit)? = null) {
+    onBuild(async = false) { player, inv ->
+        edgeOrders.forEach { index ->
+            inv.getItem(index)?.let {
+                if (!it.isAir()) return@forEach
+            }
+
+            inv.setItem(index, ShiningIcon.EDGE.item)
+        }
+        
+        action?.let { it(player, inv) }
     }
 }
 

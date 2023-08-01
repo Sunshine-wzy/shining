@@ -40,11 +40,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
     private val idToPriority: MutableMap<NamespacedId, Int> = HashMap()
     
     
-    constructor(
-        id: NamespacedId,
-        description: ElementDescription,
-        symbol: ItemStack
-    ) : super(id, description, symbol)
+    constructor(id: NamespacedId, description: ElementDescription, symbol: ItemStack) : super(id, description, symbol)
     
     constructor() : super()
     
@@ -145,13 +141,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
             }
 
             if (this@GuideCategory !== ShiningGuide) {
-                set(2 orderWith 1, ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player)) {
-                    if (clickEvent().isShiftClick) {
-                        ShiningGuide.openMainMenu(player, team, context)
-                    } else {
-                        back(player, team, context)
-                    }
-                }
+                setBackButton(player, team, context)
             }
 
             set(5 orderWith 1, ShiningIcon.SETTINGS.getLanguageItem().toLocalizedItem(player)) {

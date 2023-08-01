@@ -15,12 +15,15 @@ import io.github.sunshinewzy.shining.core.guide.data.ElementTeamData
 import io.github.sunshinewzy.shining.core.guide.state.GuideElementState
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.SItem
+import io.github.sunshinewzy.shining.objects.item.ShiningIcon
+import io.github.sunshinewzy.shining.utils.orderWith
 import io.github.sunshinewzy.shining.utils.sendMsg
 import io.github.sunshinewzy.shining.utils.setNameAndLore
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.dao.id.EntityID
+import taboolib.module.ui.type.Basic
 import java.util.*
 
 abstract class GuideElement(
@@ -229,6 +232,27 @@ abstract class GuideElement(
 
     override fun hashCode(): Int {
         return id.hashCode()
+    }
+    
+    
+    fun Basic.setBackButton(player: Player, team: GuideTeam, context: GuideContext, slot: Int = 2 orderWith 1) {
+        set(slot, ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
+            if (clickEvent().isShiftClick) {
+                ShiningGuide.openMainMenu(player, team, context)
+            } else {
+                back(player, team, context)
+            }
+        }
+    }
+    
+    fun Basic.setBackButton(player: Player, team: GuideTeam, context: GuideContext, slot: Char) {
+        set(slot, ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
+            if (clickEvent().isShiftClick) {
+                ShiningGuide.openMainMenu(player, team, context)
+            } else {
+                back(player, team, context)
+            }
+        }
     }
     
 

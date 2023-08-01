@@ -2,6 +2,24 @@ package io.github.sunshinewzy.shining.utils
 
 import io.github.sunshinewzy.shining.objects.SFlatCoord
 
+object OrderUtils {
+    
+    @JvmStatic
+    @JvmOverloads
+    fun getFullOrders(endLine: Int, startLine: Int = 1): MutableList<Int> {
+        val list = ArrayList<Int>()
+        for (i in startLine..endLine) {
+            val startOrder = 1 orderWith i
+            for (j in 0 until 9) {
+                list += startOrder + j
+            }
+        }
+        return list
+    }
+    
+}
+
+
 /**
  * x, y坐标 均从1开始
  * order 从0开始

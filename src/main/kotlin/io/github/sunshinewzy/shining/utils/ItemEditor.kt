@@ -107,7 +107,7 @@ object ItemEditor {
 
     fun editLoreWithGUI(item: ItemStack, player: Player) {
         player.openMenu<Linked<String>>(player.getLangText("menu-editor-item-lore-title")) {
-            buildMultiPage()
+            buildMultiPage(player)
 
             elements { item.getLore() }
 
