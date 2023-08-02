@@ -41,9 +41,6 @@ item-shining-shining_guide-editor-state-basic-locks-create-experience: '&b经验
 item-shining-shining_guide-editor-state-basic-locks-create-item: '&e物品锁'
 item-shining-shining_guide-editor-lock-experience: [ '&b所需经验', '', '&a> 当前' ]
 item-shining-shining_guide-editor-lock-item: [ '&b所需物品', '', '&a↓ 当前 ↓' ]
-item-shining-shining_guide-editor-lock-is_consume:
-  close: [ '&e消耗模式', '&c&l已关闭', '', '&a> 点击开启' ]
-  open: [ '&e消耗模式', '&a&l已开启', '', '&c> 点击关闭' ]
 item-shining-shining_guide-draft-editor-state: '&b状态'
 item-shining-shining_guide-draft-editor-move_folder: '&e移动文件夹'
 item-shining-shining_guide-draft-folder-create: '&a新建文件夹'
@@ -71,6 +68,12 @@ item-shining-icon-remove: '&c移除'
 item-shining-icon-select_mode:
   close: [ '&d选择模式', '&c&l已关闭', '', '&a> 点击开启' ]
   open: [ '&d选择模式', '&a&l已开启', '', '&c> 点击关闭' ]
+item-shining-icon-consume_mode:
+  close: [ '&e消耗模式', '&c&l已关闭', '', '&a> 点击开启' ]
+  open: [ '&e消耗模式', '&a&l已开启', '', '&c> 点击关闭' ]
+item-shining-icon-is_consume:
+  close: [ '&e是否消耗:', '', '&c&l否' ]
+  open: [ '&e是否消耗:', '', '&a&l是' ]
 item-shining-editor-item-lore-chat_editor: [ '&a编辑Lore', '', '&7> 使用&eChatEditor' ]
 item-shining-editor-item-lore-gui: [ '&a编辑Lore', '', '&7> 使用&bGUI' ]
 menu-shining_guide-title: 'Shining 指南'

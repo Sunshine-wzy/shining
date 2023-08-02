@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import io.github.sunshinewzy.shining.api.ShiningPlugin
+import io.github.sunshinewzy.shining.api.dictionary.DictionaryItem
 import io.github.sunshinewzy.shining.api.event.ShiningDataLoadingCompleteEvent
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.state.GuideElementStateRegistry
+import io.github.sunshinewzy.shining.api.item.ConsumableItemGroup
+import io.github.sunshinewzy.shining.api.item.universal.VanillaItem
 import io.github.sunshinewzy.shining.api.machine.IMachineManager
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
@@ -165,6 +168,8 @@ object Shining : Plugin(), ShiningPlugin {
         ).forEach {
             ConfigurationSerialization.registerClass(it)
         }
+        
+        objectMapper.registerSubtypes(VanillaItem::class.java, DictionaryItem::class.java)
     }
 
     private fun registerListeners() {
@@ -187,19 +192,24 @@ object Shining : Plugin(), ShiningPlugin {
             val stoneCategory = GuideCategory(
                 NamespacedId(Shining, "stone_age"),
                 ElementDescription("&f石器时代", "&d一切的起源"),
-                SItem(Material.STONE)
+                ItemStack(Material.STONE)
             )
 
             val lockExperience = LockExperience(5)
 
-            val stickItem = GuideItem(NamespacedId(Shining, "stick"), ElementDescription("&6工具的基石"), SItem(Material.STICK))
+            val stickItem = GuideItem(
+                NamespacedId(Shining, "stick"),
+                ElementDescription("&6工具的基石"),
+                ItemStack(Material.STICK),
+                ConsumableItemGroup(true, VanillaItem(ItemStack(Material.STICK)))
+            )
             stickItem.registerLock(lockExperience)
             stoneCategory.registerElement(stickItem)
 
             val newStoneCategory = GuideCategory(
                 NamespacedId(Shining, "new_stone_age"),
                 ElementDescription("&a新石器时代", "&6刀耕火种"),
-                SItem(Material.STONE_BRICKS)
+                ItemStack(Material.STONE_BRICKS)
             )
             newStoneCategory.registerDependency(stickItem)
             stoneCategory.registerElement(newStoneCategory)
@@ -211,7 +221,8 @@ object Shining : Plugin(), ShiningPlugin {
             val pickaxeItem = GuideItem(
                 NamespacedId(Shining, "pickaxe"),
                 ElementDescription("&e生产力提高"),
-                SItem(Material.STONE_PICKAXE)
+                ItemStack(Material.STONE_PICKAXE),
+                ConsumableItemGroup(false, VanillaItem(ItemStack(Material.STONE_PICKAXE)))
             )
             newStoneCategory.registerElement(pickaxeItem)
 
@@ -221,7 +232,7 @@ object Shining : Plugin(), ShiningPlugin {
             val bronzeAge = GuideCategory(
                 NamespacedId(Shining, "bronze_age"),
                 ElementDescription("&6青铜时代"),
-                SItem(Material.BRICKS)
+                ItemStack(Material.BRICKS)
             )
             bronzeAge.register()
             ShiningGuide.registerElement(bronzeAge)

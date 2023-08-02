@@ -21,15 +21,25 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Linked
+import taboolib.platform.util.buildItem
 
 open class GuideItem : GuideElement {
     
-    private var itemGroup: ConsumableItemGroup = ConsumableItemGroup()
+    private var itemGroup: ConsumableItemGroup
     
     
-    constructor(id: NamespacedId, description: ElementDescription, item: ItemStack) : super(id, description, item)
+    constructor(
+        id: NamespacedId,
+        description: ElementDescription,
+        item: ItemStack,
+        itemGroup: ConsumableItemGroup
+    ) : super(id, description, item) {
+        this.itemGroup = itemGroup
+    }
     
-    constructor() : super()
+    constructor() : super() {
+        this.itemGroup = ConsumableItemGroup()
+    }
     
 
     override fun openMenu(player: Player, team: GuideTeam, context: GuideContext) {
@@ -39,7 +49,12 @@ open class GuideItem : GuideElement {
             
             elements { itemGroup.items }
             
-            onGenerate { _, element, _, _ -> element.getItemStack() }
+            val playerInventory = player.inventory
+            onGenerate { _, element, _, _ -> 
+                if (element.contains(playerInventory))
+                    buildItem(element.getItemStack()) { shiny() }
+                else element.getItemStack()
+            }
             
             onBuildEdge(edgeOrders)
             
@@ -58,10 +73,18 @@ open class GuideItem : GuideElement {
             set(2 orderWith 3, itemTip.toLocalizedItem(player))
             
             set(8 orderWith 3, ShiningIcon.SUBMIT.toLocalizedItem(player)) {
-                TODO()
+                if (itemGroup.contains(player)) {
+                    itemGroup.consume(player)
+                } else {
+                    
+                }
             }
             
-//            set(5 orderWith 1)
+            set(
+                5 orderWith 1,
+                if (itemGroup.isConsume) ShiningIcon.IS_CONSUME.toStateShinyLocalizedItem("open", player)
+                else ShiningIcon.IS_CONSUME.toStateLocalizedItem("close", player)
+            )
         }
     }
 

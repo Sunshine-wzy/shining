@@ -2,13 +2,11 @@ package io.github.sunshinewzy.shining.api.guide.lock
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.GuideContext
-import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.state.GuideElementState
-import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.objects.SItem
+import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -70,9 +68,8 @@ abstract class ElementLock(
     
     
     companion object {
-        val itemIsConsume = NamespacedIdItem(Material.APPLE, NamespacedId(Shining, "shining_guide-editor-lock-is_consume"))
-        val itemIsConsumeClose = itemIsConsume.toStateItem("close")
-        val itemIsConsumeOpen = itemIsConsume.toStateItem("open").shiny()
+        val itemIsConsumeClose = ShiningIcon.CONSUME_MODE.toStateItem("close")
+        val itemIsConsumeOpen = ShiningIcon.CONSUME_MODE.toStateItem("open").shiny()
     }
     
 }

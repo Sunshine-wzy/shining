@@ -55,7 +55,9 @@ enum class ShiningIcon(val item: ItemStack) : Itemable {
     CANCEL(NamespacedIdItem(Material.BARRIER, NamespacedId(Shining, "icon-cancel"))),
     SETTINGS(NamespacedIdItem(Material.ENDER_EYE, NamespacedId(Shining, "icon-settings"))),
     REMOVE(NamespacedIdItem(Material.BARRIER, NamespacedId(Shining, "icon-remove"))),
-    SELECT_MODE(NamespacedIdItem(Material.ARROW, NamespacedId(Shining, "icon-select_mode")))
+    SELECT_MODE(NamespacedIdItem(Material.ARROW, NamespacedId(Shining, "icon-select_mode"))),
+    CONSUME_MODE(NamespacedIdItem(Material.APPLE, NamespacedId(Shining, "icon-consume_mode"))),
+    IS_CONSUME(NamespacedIdItem(Material.APPLE, NamespacedId(Shining, "icon-is_consume"))),
     
     ;
 
