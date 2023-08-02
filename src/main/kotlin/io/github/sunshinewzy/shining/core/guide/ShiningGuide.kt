@@ -1,13 +1,13 @@
 package io.github.sunshinewzy.shining.core.guide
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.dictionary.DictionaryItem
+import io.github.sunshinewzy.shining.api.dictionary.DictionaryRegistry
+import io.github.sunshinewzy.shining.api.dictionary.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.dictionary.DictionaryItem
-import io.github.sunshinewzy.shining.core.dictionary.DictionaryRegistry
-import io.github.sunshinewzy.shining.core.dictionary.item.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.getGuideTeam
 import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.setupGuideTeam
 import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext

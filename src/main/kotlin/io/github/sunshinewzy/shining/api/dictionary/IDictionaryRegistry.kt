@@ -1,8 +1,7 @@
 package io.github.sunshinewzy.shining.api.dictionary
 
+import io.github.sunshinewzy.shining.api.dictionary.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.dictionary.DictionaryItem
-import io.github.sunshinewzy.shining.core.dictionary.item.behavior.ItemBehavior
 import org.bukkit.inventory.ItemStack
 
 interface IDictionaryRegistry {

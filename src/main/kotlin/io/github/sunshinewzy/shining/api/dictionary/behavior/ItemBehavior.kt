@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.core.dictionary.item.behavior
+package io.github.sunshinewzy.shining.api.dictionary.behavior
 
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player

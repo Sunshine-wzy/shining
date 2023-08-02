@@ -13,12 +13,13 @@ item-shining-shining_guide-settings-edit_mode:
   close: [ '&e编辑模式', '&c&l已关闭', '', '&a> 点击开启' ]
   open: [ '&e编辑模式', '&a&l已开启', '', '&c> 点击关闭' ]
 item-shining-shining_guide-settings-draft_box: '&e草稿箱'
-item-shining-shining_guide-editor:
-  close: [ '&e编辑器', '&c&l已关闭', '', '&a> 点击开启' ]
-  open: [ '&e编辑器', '&a&l已开启', '', '&c> 点击关闭' ]
+item-shining-shining_guide-element-item-tip: [ '&b&l提示', '', '&f取得右侧物品 &a⇨' ]
 item-shining-shining_guide-selector:
   close: [ '&e选择器', '&c&l已关闭', '', '&a> 点击开启', '&b> Shift点击提交' ]
   open: [ '&e选择器', '&a&l已开启', '', '&c> 点击关闭', '&b> Shift点击提交' ]
+item-shining-shining_guide-editor:
+  close: [ '&e编辑器', '&c&l已关闭', '', '&a> 点击开启' ]
+  open: [ '&e编辑器', '&a&l已开启', '', '&c> 点击关闭' ]
 item-shining-shining_guide-editor-create_state_copy: '&b创建状态副本'
 item-shining-shining_guide-editor-create_state_new: '&a创建新状态'
 item-shining-shining_guide-editor-load_from_draft_box: '&e从草稿箱载入'

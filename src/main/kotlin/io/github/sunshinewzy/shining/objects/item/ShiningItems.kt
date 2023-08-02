@@ -1,9 +1,9 @@
 package io.github.sunshinewzy.shining.objects.item
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.dictionary.DictionaryRegistry
+import io.github.sunshinewzy.shining.api.dictionary.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.dictionary.DictionaryRegistry
-import io.github.sunshinewzy.shining.core.dictionary.item.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.utils.sendMsg
 import org.bukkit.Material

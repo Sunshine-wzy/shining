@@ -1,12 +1,13 @@
-package io.github.sunshinewzy.shining.core.dictionary
+package io.github.sunshinewzy.shining.api.dictionary
 
+import io.github.sunshinewzy.shining.api.dictionary.behavior.ItemBehavior
+import io.github.sunshinewzy.shining.api.item.universal.UniversalItem
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.dictionary.item.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.utils.getShiningNBT
 import io.github.sunshinewzy.shining.utils.setShiningNBT
 import org.bukkit.inventory.ItemStack
 
-open class DictionaryItem {
+open class DictionaryItem : UniversalItem {
     val name: NamespacedId
     val item: ItemStack
     val behaviors: List<ItemBehavior>
@@ -31,7 +32,9 @@ open class DictionaryItem {
 
     fun hasName(): Boolean = name != NamespacedId.NULL
 
-
+    override fun getItemStack(): ItemStack = item
+    
+    
     companion object {
         const val DICTIONARY = "dictionary"
     }
