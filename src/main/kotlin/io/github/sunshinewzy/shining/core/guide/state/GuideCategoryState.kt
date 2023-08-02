@@ -10,20 +10,22 @@ import io.github.sunshinewzy.shining.api.guide.state.IGuideElementPriorityContai
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
 import io.github.sunshinewzy.shining.core.editor.chat.type.Text
-import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
+import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
-import io.github.sunshinewzy.shining.core.menu.onBack
-import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
+import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.getDisplayName
+import io.github.sunshinewzy.shining.utils.menu.onBack
+import io.github.sunshinewzy.shining.utils.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.utils.putSetElement
 import io.github.sunshinewzy.shining.utils.toCurrentLocalizedItem
+import kotlinx.coroutines.runBlocking
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import taboolib.module.ui.openMenu
@@ -138,7 +140,9 @@ class GuideCategoryState : GuideElementState(), IGuideElementPriorityContainerSt
             elements { getElements() }
             
             onGenerate(true) { player, element, _, _ -> 
-                element.getUnlockedSymbol(player)
+                runBlocking(ShiningDispatchers.DB) {
+                    element.getUnlockedSymbol(player)
+                }
             }
             
             onClick { _, element -> 

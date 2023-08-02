@@ -15,7 +15,6 @@ import io.github.sunshinewzy.shining.core.editor.chat.type.Item
 import io.github.sunshinewzy.shining.core.editor.chat.type.Text
 import io.github.sunshinewzy.shining.core.editor.chat.type.TextList
 import io.github.sunshinewzy.shining.core.editor.chat.type.TextMap
-import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
@@ -26,18 +25,20 @@ import io.github.sunshinewzy.shining.core.guide.draft.ShiningGuideDraft
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
+import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
-import io.github.sunshinewzy.shining.core.menu.onBack
-import io.github.sunshinewzy.shining.core.menu.onBackMenu
-import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.getDisplayName
 import io.github.sunshinewzy.shining.utils.insertLore
+import io.github.sunshinewzy.shining.utils.menu.onBack
+import io.github.sunshinewzy.shining.utils.menu.onBackMenu
+import io.github.sunshinewzy.shining.utils.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.utils.orderWith
 import io.github.sunshinewzy.shining.utils.toCurrentLocalizedItem
+import kotlinx.coroutines.runBlocking
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -339,7 +340,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
                 }
             }
 
-            symbol?.let { set('i', it) }
+            symbol.let { set('i', it) }
             
             onClick(lock = true)
         }
@@ -349,9 +350,11 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
         player.openMultiPageMenu<IGuideElement>(player.getLangText("menu-shining_guide-editor-state-basic-dependencies-title")) {
             elements { getDependencyElements() }
 
-            onGenerate(async = true) { player, element, index, slot ->
-                element.getSymbolByCondition(player, GuideTeam.CompletedTeam, ElementCondition.UNLOCKED)
-                    .insertLore(0, "&7${element.getId()}", "")
+            onGenerate(true) { player, element, index, slot ->
+                runBlocking(ShiningDispatchers.DB) {
+                    element.getSymbolByCondition(player, GuideTeam.CompletedTeam, ElementCondition.UNLOCKED)
+                        .insertLore(0, "&7${element.getId()}", "")
+                }
             }
 
             onClick { event, element ->

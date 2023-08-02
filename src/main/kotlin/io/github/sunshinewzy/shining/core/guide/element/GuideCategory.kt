@@ -7,7 +7,6 @@ import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementPriorityContainer
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor.setEditor
@@ -17,12 +16,16 @@ import io.github.sunshinewzy.shining.core.guide.context.GuideSelectElementsConte
 import io.github.sunshinewzy.shining.core.guide.context.GuideShortcutBarContext
 import io.github.sunshinewzy.shining.core.guide.settings.ShiningGuideSettings
 import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
+import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import io.github.sunshinewzy.shining.core.lang.getLangText
+import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
 import io.github.sunshinewzy.shining.utils.putSetElement
+import kotlinx.coroutines.runBlocking
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.function.submit
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Linked
 import java.util.*
@@ -54,17 +57,19 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
 
             val dependencyLockedElements = LinkedList<IGuideElement>()
             val lockLockedElements = LinkedList<IGuideElement>()
-            onGenerate { player, element, index, slot ->
-                if (context[GuideEditModeContext]?.mode == true || team == GuideTeam.CompletedTeam) {
-                    return@onGenerate element.getUnlockedSymbol(player)
+            onGenerate(true) { player, element, index, slot ->
+                runBlocking(ShiningDispatchers.DB) {
+                    if (context[GuideEditModeContext]?.mode == true || team == GuideTeam.CompletedTeam) {
+                        return@runBlocking element.getUnlockedSymbol(player)
+                    }
+
+                    val condition = element.getCondition(team)
+                    if (condition == ElementCondition.LOCKED_DEPENDENCY)
+                        dependencyLockedElements += element
+                    else if (condition == ElementCondition.LOCKED_LOCK)
+                        lockLockedElements += element
+                    element.getSymbolByCondition(player, team, condition)
                 }
- 
-                val condition = element.getCondition(team)
-                if (condition == ElementCondition.LOCKED_DEPENDENCY)
-                    dependencyLockedElements += element
-                else if (condition == ElementCondition.LOCKED_LOCK)
-                    lockLockedElements += element
-                element.getSymbolByCondition(player, team, condition)
             }
 
             onBuild(true, ShiningGuide.onBuildEdge)
@@ -101,12 +106,16 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
                         }
 
                         // Update shortcut bar
-                        context[GuideShortcutBarContext]?.setItems(
-                            ctxt.elements.map {
+                        ShiningDispatchers.launchDB {
+                            val list = ctxt.elements.map {
                                 it.getUnlockedSymbol(player)
                             }
-                        )
-                        openMenu(player, team, context)
+                            
+                            submit {
+                                context[GuideShortcutBarContext]?.setItems(list)
+                                openMenu(player, team, context)
+                            }
+                        }
                         return@onClick
                     }
                 }

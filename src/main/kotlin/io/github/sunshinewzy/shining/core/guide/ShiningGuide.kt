@@ -8,13 +8,14 @@ import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.getGuideTeam
-import io.github.sunshinewzy.shining.core.guide.GuideTeam.Companion.setupGuideTeam
 import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditModeContext
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.settings.SoundSettings
+import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
+import io.github.sunshinewzy.shining.core.guide.team.GuideTeam.Companion.getGuideTeam
+import io.github.sunshinewzy.shining.core.guide.team.GuideTeam.Companion.setupGuideTeam
 import io.github.sunshinewzy.shining.core.lang.getDefaultLangText
 import io.github.sunshinewzy.shining.core.lang.item.LocalizedItem
 import io.github.sunshinewzy.shining.objects.SCollection

@@ -1,20 +1,20 @@
-package io.github.sunshinewzy.shining.core.guide
+package io.github.sunshinewzy.shining.core.guide.team
 
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.data.JacksonWrapper
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.executePlayerDataContainer
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.getDataContainer
+import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.lang.*
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
-import io.github.sunshinewzy.shining.core.menu.Search
-import io.github.sunshinewzy.shining.core.menu.onBack
-import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
-import io.github.sunshinewzy.shining.core.menu.openSearchMenu
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.*
-import kotlinx.coroutines.Dispatchers
+import io.github.sunshinewzy.shining.utils.menu.Search
+import io.github.sunshinewzy.shining.utils.menu.onBack
+import io.github.sunshinewzy.shining.utils.menu.openMultiPageMenu
+import io.github.sunshinewzy.shining.utils.menu.openSearchMenu
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -41,15 +41,16 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
     private var members: JacksonWrapper<HashSet<UUID>> by GuideTeams.members
     private var applicants: JacksonWrapper<HashSet<UUID>> by GuideTeams.applicants
+    private var elementData: JacksonWrapper<GuideTeamElementData> by GuideTeams.elementData
+    
 
-
-    fun join(player: Player) {
+    suspend fun join(player: Player) {
         join(player.uniqueId)
         player.getDataContainer()[GUIDE_TEAM_ID] = id
     }
 
-    private fun join(uuid: UUID) {
-        transaction {
+    private suspend fun join(uuid: UUID) {
+        newSuspendedTransaction {
             members.value.let {
                 it += uuid
                 members = JacksonWrapper(it)
@@ -57,13 +58,13 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         }
     }
 
-    fun leave(player: Player) {
+    suspend fun leave(player: Player) {
         leave(player.uniqueId)
         player.getDataContainer().delete(player.uniqueId.toString())
     }
 
-    private fun leave(uuid: UUID) {
-        transaction {
+    private suspend fun leave(uuid: UUID) {
+        newSuspendedTransaction {
             members.value.let {
                 it -= uuid
                 members = JacksonWrapper(it)
@@ -71,17 +72,28 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         }
     }
 
-    fun apply(player: Player) {
+    suspend fun apply(player: Player) {
         apply(player.uniqueId)
         player.getDataContainer()[GUIDE_TEAM_APPLY] = id
         notifyCaptainApplication()
     }
 
-    private fun apply(uuid: UUID) {
-        transaction {
+    private suspend fun apply(uuid: UUID) {
+        newSuspendedTransaction {
             applicants.value.let {
                 it += uuid
                 applicants = JacksonWrapper(it)
+            }
+        }
+    }
+    
+    suspend fun getElementData(): GuideTeamElementData =
+        newSuspendedTransaction { elementData.value }
+    
+    suspend fun updateElementData() {
+        newSuspendedTransaction { 
+            elementData.value.let { 
+                elementData = JacksonWrapper(it)
             }
         }
     }
@@ -90,7 +102,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         if (!applicants.value.contains(uuid))
             return false
 
-        join(uuid)
+        ShiningDispatchers.launchDB { join(uuid) }
         uuid.executePlayerDataContainer {
             it[GUIDE_TEAM_ID] = id
             it.delete(GUIDE_TEAM_APPLY)
@@ -371,7 +383,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         const val PLAYER_NOT_IN_TEAM = "menu-shining-guide-team-player_not_in_team"
 
         /**
-         * The [block] will be run asynchronously by [Dispatchers.IO] if the player is in a guide team.
+         * The [block] will be run asynchronously by [ShiningDispatchers.DB] if the player is in a guide team.
          */
         fun Player.letGuideTeam(block: (team: GuideTeam) -> Unit) {
             ShiningDispatchers.launchDB {
@@ -380,7 +392,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         }
 
         /**
-         * The [block] will be run asynchronously by [Dispatchers.IO] if the player is in a guide team, or it will send a warning message [PLAYER_NOT_IN_TEAM] to the player.
+         * The [block] will be run asynchronously by [ShiningDispatchers.DB] if the player is in a guide team, or it will send a warning message [PLAYER_NOT_IN_TEAM] to the player.
          */
         fun Player.letGuideTeamOrWarn(block: (team: GuideTeam) -> Unit) {
             ShiningDispatchers.launchDB {
@@ -551,13 +563,15 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
                         onClick { event, element ->
                             if (applyTeam == null) {
-                                element.apply(this@joinGuideTeam)
-                                sendPrefixedLangText(
-                                    "menu-shining_guide-team-join-apply-success",
-                                    Shining.prefix,
-                                    element.name,
-                                    element.captain.playerName
-                                )
+                                ShiningDispatchers.launchDB {
+                                    element.apply(this@joinGuideTeam)
+                                    sendPrefixedLangText(
+                                        "menu-shining_guide-team-join-apply-success",
+                                        Shining.prefix,
+                                        element.name,
+                                        element.captain.playerName
+                                    )
+                                }
                                 closeInventory()
                             } else {
                                 openMenu<Basic>(getLangText("menu-shining_guide-team-join-reapply-title")) {
@@ -573,13 +587,15 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                                             ?.format(element.name)
                                             ?.let { lore += it.colored() }
                                     }) {
-                                        element.apply(this@joinGuideTeam)
-                                        sendPrefixedLangText(
-                                            "menu-shining_guide-team-join-apply-success",
-                                            Shining.prefix,
-                                            element.name,
-                                            element.captain.playerName
-                                        )
+                                        ShiningDispatchers.launchDB {
+                                            element.apply(this@joinGuideTeam)
+                                            sendPrefixedLangText(
+                                                "menu-shining_guide-team-join-apply-success",
+                                                Shining.prefix,
+                                                element.name,
+                                                element.captain.playerName
+                                            )
+                                        }
                                         closeInventory()
                                     }
 

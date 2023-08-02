@@ -4,7 +4,7 @@ import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.guide.GuideTeam
+import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 

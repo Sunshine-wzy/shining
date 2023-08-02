@@ -9,20 +9,21 @@ import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
-import io.github.sunshinewzy.shining.core.guide.data.ElementTeamData
 import io.github.sunshinewzy.shining.core.guide.state.GuideElementState
+import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
+import io.github.sunshinewzy.shining.core.guide.team.GuideTeamElementData
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.SItem
+import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
 import io.github.sunshinewzy.shining.utils.sendMsg
 import io.github.sunshinewzy.shining.utils.setNameAndLore
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.jetbrains.exposed.dao.id.EntityID
 import taboolib.module.ui.type.Basic
 import java.util.*
 
@@ -35,7 +36,6 @@ abstract class GuideElement(
     private val locks: MutableList<ElementLock> = LinkedList()
 
     private val previousElementMap: MutableMap<UUID, IGuideElement> = HashMap()
-    private val teamDataMap: MutableMap<EntityID<Int>, ElementTeamData> = HashMap()
 
     
     constructor() : this(NamespacedId.NULL, ElementDescription.NULL, ItemStack(Material.STONE))
@@ -86,8 +86,22 @@ abstract class GuideElement(
             }
         }
 
-        getTeamData(team).condition = UNLOCKED
+        ShiningDispatchers.launchDB {
+            getTeamData(team).setElementCondition(this@GuideElement, UNLOCKED)
+            team.updateElementData()
+        }
         return true
+    }
+
+    override fun complete(player: Player, team: GuideTeam, isSilent: Boolean) {
+        ShiningDispatchers.launchDB { 
+            getTeamData(team).setElementCondition(this@GuideElement, COMPLETE)
+        }
+        if (isSilent) return
+
+        player.world.playSound(player.location, Sound.UI_TOAST_CHALLENGE_COMPLETE, 1f, 2f)
+        player.sendTitle("§f[§e${description.name}§f]", player.getLangText("menu-shining_guide-element-complete"), 10, 70, 20)
+        player.closeInventory()
     }
 
     override fun update(state: IGuideElementState, isMerge: Boolean): Boolean {
@@ -122,10 +136,10 @@ abstract class GuideElement(
         return true
     }
 
-    override fun isTeamCompleted(team: GuideTeam): Boolean =
-        team === GuideTeam.CompletedTeam || teamDataMap[team.id]?.condition == COMPLETE
+    override suspend fun isTeamCompleted(team: GuideTeam): Boolean =
+        team === GuideTeam.CompletedTeam || getTeamData(team).getElementCondition(this) == COMPLETE
 
-    fun isTeamDependencyCompleted(team: GuideTeam): Boolean {
+    override suspend fun isTeamDependencyCompleted(team: GuideTeam): Boolean {
         for (dependency in dependencyMap.values) {
             if (!dependency.isTeamCompleted(team)) {
                 return false
@@ -135,14 +149,14 @@ abstract class GuideElement(
         return true
     }
 
-    fun isTeamUnlocked(team: GuideTeam): Boolean =
-        teamDataMap[team.id]?.condition?.let {
+    override suspend fun isTeamUnlocked(team: GuideTeam): Boolean =
+        getTeamData(team).getElementCondition(this)?.let {
             it == UNLOCKED || it == COMPLETE
         } ?: false
 
     fun hasLock(): Boolean = locks.isNotEmpty()
 
-    override fun getCondition(team: GuideTeam): ElementCondition =
+    override suspend fun getCondition(team: GuideTeam): ElementCondition =
         if (isTeamCompleted(team)) {
             COMPLETE
         } else if (isTeamUnlocked(team)) {
@@ -155,7 +169,7 @@ abstract class GuideElement(
             UNLOCKED
         }
 
-    override fun getSymbolByCondition(player: Player, team: GuideTeam, condition: ElementCondition): ItemStack =
+    override suspend fun getSymbolByCondition(player: Player, team: GuideTeam, condition: ElementCondition): ItemStack =
         when (condition) {
             COMPLETE -> {
                 val symbolItem = symbol.clone()
@@ -211,8 +225,8 @@ abstract class GuideElement(
         return GuideElementRegistry.register(this)
     }
 
-    fun getTeamData(team: GuideTeam): ElementTeamData =
-        teamDataMap.getOrPut(team.id) { ElementTeamData() }
+    override suspend fun getTeamData(team: GuideTeam): GuideTeamElementData =
+        team.getElementData()
 
     fun registerDependency(element: IGuideElement) {
         dependencyMap[element.getId()] = element

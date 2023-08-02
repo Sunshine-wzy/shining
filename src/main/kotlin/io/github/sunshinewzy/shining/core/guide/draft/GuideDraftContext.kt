@@ -6,8 +6,8 @@ import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementContainerState
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
-import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.context.AbstractGuideContextElement
+import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 
 class GuideDraftContext {
 

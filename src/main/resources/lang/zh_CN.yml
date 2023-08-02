@@ -79,6 +79,7 @@ item-shining-editor-item-lore-gui: [ '&a编辑Lore', '', '&7> 使用&bGUI' ]
 menu-shining_guide-title: 'Shining 指南'
 menu-shining_guide-settings-title: 'Shining 指南 - 设置'
 menu-shining_guide-element-unlock-fail: '&c您未达成解锁该元素的条件'
+menu-shining_guide-element-complete: '&a任务完成'
 menu-shining_guide-element-symbol-locked_dependency: '&a> 请先完成下列元素'
 menu-shining_guide-element-symbol-locked_lock: '&a> 点击解锁'
 menu-shining_guide-element-symbol-locked_lock-need_consume: '&7需要消耗'

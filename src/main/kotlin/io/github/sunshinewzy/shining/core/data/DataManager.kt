@@ -8,10 +8,10 @@ import io.github.sunshinewzy.shining.core.data.database.DatabaseSQLite
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerData
 import io.github.sunshinewzy.shining.core.data.legacy.SAutoSaveData
 import io.github.sunshinewzy.shining.core.data.legacy.internal.SunSTPlayerData
-import io.github.sunshinewzy.shining.core.guide.GuideTeams
 import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftFolders
 import io.github.sunshinewzy.shining.core.guide.draft.GuideDrafts
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
+import io.github.sunshinewzy.shining.core.guide.team.GuideTeams
 import io.github.sunshinewzy.shining.core.task.TaskProgress
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player

@@ -3,7 +3,6 @@ package io.github.sunshinewzy.shining.core.machine.legacy
 import io.github.sunshinewzy.shining.core.machine.legacy.SMachine.Companion.getSMachine
 import io.github.sunshinewzy.shining.core.machine.legacy.SMachine.Companion.hasSMachine
 import io.github.sunshinewzy.shining.core.machine.legacy.SMachine.Companion.judgeSMachineStructure
-import io.github.sunshinewzy.shining.core.menu.SMenu
 import io.github.sunshinewzy.shining.events.smachine.SMachineAddEvent
 import io.github.sunshinewzy.shining.events.smachine.SMachineRemoveEvent
 import io.github.sunshinewzy.shining.events.smachine.SMachineUpgradeEvent
@@ -16,6 +15,7 @@ import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.objects.legacy.SBlock
 import io.github.sunshinewzy.shining.utils.getPlayer
 import io.github.sunshinewzy.shining.utils.isItemSimilar
+import io.github.sunshinewzy.shining.utils.menu.SMenu
 import io.github.sunshinewzy.shining.utils.sendMsg
 import io.github.sunshinewzy.shining.utils.subscribeEvent
 import org.bukkit.Effect

@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.core.menu
+package io.github.sunshinewzy.shining.utils.menu
 
 import org.bukkit.Material
 import org.bukkit.entity.Player

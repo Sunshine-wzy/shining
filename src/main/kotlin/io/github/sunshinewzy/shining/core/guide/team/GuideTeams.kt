@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.core.guide
+package io.github.sunshinewzy.shining.core.guide.team
 
 import com.fasterxml.jackson.core.type.TypeReference
 import io.github.sunshinewzy.shining.Shining
@@ -15,5 +15,6 @@ object GuideTeams : IntIdTable() {
     val symbol = jackson("symbol", Shining.objectMapper, ItemStack::class.java)
     val members = jackson("members", Shining.objectMapper, object : TypeReference<JacksonWrapper<HashSet<UUID>>>() {})
     val applicants = jackson("applicants", Shining.objectMapper, object : TypeReference<JacksonWrapper<HashSet<UUID>>>() {})
-
+    val elementData = jackson("element_data", Shining.objectMapper, object : TypeReference<JacksonWrapper<GuideTeamElementData>>() {})
+    
 }

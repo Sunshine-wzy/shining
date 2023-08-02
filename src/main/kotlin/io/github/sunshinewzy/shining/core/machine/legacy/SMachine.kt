@@ -4,7 +4,6 @@ import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.core.data.legacy.internal.SMachineData
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipe
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipes
-import io.github.sunshinewzy.shining.core.menu.SMenu
 import io.github.sunshinewzy.shining.events.smachine.SMachineAddEvent
 import io.github.sunshinewzy.shining.events.smachine.SMachineRemoveEvent
 import io.github.sunshinewzy.shining.events.smachine.SMachineUpgradeEvent
@@ -14,6 +13,7 @@ import io.github.sunshinewzy.shining.objects.SLocation
 import io.github.sunshinewzy.shining.objects.SLocation.Companion.toSLocation
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.*
+import io.github.sunshinewzy.shining.utils.menu.SMenu
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Sound

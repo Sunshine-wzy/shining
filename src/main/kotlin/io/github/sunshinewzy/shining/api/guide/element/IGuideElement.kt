@@ -5,8 +5,9 @@ import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.guide.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
+import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
+import io.github.sunshinewzy.shining.core.guide.team.GuideTeamElementData
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -37,6 +38,8 @@ interface IGuideElement {
      * @return True when the [player] unlock the element successfully.
      */
     fun unlock(player: Player, team: GuideTeam): Boolean
+    
+    fun complete(player: Player, team: GuideTeam, isSilent: Boolean = false)
 
     fun saveToState(state: IGuideElementState): Boolean
 
@@ -46,14 +49,20 @@ interface IGuideElement {
     
     fun update(state: IGuideElementState): Boolean = update(state, false)
 
-    fun getCondition(team: GuideTeam): ElementCondition
-
-    fun getSymbolByCondition(player: Player, team: GuideTeam, condition: ElementCondition): ItemStack
+    suspend fun getTeamData(team: GuideTeam): GuideTeamElementData
     
-    fun getUnlockedSymbol(player: Player): ItemStack =
+    suspend fun getCondition(team: GuideTeam): ElementCondition
+
+    suspend fun getSymbolByCondition(player: Player, team: GuideTeam, condition: ElementCondition): ItemStack
+    
+    suspend fun getUnlockedSymbol(player: Player): ItemStack =
         getSymbolByCondition(player, GuideTeam.CompletedTeam, ElementCondition.UNLOCKED)
     
-    fun isTeamCompleted(team: GuideTeam): Boolean
+    suspend fun isTeamCompleted(team: GuideTeam): Boolean
+
+    suspend fun isTeamUnlocked(team: GuideTeam): Boolean
+
+    suspend fun isTeamDependencyCompleted(team: GuideTeam): Boolean
 
     /**
      * Register the element
