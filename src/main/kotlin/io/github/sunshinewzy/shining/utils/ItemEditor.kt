@@ -1,10 +1,12 @@
 package io.github.sunshinewzy.shining.utils
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
 import io.github.sunshinewzy.shining.core.editor.chat.type.Text
 import io.github.sunshinewzy.shining.core.editor.chat.type.TextList
+import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
@@ -42,16 +44,14 @@ object ItemEditor {
         Material.BLACK_WOOL
     )
 
-    val editItemOrder = 2 orderWith 2
 
-
-    fun editItem(item: ItemStack, player: Player) {
+    fun editItem(item: ItemStack, player: Player, context: GuideContext) {
         player.openMenu<Basic>(player.getLangText("menu-editor-item-title")) {
             rows(3)
 
             map(
-                "oooxxxxxx",
-                "o oxaxbcx",
+                "oBoxxxxxx",
+                "oioxaxbcx",
                 "oooxxxxxx"
             )
 
@@ -60,10 +60,7 @@ object ItemEditor {
             set('a', ShiningIcon.RENAME.toLocalizedItem(player))
             set('b', itemEditLoreWithChatEditor.toLocalizedItem(player))
             set('c', itemEditLoreWithGUI.toLocalizedItem(player))
-
-            onBuild { _, inventory ->
-                inventory.setItem(editItemOrder, item)
-            }
+            set('i', item)
 
             onClick('a') { event ->
                 player.openChatEditor<Text>(player.getLangText("menu-editor-item-name-title")) { 
@@ -74,24 +71,30 @@ object ItemEditor {
                     }
                     
                     onFinal { 
-                        editItem(item, player)
+                        editItem(item, player, context)
                     }
                 }
             }
             
             onClick('b') {
-                editLoreWithChatEditor(item, player)
+                editLoreWithChatEditor(item, player, context)
             }
 
             onClick('c') {
-                editLoreWithGUI(item, player)
+                editLoreWithGUI(item, player, context)
             }
 
             onClick(lock = true)
+            
+            context[GuideEditorContext.Back]?.let {
+                set('B', ShiningIcon.BACK.toLocalizedItem(player)) {
+                    it.onBack(this)
+                }
+            } ?: set('B', ShiningIcon.EDGE.item)
         }
     }
     
-    fun editLoreWithChatEditor(item: ItemStack, player: Player) {
+    fun editLoreWithChatEditor(item: ItemStack, player: Player, context: GuideContext) {
         player.openChatEditor<TextList>(player.getLangText("menu-editor-item-lore-title")) { 
             list(item.getLore())
             
@@ -100,12 +103,12 @@ object ItemEditor {
             }
             
             onFinal { 
-                editItem(item, player)
+                editItem(item, player, context)
             }
         }
     }
 
-    fun editLoreWithGUI(item: ItemStack, player: Player) {
+    fun editLoreWithGUI(item: ItemStack, player: Player, context: GuideContext) {
         player.openMenu<Linked<String>>(player.getLangText("menu-editor-item-lore-title")) {
             buildMultiPage(player)
 
@@ -136,7 +139,7 @@ object ItemEditor {
                                         }
                                         
                                         onFinal { 
-                                            editLoreWithGUI(item, player)
+                                            editLoreWithGUI(item, player, context)
                                         }
                                     }
                                 }
@@ -158,7 +161,7 @@ object ItemEditor {
                                         }
                                         
                                         onFinal { 
-                                            editLoreWithGUI(item, player)
+                                            editLoreWithGUI(item, player, context)
                                         }
                                     }
                                 }
@@ -177,7 +180,7 @@ object ItemEditor {
                                     player.sendPrefixedLangText("menu-editor-item-lore-remove")
                                     player.closeInventory()
 
-                                    editLoreWithGUI(item, player)
+                                    editLoreWithGUI(item, player, context)
                                 }
                             }
                         }
@@ -200,7 +203,7 @@ object ItemEditor {
                             }
                             
                             onFinal { 
-                                editLoreWithGUI(item, player)
+                                editLoreWithGUI(item, player, context)
                             }
                         }
                     }
@@ -208,31 +211,31 @@ object ItemEditor {
             }
 
             set(2 orderWith 1, ShiningIcon.BACK.item) {
-                editItem(item, player)
+                editItem(item, player, context)
             }
 
-            set(5 orderWith 1, ShiningIcon.REMOVE_MODE.item) {
+            set(5 orderWith 1, ShiningIcon.REMOVE_MODE.toStateLocalizedItem("close", player)) {
                 currentItem?.let {
                     if (status == Status.REMOVE) {
                         status = Status.EDIT
-                        currentItem = ShiningIcon.REMOVE_MODE.item
+                        currentItem = ShiningIcon.REMOVE_MODE.toStateLocalizedItem("close", player)
                     } else if (status == Status.EDIT) {
                         status = Status.REMOVE
-                        currentItem = ShiningIcon.REMOVE_MODE_SHINY.item
+                        currentItem = ShiningIcon.REMOVE_MODE.toStateShinyLocalizedItem("open", player)
                     }
 
                     player.updateInventory()
                 }
             }
 
-            set(8 orderWith 1, ShiningIcon.ADD_MODE.item) {
+            set(8 orderWith 1, ShiningIcon.ADD_MODE.toStateLocalizedItem("close", player)) {
                 currentItem?.let {
                     if (status == Status.ADD) {
                         status = Status.EDIT
-                        currentItem = ShiningIcon.ADD_MODE.item
+                        currentItem = ShiningIcon.ADD_MODE.toStateLocalizedItem("close", player)
                     } else if (status == Status.EDIT) {
                         status = Status.ADD
-                        currentItem = ShiningIcon.ADD_MODE_SHINY.item
+                        currentItem = ShiningIcon.ADD_MODE.toStateShinyLocalizedItem("open", player)
                     }
 
                     player.updateInventory()

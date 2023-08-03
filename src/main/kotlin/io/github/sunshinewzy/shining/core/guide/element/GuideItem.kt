@@ -14,6 +14,7 @@ import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.OrderUtils
+import io.github.sunshinewzy.shining.utils.menu.onBack
 import io.github.sunshinewzy.shining.utils.menu.onBuildEdge
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.Material
@@ -50,10 +51,11 @@ open class GuideItem : GuideElement {
             elements { itemGroup.items }
             
             val playerInventory = player.inventory
+            val missingItems = ArrayList<ItemStack>()
             onGenerate { _, element, _, _ -> 
                 if (element.contains(playerInventory))
                     buildItem(element.getItemStack()) { shiny() }
-                else element.getItemStack()
+                else element.getItemStack().also { missingItems += it }
             }
             
             onBuildEdge(edgeOrders)
@@ -75,8 +77,9 @@ open class GuideItem : GuideElement {
             set(8 orderWith 3, ShiningIcon.SUBMIT.toLocalizedItem(player)) {
                 if (itemGroup.contains(player)) {
                     itemGroup.consume(player)
+                    complete(player, team)
                 } else {
-                    
+                    openMissingItemsMenu(player, team, context, missingItems)
                 }
             }
             
@@ -85,6 +88,37 @@ open class GuideItem : GuideElement {
                 if (itemGroup.isConsume) ShiningIcon.IS_CONSUME.toStateShinyLocalizedItem("open", player)
                 else ShiningIcon.IS_CONSUME.toStateLocalizedItem("close", player)
             )
+        }
+    }
+    
+    fun openMissingItemsMenu(player: Player, team: GuideTeam, context: GuideContext, missingItems: List<ItemStack>) {
+        player.openMenu<Linked<ItemStack>>(player.getLangText(ShiningGuide.TITLE)) {
+            rows(5)
+            slots(slotOrders)
+            
+            elements { missingItems }
+            
+            onGenerate { _, element, _, _ -> element }
+            
+            onBuildEdge(edgeOrders)
+
+            setPreviousPage(4 orderWith 5) { _, hasPreviousPage ->
+                if (hasPreviousPage) ShiningIcon.PAGE_PREVIOUS_GLASS_PANE.toLocalizedItem(player)
+                else ShiningIcon.EDGE.item
+            }
+
+            setNextPage(6 orderWith 5) { _, hasNextPage ->
+                if (hasNextPage) ShiningIcon.PAGE_NEXT_GLASS_PANE.toLocalizedItem(player)
+                else ShiningIcon.EDGE.item
+            }
+            
+            onBack { 
+                openMenu(player, team, context)
+            }
+            
+            set(2 orderWith 3, itemTipMissingItems.toLocalizedItem(player))
+            
+            set(8 orderWith 3, ShiningIcon.SUBMIT_FAILURE.toLocalizedItem(player))
         }
     }
 
@@ -123,6 +157,7 @@ open class GuideItem : GuideElement {
         }
         
         private val itemTip = NamespacedIdItem(Material.PAPER, NamespacedId(Shining, "shining_guide-element-item-tip"))
+        private val itemTipMissingItems = NamespacedIdItem(Material.PAPER, NamespacedId(Shining, "shining_guide-element-item-tip_missing_items"))
     }
     
 }

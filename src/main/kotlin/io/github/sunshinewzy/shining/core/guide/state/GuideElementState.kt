@@ -7,6 +7,7 @@ import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
 import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
+import io.github.sunshinewzy.shining.api.guide.reward.GuideRewardRegistry
 import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.Namespace
@@ -28,6 +29,7 @@ import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import io.github.sunshinewzy.shining.core.lang.getLangText
+import io.github.sunshinewzy.shining.core.lang.item.LanguageItem
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
@@ -36,6 +38,7 @@ import io.github.sunshinewzy.shining.utils.getDisplayName
 import io.github.sunshinewzy.shining.utils.insertLore
 import io.github.sunshinewzy.shining.utils.menu.onBack
 import io.github.sunshinewzy.shining.utils.menu.onBackMenu
+import io.github.sunshinewzy.shining.utils.menu.openDeleteConfirmMenu
 import io.github.sunshinewzy.shining.utils.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.utils.orderWith
 import io.github.sunshinewzy.shining.utils.toCurrentLocalizedItem
@@ -476,26 +479,58 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
     }
     
     fun openRewardsEditor(player: Player, team: GuideTeam, context: GuideContext) {
-        player.openMultiPageMenu<IGuideReward> { 
+        val (ctxt, ctxtRemove) = GuideEditorContext.Remove.getOrNew(context)
+        
+        player.openMultiPageMenu<IGuideReward>(player.getLangText("menu-shining_guide-editor-state-basic-rewards-title")) { 
             elements { rewards }
             
-            onGenerate { _, element, _, _ -> 
-                element.getIcon(player)
-            }
+            onGenerate { _, element, _, _ -> element.getIcon(player) }
             
             onClick { _, element -> 
-                element.openEditor(player, team, context, this@GuideElementState)
+                if (ctxtRemove.mode) {
+                    player.openDeleteConfirmMenu { 
+                        onConfirm { rewards -= element }
+                        onFinal { openRewardsEditor(player, team, ctxt) }
+                    }
+                } else {
+                    element.openEditor(player, GuideEditorContext.BackNoEvent {
+                        openRewardsEditor(player, team, ctxt)
+                    })
+                }
             }
             
-            onBack(player) {
-                openBasicEditor(player, team, context)
+            set(8 orderWith 1, ctxtRemove.getIcon(player)) {
+                ctxtRemove.switchMode()
+                openRewardsEditor(player, team, ctxt)
             }
+            
+            onBack(player) { openBasicEditor(player, team, context) }
             
             onClick(lock = true) {
                 if (ShiningGuide.isClickEmptySlot(it)) {
-                    TODO()
+                    openCreateNewRewardEditor(player, team, context)
                 }
             }
+        }
+    }
+    
+    fun openCreateNewRewardEditor(player: Player, team: GuideTeam, context: GuideContext) {
+        player.openMultiPageMenu<Pair<Class<out IGuideReward>, LanguageItem>>(player.getLangText("menu-shining_guide-editor-state-basic-rewards-create-title")) { 
+            elements { GuideRewardRegistry.getRegisteredClassPairList() }
+            
+            onGenerate { _, element, _, _ -> 
+                element.second.toLocalizedItem(player)
+            }
+            
+            onClick { event, element -> 
+                val reward = element.first.newInstance()
+                rewards += reward
+                reward.openEditor(player, GuideEditorContext.BackNoEvent {
+                    openRewardsEditor(player, team, context)
+                })
+            }
+            
+            onBack { openRewardsEditor(player, team, context) }
         }
     }
     

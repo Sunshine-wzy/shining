@@ -199,9 +199,7 @@ object ShiningGuide : GuideCategory(
         firework.fireworkMeta = meta
     }
 
-    fun getItem(): ItemStack {
-        return guideItem.item.clone()
-    }
+    fun getItem(): ItemStack = guideItem.getItemStack()
     
     fun isClickEmptySlot(event: ClickEvent): Boolean =
         event.rawSlot in slotOrders && event.currentItem.isAir()

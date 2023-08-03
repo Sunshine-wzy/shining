@@ -14,6 +14,7 @@ item-shining-shining_guide-settings-edit_mode:
   open: [ '&e编辑模式', '&a&l已开启', '', '&c> 点击关闭' ]
 item-shining-shining_guide-settings-draft_box: '&e草稿箱'
 item-shining-shining_guide-element-item-tip: [ '&b&l提示', '', '&f取得右侧物品 &a⇨' ]
+item-shining-shining_guide-element-item-tip_missing_items: [ '&b&l提示', '', '&f缺少右侧物品 &a⇨' ]
 item-shining-shining_guide-selector:
   close: [ '&e选择器', '&c&l已关闭', '', '&a> 点击开启', '&b> Shift点击提交' ]
   open: [ '&e选择器', '&a&l已开启', '', '&c> 点击关闭', '&b> Shift点击提交' ]
@@ -48,7 +49,8 @@ item-shining-shining_guide-draft-folder-create: '&a新建文件夹'
 item-shining-shining_guide-draft-folder-editor: '&e编辑文件夹'
 item-shining-shining_guide-state-item: [ '&bItem - 物品', '', '&f取得指定的物品' ]
 item-shining-shining_guide-state-category: [ '&eCategory - 分类', '', '&f能有序的容纳各种元素' ]
-item-shining-shining_guide-reward-item-icon: [ '&bItem - 物品', '', '&f奖励指定的物品' ]
+item-shining-shining_guide-reward-item-icon: [ '&bItem - 物品', '', '&f奖励物品' ]
+item-shining-shining_guide-reward-command-icon: [ '&cCommand - 指令', '', '&f执行指令', '&f支持PAPI变量' ]
 item-shining-icon-back_menu: [ '&c⇦ 返回', '', '&f左键：&7返回上一页', '&fShift + 左键：&7返回主菜单' ]
 item-shining-icon-back: '&b⇦ 返回'
 item-shining-icon-submit: '&a>> 点击以提交任务 <<'
@@ -60,10 +62,12 @@ item-shining-icon-page_next_glass_pane: '&a下一页 &e⇨'
 item-shining-icon-page_previous_glass_pane: '&e⇦ &a上一页'
 item-shining-icon-rename: '&e重命名'
 item-shining-icon-edit_lore: '&a编辑Lore'
-item-shining-icon-remove_mode: [ '&c删除模式', '&7已关闭', '', '&a> 点击开启' ]
-item-shining-icon-remove_mode_shiny: [ '&c删除模式', '&7已开启', '', '&a> 点击关闭' ]
-item-shining-icon-add_mode: [ '&e增添模式', '&7已关闭', '', '&a> 点击开启' ]
-item-shining-icon-add_mode_shiny: [ '&e增添模式', '&7已开启', '', '&a> 点击开启' ]
+item-shining-icon-remove_mode:
+  close: [ '&c删除模式', '&7&l已关闭', '', '&a> 点击开启' ]
+  open: [ '&c删除模式', '&a&l已开启', '', '&7> 点击关闭' ]
+item-shining-icon-add_mode:
+  close: [ '&e增添模式', '&c&l已关闭', '', '&a> 点击开启' ]
+  open: [ '&e增添模式', '&a&l已开启', '', '&c> 点击关闭' ]
 item-shining-icon-search: '&a搜索'
 item-shining-icon-confirm: '&a确认'
 item-shining-icon-cancel: '&c取消'
@@ -78,8 +82,14 @@ item-shining-icon-consume_mode:
 item-shining-icon-is_consume:
   close: [ '&e是否消耗:', '', '&c&l否' ]
   open: [ '&e是否消耗:', '', '&a&l是' ]
+item-shining-icon-submit_failure: '&c提交失败'
 item-shining-editor-item-lore-chat_editor: [ '&a编辑Lore', '', '&7> 使用&eChatEditor' ]
 item-shining-editor-item-lore-gui: [ '&a编辑Lore', '', '&7> 使用&bGUI' ]
+item-shining-item-universal-vanilla-current: [ '&b物品', '', '&a⇨ 当前 ⇨' ]
+item-shining-item-universal-vanilla-hand: '&e替换为手持物品'
+item-shining-item-universal-vanilla-editor: '&d打开物品编辑器'
+item-shining-item-universal-dictionary-name: '&b编辑物品字典名'
+item-shining-item-universal-dictionary-amount: '&e编辑物品数量'
 menu-shining_guide-title: 'Shining 指南'
 menu-shining_guide-settings-title: 'Shining 指南 - 设置'
 menu-shining_guide-element-unlock-fail: '&c您未达成解锁该元素的条件'
@@ -135,12 +145,17 @@ menu-shining_guide-editor-state-basic-symbol-title: 'Shining 指南 - 图标编�
 menu-shining_guide-editor-state-basic-dependencies-title: 'Shining 指南 - 依赖编辑'
 menu-shining_guide-editor-state-basic-locks-title: 'Shining 指南 - 锁编辑'
 menu-shining_guide-editor-state-basic-locks-create-title: 'Shining 指南 - 创建新锁'
+menu-shining_guide-editor-state-basic-rewards-title: 'Shining 指南 - 奖励编辑'
+menu-shining_guide-editor-state-basic-rewards-create-title: 'Shining 指南 - 创建奖励'
 menu-shining_guide-editor-state-category-title: 'Shining 指南 - 类别状态编辑'
 menu-shining_guide-editor-state-category-element-title: '类别状态编辑 - 元素'
 menu-shining_guide-draft-title: '草稿箱'
 menu-shining_guide-draft-symbol-folder: '&7&l文件夹'
 menu-shining_guide-draft-symbol-draft: '&7&l草稿'
 menu-shining_guide-draft-editor-title: '草稿编辑'
+menu-shining_guide-reward-item-title: '编辑奖励 - 物品'
+menu-item-universal-vanilla-title: '编辑物品'
+menu-item-universal-dictionary-title: '编辑字典物品'
 menu-search-prompt: '搜索'
 menu-editor-item-title: '物品编辑器'
 menu-editor-item-name-title: '物品名称编辑'

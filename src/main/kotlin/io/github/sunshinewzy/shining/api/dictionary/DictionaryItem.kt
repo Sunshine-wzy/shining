@@ -1,10 +1,7 @@
 package io.github.sunshinewzy.shining.api.dictionary
 
 import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonTypeName
-import com.fasterxml.jackson.annotation.JsonValue
 import io.github.sunshinewzy.shining.api.dictionary.behavior.ItemBehavior
-import io.github.sunshinewzy.shining.api.item.universal.UniversalItem
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.utils.getShiningNBT
 import io.github.sunshinewzy.shining.utils.setShiningNBT
@@ -12,11 +9,9 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import taboolib.platform.util.isAir
 
-@JsonTypeName("dictionary")
-open class DictionaryItem : UniversalItem {
-    @JsonValue
+open class DictionaryItem {
     val name: NamespacedId
-    val item: ItemStack
+    private val item: ItemStack
     val behaviors: List<ItemBehavior>
 
 
@@ -38,16 +33,8 @@ open class DictionaryItem : UniversalItem {
     
 
     fun hasName(): Boolean = name != NamespacedId.NULL
-
     
-    override fun getItemStack(): ItemStack = item.clone()
-
-    override fun contains(inventory: Inventory): Boolean =
-        inventory.containsDictionaryItem(name, item.amount)
-
-    override fun consume(inventory: Inventory): Boolean =
-        inventory.removeDictionaryItem(name, item.amount)
-    
+    fun getItemStack(): ItemStack = item.clone()
 
     companion object {
         

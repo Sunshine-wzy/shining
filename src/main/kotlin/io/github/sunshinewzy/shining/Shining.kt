@@ -4,13 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import io.github.sunshinewzy.shining.api.ShiningPlugin
-import io.github.sunshinewzy.shining.api.dictionary.DictionaryItem
 import io.github.sunshinewzy.shining.api.event.ShiningDataLoadingCompleteEvent
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.reward.GuideRewardRegistry
 import io.github.sunshinewzy.shining.api.guide.state.GuideElementStateRegistry
 import io.github.sunshinewzy.shining.api.item.ConsumableItemGroup
-import io.github.sunshinewzy.shining.api.item.universal.VanillaItem
+import io.github.sunshinewzy.shining.api.item.universal.DictionaryUniversalItem
+import io.github.sunshinewzy.shining.api.item.universal.VanillaUniversalItem
 import io.github.sunshinewzy.shining.api.machine.IMachineManager
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
@@ -133,8 +133,8 @@ object Shining : Plugin(), ShiningPlugin {
 
     private fun init() {
         registerSerialization()
-        registerListeners()
         registerClasses()
+        registerListeners()
         
         try {
             SReflect.init()
@@ -164,7 +164,9 @@ object Shining : Plugin(), ShiningPlugin {
 
     private fun registerSerialization() {
         objectMapper.registerSubtypes(
-            VanillaItem::class.java, DictionaryItem::class.java,
+            // UniversalItem
+            VanillaUniversalItem::class.java, DictionaryUniversalItem::class.java,
+            // IGuideReward
             GuideRewardItem::class.java
         )
         
@@ -177,10 +179,6 @@ object Shining : Plugin(), ShiningPlugin {
             ConfigurationSerialization.registerClass(it)
         }
     }
-
-    private fun registerListeners() {
-        SunSTSubscriber.init()
-    }
     
     private fun registerClasses() {
         GuideElementStateRegistry.register(
@@ -191,8 +189,15 @@ object Shining : Plugin(), ShiningPlugin {
         )
         
         GuideRewardRegistry.register(
-            mapOf()
+            mapOf(
+                GuideRewardItem::class.java to GuideRewardItem.itemIcon
+                
+            )
         )
+    }
+
+    private fun registerListeners() {
+        SunSTSubscriber.init()
     }
 
 
@@ -211,7 +216,7 @@ object Shining : Plugin(), ShiningPlugin {
                 NamespacedId(Shining, "stick"),
                 ElementDescription("&6工具的基石"),
                 ItemStack(Material.STICK),
-                ConsumableItemGroup(true, VanillaItem(ItemStack(Material.STICK)))
+                ConsumableItemGroup(true, VanillaUniversalItem(ItemStack(Material.STICK)))
             )
             stickItem.registerLock(lockExperience)
             stoneCategory.registerElement(stickItem)
@@ -232,7 +237,7 @@ object Shining : Plugin(), ShiningPlugin {
                 NamespacedId(Shining, "pickaxe"),
                 ElementDescription("&e生产力提高"),
                 ItemStack(Material.STONE_PICKAXE),
-                ConsumableItemGroup(false, VanillaItem(ItemStack(Material.STONE_PICKAXE)))
+                ConsumableItemGroup(false, VanillaUniversalItem(ItemStack(Material.STONE_PICKAXE)))
             )
             newStoneCategory.registerElement(pickaxeItem)
 
