@@ -7,6 +7,7 @@ import io.github.sunshinewzy.shining.api.ShiningPlugin
 import io.github.sunshinewzy.shining.api.dictionary.DictionaryItem
 import io.github.sunshinewzy.shining.api.event.ShiningDataLoadingCompleteEvent
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
+import io.github.sunshinewzy.shining.api.guide.reward.GuideRewardRegistry
 import io.github.sunshinewzy.shining.api.guide.state.GuideElementStateRegistry
 import io.github.sunshinewzy.shining.api.item.ConsumableItemGroup
 import io.github.sunshinewzy.shining.api.item.universal.VanillaItem
@@ -22,8 +23,10 @@ import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.element.GuideItem
 import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
+import io.github.sunshinewzy.shining.core.guide.reward.GuideRewardItem
 import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
 import io.github.sunshinewzy.shining.core.guide.state.GuideItemState
+import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.machine.MachineManager
 import io.github.sunshinewzy.shining.core.machine.legacy.*
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipe
@@ -131,7 +134,7 @@ object Shining : Plugin(), ShiningPlugin {
     private fun init() {
         registerSerialization()
         registerListeners()
-        registerGuideElementStateClasses()
+        registerClasses()
         
         try {
             SReflect.init()
@@ -160,6 +163,11 @@ object Shining : Plugin(), ShiningPlugin {
     }
 
     private fun registerSerialization() {
+        objectMapper.registerSubtypes(
+            VanillaItem::class.java, DictionaryItem::class.java,
+            GuideRewardItem::class.java
+        )
+        
         arrayOf(
             SBlock::class.java,
             TaskProgress::class.java,
@@ -168,20 +176,22 @@ object Shining : Plugin(), ShiningPlugin {
         ).forEach {
             ConfigurationSerialization.registerClass(it)
         }
-        
-        objectMapper.registerSubtypes(VanillaItem::class.java, DictionaryItem::class.java)
     }
 
     private fun registerListeners() {
         SunSTSubscriber.init()
     }
     
-    private fun registerGuideElementStateClasses() {
+    private fun registerClasses() {
         GuideElementStateRegistry.register(
             mapOf(
-                GuideItemState::class.java to ItemStack(Material.STICK),
-                GuideCategoryState::class.java to ItemStack(Material.BOOK)
+                GuideItemState::class.java to NamespacedIdItem(Material.STICK, NamespacedId(Shining, "shining_guide-state-item")),
+                GuideCategoryState::class.java to NamespacedIdItem(Material.BOOK, NamespacedId(Shining, "shining_guide-state-category"))
             )
+        )
+        
+        GuideRewardRegistry.register(
+            mapOf()
         )
     }
 

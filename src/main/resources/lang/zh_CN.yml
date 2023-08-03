@@ -36,6 +36,7 @@ item-shining-shining_guide-editor-state-element-symbol: '&6图标'
 item-shining-shining_guide-editor-state-element-symbol-current: [ '&6图标', '&7>> 点击编辑 <<', '', '&a↓ 当前 ↓' ]
 item-shining-shining_guide-editor-state-element-dependencies: '&e依赖'
 item-shining-shining_guide-editor-state-element-locks: '&c锁'
+item-shining-shining_guide-editor-state-element-rewards: '&a奖励'
 item-shining-shining_guide-editor-state-category-priority: '&d优先级'
 item-shining-shining_guide-editor-state-basic-locks-create-experience: '&b经验锁'
 item-shining-shining_guide-editor-state-basic-locks-create-item: '&e物品锁'
@@ -45,6 +46,9 @@ item-shining-shining_guide-draft-editor-state: '&b状态'
 item-shining-shining_guide-draft-editor-move_folder: '&e移动文件夹'
 item-shining-shining_guide-draft-folder-create: '&a新建文件夹'
 item-shining-shining_guide-draft-folder-editor: '&e编辑文件夹'
+item-shining-shining_guide-state-item: [ '&bItem - 物品', '', '&f取得指定的物品' ]
+item-shining-shining_guide-state-category: [ '&eCategory - 分类', '', '&f能有序的容纳各种元素' ]
+item-shining-shining_guide-reward-item-icon: [ '&bItem - 物品', '', '&f奖励指定的物品' ]
 item-shining-icon-back_menu: [ '&c⇦ 返回', '', '&f左键：&7返回上一页', '&fShift + 左键：&7返回主菜单' ]
 item-shining-icon-back: '&b⇦ 返回'
 item-shining-icon-submit: '&a>> 点击以提交任务 <<'

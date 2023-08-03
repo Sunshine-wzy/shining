@@ -40,7 +40,7 @@ class LockExperience(
         player.level -= level
     }
 
-    override fun openEditor(player: Player, team: GuideTeam, state: GuideElementState, context: GuideContext) {
+    override fun openEditor(player: Player, team: GuideTeam, context: GuideContext, state: GuideElementState) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-lock-experience-title").colored()) {
             rows(3)
 
@@ -59,7 +59,7 @@ class LockExperience(
             set('c', if (isConsume) itemIsConsumeOpen.toLocalizedItem(player) else itemIsConsumeClose.toLocalizedItem(player)) {
                 switchIsConsume()
                 
-                openEditor(player, team, state, context)
+                openEditor(player, team, context, state)
             }
             
             set('a', itemEditExperience.toLocalizedItem(player).clone().addLore(description(player))) {
@@ -75,7 +75,7 @@ class LockExperience(
                     }
                     
                     onFinal { 
-                        openEditor(player, team, state, context)
+                        openEditor(player, team, context, state)
                     }
                 }
             }

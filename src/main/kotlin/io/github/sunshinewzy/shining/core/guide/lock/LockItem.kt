@@ -44,7 +44,7 @@ class LockItem(
         player.inventory.removeSItem(item)
     }
 
-    override fun openEditor(player: Player, team: GuideTeam, state: GuideElementState, context: GuideContext) {
+    override fun openEditor(player: Player, team: GuideTeam, context: GuideContext, state: GuideElementState) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-lock-item-title").colored()) {
             rows(4)
 
@@ -63,7 +63,7 @@ class LockItem(
 
             set('c', if (isConsume) itemIsConsumeOpen.toLocalizedItem(player) else itemIsConsumeClose.toLocalizedItem(player)) {
                 switchIsConsume()
-                openEditor(player, team, state, context)
+                openEditor(player, team, context, state)
             }
             
             val theItemEditItem = itemEditItem.toLocalizedItem(player)
@@ -76,7 +76,7 @@ class LockItem(
                     }
                     
                     onFinal { 
-                        openEditor(player, team, state, context)
+                        openEditor(player, team, context, state)
                     }
                 }
             }

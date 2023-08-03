@@ -41,7 +41,7 @@ abstract class ElementLock(
     /**
      * Opens an editor to edit the lock.
      */
-    abstract fun openEditor(player: Player, team: GuideTeam, state: GuideElementState, context: GuideContext)
+    abstract fun openEditor(player: Player, team: GuideTeam, context: GuideContext, state: GuideElementState)
     
 
     /**

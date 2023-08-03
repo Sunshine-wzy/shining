@@ -7,6 +7,7 @@ import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
+import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
@@ -34,6 +35,7 @@ abstract class GuideElement(
 ) : IGuideElement {
     private val dependencyMap: MutableMap<NamespacedId, IGuideElement> = HashMap()
     private val locks: MutableList<ElementLock> = LinkedList()
+    private val rewards: MutableList<IGuideReward> = LinkedList()
 
     private val previousElementMap: MutableMap<UUID, IGuideElement> = HashMap()
 
@@ -101,7 +103,14 @@ abstract class GuideElement(
 
         player.world.playSound(player.location, Sound.UI_TOAST_CHALLENGE_COMPLETE, 1f, 2f)
         player.sendTitle("§f[§e${description.name}§f]", player.getLangText("menu-shining_guide-element-complete"), 10, 70, 20)
+        reward(player)
         player.closeInventory()
+    }
+
+    override fun reward(player: Player) {
+        rewards.forEach { 
+            it.reward(player)
+        }
     }
 
     override fun update(state: IGuideElementState, isMerge: Boolean): Boolean {
@@ -115,6 +124,8 @@ abstract class GuideElement(
         state.getDependencyElementMapTo(dependencyMap)
         locks.clear()
         state.locks.mapTo(locks) { it.clone() }
+        rewards.clear()
+        state.rewards.mapTo(rewards) { it.clone() }
 
         return true
     }
@@ -133,6 +144,9 @@ abstract class GuideElement(
         state.dependencies += dependencyMap.keys
         state.locks.clear()
         locks.mapTo(state.locks) { it.clone() }
+        state.rewards.clear()
+        rewards.mapTo(state.rewards) { it.clone() }
+        
         return true
     }
 

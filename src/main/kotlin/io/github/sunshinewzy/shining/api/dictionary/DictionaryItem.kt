@@ -40,7 +40,7 @@ open class DictionaryItem : UniversalItem {
     fun hasName(): Boolean = name != NamespacedId.NULL
 
     
-    override fun getItemStack(): ItemStack = item
+    override fun getItemStack(): ItemStack = item.clone()
 
     override fun contains(inventory: Inventory): Boolean =
         inventory.containsDictionaryItem(name, item.amount)

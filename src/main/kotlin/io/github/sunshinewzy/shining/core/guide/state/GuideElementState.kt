@@ -7,6 +7,7 @@ import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
 import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
+import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
@@ -63,6 +64,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
     var dependencies: MutableSet<NamespacedId> = HashSet()
     var locks: MutableList<ElementLock> = LinkedList()
+    var rewards: MutableList<IGuideReward> = LinkedList()
     
     
     fun addDependency(element: IGuideElement) {
@@ -86,6 +88,8 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
         state.dependencies += dependencies
         state.locks.clear()
         locks.mapTo(state.locks) { it.clone() }
+        state.rewards.clear()
+        rewards.mapTo(state.rewards) { it.clone() }
         
         return state
     }
@@ -93,6 +97,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
     abstract fun openAdvancedEditor(player: Player, team: GuideTeam, context: GuideContext)
 
+    public abstract override fun clone(): GuideElementState
 
     override fun update(): Boolean =
         element?.update(this) ?: false
@@ -224,7 +229,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             map(
                 "-B-------",
                 "- a b c -",
-                "- d e f -",
+                "- def g  -",
                 "---------"
             )
 
@@ -301,6 +306,10 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
 
             set('f', itemEditLocks.toLocalizedItem(player)) {
                 openLocksEditor(player, team, context)
+            }
+            
+            set('g', itemEditRewards.toLocalizedItem(player)) {
+                
             }
 
             onClick(lock = true)
@@ -419,15 +428,15 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             }
             
             onClick { _, element -> 
-                element.openEditor(player, team, this@GuideElementState, context)
+                element.openEditor(player, team, context, this@GuideElementState)
             }
 
-            set(2 orderWith 1, ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player)) {
+            onBack(player) {
                 openBasicEditor(player, team, context)
             }
 
             onClick(lock = true) {
-                if (it.rawSlot in ShiningGuide.slotOrders && it.currentItem.isAir()) {
+                if (ShiningGuide.isClickEmptySlot(it)) {
                     openCreateNewLockMenu(player, team, context)
                 }
             }
@@ -453,16 +462,40 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             set('a', itemCreateLockExperience.toLocalizedItem(player)) {
                 val lock = LockExperience(1)
                 locks += lock
-                lock.openEditor(player, team, this@GuideElementState, context)
+                lock.openEditor(player, team, context, this@GuideElementState)
             }
             
             set('b', itemCreateLockItem.toLocalizedItem(player)) {
                 val lock = LockItem(ItemStack(Material.AIR))
                 locks += lock
-                lock.openEditor(player, team, this@GuideElementState, context)
+                lock.openEditor(player, team, context, this@GuideElementState)
             }
 
             onClick(lock = true)
+        }
+    }
+    
+    fun openRewardsEditor(player: Player, team: GuideTeam, context: GuideContext) {
+        player.openMultiPageMenu<IGuideReward> { 
+            elements { rewards }
+            
+            onGenerate { _, element, _, _ -> 
+                element.getIcon(player)
+            }
+            
+            onClick { _, element -> 
+                element.openEditor(player, team, context, this@GuideElementState)
+            }
+            
+            onBack(player) {
+                openBasicEditor(player, team, context)
+            }
+            
+            onClick(lock = true) {
+                if (ShiningGuide.isClickEmptySlot(it)) {
+                    TODO()
+                }
+            }
         }
     }
     
@@ -504,7 +537,8 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
         private val itemEditSymbolCurrent = NamespacedIdItem(Material.EMERALD, NamespacedId(Shining, "shining_guide-editor-state-element-symbol-current"))
         private val itemEditDependencies = NamespacedIdItem(Material.CHEST, NamespacedId(Shining, "shining_guide-editor-state-element-dependencies"))
         private val itemEditLocks = NamespacedIdItem(Material.TRIPWIRE_HOOK, NamespacedId(Shining, "shining_guide-editor-state-element-locks"))
-
+        private val itemEditRewards = NamespacedIdItem(Material.GOLDEN_APPLE, NamespacedId(Shining, "shining_guide-editor-state-element-rewards"))
+        
         private val itemCreateLockExperience = NamespacedIdItem(Material.EXPERIENCE_BOTTLE, NamespacedId(Shining, "shining_guide-editor-state-basic-locks-create-experience"))
         private val itemCreateLockItem = NamespacedIdItem(Material.ITEM_FRAME, NamespacedId(Shining, "shining_guide-editor-state-basic-locks-create-item"))
         

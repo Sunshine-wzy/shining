@@ -41,6 +41,8 @@ interface IGuideElement {
     
     fun complete(player: Player, team: GuideTeam, isSilent: Boolean = false)
 
+    fun reward(player: Player)
+    
     fun saveToState(state: IGuideElementState): Boolean
 
     fun getState(): IGuideElementState

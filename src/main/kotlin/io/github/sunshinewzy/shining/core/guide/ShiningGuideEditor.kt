@@ -26,7 +26,6 @@ import io.github.sunshinewzy.shining.utils.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.submit
 import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
@@ -93,11 +92,11 @@ object ShiningGuideEditor {
     }
     
     fun openCreateNewStateEditor(player: Player, context: GuideContext, elementContainer: IGuideElementContainer?, elementContainerState: IGuideElementContainerState?) {
-        player.openMultiPageMenu<Pair<Class<out IGuideElementState>, ItemStack>>(player.getLangText("menu-shining_guide-editor-create_new_state-title")) { 
+        player.openMultiPageMenu<Pair<Class<out IGuideElementState>, LanguageItem>>(player.getLangText("menu-shining_guide-editor-create_new_state-title")) { 
             elements { GuideElementStateRegistry.getRegisteredClassPairList() }
             
             onGenerate { _, element, _, _ -> 
-                element.second
+                element.second.toLocalizedItem(player)
             }
             
             onClick { _, element -> 
