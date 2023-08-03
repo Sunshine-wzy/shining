@@ -7,7 +7,7 @@ import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
-import io.github.sunshinewzy.shining.core.guide.team.GuideTeamElementData
+import io.github.sunshinewzy.shining.core.guide.team.GuideTeamData
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -51,7 +51,7 @@ interface IGuideElement {
     
     fun update(state: IGuideElementState): Boolean = update(state, false)
 
-    suspend fun getTeamData(team: GuideTeam): GuideTeamElementData
+    suspend fun getTeamData(team: GuideTeam): GuideTeamData
     
     suspend fun getCondition(team: GuideTeam): ElementCondition
 

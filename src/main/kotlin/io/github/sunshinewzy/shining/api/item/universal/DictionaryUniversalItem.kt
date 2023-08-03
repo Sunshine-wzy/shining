@@ -70,7 +70,7 @@ class DictionaryUniversalItem(
                     predicate {
                         when (index) {
                             "namespace" -> Namespace.VALID_NAMESPACE.matcher(it).matches()
-                            "id" -> NamespacedId.VALID_ID.matcher(it).matches() && it != "shining_guide"
+                            "id" -> NamespacedId.VALID_ID.matcher(it).matches()
                             else -> false
                         }
                     }

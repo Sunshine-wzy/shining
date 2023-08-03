@@ -45,6 +45,10 @@ taboolib {
         links { 
             name("homepage").url("https://www.mcbbs.net/thread-1170416-1-1.html")
         }
+        
+        dependencies { 
+            name("PlaceholderAPI").optional(true)
+        }
     }
 }
 

@@ -5,7 +5,9 @@ import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.item.universal.UniversalItem
+import io.github.sunshinewzy.shining.api.item.universal.UniversalItemRegistry
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
@@ -61,6 +63,16 @@ class GuideRewardItem(val items: MutableList<UniversalItem>) : IGuideReward {
             set(8 orderWith 1, ctxtRemove.getIcon(player)) {
                 ctxtRemove.switchMode()
                 openEditor(player, ctxt)
+            }
+            
+            onClick(lock = true) { event ->
+                if (ShiningGuide.isClickEmptySlot(event)) {
+                    UniversalItemRegistry.openCreator(player, GuideEditorContext.Back {
+                        openEditor(player, context)
+                    } + UniversalItemRegistry.CreateContext {
+                        this@GuideRewardItem.items += it
+                    })
+                }
             }
         }
     }

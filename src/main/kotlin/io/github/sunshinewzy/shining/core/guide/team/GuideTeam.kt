@@ -41,7 +41,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
     private var members: JacksonWrapper<HashSet<UUID>> by GuideTeams.members
     private var applicants: JacksonWrapper<HashSet<UUID>> by GuideTeams.applicants
-    private var elementData: JacksonWrapper<GuideTeamElementData> by GuideTeams.elementData
+    private var data: JacksonWrapper<GuideTeamData> by GuideTeams.data
     
 
     suspend fun join(player: Player) {
@@ -87,13 +87,13 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         }
     }
     
-    suspend fun getElementData(): GuideTeamElementData =
-        newSuspendedTransaction { elementData.value }
+    suspend fun getTeamData(): GuideTeamData =
+        newSuspendedTransaction { data.value }
     
-    suspend fun updateElementData() {
+    suspend fun updateTeamData() {
         newSuspendedTransaction { 
-            elementData.value.let { 
-                elementData = JacksonWrapper(it)
+            data.value.let { 
+                data = JacksonWrapper(it)
             }
         }
     }
@@ -342,6 +342,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                     this.symbol = symbol
                     this.members = JacksonWrapper(hashSetOf())
                     this.applicants = JacksonWrapper(hashSetOf())
+                    this.data = JacksonWrapper(GuideTeamData())
                 }
                 container[GUIDE_TEAM_ID] = guideTeam.id
                 true

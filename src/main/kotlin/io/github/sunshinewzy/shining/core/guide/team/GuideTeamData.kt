@@ -5,7 +5,7 @@ import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 
-class GuideTeamElementData {
+class GuideTeamData {
     
     val elementConditionMap: MutableMap<NamespacedId, ElementCondition> = HashMap()
     

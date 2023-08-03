@@ -10,6 +10,7 @@ import io.github.sunshinewzy.shining.api.guide.reward.GuideRewardRegistry
 import io.github.sunshinewzy.shining.api.guide.state.GuideElementStateRegistry
 import io.github.sunshinewzy.shining.api.item.ConsumableItemGroup
 import io.github.sunshinewzy.shining.api.item.universal.DictionaryUniversalItem
+import io.github.sunshinewzy.shining.api.item.universal.UniversalItemRegistry
 import io.github.sunshinewzy.shining.api.item.universal.VanillaUniversalItem
 import io.github.sunshinewzy.shining.api.machine.IMachineManager
 import io.github.sunshinewzy.shining.api.namespace.Namespace
@@ -23,6 +24,7 @@ import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.element.GuideItem
 import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
+import io.github.sunshinewzy.shining.core.guide.reward.GuideRewardCommand
 import io.github.sunshinewzy.shining.core.guide.reward.GuideRewardItem
 import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
 import io.github.sunshinewzy.shining.core.guide.state.GuideItemState
@@ -167,7 +169,9 @@ object Shining : Plugin(), ShiningPlugin {
             // UniversalItem
             VanillaUniversalItem::class.java, DictionaryUniversalItem::class.java,
             // IGuideReward
-            GuideRewardItem::class.java
+            GuideRewardItem::class.java, GuideRewardCommand::class.java,
+            // UniversalItem
+            VanillaUniversalItem::class.java, DictionaryUniversalItem::class.java
         )
         
         arrayOf(
@@ -181,19 +185,20 @@ object Shining : Plugin(), ShiningPlugin {
     }
     
     private fun registerClasses() {
-        GuideElementStateRegistry.register(
-            mapOf(
-                GuideItemState::class.java to NamespacedIdItem(Material.STICK, NamespacedId(Shining, "shining_guide-state-item")),
-                GuideCategoryState::class.java to NamespacedIdItem(Material.BOOK, NamespacedId(Shining, "shining_guide-state-category"))
-            )
-        )
+        GuideElementStateRegistry.register(mapOf(
+            GuideItemState::class.java to NamespacedIdItem(Material.STICK, NamespacedId(Shining, "shining_guide-state-item")),
+            GuideCategoryState::class.java to NamespacedIdItem(Material.BOOK, NamespacedId(Shining, "shining_guide-state-category"))
+        ))
         
-        GuideRewardRegistry.register(
-            mapOf(
-                GuideRewardItem::class.java to GuideRewardItem.itemIcon
-                
-            )
-        )
+        GuideRewardRegistry.register(mapOf(
+            GuideRewardItem::class.java to GuideRewardItem.itemIcon,
+            GuideRewardCommand::class.java to GuideRewardCommand.itemIcon
+        ))
+        
+        UniversalItemRegistry.register(mapOf(
+            VanillaUniversalItem::class.java to NamespacedIdItem(Material.GRASS_BLOCK, NamespacedId(Shining, "item-universal-vanilla-icon")),
+            DictionaryUniversalItem::class.java to NamespacedIdItem(Material.BOOKSHELF, NamespacedId(Shining, "item-universal-dictionary-icon"))
+        ))
     }
 
     private fun registerListeners() {

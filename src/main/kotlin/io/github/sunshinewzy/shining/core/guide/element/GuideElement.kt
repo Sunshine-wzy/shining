@@ -13,7 +13,7 @@ import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.state.GuideElementState
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
-import io.github.sunshinewzy.shining.core.guide.team.GuideTeamElementData
+import io.github.sunshinewzy.shining.core.guide.team.GuideTeamData
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
@@ -25,6 +25,7 @@ import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.module.chat.colored
 import taboolib.module.ui.type.Basic
 import java.util.*
 
@@ -90,7 +91,7 @@ abstract class GuideElement(
 
         ShiningDispatchers.launchDB {
             getTeamData(team).setElementCondition(this@GuideElement, UNLOCKED)
-            team.updateElementData()
+            team.updateTeamData()
         }
         return true
     }
@@ -98,11 +99,12 @@ abstract class GuideElement(
     override fun complete(player: Player, team: GuideTeam, isSilent: Boolean) {
         ShiningDispatchers.launchDB { 
             getTeamData(team).setElementCondition(this@GuideElement, COMPLETE)
+            team.updateTeamData()
         }
         if (isSilent) return
 
         player.world.playSound(player.location, Sound.UI_TOAST_CHALLENGE_COMPLETE, 1f, 2f)
-        player.sendTitle("§f[§e${description.name}§f]", player.getLangText("menu-shining_guide-element-complete"), 10, 70, 20)
+        player.sendTitle("§f[§e${description.name.colored()}§f]", player.getLangText("menu-shining_guide-element-complete").colored(), 10, 70, 20)
         reward(player)
         player.closeInventory()
     }
@@ -239,8 +241,8 @@ abstract class GuideElement(
         return GuideElementRegistry.register(this)
     }
 
-    override suspend fun getTeamData(team: GuideTeam): GuideTeamElementData =
-        team.getElementData()
+    override suspend fun getTeamData(team: GuideTeam): GuideTeamData =
+        team.getTeamData()
 
     fun registerDependency(element: IGuideElement) {
         dependencyMap[element.getId()] = element

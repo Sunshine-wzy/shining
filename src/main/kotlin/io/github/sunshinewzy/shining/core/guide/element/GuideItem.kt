@@ -12,6 +12,7 @@ import io.github.sunshinewzy.shining.core.guide.state.GuideItemState
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
+import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.OrderUtils
 import io.github.sunshinewzy.shining.utils.menu.onBack
@@ -20,6 +21,7 @@ import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.function.submit
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Linked
 import taboolib.platform.util.buildItem
@@ -44,50 +46,58 @@ open class GuideItem : GuideElement {
     
 
     override fun openMenu(player: Player, team: GuideTeam, context: GuideContext) {
-        player.openMenu<Linked<UniversalItem>>(player.getLangText(ShiningGuide.TITLE)) { 
-            rows(5)
-            slots(slotOrders)
+        ShiningDispatchers.launchDB { 
+            val isCompleted = isTeamCompleted(team)
             
-            elements { itemGroup.items }
-            
-            val playerInventory = player.inventory
-            val missingItems = ArrayList<ItemStack>()
-            onGenerate { _, element, _, _ -> 
-                if (element.contains(playerInventory))
-                    buildItem(element.getItemStack()) { shiny() }
-                else element.getItemStack().also { missingItems += it }
-            }
-            
-            onBuildEdge(edgeOrders)
-            
-            setPreviousPage(4 orderWith 5) { _, hasPreviousPage -> 
-                if (hasPreviousPage) ShiningIcon.PAGE_PREVIOUS_GLASS_PANE.toLocalizedItem(player)
-                else ShiningIcon.EDGE.item
-            }
-            
-            setNextPage(6 orderWith 5) { _, hasNextPage ->
-                if (hasNextPage) ShiningIcon.PAGE_NEXT_GLASS_PANE.toLocalizedItem(player)
-                else ShiningIcon.EDGE.item
-            }
-            
-            setBackButton(player, team, context)
-            
-            set(2 orderWith 3, itemTip.toLocalizedItem(player))
-            
-            set(8 orderWith 3, ShiningIcon.SUBMIT.toLocalizedItem(player)) {
-                if (itemGroup.contains(player)) {
-                    itemGroup.consume(player)
-                    complete(player, team)
-                } else {
-                    openMissingItemsMenu(player, team, context, missingItems)
+            submit {
+                player.openMenu<Linked<UniversalItem>>(player.getLangText(ShiningGuide.TITLE)) {
+                    rows(5)
+                    slots(slotOrders)
+
+                    elements { itemGroup.items }
+
+                    val playerInventory = player.inventory
+                    val missingItems = ArrayList<ItemStack>()
+                    onGenerate { _, element, _, _ ->
+                        if (element.contains(playerInventory))
+                            buildItem(element.getItemStack()) { shiny() }
+                        else element.getItemStack().also { missingItems += it }
+                    }
+
+                    onBuildEdge(edgeOrders)
+
+                    setPreviousPage(4 orderWith 5) { _, hasPreviousPage ->
+                        if (hasPreviousPage) ShiningIcon.PAGE_PREVIOUS_GLASS_PANE.toLocalizedItem(player)
+                        else ShiningIcon.EDGE.item
+                    }
+
+                    setNextPage(6 orderWith 5) { _, hasNextPage ->
+                        if (hasNextPage) ShiningIcon.PAGE_NEXT_GLASS_PANE.toLocalizedItem(player)
+                        else ShiningIcon.EDGE.item
+                    }
+
+                    setBackButton(player, team, context)
+
+                    set(2 orderWith 3, itemTip.toLocalizedItem(player))
+
+                    if (!isCompleted) {
+                        set(8 orderWith 3, ShiningIcon.SUBMIT.toLocalizedItem(player)) {
+                            if (itemGroup.contains(player)) {
+                                if (itemGroup.isConsume) itemGroup.consume(player)
+                                complete(player, team)
+                            } else {
+                                openMissingItemsMenu(player, team, context, missingItems)
+                            }
+                        }
+                    }
+
+                    set(
+                        5 orderWith 1,
+                        if (itemGroup.isConsume) ShiningIcon.IS_CONSUME.toStateShinyLocalizedItem("open", player)
+                        else ShiningIcon.IS_CONSUME.toStateLocalizedItem("close", player)
+                    )
                 }
             }
-            
-            set(
-                5 orderWith 1,
-                if (itemGroup.isConsume) ShiningIcon.IS_CONSUME.toStateShinyLocalizedItem("open", player)
-                else ShiningIcon.IS_CONSUME.toStateLocalizedItem("close", player)
-            )
         }
     }
     

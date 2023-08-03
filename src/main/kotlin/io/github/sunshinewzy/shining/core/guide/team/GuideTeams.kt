@@ -15,6 +15,6 @@ object GuideTeams : IntIdTable() {
     val symbol = jackson("symbol", Shining.objectMapper, ItemStack::class.java)
     val members = jackson("members", Shining.objectMapper, object : TypeReference<JacksonWrapper<HashSet<UUID>>>() {})
     val applicants = jackson("applicants", Shining.objectMapper, object : TypeReference<JacksonWrapper<HashSet<UUID>>>() {})
-    val elementData = jackson("element_data", Shining.objectMapper, object : TypeReference<JacksonWrapper<GuideTeamElementData>>() {})
+    val data = jackson("data", Shining.objectMapper, object : TypeReference<JacksonWrapper<GuideTeamData>>() {})
     
 }

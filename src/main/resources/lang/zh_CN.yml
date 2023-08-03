@@ -85,9 +85,11 @@ item-shining-icon-is_consume:
 item-shining-icon-submit_failure: '&c提交失败'
 item-shining-editor-item-lore-chat_editor: [ '&a编辑Lore', '', '&7> 使用&eChatEditor' ]
 item-shining-editor-item-lore-gui: [ '&a编辑Lore', '', '&7> 使用&bGUI' ]
+item-shining-item-universal-vanilla-icon: '&f普通物品'
 item-shining-item-universal-vanilla-current: [ '&b物品', '', '&a⇨ 当前 ⇨' ]
 item-shining-item-universal-vanilla-hand: '&e替换为手持物品'
 item-shining-item-universal-vanilla-editor: '&d打开物品编辑器'
+item-shining-item-universal-dictionary-icon: '&e字典物品'
 item-shining-item-universal-dictionary-name: '&b编辑物品字典名'
 item-shining-item-universal-dictionary-amount: '&e编辑物品数量'
 menu-shining_guide-title: 'Shining 指南'
@@ -156,6 +158,8 @@ menu-shining_guide-draft-editor-title: '草稿编辑'
 menu-shining_guide-reward-item-title: '编辑奖励 - 物品'
 menu-item-universal-vanilla-title: '编辑物品'
 menu-item-universal-dictionary-title: '编辑字典物品'
+menu-item-universal-creator-title: '新建通用物品'
+menu-item-consumable_item_group-title: '编辑可消耗物品组'
 menu-search-prompt: '搜索'
 menu-editor-item-title: '物品编辑器'
 menu-editor-item-name-title: '物品名称编辑'

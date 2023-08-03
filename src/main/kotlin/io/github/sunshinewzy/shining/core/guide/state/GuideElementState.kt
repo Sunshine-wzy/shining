@@ -312,7 +312,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
             }
             
             set('g', itemEditRewards.toLocalizedItem(player)) {
-                
+                openRewardsEditor(player, team, context)
             }
 
             onClick(lock = true)
@@ -522,7 +522,7 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
                 element.second.toLocalizedItem(player)
             }
             
-            onClick { event, element -> 
+            onClick { _, element -> 
                 val reward = element.first.newInstance()
                 rewards += reward
                 reward.openEditor(player, GuideEditorContext.BackNoEvent {

@@ -1,8 +1,6 @@
 package io.github.sunshinewzy.shining.api.item.universal
 
-import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonTypeName
-import com.fasterxml.jackson.annotation.JsonValue
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
@@ -24,7 +22,10 @@ import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 
 @JsonTypeName("vanilla")
-class VanillaUniversalItem @JsonCreator constructor(@JsonValue var item: ItemStack) : UniversalItem {
+class VanillaUniversalItem(var item: ItemStack) : UniversalItem {
+    
+    constructor() : this(ItemStack(Material.STONE))
+    
     
     override fun getItemStack(): ItemStack = item.clone()
 
@@ -39,12 +40,13 @@ class VanillaUniversalItem @JsonCreator constructor(@JsonValue var item: ItemSta
             rows(3)
             
             map(
-                "-B-------",
-                "-c-i-a b-",
-                "---------"
+                "-B===----",
+                "-c=i=a b-",
+                "--===----"
             )
             
             set('-', ShiningIcon.EDGE.item)
+            set('=', ShiningIcon.EDGE_GLASS_PANE.item)
             set('c', itemCurrent.toLocalizedItem(player))
             set('i', item)
             
