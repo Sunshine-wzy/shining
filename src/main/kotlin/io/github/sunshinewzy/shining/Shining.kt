@@ -115,7 +115,7 @@ object Shining : Plugin(), ShiningPlugin {
 
         info("Shining 加载成功！")
 
-        if (System.getProperty("ShiningDebug") == "true")
+        if (System.getProperty("shining.debug") == "true")
             test()
     }
 

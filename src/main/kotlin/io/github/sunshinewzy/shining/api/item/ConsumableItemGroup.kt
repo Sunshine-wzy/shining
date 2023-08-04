@@ -19,7 +19,7 @@ import org.bukkit.inventory.ItemStack
 class ConsumableItemGroup(
     var isConsume: Boolean,
     val items: MutableList<UniversalItem> = ArrayList()
-) {
+): Cloneable {
     
     constructor() : this(true)
     
@@ -99,5 +99,8 @@ class ConsumableItemGroup(
             }
         }
     }
+
+    public override fun clone(): ConsumableItemGroup =
+        ConsumableItemGroup(isConsume, items.mapTo(ArrayList()) { it.clone() })
     
 }

@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack
     use = JsonTypeInfo.Id.NAME,
     include = JsonTypeInfo.As.PROPERTY
 )
-interface UniversalItem {
+interface UniversalItem : Cloneable {
     
     @JsonIgnore
     fun getItemStack(): ItemStack
@@ -21,5 +21,7 @@ interface UniversalItem {
     fun consume(inventory: Inventory): Boolean
     
     fun openEditor(player: Player, context: GuideContext)
+
+    public override fun clone(): UniversalItem
     
 }

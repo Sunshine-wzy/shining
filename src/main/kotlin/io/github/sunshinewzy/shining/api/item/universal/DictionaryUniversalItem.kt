@@ -110,6 +110,8 @@ class DictionaryUniversalItem(
             onClick(lock = true)
         }
     }
+
+    override fun clone(): DictionaryUniversalItem = DictionaryUniversalItem(name, amount)
     
     
     companion object {

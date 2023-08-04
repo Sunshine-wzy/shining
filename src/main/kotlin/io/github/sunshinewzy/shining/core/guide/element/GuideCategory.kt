@@ -211,9 +211,9 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
         return super.register() as GuideCategory
     }
 
-    fun getElements(): List<IGuideElement> {
+    override fun getElements(): List<IGuideElement> {
         val list = ArrayList<IGuideElement>()
-        priorityToElements.forEach { (priority, elements) -> 
+        priorityToElements.forEach { (_, elements) -> 
             list += elements
         }
         return list

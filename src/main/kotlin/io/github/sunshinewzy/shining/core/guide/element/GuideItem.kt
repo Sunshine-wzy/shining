@@ -132,6 +132,9 @@ open class GuideItem : GuideElement {
         }
     }
 
+    override fun getState(): IGuideElementState =
+        GuideItemState().correlateElement(this)
+
     override fun saveToState(state: IGuideElementState): Boolean {
         if (state !is GuideItemState) return false
         if (!super.saveToState(state)) return false
@@ -139,9 +142,6 @@ open class GuideItem : GuideElement {
         state.itemGroup = itemGroup
         return true
     }
-
-    override fun getState(): IGuideElementState =
-        GuideItemState().correlateElement(this)
 
     override fun update(state: IGuideElementState, isMerge: Boolean): Boolean {
         if (state !is GuideItemState) return false

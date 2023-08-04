@@ -19,7 +19,7 @@ class GuideItemState : GuideElementState() {
         val state = GuideItemState()
         copyTo(state)
         
-        state.itemGroup = itemGroup
+        state.itemGroup = itemGroup?.clone()
         return state
     }
 

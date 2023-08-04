@@ -77,8 +77,10 @@ class VanillaUniversalItem(var item: ItemStack) : UniversalItem {
             onClick(lock = true)
         }
     }
+
+    override fun clone(): VanillaUniversalItem = VanillaUniversalItem(item.clone())
     
-    
+
     companion object {
         val itemCurrent = NamespacedIdItem(Material.ITEM_FRAME, NamespacedId(Shining, "item-universal-vanilla-current"))
         private val itemHand = NamespacedIdItem(Material.EMERALD, NamespacedId(Shining, "item-universal-vanilla-hand"))
