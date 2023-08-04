@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.utils
 
 import io.github.sunshinewzy.shining.objects.SFlatCoord
+import io.github.sunshinewzy.shining.objects.coordinate.Coordinate2D
 
 object OrderUtils {
     
@@ -27,7 +28,9 @@ object OrderUtils {
 infix fun Int.orderWith(y: Int): Int = (y - 1) * 9 + (this - 1)
 
 
-fun Int.toCoordinate(): SFlatCoord = SFlatCoord(this % 9 + 1, this / 9 + 1)
+fun Int.toCoordinate2D(): Coordinate2D = Coordinate2D(this % 9 + 1, this / 9 + 1)
+
+fun Int.toFlatCoord(): SFlatCoord = SFlatCoord(this % 9 + 1, this / 9 + 1)
 
 
 fun Int.toX(length: Int): Int = this % length + 1

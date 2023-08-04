@@ -109,7 +109,7 @@ sealed class SCraftRecipe(
         checkAmount: Boolean = true,
         checkDurability: Boolean = false
     ): Boolean {
-        val coord = slot.toCoordinate()
+        val coord = slot.toFlatCoord()
         return match(inventory, coord.x, coord.y, checkLore, checkAmount, checkDurability)
     }
 
@@ -168,7 +168,7 @@ sealed class SCraftRecipe(
             checkAmount: Boolean = true,
             checkDurability: Boolean = false
         ): SCraftRecipe? {
-            val coord = slot.toCoordinate()
+            val coord = slot.toFlatCoord()
             return matchRecipe(inventory, coord.x, coord.y, size, checkLore, checkAmount, checkDurability)
         }
 

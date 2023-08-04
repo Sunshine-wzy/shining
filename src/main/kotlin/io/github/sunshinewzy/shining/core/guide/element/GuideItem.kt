@@ -12,11 +12,11 @@ import io.github.sunshinewzy.shining.core.guide.state.GuideItemState
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
+import io.github.sunshinewzy.shining.core.menu.onBack
+import io.github.sunshinewzy.shining.core.menu.onBuildEdge
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.OrderUtils
-import io.github.sunshinewzy.shining.utils.menu.onBack
-import io.github.sunshinewzy.shining.utils.menu.onBuildEdge
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.Material
 import org.bukkit.entity.Player

@@ -8,13 +8,13 @@ import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHan
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.lang.*
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
+import io.github.sunshinewzy.shining.core.menu.Search
+import io.github.sunshinewzy.shining.core.menu.onBack
+import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
+import io.github.sunshinewzy.shining.core.menu.openSearchMenu
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.*
-import io.github.sunshinewzy.shining.utils.menu.Search
-import io.github.sunshinewzy.shining.utils.menu.onBack
-import io.github.sunshinewzy.shining.utils.menu.openMultiPageMenu
-import io.github.sunshinewzy.shining.utils.menu.openSearchMenu
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player

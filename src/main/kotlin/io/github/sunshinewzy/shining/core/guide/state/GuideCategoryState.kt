@@ -18,11 +18,11 @@ import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
+import io.github.sunshinewzy.shining.core.menu.onBack
+import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.getDisplayName
-import io.github.sunshinewzy.shining.utils.menu.onBack
-import io.github.sunshinewzy.shining.utils.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.utils.putSetElement
 import io.github.sunshinewzy.shining.utils.toCurrentLocalizedItem
 import kotlinx.coroutines.runBlocking

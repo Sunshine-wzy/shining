@@ -8,9 +8,9 @@ import io.github.sunshinewzy.shining.core.data.JacksonWrapper
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
+import io.github.sunshinewzy.shining.core.menu.openDeleteConfirmMenu
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
-import io.github.sunshinewzy.shining.utils.menu.openDeleteConfirmMenu
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack

@@ -7,7 +7,7 @@ import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.element.GuideMap
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
-import io.github.sunshinewzy.shining.objects.Coordinate2D
+import io.github.sunshinewzy.shining.objects.coordinate.Coordinate2D
 import org.bukkit.entity.Player
 
 class GuideMapState : GuideElementState() {

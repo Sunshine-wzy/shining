@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.utils.menu
+package io.github.sunshinewzy.shining.core.menu
 
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor

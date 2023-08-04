@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.utils.menu
+package io.github.sunshinewzy.shining.core.menu
 
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.events.smenu.SMenuClickEvent

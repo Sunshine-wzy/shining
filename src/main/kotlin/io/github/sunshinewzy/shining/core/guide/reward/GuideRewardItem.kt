@@ -11,10 +11,10 @@ import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
+import io.github.sunshinewzy.shining.core.menu.onBack
+import io.github.sunshinewzy.shining.core.menu.openDeleteConfirmMenu
+import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.utils.giveItem
-import io.github.sunshinewzy.shining.utils.menu.onBack
-import io.github.sunshinewzy.shining.utils.menu.openDeleteConfirmMenu
-import io.github.sunshinewzy.shining.utils.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.Material
 import org.bukkit.entity.Player

@@ -18,11 +18,11 @@ import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.LanguageItem
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
+import io.github.sunshinewzy.shining.core.menu.onBack
+import io.github.sunshinewzy.shining.core.menu.onBackMenu
+import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
-import io.github.sunshinewzy.shining.utils.menu.onBack
-import io.github.sunshinewzy.shining.utils.menu.onBackMenu
-import io.github.sunshinewzy.shining.utils.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.Material
 import org.bukkit.entity.Player

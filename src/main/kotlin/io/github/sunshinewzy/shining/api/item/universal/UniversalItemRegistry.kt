@@ -6,8 +6,8 @@ import io.github.sunshinewzy.shining.core.guide.context.AbstractGuideContextElem
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.LanguageItem
-import io.github.sunshinewzy.shining.utils.menu.onBack
-import io.github.sunshinewzy.shining.utils.menu.openMultiPageMenu
+import io.github.sunshinewzy.shining.core.menu.onBack
+import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import org.bukkit.entity.Player
 
 object UniversalItemRegistry : AbstractClassRegistry<UniversalItem>() {

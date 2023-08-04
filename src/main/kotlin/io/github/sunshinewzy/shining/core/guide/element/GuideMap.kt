@@ -8,7 +8,7 @@ import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.state.GuideMapState
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
-import io.github.sunshinewzy.shining.objects.Coordinate2D
+import io.github.sunshinewzy.shining.objects.coordinate.Coordinate2D
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -34,6 +34,7 @@ class GuideMap : GuideElement, IGuideElementContainer {
 
     override fun openMenu(player: Player, team: GuideTeam, context: GuideContext) {
         TODO("Not yet implemented")
+        
     }
     
     override fun getState(): IGuideElementState =

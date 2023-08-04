@@ -2,13 +2,13 @@ package io.github.sunshinewzy.shining.objects.machine
 
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.core.machine.legacy.SSingleMachine
+import io.github.sunshinewzy.shining.core.menu.SMenu
 import io.github.sunshinewzy.shining.objects.SCraftRecipe
 import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.SItem.Companion.addShapelessRecipe
 import io.github.sunshinewzy.shining.objects.SLocation
 import io.github.sunshinewzy.shining.objects.inventoryholder.SCraftInventoryHolder
 import io.github.sunshinewzy.shining.utils.*
-import io.github.sunshinewzy.shining.utils.menu.SMenu
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound

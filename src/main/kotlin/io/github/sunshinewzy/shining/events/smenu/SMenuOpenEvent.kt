@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.events.smenu
 
-import io.github.sunshinewzy.shining.utils.menu.SMenu
+import io.github.sunshinewzy.shining.core.menu.SMenu
 import org.bukkit.entity.Player
 import org.bukkit.event.HandlerList
 

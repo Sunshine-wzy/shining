@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.objects
+package io.github.sunshinewzy.shining.objects.coordinate
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
