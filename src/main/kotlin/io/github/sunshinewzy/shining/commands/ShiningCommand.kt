@@ -16,18 +16,18 @@ import taboolib.common.platform.command.PermissionDefault
 import taboolib.common.platform.command.mainCommand
 import taboolib.expansion.createHelper
 
-@CommandHeader("shining", aliases = ["shi"], permissionDefault = PermissionDefault.TRUE)
+@CommandHeader("shining", aliases = ["shi"], permission = "shining.command", permissionDefault = PermissionDefault.TRUE)
 object ShiningCommand {
 
-    @CommandBody(permissionDefault = PermissionDefault.TRUE)
+    @CommandBody
     val main = mainCommand {
         createHelper()
     }
 
-    @CommandBody(permissionDefault = PermissionDefault.OP)
+    @CommandBody(permission = "shining.command.item", permissionDefault = PermissionDefault.OP)
     val item = CommandItem.item
 
-    @CommandBody(permissionDefault = PermissionDefault.TRUE)
+    @CommandBody(permission = "shining.command.guide", permissionDefault = PermissionDefault.TRUE)
     val guide = CommandGuide.guide
 
 

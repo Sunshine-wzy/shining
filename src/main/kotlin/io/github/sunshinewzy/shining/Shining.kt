@@ -19,6 +19,7 @@ import io.github.sunshinewzy.shining.core.data.DataManager
 import io.github.sunshinewzy.shining.core.data.SerializationModules
 import io.github.sunshinewzy.shining.core.data.legacy.internal.SLocationData
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
+import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.element.GuideItem
@@ -53,6 +54,8 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
+import org.bukkit.permissions.Permission
+import org.bukkit.permissions.PermissionDefault
 import org.bukkit.plugin.PluginManager
 import org.jetbrains.exposed.sql.Database
 import taboolib.common.env.RuntimeDependencies
@@ -137,6 +140,7 @@ object Shining : Plugin(), ShiningPlugin {
         registerSerialization()
         registerClasses()
         registerListeners()
+        registerPermissions()
         
         try {
             SReflect.init()
@@ -203,6 +207,16 @@ object Shining : Plugin(), ShiningPlugin {
 
     private fun registerListeners() {
         SunSTSubscriber.init()
+    }
+    
+    private fun registerPermission(permission: Permission) {
+        pluginManager.addPermission(permission)
+        pluginManager.recalculatePermissionDefaults(permission)
+        permission.recalculatePermissibles()
+    }
+    
+    private fun registerPermissions() {
+        registerPermission(Permission(ShiningGuideEditor.PERMISSION_EDIT, PermissionDefault.OP))
     }
 
 
