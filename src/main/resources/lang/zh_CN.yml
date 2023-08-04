@@ -49,14 +49,15 @@ item-shining-shining_guide-draft-folder-create: '&a新建文件夹'
 item-shining-shining_guide-draft-folder-editor: '&e编辑文件夹'
 item-shining-shining_guide-state-item: [ '&bItem - 物品', '', '&f取得指定的物品' ]
 item-shining-shining_guide-state-category: [ '&eCategory - 分类', '', '&f能有序的容纳各种元素' ]
+item-shining-shining_guide-state-map: [ '&dMap - 图', '', '&f能灵活的容纳各种元素', '&f适合制作科技线' ]
 item-shining-shining_guide-reward-item-icon: [ '&bItem - 物品', '', '&f奖励物品' ]
 item-shining-shining_guide-reward-command-icon: [ '&cCommand - 指令', '', '&f执行指令', '&f支持PAPI变量' ]
 item-shining-icon-back_menu: [ '&c⇦ 返回', '', '&f左键：&7返回上一页', '&fShift + 左键：&7返回主菜单' ]
 item-shining-icon-back: '&b⇦ 返回'
 item-shining-icon-submit: '&a>> 点击以提交任务 <<'
 item-shining-icon-workbench: '&a>> &d使用工作台合成 &a<<'
-item-shining-icon-page_next: '&a下一页 ⇩'
-item-shining-icon-page_previous: '&a上一页 ⇧'
+item-shining-icon-page_next: '&a下一页 &e⇩'
+item-shining-icon-page_previous: '&e⇧ &a上一页'
 item-shining-icon-home: '&e⇨ &a返回主界面 &e⇦'
 item-shining-icon-page_next_glass_pane: '&a下一页 &e⇨'
 item-shining-icon-page_previous_glass_pane: '&e⇦ &a上一页'
@@ -83,6 +84,10 @@ item-shining-icon-is_consume:
   close: [ '&e是否消耗:', '', '&c&l否' ]
   open: [ '&e是否消耗:', '', '&a&l是' ]
 item-shining-icon-submit_failure: '&c提交失败'
+item-shining-icon-move_right: '&a向右移动 &e⇨'
+item-shining-icon-move_left: '&e⇦ &a向左移动'
+item-shining-icon-move_up: '&e⇧ &a向上移动'
+item-shining-icon-move_down: '&a向下移动 &e⇩'
 item-shining-editor-item-lore-chat_editor: [ '&a编辑Lore', '', '&7> 使用&eChatEditor' ]
 item-shining-editor-item-lore-gui: [ '&a编辑Lore', '', '&7> 使用&bGUI' ]
 item-shining-item-universal-vanilla-icon: '&f普通物品'
@@ -151,6 +156,8 @@ menu-shining_guide-editor-state-basic-rewards-title: 'Shining 指南 - 奖励编
 menu-shining_guide-editor-state-basic-rewards-create-title: 'Shining 指南 - 创建奖励'
 menu-shining_guide-editor-state-category-title: 'Shining 指南 - 类别状态编辑'
 menu-shining_guide-editor-state-category-element-title: '类别状态编辑 - 元素'
+menu-shining_guide-editor-state-map-title: 'Shining 指南 - 图状态编辑'
+menu-shining_guide-editor-state-map-element-title: '图状态编辑 - 元素'
 menu-shining_guide-draft-title: '草稿箱'
 menu-shining_guide-draft-symbol-folder: '&7&l文件夹'
 menu-shining_guide-draft-symbol-draft: '&7&l草稿'

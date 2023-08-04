@@ -86,7 +86,7 @@ object ShiningGuide : GuideCategory(
     const val TITLE = "menu-shining_guide-title"
 
     val edgeOrders: List<Int> = (((1 orderWith 1)..(9 orderWith 1)) + ((1 orderWith 6)..(9 orderWith 6)))
-    val slotOrders: List<Int> = ((1 orderWith 2)..(9 orderWith 5)).toList()
+    val slotOrders: List<Int> = ((1 orderWith 2)..(8 orderWith 5)).toList()
 
     
     fun init() {

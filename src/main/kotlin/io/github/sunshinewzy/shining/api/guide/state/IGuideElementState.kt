@@ -19,7 +19,7 @@ import org.bukkit.inventory.ItemStack
     include = JsonTypeInfo.As.PROPERTY,
     property = "@class"
 )
-interface IGuideElementState {
+interface IGuideElementState : Cloneable {
 
     @get:JsonIgnore
     @set:JsonIgnore
@@ -64,5 +64,7 @@ interface IGuideElementState {
         element.saveToState(this)
         return this
     }
+
+    public override fun clone(): IGuideElementState
     
 }

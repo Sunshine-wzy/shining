@@ -23,12 +23,14 @@ import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.element.GuideItem
+import io.github.sunshinewzy.shining.core.guide.element.GuideMap
 import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
 import io.github.sunshinewzy.shining.core.guide.reward.GuideRewardCommand
 import io.github.sunshinewzy.shining.core.guide.reward.GuideRewardItem
 import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
 import io.github.sunshinewzy.shining.core.guide.state.GuideItemState
+import io.github.sunshinewzy.shining.core.guide.state.GuideMapState
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.machine.MachineManager
 import io.github.sunshinewzy.shining.core.machine.legacy.*
@@ -38,6 +40,7 @@ import io.github.sunshinewzy.shining.core.task.TaskProgress
 import io.github.sunshinewzy.shining.listeners.SunSTSubscriber
 import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
+import io.github.sunshinewzy.shining.objects.coordinate.Coordinate2D
 import io.github.sunshinewzy.shining.objects.legacy.SBlock
 import io.github.sunshinewzy.shining.objects.machine.SunSTMachineManager
 import io.github.sunshinewzy.shining.utils.SReflect
@@ -191,7 +194,8 @@ object Shining : Plugin(), ShiningPlugin {
     private fun registerClasses() {
         GuideElementStateRegistry.register(mapOf(
             GuideItemState::class.java to NamespacedIdItem(Material.STICK, NamespacedId(Shining, "shining_guide-state-item")),
-            GuideCategoryState::class.java to NamespacedIdItem(Material.BOOK, NamespacedId(Shining, "shining_guide-state-category"))
+            GuideCategoryState::class.java to NamespacedIdItem(Material.BOOK, NamespacedId(Shining, "shining_guide-state-category")),
+            GuideMapState::class.java to NamespacedIdItem(Material.MAP, NamespacedId(Shining, "shining_guide-state-map"))
         ))
         
         GuideRewardRegistry.register(mapOf(
@@ -270,6 +274,34 @@ object Shining : Plugin(), ShiningPlugin {
             )
             bronzeAge.register()
             ShiningGuide.registerElement(bronzeAge)
+            
+            
+            val electricityAge = GuideMap(
+                NamespacedId(Shining, "electricity_age"),
+                ElementDescription("&b电力时代"),
+                ItemStack(Material.REDSTONE_BLOCK)
+            )
+            val steelItem = GuideItem(
+                NamespacedId(Shining, "steel_ingot"),
+                ElementDescription("&f工业基础", "", "&7&l钢"),
+                ItemStack(Material.IRON_INGOT),
+                ConsumableItemGroup(true, VanillaUniversalItem(
+                    SItem(Material.IRON_INGOT, "&7钢锭")
+                ))
+            )
+            electricityAge.registerElement(steelItem, Coordinate2D.ORIGIN)
+            val steelBlockItem = GuideItem(
+                NamespacedId(Shining, "steel_block"),
+                ElementDescription("&b大炼钢铁", "&a多快好省"),
+                ItemStack(Material.IRON_BLOCK),
+                ConsumableItemGroup(false, VanillaUniversalItem(
+                    SItem(Material.IRON_BLOCK, "&7钢块")
+                ))
+            )
+            electricityAge.registerElement(steelBlockItem, Coordinate2D(1, 0))
+            
+            electricityAge.register()
+            ShiningGuide.registerElement(electricityAge)
         }
 
         val mapper = jsonMapper {

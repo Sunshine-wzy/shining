@@ -55,7 +55,7 @@ import java.util.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-abstract class GuideElementState : IGuideElementState, Cloneable {
+abstract class GuideElementState : IGuideElementState {
 
     private val elementDelegate: ElementDelegate = ElementDelegate()
     
@@ -99,8 +99,6 @@ abstract class GuideElementState : IGuideElementState, Cloneable {
     
 
     abstract fun openAdvancedEditor(player: Player, team: GuideTeam, context: GuideContext)
-
-    public abstract override fun clone(): GuideElementState
 
     override fun update(): Boolean =
         element?.update(this) ?: false

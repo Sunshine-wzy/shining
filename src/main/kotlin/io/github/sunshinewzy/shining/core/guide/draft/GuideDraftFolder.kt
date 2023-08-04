@@ -219,28 +219,34 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                                                 }
                                             }
                                         } else if (ctxt.elementContainer != null) {
-                                            val theElement = state.toElement()
-                                            ShiningDispatchers.launchDB { 
-                                                if (GuideElementRegistry.saveElement(theElement, true)) {
-                                                    submit {
-                                                        ctxt.elementContainer.registerElement(theElement)
-                                                        ShiningDispatchers.launchDB {
-                                                            if (GuideElementRegistry.saveElement(ctxt.elementContainer))
-                                                                player.sendPrefixedLangText("text-shining_guide-draft-load-success")
-                                                            else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_container")
+                                            context[ShiningGuideEditor.CreateContext]?.let { ctxtCreate ->
+                                                val theElement = state.toElement()
+                                                ShiningDispatchers.launchDB {
+                                                    if (GuideElementRegistry.saveElement(theElement, true)) {
+                                                        submit {
+//                                                            ctxt.elementContainer.registerElement(theElement)
+                                                            ctxtCreate.onCreate(theElement)
+                                                            ShiningDispatchers.launchDB {
+                                                                if (GuideElementRegistry.saveElement(ctxt.elementContainer))
+                                                                    player.sendPrefixedLangText("text-shining_guide-draft-load-success")
+                                                                else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_container")
+                                                            }
                                                         }
-                                                    }
-                                                } else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_element")
+                                                    } else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_element")
+                                                }
                                             }
                                         } else if (ctxt.elementContainerState != null) {
-                                            val theElement = state.toElement()
-                                            ShiningDispatchers.launchDB { 
-                                                if (GuideElementRegistry.saveElement(theElement, true)) {
-                                                    submit { 
-                                                        ctxt.elementContainerState.addElement(theElement)
-                                                        player.sendPrefixedLangText("text-shining_guide-draft-load-success")
-                                                    }
-                                                } else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_element")
+                                            context[ShiningGuideEditor.CreateContext]?.let { ctxtCreate ->
+                                                val theElement = state.toElement()
+                                                ShiningDispatchers.launchDB {
+                                                    if (GuideElementRegistry.saveElement(theElement, true)) {
+                                                        submit {
+//                                                            ctxt.elementContainerState.addElement(theElement)
+                                                            ctxtCreate.onCreate(theElement)
+                                                            player.sendPrefixedLangText("text-shining_guide-draft-load-success")
+                                                        }
+                                                    } else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_element")
+                                                }
                                             }
                                         } else {
                                             player.sendPrefixedLangText("text-shining_guide-draft-load-failure-null")

@@ -8,6 +8,7 @@ import io.github.sunshinewzy.shining.api.guide.state.GuideElementStateRegistry
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementContainerState
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.guide.context.AbstractGuideContextElement
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditModeContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftContext
@@ -78,13 +79,13 @@ object ShiningGuideEditor {
             }
 
             set('b', itemCreateStateNew.toLocalizedItem(player)) {
-                openCreateNewStateEditor(player, GuideEditorContext.Back {
+                openCreateNewStateEditor(player, context + GuideEditorContext.Back {
                     openEditor(player, team, context, element, elementContainer, elementContainerState)
                 }, elementContainer, elementContainerState)
             }
             
             set('c', itemLoadFromDraftBox.toLocalizedItem(player)) {
-                ShiningGuideDraft.openLastSelectMenu(player, GuideDraftContext.Load(team, context, element, elementContainer, elementContainerState))
+                ShiningGuideDraft.openLastSelectMenu(player, context + GuideDraftContext.Load(team, context, element, elementContainer, elementContainerState))
             }
 
             onClick(lock = true)
@@ -104,29 +105,33 @@ object ShiningGuideEditor {
                 state.openEditor(player, context = GuideEditorContext.Back {
                     openCreateNewStateEditor(player, context, elementContainer, elementContainerState)
                     
-                    if (elementContainer != null) {
-                        val theElement = state.toElement()
-                        ShiningDispatchers.launchDB {
-                            if (GuideElementRegistry.saveElement(theElement, true)) {
-                                submit {
-                                    elementContainer.registerElement(theElement)
-                                    ShiningDispatchers.launchDB {
-                                        if (GuideElementRegistry.saveElement(elementContainer))
-                                            player.sendPrefixedLangText("text-shining_guide-draft-load-success")
-                                        else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_container")
+                    context[CreateContext]?.let { ctxtCreate ->
+                        if (elementContainer != null) {
+                            val theElement = state.toElement()
+                            ShiningDispatchers.launchDB {
+                                if (GuideElementRegistry.saveElement(theElement, true)) {
+                                    submit {
+//                                        elementContainer.registerElement(theElement)
+                                        ctxtCreate.onCreate(theElement)
+                                        ShiningDispatchers.launchDB {
+                                            if (GuideElementRegistry.saveElement(elementContainer))
+                                                player.sendPrefixedLangText("text-shining_guide-draft-load-success")
+                                            else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_container")
+                                        }
                                     }
-                                }
-                            } else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_element")
-                        }
-                    } else if (elementContainerState != null) {
-                        val theElement = state.toElement()
-                        ShiningDispatchers.launchDB {
-                            if (GuideElementRegistry.saveElement(theElement, true)) {
-                                submit {
-                                    elementContainerState.addElement(theElement)
-                                    player.sendPrefixedLangText("text-shining_guide-draft-load-success")
-                                }
-                            } else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_element")
+                                } else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_element")
+                            }
+                        } else if (elementContainerState != null) {
+                            val theElement = state.toElement()
+                            ShiningDispatchers.launchDB {
+                                if (GuideElementRegistry.saveElement(theElement, true)) {
+                                    submit {
+//                                        elementContainerState.addElement(theElement)
+                                        ctxtCreate.onCreate(theElement)
+                                        player.sendPrefixedLangText("text-shining_guide-draft-load-success")
+                                    }
+                                } else player.sendPrefixedLangText("text-shining_guide-draft-load-failure-save_element")
+                            }
                         }
                     }
                 })
@@ -165,6 +170,11 @@ object ShiningGuideEditor {
             editorContext.editor = !editorContext.editor
             onClick(this)
         }
+    }
+    
+    
+    class CreateContext(val onCreate: (IGuideElement) -> Unit) : AbstractGuideContextElement(CreateContext) {
+        companion object : GuideContext.Key<CreateContext>
     }
 
 }

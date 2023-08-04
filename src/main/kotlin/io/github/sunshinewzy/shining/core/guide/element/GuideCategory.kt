@@ -72,7 +72,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
                 }
             }
 
-            onBuild(true, ShiningGuide.onBuildEdge)
+            onBuild(false, ShiningGuide.onBuildEdge)
 
             setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
                 if (hasPreviousPage) {
@@ -91,6 +91,8 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
                     ShiningGuideEditor.openEditor(
                         player, team, GuideEditorContext.Back {
                             openMenu(player, team, context)
+                        } + ShiningGuideEditor.CreateContext {
+                            registerElement(it)
                         }, element, this@GuideCategory
                     )
                     return@onClick
@@ -139,6 +141,8 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
                         ShiningGuideEditor.openEditor(
                             player, team, GuideEditorContext.Back {
                                 openMenu(player, team, context)
+                            } + ShiningGuideEditor.CreateContext {
+                                registerElement(it)
                             },null, this@GuideCategory
                         )
                     }

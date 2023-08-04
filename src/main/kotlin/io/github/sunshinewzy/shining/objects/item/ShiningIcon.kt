@@ -36,6 +36,11 @@ enum class ShiningIcon(val item: ItemStack) : Itemable {
     CONSUME_MODE(NamespacedIdItem(Material.APPLE, NamespacedId(Shining, "icon-consume_mode"))),
     IS_CONSUME(NamespacedIdItem(Material.APPLE, NamespacedId(Shining, "icon-is_consume"))),
     SUBMIT_FAILURE(NamespacedIdItem(Material.BARRIER, NamespacedId(Shining, "icon-submit_failure"))),
+    MOVE_RIGHT(NamespacedIdItem(Material.LIME_STAINED_GLASS_PANE, NamespacedId(Shining, "icon-move_right"))),
+    MOVE_LEFT(NamespacedIdItem(Material.LIME_STAINED_GLASS_PANE, NamespacedId(Shining, "icon-move_left"))),
+    MOVE_UP(NamespacedIdItem(Material.LIME_STAINED_GLASS_PANE, NamespacedId(Shining, "icon-move_up"))),
+    MOVE_DOWN(NamespacedIdItem(Material.LIME_STAINED_GLASS_PANE, NamespacedId(Shining, "icon-move_down"))),
+    
     
     ;
 

@@ -19,6 +19,7 @@ import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.onBack
+import io.github.sunshinewzy.shining.core.menu.openDeleteConfirmMenu
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
@@ -154,6 +155,8 @@ class GuideCategoryState : GuideElementState(), IGuideElementPriorityContainerSt
                     ShiningGuideEditor.openEditor(
                         player, team, GuideEditorContext.Back {
                             openAdvancedEditor(player, team, context)
+                        } + ShiningGuideEditor.CreateContext {
+                            addElement(it)
                         }, null, null, this@GuideCategoryState
                     )
                 }
@@ -177,7 +180,7 @@ class GuideCategoryState : GuideElementState(), IGuideElementPriorityContainerSt
 
             set('-', ShiningIcon.EDGE.item)
 
-            set('B', ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
+            set('B', ShiningIcon.BACK.toLocalizedItem(player)) {
                 openAdvancedEditor(player, team, context)
             }
 
@@ -204,8 +207,10 @@ class GuideCategoryState : GuideElementState(), IGuideElementPriorityContainerSt
             }
 
             set('d', ShiningIcon.REMOVE.toLocalizedItem(player)) {
-                removeElement(element)
-                openAdvancedEditor(player, team, context)
+                player.openDeleteConfirmMenu { 
+                    onConfirm { removeElement(element) }
+                    onFinal { openAdvancedEditor(player, team, context) }
+                }
             }
 
             onClick(lock = true)

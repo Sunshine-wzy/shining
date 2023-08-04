@@ -143,8 +143,8 @@ fun <T> Linked<T>.buildMultiPage(player: Player) {
     }
 }
 
-fun <T> Linked<T>.onBuildEdge(edgeOrders: Collection<Int>, action: ((Player, Inventory) -> Unit)? = null) {
-    onBuild(async = false) { player, inv ->
+fun Basic.onBuildEdge(edgeOrders: Collection<Int>, action: ((Player, Inventory) -> Unit)? = null) {
+    onBuild(false) { player, inv ->
         edgeOrders.forEach { index ->
             inv.getItem(index)?.let {
                 if (!it.isAir()) return@forEach
