@@ -19,10 +19,7 @@ open class NamespacedIdItem(item: ItemStack, val id: NamespacedId) :
 
     constructor(type: Material, id: NamespacedId) : this(ItemStack(type), id)
     constructor(type: Material, amount: Int, id: NamespacedId) : this(ItemStack(type, amount), id)
-    constructor(type: Material, damage: Short, amount: Int, id: NamespacedId) : this(
-        ItemStack(type, amount, damage),
-        id
-    )
+    constructor(type: Material, damage: Short, amount: Int, id: NamespacedId) : this(ItemStack(type, amount, damage), id)
 
 
     override fun shiny(): NamespacedIdItem {

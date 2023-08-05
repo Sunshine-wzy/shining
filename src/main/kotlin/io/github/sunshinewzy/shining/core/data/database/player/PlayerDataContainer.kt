@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.shining.core.data.database.player
 
+import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import taboolib.common.platform.Schedule
-import taboolib.common.platform.function.submitAsync
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
@@ -27,7 +27,7 @@ class PlayerDataContainer(val player: String) {
 
     fun delete(key: String) {
         source.remove(key)
-        submitAsync { PlayerDatabase.delete(player, key) }
+        ShiningDispatchers.launchDB { PlayerDatabase.delete(player, key) }
     }
 
     fun keys(): Set<String> {
@@ -43,7 +43,7 @@ class PlayerDataContainer(val player: String) {
     }
 
     fun save(key: String) {
-        submitAsync { PlayerDatabase[player, key] = source[key]!! }
+        ShiningDispatchers.launchDB { PlayerDatabase[player, key] = source[key]!! }
     }
 
     fun checkUpdate() {

@@ -322,24 +322,24 @@ object Shining : Plugin(), ShiningPlugin {
                         ShiningGuide.fireworkCongratulate(event.player)
                     }
 
-                    Material.STICK -> {
-                        event.clickedBlock?.let { block ->
-                            event.player.sendMessage(
-                                """
-                                > Block
-                                ${block.type}
-                                ${block.data}
-                                ${block.blockData.asString}
-                            """.trimIndent()
-                            )
-                        }
-                    }
-
-                    Material.AIR -> {}
+//                    Material.STICK -> {
+//                        event.clickedBlock?.let { block ->
+//                            event.player.sendMessage(
+//                                """
+//                                > Block
+//                                ${block.type}
+//                                ${block.data}
+//                                ${block.blockData.asString}
+//                            """.trimIndent()
+//                            )
+//                        }
+//                    }
+//
+//                    Material.AIR -> {}
 
                     else -> {
-                        val json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item)
-                        event.player.sendMessage(json)
+//                        val json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item)
+//                        event.player.sendMessage(json)
 //                        player.openMenu<Basic> { 
 //                            rows(3)
 //                            set(5 orderWith 2, mapper.readValue(json, ItemStack::class.java))

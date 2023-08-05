@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.core.guide.team
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.event.ShiningGuideTeamSetupEvent
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.data.JacksonWrapper
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.executePlayerDataContainer
@@ -24,7 +25,6 @@ import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.transactions.transaction
 import taboolib.common.LifeCycle
 import taboolib.common.platform.SkipTo
 import taboolib.common.platform.function.submit
@@ -98,17 +98,17 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         }
     }
 
-    fun approveApplication(uuid: UUID): Boolean {
+    suspend fun approveApplication(uuid: UUID): Boolean {
         if (!applicants.value.contains(uuid))
             return false
 
-        ShiningDispatchers.launchDB { join(uuid) }
+        join(uuid)
         uuid.executePlayerDataContainer {
             it[GUIDE_TEAM_ID] = id
             it.delete(GUIDE_TEAM_APPLY)
         }
 
-        transaction {
+        newSuspendedTransaction {
             applicants.value.let {
                 it -= uuid
                 applicants = JacksonWrapper(it)
@@ -117,7 +117,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         return true
     }
 
-    fun refuseApplication(uuid: UUID): Boolean {
+    suspend fun refuseApplication(uuid: UUID): Boolean {
         if (!applicants.value.contains(uuid))
             return false
 
@@ -125,7 +125,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
             it.delete(GUIDE_TEAM_APPLY)
         }
 
-        transaction {
+        newSuspendedTransaction {
             applicants.value.let {
                 it -= uuid
                 applicants = JacksonWrapper(it)
@@ -254,49 +254,53 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
             onClick { event, element ->
                 when (event.clickEvent().click) {
                     ClickType.LEFT, ClickType.SHIFT_LEFT -> {
-                        if (approveApplication(element)) {
-                            player.sendPrefixedLangText(
-                                "menu-shining_guide-team-manage-application-approve",
-                                Shining.prefix,
-                                element.playerName
-                            )
-                            welcome(element)
-                        } else {
-                            player.sendPrefixedLangText(
-                                "menu-shining_guide-team-manage-application-not_found",
-                                Shining.prefix,
-                                element.playerName
-                            )
-                        }
+                        ShiningDispatchers.launchDB {
+                            if (approveApplication(element)) {
+                                player.sendPrefixedLangText(
+                                    "menu-shining_guide-team-manage-application-approve",
+                                    Shining.prefix,
+                                    element.playerName
+                                )
+                                welcome(element)
+                            } else {
+                                player.sendPrefixedLangText(
+                                    "menu-shining_guide-team-manage-application-not_found",
+                                    Shining.prefix,
+                                    element.playerName
+                                )
+                            }
 
-                        openManageApplicationMenu(player)
+                            openManageApplicationMenu(player)
+                        }
                     }
 
                     ClickType.RIGHT, ClickType.SHIFT_RIGHT -> {
-                        if (refuseApplication(element)) {
-                            player.sendPrefixedLangText(
-                                "menu-shining_guide-team-manage-application-refuse",
-                                Shining.prefix,
-                                element.playerName
-                            )
-                            element.player?.let {
-                                it.sendPrefixedLangText(
-                                    "menu-shining_guide-team-manage-application-was_refused",
+                        ShiningDispatchers.launchDB {
+                            if (refuseApplication(element)) {
+                                player.sendPrefixedLangText(
+                                    "menu-shining_guide-team-manage-application-refuse",
                                     Shining.prefix,
-                                    name,
-                                    player.name
+                                    element.playerName
                                 )
-                                it.playSound(it.location, Sound.ENTITY_VILLAGER_NO, 1f, 0.5f)
+                                element.player?.let {
+                                    it.sendPrefixedLangText(
+                                        "menu-shining_guide-team-manage-application-was_refused",
+                                        Shining.prefix,
+                                        name,
+                                        player.name
+                                    )
+                                    it.playSound(it.location, Sound.ENTITY_VILLAGER_NO, 1f, 0.5f)
+                                }
+                            } else {
+                                player.sendPrefixedLangText(
+                                    "menu-shining_guide-team-manage-application-not_found",
+                                    Shining.prefix,
+                                    element.playerName
+                                )
                             }
-                        } else {
-                            player.sendPrefixedLangText(
-                                "menu-shining_guide-team-manage-application-not_found",
-                                Shining.prefix,
-                                element.playerName
-                            )
-                        }
 
-                        openManageApplicationMenu(player)
+                            openManageApplicationMenu(player)
+                        }
                     }
 
                     else -> {}
@@ -405,6 +409,10 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
          * Open a menu allowing the player to choose to create or join a guide team.
          */
         fun Player.setupGuideTeam() {
+            val event = ShiningGuideTeamSetupEvent(this)
+            event.call()
+            if (event.isCancelled) return
+            
             openMenu<Basic>(getLangText("menu-shining_guide-team-setup-title")) {
                 rows(3)
 

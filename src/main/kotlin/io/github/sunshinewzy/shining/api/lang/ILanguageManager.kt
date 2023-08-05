@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.api.lang
 
+import io.github.sunshinewzy.shining.api.ShiningConfig
 import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
 import io.github.sunshinewzy.shining.core.lang.LanguageFile
 import io.github.sunshinewzy.shining.core.lang.node.ListNode
@@ -40,13 +41,17 @@ interface ILanguageManager {
         getLangTextNode(locale, node)?.text
 
     fun getLangText(locale: String, node: String): String =
-        getLangTextOrNull(locale, node) ?: "{$locale:$node}"
+        (getLangTextOrNull(locale, node)
+            ?: if (locale != ShiningConfig.language) getLangTextOrNull(ShiningConfig.language, node) else null)
+            ?: "{$locale:$node}"
 
     fun getLangTextOrNull(locale: String, node: String, vararg args: String?): String? =
         getLangTextNode(locale, node)?.format(*args)
 
     fun getLangText(locale: String, node: String, vararg args: String?): String =
-        getLangTextOrNull(locale, node, *args) ?: "{$locale:$node:${args.joinToString()}}"
+        (getLangTextOrNull(locale, node, *args)
+            ?: if (locale != ShiningConfig.language) getLangTextOrNull(ShiningConfig.language, node, *args) else null)
+            ?: "{$locale:$node:${args.joinToString()}}"
 
     fun transfer(source: String): String
 
