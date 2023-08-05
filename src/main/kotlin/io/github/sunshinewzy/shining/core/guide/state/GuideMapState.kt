@@ -1,16 +1,21 @@
 package io.github.sunshinewzy.shining.core.guide.state
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonSetter
+import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementContainerState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
+import io.github.sunshinewzy.shining.core.editor.chat.type.TextMap
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.element.GuideMap
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import io.github.sunshinewzy.shining.core.lang.getLangText
+import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.MapMenu
 import io.github.sunshinewzy.shining.core.menu.onBack
 import io.github.sunshinewzy.shining.core.menu.onBuildEdge
@@ -19,8 +24,11 @@ import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.coordinate.Coordinate2D
 import io.github.sunshinewzy.shining.objects.coordinate.Rectangle
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
+import io.github.sunshinewzy.shining.utils.getDisplayName
 import io.github.sunshinewzy.shining.utils.orderWith
+import io.github.sunshinewzy.shining.utils.toCurrentLocalizedItem
 import kotlinx.coroutines.runBlocking
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
@@ -29,6 +37,9 @@ class GuideMapState : GuideElementState(), IGuideElementContainerState {
 
     var basePoint: Coordinate2D = Coordinate2D(3, 3)
     var elements: MutableMap<Coordinate2D, NamespacedId> = HashMap()
+    @JsonIgnore
+    var idToCoordinate: MutableMap<NamespacedId, Coordinate2D> = HashMap()
+    var removedElements: MutableSet<NamespacedId> = HashSet()
     
     
     override fun toElement(): IGuideElement =
@@ -38,23 +49,36 @@ class GuideMapState : GuideElementState(), IGuideElementContainerState {
         val state = GuideMapState()
         copyTo(state)
         
+        state.basePoint = basePoint
         state.elements += elements
+        state.idToCoordinate += idToCoordinate
+        state.removedElements += removedElements
         return state
     }
 
     fun addElement(id: NamespacedId, coordinate: Coordinate2D) {
         elements[coordinate] = id
+        idToCoordinate[id] = coordinate
+        removedElements -= id
     }
     
     override fun addElement(id: NamespacedId) {
         addElement(id, Coordinate2D.ORIGIN)
     }
 
-    fun removeElement(coordinate: Coordinate2D) {
-        elements -= coordinate
+    fun removeElement(coordinate: Coordinate2D): Boolean {
+        elements.remove(coordinate)?.let { 
+            idToCoordinate -= it
+            removedElements += it
+            return true
+        }
+        return false
     }
     
-    override fun removeElement(id: NamespacedId): Boolean = false
+    override fun removeElement(id: NamespacedId): Boolean {
+        val coordinate = idToCoordinate[id] ?: return false
+        return removeElement(coordinate)
+    }
 
     override fun openAdvancedEditor(player: Player, team: GuideTeam, context: GuideContext) {
         player.openMenu<MapMenu<IGuideElement>>(player.getLangText("menu-shining_guide-editor-state-map-title")) { 
@@ -94,6 +118,26 @@ class GuideMapState : GuideElementState(), IGuideElementContainerState {
             onBack(player) { 
                 openEditor(player, team, context)
             }
+            
+            val theItemEditBasePoint = itemEditBasePoint.toCurrentLocalizedItem(player, "(${basePoint.x}, ${basePoint.y})")
+            set(5 orderWith 1, theItemEditBasePoint) {
+                player.openChatEditor<TextMap>(theItemEditBasePoint.getDisplayName()) {
+                    map(mapOf(
+                        "x" to basePoint.x.toString(),
+                        "y" to basePoint.y.toString()
+                    ))
+
+                    predicate { it.toIntOrNull() != null }
+
+                    onSubmit { content ->
+                        val x = content["x"]?.toIntOrNull() ?: return@onSubmit
+                        val y = content["y"]?.toIntOrNull() ?: return@onSubmit
+                        basePoint = Coordinate2D(x, y)
+                    }
+
+                    onFinal { openAdvancedEditor(player, team, context) }
+                }
+            }
         }
     }
 
@@ -113,10 +157,29 @@ class GuideMapState : GuideElementState(), IGuideElementContainerState {
                 openAdvancedEditor(player, team, context)
             }
             
-            // TODO
-//            set('a', ) {
-//                
-//            }
+            val theItemEditCoordinate = itemEditCoordinate.toCurrentLocalizedItem(player, "(${coordinate.x}, ${coordinate.y})")
+            set('a', theItemEditCoordinate) {
+                player.openChatEditor<TextMap>(theItemEditCoordinate.getDisplayName()) { 
+                    map(mapOf(
+                        "x" to coordinate.x.toString(),
+                        "y" to coordinate.y.toString()
+                    ))
+                    
+                    predicate { it.toIntOrNull() != null }
+                    
+                    onSubmit { content -> 
+                        val x = content["x"]?.toIntOrNull() ?: return@onSubmit
+                        val y = content["y"]?.toIntOrNull() ?: return@onSubmit
+                        val newCoordinate = Coordinate2D(x, y)
+                        
+                        removeElement(coordinate)
+                        addElement(element.getId(), newCoordinate)
+                        editElement(player, team, context, element, newCoordinate)
+                    }
+                    
+                    onCancel { editElement(player, team, context, element, coordinate) }
+                }
+            }
 
             set('d', ShiningIcon.REMOVE.toLocalizedItem(player)) {
                 player.openDeleteConfirmMenu {
@@ -129,6 +192,16 @@ class GuideMapState : GuideElementState(), IGuideElementContainerState {
         }
     }
     
+    
+    @JsonSetter("elements")
+    fun setElementsAndIdToCoordinate(map: MutableMap<Coordinate2D, NamespacedId>) {
+        elements.clear()
+        idToCoordinate.clear()
+        map.forEach { (coordinate, id) -> 
+            elements[coordinate] = id
+            idToCoordinate[id] = coordinate
+        }
+    }
     
     @JsonIgnore
     fun setElementsByMap(map: Map<Coordinate2D, IGuideElement>) {
@@ -149,5 +222,11 @@ class GuideMapState : GuideElementState(), IGuideElementContainerState {
     
     @JsonIgnore
     fun getElementsMap(): MutableMap<Coordinate2D, IGuideElement> = getElementsMapTo(HashMap())
+    
+    
+    companion object {
+        private val itemEditBasePoint = NamespacedIdItem(Material.COMPASS, NamespacedId(Shining, "shining_guide-editor-state-map-base_point"))
+        private val itemEditCoordinate = NamespacedIdItem(Material.COMPASS, NamespacedId(Shining, "shining_guide-editor-state-map-coordinate"))
+    }
     
 }

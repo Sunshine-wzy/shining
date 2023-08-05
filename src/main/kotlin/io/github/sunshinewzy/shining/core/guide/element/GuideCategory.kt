@@ -41,6 +41,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
     private val priorityToElements: TreeMap<Int, MutableSet<IGuideElement>> =
         TreeMap { o1, o2 -> o2 - o1 }
     private val idToPriority: MutableMap<NamespacedId, Int> = HashMap()
+    private val removedElements: MutableSet<NamespacedId> = HashSet()
     
     
     constructor(id: NamespacedId, description: ElementDescription, symbol: ItemStack) : super(id, description, symbol)
@@ -186,6 +187,8 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
         state.setPriorityToElementsByMap(priorityToElements)
         state.idToPriority.clear()
         state.idToPriority += idToPriority
+        state.removedElements.clear()
+        state.removedElements += removedElements
         return true
     }
 
@@ -196,6 +199,14 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
         if (state !is GuideCategoryState) return false
         if (!super<GuideElement>.update(state, isMerge)) return false
 
+        removedElements.clear()
+        removedElements += state.removedElements
+        removedElements.forEach { id ->
+            if (idToPriority.contains(id)) {
+                unregisterElement(id)
+            }
+        }
+        
         if (!isMerge) {
             priorityToElements.clear()
             idToPriority.clear()
@@ -206,8 +217,26 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
     }
 
     override fun registerElement(element: IGuideElement, priority: Int) {
+        val id = element.getId()
         priorityToElements.putSetElement(priority, element)
-        idToPriority[element.getId()] = priority
+        idToPriority[id] = priority
+        removedElements -= id
+    }
+
+    override fun unregisterElement(id: NamespacedId) {
+        val priority = idToPriority[id] ?: return
+        priorityToElements[priority]?.let { elementSet ->
+            for (element in elementSet) {
+                if (element.getId() == id) {
+                    idToPriority -= id
+                    elementSet -= element
+                    ShiningDispatchers.launchDB {
+                        GuideElementRegistry.removeElement(element)
+                    }
+                    return
+                }
+            }
+        }
     }
 
     override fun register(): GuideCategory {
@@ -225,7 +254,9 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
     
     override fun updateElementId(element: IGuideElement, oldId: NamespacedId) {
         idToPriority.remove(oldId)?.let { 
-            idToPriority[element.getId()] = it
+            val id = element.getId()
+            idToPriority[id] = it
+            removedElements -= id
         }
     }
 

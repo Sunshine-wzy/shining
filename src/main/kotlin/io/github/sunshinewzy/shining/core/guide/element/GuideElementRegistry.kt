@@ -107,6 +107,15 @@ object GuideElementRegistry : LongIdTable() {
         }
     }
     
+    suspend fun removeElement(element: IGuideElement) {
+        val id = element.getId()
+        stateCache -= id
+        elementCache -= id
+        newSuspendedTransaction { 
+            deleteElement(id)
+        }
+    }
+    
     
     private fun insertElement(element: IGuideElement): EntityID<Long> =
         insertAndGetId {

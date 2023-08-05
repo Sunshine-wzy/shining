@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.core.editor.chat
 
-import io.github.sunshinewzy.shining.core.lang.sendLangText
+import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
 import org.bukkit.entity.Player
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import taboolib.common.LifeCycle
@@ -26,18 +26,18 @@ object ChatEditor {
         getSession(player)?.let { session ->
             if (session.isCorrect) {
                 sessionMap.remove(player.uniqueId)
-                player.sendLangText("text-editor-chat-session-submit_correct", session.name)
+                player.sendPrefixedLangText("text-editor-chat-session-submit_correct", session.name)
                 session.submit(player)
                 session.final(player)
             } else {
-                player.sendLangText("text-editor-chat-session-submit_incorrect", session.name)
+                player.sendPrefixedLangText("text-editor-chat-session-submit_incorrect", session.name)
             }
         }
     }
 
     fun cancel(player: Player) {
         sessionMap.remove(player.uniqueId)?.let { session ->
-            player.sendLangText("text-editor-chat-session-cancel", session.name)
+            player.sendPrefixedLangText("text-editor-chat-session-cancel", session.name)
             session.cancel(player)
             session.final(player)
         }
@@ -61,7 +61,7 @@ object ChatEditor {
                 session.update(event)
                 session.send(event.player)
             } else {
-                event.player.sendLangText("text-editor-chat-session-incorrect")
+                event.player.sendPrefixedLangText("text-editor-chat-session-incorrect")
             }
         }
     }

@@ -36,6 +36,8 @@ class GuideMap : GuideElement, IGuideElementContainer {
 
     private var basePoint: Coordinate2D
     private val elements: MutableMap<Coordinate2D, IGuideElement> = HashMap()
+    private val idToCoordinate: MutableMap<NamespacedId, Coordinate2D> = HashMap()
+    private val removedElements: MutableSet<NamespacedId> = HashSet()
     
     
     constructor(
@@ -179,8 +181,13 @@ class GuideMap : GuideElement, IGuideElementContainer {
         if (state !is GuideMapState) return false
         if (!super.saveToState(state)) return false
         
+        state.basePoint = basePoint
         state.elements.clear()
         state.setElementsByMap(elements)
+        state.idToCoordinate.clear()
+        state.idToCoordinate += idToCoordinate
+        state.removedElements.clear()
+        state.removedElements += removedElements
         return true
     }
 
@@ -188,10 +195,21 @@ class GuideMap : GuideElement, IGuideElementContainer {
         if (state !is GuideMapState) return false
         if (!super<GuideElement>.update(state, isMerge)) return false
         
+        removedElements.clear()
+        removedElements += state.removedElements
+        removedElements.forEach { id ->
+            if (idToCoordinate.contains(id)) {
+                unregisterElement(id)
+            }
+        }
+        
+        basePoint = state.basePoint
         if (!isMerge) {
             elements.clear()
+            idToCoordinate.clear()
         }
         state.getElementsMapTo(elements)
+        idToCoordinate += state.idToCoordinate
         return true
     }
 
@@ -201,11 +219,26 @@ class GuideMap : GuideElement, IGuideElementContainer {
     }
 
     fun registerElement(element: IGuideElement, coordinate: Coordinate2D) {
+        val id = element.getId()
         elements[coordinate] = element
+        idToCoordinate[id] = coordinate
+        removedElements -= id
     }
     
     override fun registerElement(element: IGuideElement) {
         registerElement(element, Coordinate2D.ORIGIN)
+    }
+
+    override fun unregisterElement(id: NamespacedId) {
+        val coordinate = idToCoordinate[id] ?: return
+        elements[coordinate]?.let { element ->
+            if (element.getId() == id) {
+                elements -= coordinate
+                ShiningDispatchers.launchDB {
+                    GuideElementRegistry.removeElement(element)
+                }
+            }
+        }
     }
 
     override fun getElements(): List<IGuideElement> =

@@ -6,6 +6,12 @@ interface IGuideElementContainer : IGuideElement {
 
     fun registerElement(element: IGuideElement)
     
+    fun unregisterElement(id: NamespacedId)
+    
+    fun unregisterElement(element: IGuideElement) {
+        unregisterElement(element.getId())
+    }
+    
     fun getElements(): List<IGuideElement>
 
     fun updateElementId(element: IGuideElement, oldId: NamespacedId) {}

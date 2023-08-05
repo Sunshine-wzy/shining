@@ -55,7 +55,7 @@ class VanillaUniversalItem(var item: ItemStack) : UniversalItem {
                     item(item)
                     
                     onSubmit { 
-                        item = it
+                        item = it.clone()
                     }
                     
                     onFinal { 

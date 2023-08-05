@@ -41,6 +41,7 @@ class GuideCategoryState : GuideElementState(), IGuideElementPriorityContainerSt
         TreeMap { o1, o2 -> o2 - o1 }
     @JsonIgnore
     var idToPriority: MutableMap<NamespacedId, Int> = HashMap()
+    var removedElements: MutableSet<NamespacedId> = HashSet()
     
     
     @JsonIgnore
@@ -116,11 +117,14 @@ class GuideCategoryState : GuideElementState(), IGuideElementPriorityContainerSt
     override fun addElement(id: NamespacedId, priority: Int) {
         priorityToElements.putSetElement(priority, id)
         idToPriority[id] = priority
+        removedElements -= id
     }
     
     override fun removeElement(id: NamespacedId): Boolean {
         val priority = idToPriority.remove(id) ?: return false
-        return priorityToElements[priority]?.remove(id) ?: false
+        priorityToElements[priority]?.remove(id) ?: return false
+        removedElements += id
+        return true
     }
     
 
@@ -133,6 +137,7 @@ class GuideCategoryState : GuideElementState(), IGuideElementPriorityContainerSt
         
         state.priorityToElements += priorityToElements
         state.idToPriority += idToPriority
+        state.removedElements += removedElements
         return state
     }
 

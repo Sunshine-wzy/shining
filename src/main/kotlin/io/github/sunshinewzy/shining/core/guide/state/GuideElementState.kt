@@ -247,11 +247,21 @@ abstract class GuideElementState : IGuideElementState {
                     } ?: map(mapOf("namespace" to "shining", "id" to ""))
 
                     predicate {
-                        when (index) {
+                        val res = when (index) {
                             "namespace" -> Namespace.VALID_NAMESPACE.matcher(it).matches()
                             "id" -> NamespacedId.VALID_ID.matcher(it).matches() && it != "shining_guide"
                             else -> false
                         }
+                        if (!res) return@predicate false
+                        val namespace = content["namespace"] ?: return@predicate false
+                        val id = content["id"] ?: return@predicate false
+                        val namespacedId = NamespacedId.fromString("$namespace:$id") ?: return@predicate false
+                        
+                        GuideElementRegistry.getElement(namespacedId)?.let { 
+                            player.sendPrefixedLangText("text-shining_guide-editor-state-element-basic-id-duplication")
+                            return@predicate false
+                        }
+                        true
                     }
 
                     onSubmit { content ->
