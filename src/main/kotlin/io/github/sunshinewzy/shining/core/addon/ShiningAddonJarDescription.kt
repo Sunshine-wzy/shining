@@ -2,6 +2,7 @@ package io.github.sunshinewzy.shining.core.addon
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import io.github.sunshinewzy.shining.core.data.serializer.ShiningAddonJarDescriptionDeserializer
+import taboolib.common.env.Dependency
 
 @JsonDeserialize(using = ShiningAddonJarDescriptionDeserializer::class)
 data class ShiningAddonJarDescription(
@@ -14,5 +15,9 @@ data class ShiningAddonJarDescription(
     val depend: Set<String>,
     val softdepend: Set<String>,
     val repositories: List<String>,
-    val libraries: List<String>
-)
+    val libraries: List<Dependency>
+) {
+    
+    fun getNameAndVersion(): String = "$name v$version"
+    
+}

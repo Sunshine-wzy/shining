@@ -72,6 +72,11 @@ class EdgeCube @JvmOverloads constructor(
         }
     }
 
+    override fun calculateLocations(): List<Location> {
+        TODO("Not yet implemented")
+    }
+    
+
     companion object {
         /**
          * 向上的向量

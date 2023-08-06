@@ -1,7 +1,7 @@
-package io.github.sunshinewzy.shining.core.addon
+package io.github.sunshinewzy.shining.core.addon.loader
 
+import io.github.sunshinewzy.shining.core.addon.ShiningAddonManager
 import java.net.URLClassLoader
-import java.util.concurrent.CopyOnWriteArrayList
 
 class ShiningAddonClassLoader(
     val loader: ShiningAddonJarLoader,
@@ -9,11 +9,14 @@ class ShiningAddonClassLoader(
 ) : URLClassLoader(arrayOf(loader.file.toURI().toURL()), parent) {
     
     private var libraryLoader: URLClassLoader? = null
-    private val addonDependencies: List<ShiningAddonClassLoader> = CopyOnWriteArrayList()
+    private var addonDependencies: List<ShiningAddonClassLoader>? = null
     
     
     fun setDependencyClassLoaders() {
-        TODO()
+        libraryLoader = LibraryLoaderPools[loader]
+        addonDependencies = (loader.description.depend + loader.description.softdepend)
+            .mapNotNull { ShiningAddonManager.jarLoaders[it]?.classLoader }
+            .takeUnless(List<*>::isEmpty)
     }
 
     override fun loadClass(name: String, resolve: Boolean): Class<*> {
@@ -33,7 +36,7 @@ class ShiningAddonClassLoader(
 
             // Load class from addon dependencies
             if (c == null) {
-                c = addonDependencies.firstNotNullOfOrNull { runCatching { it.loadClass(name, true) }.getOrNull() }
+                c = addonDependencies?.firstNotNullOfOrNull { runCatching { it.loadClass(name, true) }.getOrNull() }
             }
 
             // Load class from parent (shining classloader)
@@ -59,9 +62,8 @@ class ShiningAddonClassLoader(
     }
 
     private fun loadLibraryClass(name: String): Class<*>? {
-        val libraryLoader = libraryLoader
-        if (libraryLoader != null) {
-            return libraryLoader.runCatching { this.loadClass(name) }.getOrNull()
+        libraryLoader?.let {
+            return it.runCatching { this.loadClass(name) }.getOrNull()
         }
 
         return null

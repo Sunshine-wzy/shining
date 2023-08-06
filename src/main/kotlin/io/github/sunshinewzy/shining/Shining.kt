@@ -16,6 +16,7 @@ import io.github.sunshinewzy.shining.api.item.universal.VanillaUniversalItem
 import io.github.sunshinewzy.shining.api.machine.IMachineManager
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.addon.ShiningAddonManager
 import io.github.sunshinewzy.shining.core.data.DataManager
 import io.github.sunshinewzy.shining.core.data.SerializationModules
 import io.github.sunshinewzy.shining.core.data.legacy.internal.SLocationData
@@ -129,6 +130,7 @@ object Shining : Plugin(), ShiningPlugin {
     }
 
     override fun onDisable() {
+        ShiningAddonManager.disableJarAddons()
         coroutineScope.cancel()
     }
 
@@ -175,6 +177,11 @@ object Shining : Plugin(), ShiningPlugin {
         SSingleMachine.init()
         SFlatMachine.init()
         SunSTMachineManager.register()
+        
+        ShiningAddonManager.loadAddons()
+        submit { 
+            ShiningAddonManager.activeJarAddons()
+        }
     }
 
     private fun registerSerialization() {

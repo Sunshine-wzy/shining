@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.Version
 import com.fasterxml.jackson.databind.module.SimpleModule
 import io.github.sunshinewzy.shining.core.data.serializer.*
 import org.bukkit.inventory.ItemStack
+import taboolib.common.env.Dependency
 import taboolib.module.nms.ItemTagData
 
 object SerializationModules {
@@ -13,6 +14,7 @@ object SerializationModules {
     val shining: SimpleModule = SimpleModule("Shining", VERSION).apply {
         addSerializer(JacksonWrapper::class.java, JacksonWrapperSerializer)
         addDeserializer(JacksonWrapper::class.java, JacksonWrapperDeserializer())
+        addDeserializer(Dependency::class.java, DependencyDeserializer)
     }
 
     val bukkit: SimpleModule = SimpleModule("Bukkit", VERSION).apply {
