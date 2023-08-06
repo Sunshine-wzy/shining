@@ -35,15 +35,15 @@ taboolib {
 //    relocate("com.zaxxer.hikari.", "com.zaxxer.hikari_4_0_3.")
     
     description { 
-        desc("A core lib made by SunShine Technology.")
+        desc("shining - Light up your creativity!")
         bukkitApi("1.13")
         
-        contributors { 
+        contributors {
             name("Sunshine_wzy")
         }
         
         links { 
-            name("homepage").url("https://www.mcbbs.net/thread-1170416-1-1.html")
+//            name("homepage").url("")
         }
         
         dependencies { 
@@ -84,6 +84,7 @@ dependencies {
     taboo("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
     taboo("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     taboo("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+    taboo("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
 
     compileOnly("com.zaxxer:HikariCP:4.0.3")
 

@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import io.github.sunshinewzy.shining.api.ShiningPlugin
@@ -105,6 +106,11 @@ object Shining : Plugin(), ShiningPlugin {
         addModule(kotlinModule())
         addModule(SerializationModules.shining)
         addModule(SerializationModules.bukkit)
+    }
+    val yamlObjectMapper: ObjectMapper = ObjectMapper(YAMLFactory()).apply { 
+        registerModule(kotlinModule())
+        registerModule(SerializationModules.shining)
+        registerModule(SerializationModules.bukkit)
     }
     val coroutineScope: CoroutineScope by lazy { CoroutineScope(SupervisorJob()) }
 
