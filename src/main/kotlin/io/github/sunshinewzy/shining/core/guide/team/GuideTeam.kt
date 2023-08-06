@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.shining.core.guide.team
 
 import io.github.sunshinewzy.shining.Shining
-import io.github.sunshinewzy.shining.api.event.ShiningGuideTeamSetupEvent
+import io.github.sunshinewzy.shining.api.event.guide.ShiningGuideTeamSetupEvent
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.data.JacksonWrapper
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.executePlayerDataContainer
@@ -325,18 +325,23 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
             NamespacedIdItem(Material.BREAD, NamespacedId(Shining, "shining_guide-team-manage-application"))
         private val teamManageItem =
             NamespacedIdItem(Material.GOLDEN_APPLE, NamespacedId(Shining, "shining_guide-team-manage"))
-
-
-        private suspend fun create(captain: Player, name: String, symbol: ItemStack): Boolean {
+        
+        
+        /**
+         * Create a team with [captain] as its captain.
+         * 
+         * @return The newly created team. Null if [captain] is already in a team.
+         */
+        suspend fun create(captain: Player, name: String, symbol: ItemStack): GuideTeam? {
             val container = captain.getDataContainer()
             if (!container[GUIDE_TEAM_ID].isNullOrEmpty()) {
-                return false
+                return null
             }
 
             return newSuspendedTransaction transaction@{
                 find { GuideTeams.captain eq captain.uniqueId }.let {
                     if (!it.empty()) {
-                        return@transaction false
+                        return@transaction null
                     }
                 }
 
@@ -349,7 +354,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                     this.data = JacksonWrapper(GuideTeamData())
                 }
                 container[GUIDE_TEAM_ID] = guideTeam.id
-                true
+                guideTeam
             }
         }
 
@@ -493,7 +498,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                 onClick('d') {
                     if (name.isNotBlank()) {
                         ShiningDispatchers.launchDB {
-                            if (create(this@createGuideTeam, name, symbol)) {
+                            if (create(this@createGuideTeam, name, symbol) != null) {
                                 sendPrefixedLangText("menu-shining_guide-team-create-success", Shining.prefix, name)
                                 submit {
                                     closeInventory()

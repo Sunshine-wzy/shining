@@ -251,7 +251,19 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
         }
         return list
     }
-    
+
+    override suspend fun getElementsByCondition(team: GuideTeam, condition: ElementCondition): List<IGuideElement> {
+        val list = ArrayList<IGuideElement>()
+        priorityToElements.forEach { (_, elements) -> 
+            elements.forEach { element ->
+                if (element.getCondition(team) == condition) {
+                    list += elements
+                }
+            }
+        }
+        return list
+    }
+
     override fun updateElementId(element: IGuideElement, oldId: NamespacedId) {
         idToPriority.remove(oldId)?.let { 
             val id = element.getId()

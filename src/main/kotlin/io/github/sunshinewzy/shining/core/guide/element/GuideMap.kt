@@ -244,7 +244,17 @@ class GuideMap : GuideElement, IGuideElementContainer {
     override fun getElements(): List<IGuideElement> =
         elements.map { it.value }
 
+    override suspend fun getElementsByCondition(team: GuideTeam, condition: ElementCondition): List<IGuideElement> {
+        val list = ArrayList<IGuideElement>()
+        elements.forEach { (_, element) -> 
+            if (element.getCondition(team) == condition) {
+                list += element
+            }
+        }
+        return list
+    }
     
+
     companion object {
         val edgeOrders: List<Int> = ArrayList(ShiningGuide.edgeOrders).also {
             for (i in 2..5) {

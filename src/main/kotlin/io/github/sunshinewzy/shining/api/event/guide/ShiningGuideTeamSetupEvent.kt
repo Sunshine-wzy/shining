@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.api.event
+package io.github.sunshinewzy.shining.api.event.guide
 
 import org.bukkit.entity.Player
 import taboolib.platform.type.BukkitProxyEvent

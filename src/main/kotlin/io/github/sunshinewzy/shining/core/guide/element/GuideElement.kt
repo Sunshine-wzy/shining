@@ -1,6 +1,8 @@
 package io.github.sunshinewzy.shining.core.guide.element
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.event.guide.ShiningGuideElementCompleteEvent
+import io.github.sunshinewzy.shining.api.event.guide.ShiningGuideElementUnlockEvent
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.ElementCondition.*
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
@@ -82,7 +84,10 @@ abstract class GuideElement(
                 return false
             }
         }
-
+        
+        if (!ShiningGuideElementUnlockEvent(this, player, team).call())
+            return false
+        
         locks.forEach {
             if (it.isConsume) {
                 it.consume(player)
@@ -97,8 +102,13 @@ abstract class GuideElement(
     }
 
     override fun complete(player: Player, team: GuideTeam, isSilent: Boolean) {
+        if (!ShiningGuideElementCompleteEvent(this, player, team, isSilent).call())
+            return
+        
         ShiningDispatchers.launchDB { 
-            getTeamData(team).setElementCondition(this@GuideElement, COMPLETE)
+            val data = getTeamData(team)
+            data.setElementCondition(this@GuideElement, COMPLETE)
+            data.setLastCompletedElement(this@GuideElement)
             team.updateTeamData()
         }
         if (isSilent) return
