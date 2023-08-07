@@ -83,8 +83,8 @@ dependencies {
     taboo("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
     taboo("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
     taboo("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-    taboo("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     taboo("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
+    compileOnly("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
 
     compileOnly("com.zaxxer:HikariCP:4.0.3")
 

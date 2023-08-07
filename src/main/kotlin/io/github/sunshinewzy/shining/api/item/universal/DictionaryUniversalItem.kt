@@ -14,7 +14,6 @@ import io.github.sunshinewzy.shining.core.editor.chat.type.TextMap
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
-import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.getDisplayName
 import io.github.sunshinewzy.shining.utils.toCurrentLocalizedItem
@@ -37,7 +36,7 @@ class DictionaryUniversalItem(
     override fun getItemStack(): ItemStack =
         DictionaryRegistry.get(name)?.getItemStack()?.also { 
             it.amount = amount
-        } ?: SItem.AIR
+        } ?: ItemStack(Material.AIR)
 
     override fun contains(inventory: Inventory): Boolean =
         inventory.containsDictionaryItem(name, amount)

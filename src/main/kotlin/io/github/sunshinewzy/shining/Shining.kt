@@ -85,7 +85,8 @@ import taboolib.platform.BukkitPlugin
     RuntimeDependency(value = "org.jetbrains.exposed:exposed-core:0.41.1", isolated = true),
     RuntimeDependency(value = "org.jetbrains.exposed:exposed-dao:0.41.1", isolated = true),
     RuntimeDependency(value = "org.jetbrains.exposed:exposed-jdbc:0.41.1", isolated = true),
-    RuntimeDependency(value = "!com.zaxxer:HikariCP:4.0.3", isolated = true)
+    RuntimeDependency(value = "!com.zaxxer:HikariCP:4.0.3", isolated = true),
+    RuntimeDependency(value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0", transitive = false, isolated = true)
 )
 object Shining : Plugin(), ShiningPlugin {
     const val NAME = "shining"
