@@ -2,6 +2,7 @@ options:
   # 前缀名称
   prefix: '&eshining'
   language: 'zh_CN'
+  default_repository_central: 'https://maven.aliyun.com/repository/central'
 
 # SQL数据库
 #

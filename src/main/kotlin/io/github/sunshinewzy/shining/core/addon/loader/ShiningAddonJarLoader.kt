@@ -3,9 +3,9 @@ package io.github.sunshinewzy.shining.core.addon.loader
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.addon.ShiningAddon
-import io.github.sunshinewzy.shining.core.addon.ShiningAddonJarDescription
+import io.github.sunshinewzy.shining.api.addon.ShiningAddonJarDescription
 import io.github.sunshinewzy.shining.core.addon.ShiningAddonLogger
-import io.github.sunshinewzy.shining.core.addon.ShiningAddonManager
+import io.github.sunshinewzy.shining.core.addon.ShiningAddonRegistry
 import java.io.File
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.jvm.jvmName
@@ -37,7 +37,7 @@ class ShiningAddonJarLoader(val file: File) {
         
         addon.logger = logger
         addon.file = file
-        addon.dataFolder = File(ShiningAddonManager.addonsFolder, description.name)
+        addon.dataFolder = File(ShiningAddonRegistry.addonsFolder, description.name)
         addon.description = description
         return addon
     }

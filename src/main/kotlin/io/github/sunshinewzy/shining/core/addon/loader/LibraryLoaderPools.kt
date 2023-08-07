@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.core.addon.loader
 
+import io.github.sunshinewzy.shining.api.ShiningConfig
 import io.github.sunshinewzy.shining.utils.poll
 import taboolib.common.env.Dependency
 import taboolib.common.env.DependencyDownloader
@@ -86,6 +87,9 @@ object LibraryLoaderPools {
         val downloader = DependencyDownloader(baseDir)
         repositories.forEach {
             downloader.addRepository(Repository(it))
+        }
+        if (downloader.repositories.isEmpty()) {
+            downloader.addRepository(Repository(ShiningConfig.defaultRepositoryCentral))
         }
 
         val urls = HashSet<URL>()

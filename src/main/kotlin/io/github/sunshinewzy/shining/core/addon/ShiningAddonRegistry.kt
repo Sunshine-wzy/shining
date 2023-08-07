@@ -15,7 +15,7 @@ import java.util.logging.Level
 import java.util.regex.Pattern
 
 @SkipTo(LifeCycle.ENABLE)
-object ShiningAddonManager {
+object ShiningAddonRegistry {
     
     val addonsFolder: File = File(getDataFolder(), "addons/")
     internal val jarLoaders: MutableMap<String, ShiningAddonJarLoader> = HashMap()

@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.core.addon.loader
 
-import io.github.sunshinewzy.shining.core.addon.ShiningAddonManager
+import io.github.sunshinewzy.shining.core.addon.ShiningAddonRegistry
 import java.net.URLClassLoader
 
 class ShiningAddonClassLoader(
@@ -15,7 +15,7 @@ class ShiningAddonClassLoader(
     fun setDependencyClassLoaders() {
         libraryLoader = LibraryLoaderPools[loader]
         addonDependencies = (loader.description.depend + loader.description.softdepend)
-            .mapNotNull { ShiningAddonManager.jarLoaders[it]?.classLoader }
+            .mapNotNull { ShiningAddonRegistry.jarLoaders[it]?.classLoader }
             .takeUnless(List<*>::isEmpty)
     }
 
