@@ -5,6 +5,7 @@ import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.addon.ShiningAddon
 import io.github.sunshinewzy.shining.api.addon.ShiningAddonJarDescription
 import io.github.sunshinewzy.shining.core.addon.ShiningAddonLogger
+import io.github.sunshinewzy.shining.core.addon.ShiningAddonManager
 import io.github.sunshinewzy.shining.core.addon.ShiningAddonRegistry
 import java.io.File
 import kotlin.reflect.full.createInstance
@@ -39,6 +40,7 @@ class ShiningAddonJarLoader(val file: File) {
         addon.file = file
         addon.dataFolder = File(ShiningAddonRegistry.addonsFolder, description.name)
         addon.description = description
+        addon.addonManager = ShiningAddonManager(addon)
         return addon
     }
     

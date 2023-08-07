@@ -10,7 +10,9 @@ abstract class ShiningAddon : ShiningPlugin {
     lateinit var file: File internal set
     lateinit var dataFolder: File internal set
     lateinit var description: ShiningAddonJarDescription internal set
+    lateinit var addonManager: IShiningAddonManager internal set
 
+    
     override fun getName(): String = description.name
 
     

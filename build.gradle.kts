@@ -109,6 +109,10 @@ tasks {
 //        }
     }
     
+    java {
+        withSourcesJar()
+    }
+    
     test {
         useJUnitPlatform()
         testLogging {
