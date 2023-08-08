@@ -30,7 +30,7 @@ taboolib {
     classifier = null
     version = "6.0.11-31"
     
-    options("skip-kotlin-relocate", "enable-isolated-classloader")
+    options("skip-kotlin-relocate", "enable-isolated-classloader", "keep-kotlin-module")
     
 //    relocate("com.zaxxer.hikari.", "com.zaxxer.hikari_4_0_3.")
     
