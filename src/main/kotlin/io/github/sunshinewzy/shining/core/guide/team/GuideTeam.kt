@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.core.guide.team
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.event.guide.ShiningGuideTeamGetAsyncEvent
 import io.github.sunshinewzy.shining.api.event.guide.ShiningGuideTeamSetupEvent
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.data.JacksonWrapper
@@ -45,11 +46,18 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
     
 
     suspend fun join(player: Player) {
-        join(player.uniqueId)
+        joinByUUID(player.uniqueId)
         player.getDataContainer()[GUIDE_TEAM_ID] = id
     }
+    
+    suspend fun join(uuid: UUID) {
+        joinByUUID(uuid)
+        uuid.executePlayerDataContainer { 
+            it[GUIDE_TEAM_ID] = id
+        }
+    }
 
-    private suspend fun join(uuid: UUID) {
+    private suspend fun joinByUUID(uuid: UUID) {
         newSuspendedTransaction {
             members.value.let {
                 it += uuid
@@ -59,11 +67,18 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
     }
 
     suspend fun leave(player: Player) {
-        leave(player.uniqueId)
-        player.getDataContainer().delete(player.uniqueId.toString())
+        leaveByUUID(player.uniqueId)
+        player.getDataContainer().delete(GUIDE_TEAM_ID)
+    }
+    
+    suspend fun leave(uuid: UUID) {
+        leaveByUUID(uuid)
+        uuid.executePlayerDataContainer { 
+            it.delete(GUIDE_TEAM_ID)
+        }
     }
 
-    private suspend fun leave(uuid: UUID) {
+    private suspend fun leaveByUUID(uuid: UUID) {
         newSuspendedTransaction {
             members.value.let {
                 it -= uuid
@@ -73,17 +88,47 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
     }
 
     suspend fun apply(player: Player) {
-        apply(player.uniqueId)
+        applyByUUID(player.uniqueId)
         player.getDataContainer()[GUIDE_TEAM_APPLY] = id
         notifyCaptainApplication()
     }
+    
+    suspend fun apply(uuid: UUID) {
+        applyByUUID(uuid)
+        uuid.executePlayerDataContainer { 
+            it[GUIDE_TEAM_APPLY] = id
+        }
+        notifyCaptainApplication()
+    }
 
-    private suspend fun apply(uuid: UUID) {
+    private suspend fun applyByUUID(uuid: UUID) {
         newSuspendedTransaction {
             applicants.value.let {
                 it += uuid
                 applicants = JacksonWrapper(it)
             }
+        }
+    }
+    
+    suspend fun changeCaptain(player: Player) {
+        changeCaptain(player.uniqueId)
+    }
+    
+    suspend fun changeCaptain(uuid: UUID) {
+        newSuspendedTransaction {
+            captain.executePlayerDataContainer {
+                it.delete(GUIDE_TEAM_ID)
+            }
+        }
+        changeCaptainByUUID(uuid)
+        uuid.executePlayerDataContainer { 
+            it[GUIDE_TEAM_ID] = id
+        }
+    }
+    
+    private suspend fun changeCaptainByUUID(uuid: UUID) {
+        newSuspendedTransaction { 
+            captain = uuid
         }
     }
     
@@ -102,7 +147,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         if (!applicants.value.contains(uuid))
             return false
 
-        join(uuid)
+        joinByUUID(uuid)
         uuid.executePlayerDataContainer {
             it[GUIDE_TEAM_ID] = id
             it.delete(GUIDE_TEAM_APPLY)
@@ -358,6 +403,25 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
             }
         }
 
+        suspend fun hasGuideTeam(uuid: UUID): Boolean {
+            return newSuspendedTransaction { 
+                uuid.executePlayerDataContainer { 
+                    it[GUIDE_TEAM_ID]?.toInt()?.let { id ->
+                        findById(id)?.let { return@executePlayerDataContainer true }
+                    }
+                } ?: false
+            }
+        }
+        
+        suspend fun getGuideTeam(uuid: UUID): GuideTeam? {
+            return newSuspendedTransaction {
+                uuid.executePlayerDataContainer { container ->
+                    container[GUIDE_TEAM_ID]?.toInt()?.let { id ->
+                        findById(id)?.let { return@executePlayerDataContainer it }
+                    }
+                }
+            }
+        }
 
         /**
          * Check if the player is in a guide team.
@@ -365,9 +429,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         suspend fun Player.hasGuideTeam(): Boolean {
             return newSuspendedTransaction transaction@{
                 getDataContainer()[GUIDE_TEAM_ID]?.toInt()?.let { id ->
-                    findById(id)?.let {
-                        return@transaction true
-                    }
+                    findById(id)?.let { return@transaction true }
                 }
                 false
             }
@@ -379,13 +441,14 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
          * If the player is not in a guide team, it will return null.
          */
         suspend fun Player.getGuideTeam(): GuideTeam? {
+            val event = ShiningGuideTeamGetAsyncEvent(this)
+            event.call()
+            event.team?.let { return it }
+            
             return newSuspendedTransaction transaction@{
                 getDataContainer()[GUIDE_TEAM_ID]?.toInt()?.let { id ->
-                    findById(id)?.let {
-                        return@transaction it
-                    }
+                    findById(id)?.let { return@transaction it }
                 }
-
                 null
             }
         }

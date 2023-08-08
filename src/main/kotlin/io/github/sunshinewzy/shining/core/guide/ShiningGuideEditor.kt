@@ -41,8 +41,6 @@ object ShiningGuideEditor {
     private val itemCreateStateCopy = NamespacedIdItem(Material.REDSTONE_LAMP, NamespacedId(Shining, "shining_guide-editor-create_state_copy"))
     private val itemCreateStateNew = NamespacedIdItem(Material.GLASS, NamespacedId(Shining, "shining_guide-editor-create_state_new"))
     private val itemLoadFromDraftBox = NamespacedIdItem(Material.BOOKSHELF, NamespacedId(Shining, "shining_guide-editor-load_from_draft_box"))
-    
-    const val PERMISSION_EDIT = "shining.guide.edit"
 
 
     @JvmOverloads

@@ -21,12 +21,14 @@ object PlayerDatabaseHandler {
         dataContainer.remove(uniqueId)
     }
 
-    fun UUID.executePlayerDataContainer(action: (PlayerDataContainer) -> Unit) {
+    fun <T> UUID.executePlayerDataContainer(action: (PlayerDataContainer) -> T): T? {
         dataContainer[this]?.let(action)
             ?: PlayerDataContainer(this.toString()).let {
-                action(it)
+                val result = action(it)
                 dataContainer.remove(this)
+                return result
             }
+        return null
     }
 
 }

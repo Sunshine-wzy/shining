@@ -21,6 +21,9 @@ object ShiningGuideSettings {
     private val itemEditModeClose = itemEditMode.toStateItem("close")
     private val itemEditModeOpen = itemEditMode.toStateItem("open").shiny()
     private val itemDraftBox = NamespacedIdItem(Material.BOOKSHELF, NamespacedId(Shining, "shining_guide-settings-draft_box"))
+
+    const val PERMISSION_EDIT = "shining.guide.edit"
+    const val PERMISSION_TEAM = "shining.guide.team"
     
 
     fun openSettingsMenu(player: Player, team: GuideTeam) {
@@ -40,13 +43,13 @@ object ShiningGuideSettings {
 
             set('B', ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player), ShiningGuide.onClickBack)
 
-            if (team !== GuideTeam.CompletedTeam) {
+            if (team !== GuideTeam.CompletedTeam && player.hasPermission(PERMISSION_TEAM)) {
                 set('a', itemTeamInfo.toLocalizedItem(player)) {
                     team.openInfoMenu(player)
                 }
             }
 
-            if (player.hasPermission(ShiningGuideEditor.PERMISSION_EDIT)) {
+            if (player.hasPermission(PERMISSION_EDIT)) {
                 set(
                     'e',
                     if (ShiningGuideEditor.isEditModeEnabled(player)) itemEditModeOpen.toLocalizedItem(player)

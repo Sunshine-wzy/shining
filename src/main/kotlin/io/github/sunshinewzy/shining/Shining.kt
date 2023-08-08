@@ -21,7 +21,6 @@ import io.github.sunshinewzy.shining.core.data.DataManager
 import io.github.sunshinewzy.shining.core.data.SerializationModules
 import io.github.sunshinewzy.shining.core.data.legacy.internal.SLocationData
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
-import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.element.GuideItem
@@ -30,6 +29,7 @@ import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
 import io.github.sunshinewzy.shining.core.guide.reward.GuideRewardCommand
 import io.github.sunshinewzy.shining.core.guide.reward.GuideRewardItem
+import io.github.sunshinewzy.shining.core.guide.settings.ShiningGuideSettings
 import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
 import io.github.sunshinewzy.shining.core.guide.state.GuideItemState
 import io.github.sunshinewzy.shining.core.guide.state.GuideMapState
@@ -234,7 +234,8 @@ object Shining : Plugin(), ShiningPlugin {
     }
     
     private fun registerPermissions() {
-        registerPermission(Permission(ShiningGuideEditor.PERMISSION_EDIT, PermissionDefault.OP))
+        registerPermission(Permission(ShiningGuideSettings.PERMISSION_EDIT, PermissionDefault.OP))
+        registerPermission(Permission(ShiningGuideSettings.PERMISSION_TEAM, PermissionDefault.TRUE))
     }
 
 
