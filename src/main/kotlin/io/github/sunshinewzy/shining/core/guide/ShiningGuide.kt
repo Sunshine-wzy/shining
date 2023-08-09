@@ -4,6 +4,7 @@ import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.dictionary.DictionaryItem
 import io.github.sunshinewzy.shining.api.dictionary.DictionaryRegistry
 import io.github.sunshinewzy.shining.api.dictionary.behavior.ItemBehavior
+import io.github.sunshinewzy.shining.api.event.guide.ShiningGuideOpenEvent
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
@@ -98,6 +99,8 @@ object ShiningGuide : GuideCategory(
 
     @JvmOverloads
     fun openMainMenu(player: Player, context: GuideContext = EmptyGuideContext) {
+        if (!ShiningGuideOpenEvent(player, context, false).call()) return
+        
         ShiningDispatchers.launchDB {
             val team = player.getGuideTeam() ?: kotlin.run {
                 submit {
@@ -126,6 +129,8 @@ object ShiningGuide : GuideCategory(
 
     @JvmOverloads
     fun openLastElement(player: Player, context: GuideContext = EmptyGuideContext) {
+        if (!ShiningGuideOpenEvent(player, context, true).call()) return
+        
         ShiningDispatchers.launchDB {
             val team = player.getGuideTeam() ?: kotlin.run {
                 submit {
