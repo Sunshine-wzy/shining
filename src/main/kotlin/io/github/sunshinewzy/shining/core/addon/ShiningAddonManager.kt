@@ -30,9 +30,9 @@ open class ShiningAddonManager(private val addon: ShiningAddon) : IShiningAddonM
         func: Closeable.(T) -> Unit
     ): ShiningListener {
         listenEvents += event
-        val closeableListener = CloseableListener()
+        val closeableListener = CloseableListener(this)
         val listener = ShiningListener(BukkitListener.BukkitListener(event) { func(closeableListener, it as T) })
-        closeableListener.proxyListener = listener
+        closeableListener.listener = listener
         Shining.pluginManager.registerEvent(event, listener, priority, listener, Shining.plugin, ignoreCancelled)
         registeredListeners += listener
         return listener
