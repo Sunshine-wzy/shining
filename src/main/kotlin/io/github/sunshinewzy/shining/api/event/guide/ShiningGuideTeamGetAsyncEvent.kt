@@ -7,7 +7,4 @@ import taboolib.platform.type.BukkitProxyEvent
 class ShiningGuideTeamGetAsyncEvent(
     val player: Player,
     var team: GuideTeam? = null
-) : BukkitProxyEvent() {
-    override val allowCancelled: Boolean
-        get() = false
-}
+) : BukkitProxyEvent()

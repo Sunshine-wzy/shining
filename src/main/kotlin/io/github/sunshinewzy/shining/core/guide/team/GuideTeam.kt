@@ -383,23 +383,27 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                 return null
             }
 
+            val guideTeam = create(captain.uniqueId, name, symbol) ?: return null
+            container[GUIDE_TEAM_ID] = guideTeam.id
+            return guideTeam
+        }
+        
+        suspend fun create(captain: UUID, name: String, symbol: ItemStack): GuideTeam? {
             return newSuspendedTransaction transaction@{
-                find { GuideTeams.captain eq captain.uniqueId }.let {
+                find { GuideTeams.captain eq captain }.let {
                     if (!it.empty()) {
                         return@transaction null
                     }
                 }
-
-                val guideTeam = new {
-                    this.captain = captain.uniqueId
+                
+                new {
+                    this.captain = captain
                     this.name = name
                     this.symbol = symbol
                     this.members = JacksonWrapper(hashSetOf())
                     this.applicants = JacksonWrapper(hashSetOf())
                     this.data = JacksonWrapper(GuideTeamData())
                 }
-                container[GUIDE_TEAM_ID] = guideTeam.id
-                guideTeam
             }
         }
 
@@ -444,6 +448,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
             val event = ShiningGuideTeamGetAsyncEvent(this)
             event.call()
             event.team?.let { return it }
+            if (event.isCancelled) return null
             
             return newSuspendedTransaction transaction@{
                 getDataContainer()[GUIDE_TEAM_ID]?.toInt()?.let { id ->

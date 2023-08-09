@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.commands
 
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
+import io.github.sunshinewzy.shining.core.guide.settings.ShiningGuideSettings
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeam.Companion.letGuideTeamOrWarn
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.subCommand
@@ -16,7 +17,7 @@ internal object CommandGuide {
                 }
             }
 
-            literal("team") {
+            literal("team", permission = ShiningGuideSettings.PERMISSION_TEAM) {
                 literal("manage") {
                     execute<Player> { sender, context, argument ->
                         sender.letGuideTeamOrWarn { team ->

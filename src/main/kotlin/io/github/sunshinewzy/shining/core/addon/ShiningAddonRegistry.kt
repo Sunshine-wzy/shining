@@ -134,6 +134,7 @@ object ShiningAddonRegistry {
 
             try {
                 addon.onDisable()
+                addon.addonManager.unregisterListeners()
             } catch (th: Throwable) {
                 addon.logger.log(Level.SEVERE, "Failed to disable ${addon.description.getNameAndVersion()}", th)
             }
