@@ -7,6 +7,8 @@ import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.data.JacksonWrapper
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.executePlayerDataContainer
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.getDataContainer
+import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
+import io.github.sunshinewzy.shining.core.editor.chat.type.Text
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.lang.*
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
@@ -132,6 +134,12 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         }
     }
     
+    suspend fun changeName(name: String) {
+        newSuspendedTransaction { 
+            this@GuideTeam.name = name
+        }
+    }
+    
     suspend fun getTeamData(): GuideTeamData =
         newSuspendedTransaction { data.value }
     
@@ -226,7 +234,22 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
             set('B', ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player), ShiningGuide.onClickBack)
 
-            set('a', symbol.clone().localize(player.getLanguageNode("menu-shining_guide-team-info-symbol"), name))
+            set('a', symbol.clone().localize(player.getLanguageNode("menu-shining_guide-team-info-symbol"), name)) {
+                player.openChatEditor<Text>(player.getLangText("menu-shining_guide-team-create-name")) {
+                    text(name)
+
+                    predicate { it.length < 50 }
+
+                    onSubmit {
+                        ShiningDispatchers.launchDB {
+                            changeName(it)
+                        }
+                    }
+
+                    onCancel { openInfoMenu(player) }
+                }
+            }
+            
             set(
                 'b',
                 buildItem(Material.PLAYER_HEAD) {
@@ -360,16 +383,11 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         const val GUIDE_TEAM_ID = "shining_guide-team-id"
         const val GUIDE_TEAM_APPLY = "shining_guide-team-apply"
 
-        private val createTeamItem =
-            NamespacedIdItem(Material.SLIME_BALL, NamespacedId(Shining, "shining_guide-team-create"))
-        private val joinTeamItem =
-            NamespacedIdItem(Material.ENDER_PEARL, NamespacedId(Shining, "shining_guide-team-join"))
-        private val editTeamNameItem =
-            NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-team-edit_name"))
-        private val applicationManageItem =
-            NamespacedIdItem(Material.BREAD, NamespacedId(Shining, "shining_guide-team-manage-application"))
-        private val teamManageItem =
-            NamespacedIdItem(Material.GOLDEN_APPLE, NamespacedId(Shining, "shining_guide-team-manage"))
+        private val createTeamItem = NamespacedIdItem(Material.SLIME_BALL, NamespacedId(Shining, "shining_guide-team-create"))
+        private val joinTeamItem = NamespacedIdItem(Material.ENDER_PEARL, NamespacedId(Shining, "shining_guide-team-join"))
+        private val editTeamNameItem = NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-team-edit_name"))
+        private val applicationManageItem = NamespacedIdItem(Material.BREAD, NamespacedId(Shining, "shining_guide-team-manage-application"))
+        private val teamManageItem = NamespacedIdItem(Material.GOLDEN_APPLE, NamespacedId(Shining, "shining_guide-team-manage"))
         
         
         /**
@@ -497,13 +515,9 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
                 set('a', createTeamItem.toLocalizedItem(this@setupGuideTeam))
                 set('b', joinTeamItem.toLocalizedItem(this@setupGuideTeam))
 
-                onClick('a') {
-                    createGuideTeam()
-                }
+                onClick('a') { createGuideTeam() }
 
-                onClick('b') {
-                    joinGuideTeam()
-                }
+                onClick('b') { joinGuideTeam() }
 
                 onClick(lock = true)
             }
@@ -533,33 +547,26 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
 
 
                 onClick('b') {
-                    sendMsg(Shining.prefix, getLangText("menu-shining_guide-team-create-input_name"))
-
-                    PlayerChatSubscriber(this@createGuideTeam, getLangText("menu-shining_guide-team-create-edit_id")) {
-                        submit {
-                            createGuideTeam(message, symbol)
-                        }
-                        true
-                    }.register()
-
-                    closeInventory()
+                    openChatEditor<Text>(getLangText("menu-shining_guide-team-create-name")) { 
+                        text(name)
+                        
+                        predicate { it.length < 50 }
+                        
+                        onSubmit { createGuideTeam(it, symbol) }
+                        
+                        onCancel { createGuideTeam(name, symbol) }
+                    }
                 }
 
                 onClick('c') {
                     openSearchMenu<ItemStack>(getLangText("menu-shining_guide-team-create-search_symbol-title")) {
                         searchMap { Search.allItemMap }
 
-                        onClick { event, item ->
-                            createGuideTeam(name, item)
-                        }
+                        onClick { _, item -> createGuideTeam(name, item) }
 
-                        onGenerate { _, element, _, _ ->
-                            element
-                        }
+                        onGenerate { _, element, _, _ -> element }
 
-                        onBack(this@createGuideTeam) {
-                            createGuideTeam(name, symbol)
-                        }
+                        onBack(this@createGuideTeam) { createGuideTeam(name, symbol) }
                     }
                 }
 
