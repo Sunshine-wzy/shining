@@ -14,9 +14,11 @@ interface IGuideElementContainer : IGuideElement {
         unregisterElement(element.getId())
     }
     
-    fun getElements(): List<IGuideElement>
+    fun getElement(id: NamespacedId, isDeep: Boolean = false): IGuideElement?
     
-    suspend fun getElementsByCondition(team: GuideTeam, condition: ElementCondition): List<IGuideElement>
+    fun getElements(isDeep: Boolean = false): List<IGuideElement>
+    
+    suspend fun getElementsByCondition(team: GuideTeam, condition: ElementCondition, isDeep: Boolean = false): List<IGuideElement>
 
     fun updateElementId(element: IGuideElement, oldId: NamespacedId) {}
 

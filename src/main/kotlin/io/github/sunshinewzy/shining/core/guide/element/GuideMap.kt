@@ -241,14 +241,64 @@ class GuideMap : GuideElement, IGuideElementContainer {
         }
     }
 
-    override fun getElements(): List<IGuideElement> =
-        elements.map { it.value }
+    override fun getElement(id: NamespacedId, isDeep: Boolean): IGuideElement? {
+        idToCoordinate[id]?.let { coordinate ->
+            elements[coordinate]?.let {
+                return it
+            }
+        }
+        
+        if (isDeep) {
+            elements.forEach { (coordinate, element) -> 
+                if (element is IGuideElementContainer) {
+                    element.getElement(id, true)?.let { 
+                        return it
+                    }
+                }
+            }
+        }
+        return null
+    }
 
-    override suspend fun getElementsByCondition(team: GuideTeam, condition: ElementCondition): List<IGuideElement> {
+    override fun getElements(isDeep: Boolean): List<IGuideElement> {
         val list = ArrayList<IGuideElement>()
-        elements.forEach { (_, element) -> 
-            if (element.getCondition(team) == condition) {
-                list += element
+        if (isDeep) {
+            elements.forEach { (coordinate, element) -> 
+                if (element is IGuideElementContainer) {
+                    list += element.getElements(true)
+                } else list += element
+            }
+        } else {
+            elements.mapTo(list) { it.value }
+        }
+        return list
+    }
+
+    override suspend fun getElementsByCondition(team: GuideTeam, condition: ElementCondition, isDeep: Boolean): List<IGuideElement> {
+        val list = ArrayList<IGuideElement>()
+        if (isDeep) {
+            elements.forEach { (_, element) ->
+                val elementCondition = element.getCondition(team)
+                if (element is IGuideElementContainer) {
+                    when (elementCondition) {
+                        ElementCondition.COMPLETE, ElementCondition.UNLOCKED -> {
+                            list += element.getElementsByCondition(team, condition, true)
+                        }
+                        ElementCondition.LOCKED_DEPENDENCY, ElementCondition.LOCKED_LOCK -> {
+                            if (elementCondition == condition) {
+                                list += element
+                            }
+                        }
+                    }
+                } else if (elementCondition == condition) {
+                    list += element
+                }
+            }
+        } else {
+            elements.forEach { (_, element) ->
+                if (element.getCondition(team) == condition) {
+                    list += element
+                }
             }
         }
         return list

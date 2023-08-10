@@ -1,9 +1,11 @@
 package io.github.sunshinewzy.shining.core.guide.element
 
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
+import io.github.sunshinewzy.shining.api.guide.ElementCondition.*
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
+import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementPriorityContainer
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
@@ -65,9 +67,9 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
                     }
 
                     val condition = element.getCondition(team)
-                    if (condition == ElementCondition.LOCKED_DEPENDENCY)
+                    if (condition == LOCKED_DEPENDENCY)
                         dependencyLockedElements += element
-                    else if (condition == ElementCondition.LOCKED_LOCK)
+                    else if (condition == LOCKED_LOCK)
                         lockLockedElements += element
                     element.getSymbolByCondition(player, team, condition)
                 }
@@ -244,20 +246,75 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
         return super.register() as GuideCategory
     }
 
-    override fun getElements(): List<IGuideElement> {
+    override fun getElement(id: NamespacedId, isDeep: Boolean): IGuideElement? {
+        idToPriority[id]?.let { priority ->
+            priorityToElements[priority]?.let { elements ->
+                elements.forEach { element ->
+                    if (element.getId() == id) return element
+                }
+            }
+        }
+        
+        if (isDeep) {
+            priorityToElements.forEach { (priority, elements) -> 
+                elements.forEach { element ->
+                    if (element is IGuideElementContainer) {
+                        element.getElement(id, true)?.let { 
+                            return it
+                        }
+                    }
+                }
+            }
+        }
+        return null
+    }
+
+    override fun getElements(isDeep: Boolean): List<IGuideElement> {
         val list = ArrayList<IGuideElement>()
-        priorityToElements.forEach { (_, elements) -> 
-            list += elements
+        if (isDeep) {
+            priorityToElements.forEach { (_, elements) ->
+                elements.forEach { element ->
+                    if (element is IGuideElementContainer) {
+                        list += element.getElements(true)
+                    } else list += element
+                }
+            }
+        } else {
+            priorityToElements.forEach { (_, elements) ->
+                list += elements
+            }
         }
         return list
     }
 
-    override suspend fun getElementsByCondition(team: GuideTeam, condition: ElementCondition): List<IGuideElement> {
+    override suspend fun getElementsByCondition(team: GuideTeam, condition: ElementCondition, isDeep: Boolean): List<IGuideElement> {
         val list = ArrayList<IGuideElement>()
-        priorityToElements.forEach { (_, elements) -> 
-            elements.forEach { element ->
-                if (element.getCondition(team) == condition) {
-                    list += elements
+        if (isDeep) {
+            priorityToElements.forEach { (_, elements) ->
+                elements.forEach { element ->
+                    val elementCondition = element.getCondition(team)
+                    if (element is IGuideElementContainer) {
+                        when (elementCondition) {
+                            COMPLETE, UNLOCKED -> {
+                                list += element.getElementsByCondition(team, condition, true)
+                            }
+                            LOCKED_DEPENDENCY, LOCKED_LOCK -> {
+                                if (elementCondition == condition) {
+                                    list += element
+                                }
+                            }
+                        }
+                    } else if (elementCondition == condition) {
+                        list += element
+                    }
+                }
+            }
+        } else {
+            priorityToElements.forEach { (_, elements) ->
+                elements.forEach { element ->
+                    if (element.getCondition(team) == condition) {
+                        list += elements
+                    }
                 }
             }
         }

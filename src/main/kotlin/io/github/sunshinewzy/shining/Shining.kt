@@ -62,6 +62,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.permissions.Permission
 import org.bukkit.permissions.PermissionDefault
 import org.bukkit.plugin.PluginManager
+import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
 import taboolib.common.env.RuntimeDependencies
 import taboolib.common.env.RuntimeDependency
@@ -98,7 +99,7 @@ object Shining : Plugin(), ShiningPlugin {
     lateinit var database: Database
         private set
 
-    val plugin: BukkitPlugin by lazy { BukkitPlugin.getInstance() }
+    val plugin: JavaPlugin by lazy { BukkitPlugin.getInstance() }
     val pluginManager: PluginManager by lazy { Bukkit.getPluginManager() }
 
     @get:JvmName("prefix")
