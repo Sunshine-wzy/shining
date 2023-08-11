@@ -1,7 +1,6 @@
 package io.github.sunshinewzy.shining.api.addon
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import io.github.sunshinewzy.shining.core.data.serializer.ShiningAddonJarDescriptionDeserializer
 import taboolib.common.env.Dependency
 
 @JsonDeserialize(using = ShiningAddonJarDescriptionDeserializer::class)

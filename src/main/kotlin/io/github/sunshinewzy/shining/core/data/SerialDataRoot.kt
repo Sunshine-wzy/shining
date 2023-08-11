@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
+import io.github.sunshinewzy.shining.api.data.DataRootOptions
 import io.github.sunshinewzy.shining.api.data.ISerialDataRoot
 import io.github.sunshinewzy.shining.api.data.container.ISerialDataContainer
 
