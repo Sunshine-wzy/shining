@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.core.data
 
+import io.github.sunshinewzy.shining.api.data.DataRootOptions
 import io.github.sunshinewzy.shining.api.data.IDataRoot
 import io.github.sunshinewzy.shining.api.data.container.IDataContainer
 
