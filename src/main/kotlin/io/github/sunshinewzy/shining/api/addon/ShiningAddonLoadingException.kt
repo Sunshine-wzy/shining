@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.core.addon.loader
+package io.github.sunshinewzy.shining.api.addon
 
 class ShiningAddonLoadingException : RuntimeException {
     

@@ -1,10 +1,10 @@
 package io.github.sunshinewzy.shining.core.addon
 
 import io.github.sunshinewzy.shining.api.addon.ShiningAddon
+import io.github.sunshinewzy.shining.api.addon.ShiningAddonLoadingException
 import io.github.sunshinewzy.shining.core.addon.loader.LibraryLoaderPools
 import io.github.sunshinewzy.shining.core.addon.loader.ShiningAddonInitializingException
 import io.github.sunshinewzy.shining.core.addon.loader.ShiningAddonJarLoader
-import io.github.sunshinewzy.shining.core.addon.loader.ShiningAddonLoadingException
 import io.github.sunshinewzy.shining.utils.CollectionUtils
 import taboolib.common.LifeCycle
 import taboolib.common.platform.SkipTo

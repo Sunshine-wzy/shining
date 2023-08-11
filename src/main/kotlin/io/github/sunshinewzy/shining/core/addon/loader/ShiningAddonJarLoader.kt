@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.addon.ShiningAddon
 import io.github.sunshinewzy.shining.api.addon.ShiningAddonJarDescription
+import io.github.sunshinewzy.shining.api.addon.ShiningAddonLoadingException
 import io.github.sunshinewzy.shining.core.addon.ShiningAddonLogger
 import io.github.sunshinewzy.shining.core.addon.ShiningAddonManager
 import io.github.sunshinewzy.shining.core.addon.ShiningAddonRegistry

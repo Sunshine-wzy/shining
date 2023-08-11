@@ -1,11 +1,9 @@
-package io.github.sunshinewzy.shining.core.data.serializer
+package io.github.sunshinewzy.shining.api.addon
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
-import io.github.sunshinewzy.shining.api.addon.ShiningAddonJarDescription
-import io.github.sunshinewzy.shining.core.addon.loader.ShiningAddonLoadingException
 import taboolib.common.env.Dependency
 
 object ShiningAddonJarDescriptionDeserializer : StdDeserializer<ShiningAddonJarDescription>(ShiningAddonJarDescription::class.java) {
