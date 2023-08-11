@@ -1,14 +1,21 @@
 package io.github.sunshinewzy.shining.commands
 
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
+import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.settings.ShiningGuideSettings
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeam.Companion.letGuideTeamOrWarn
+import io.github.sunshinewzy.shining.objects.ShiningDispatchers
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.function.submit
+import taboolib.expansion.createHelper
 
 internal object CommandGuide {
-
+    
+    const val PERMISSION_RELOAD = "shining.command.guide.reload"
+    
+    
     val guide = subCommand {
         literal("open") {
             literal("main") {
@@ -41,6 +48,16 @@ internal object CommandGuide {
                 ShiningGuide.openLastElement(sender)
             }
         }
+        
+        literal("reload", permission = PERMISSION_RELOAD) {
+            execute<CommandSender> { _, _, _ ->
+                ShiningDispatchers.launchDB { 
+                    GuideElementRegistry.reload()
+                }
+            }
+        }
+        
+        createHelper()
     }
 
 }

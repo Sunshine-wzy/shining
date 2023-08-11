@@ -16,6 +16,7 @@ import io.github.sunshinewzy.shining.api.item.universal.VanillaUniversalItem
 import io.github.sunshinewzy.shining.api.machine.IMachineManager
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.commands.CommandGuide
 import io.github.sunshinewzy.shining.core.addon.ShiningAddonRegistry
 import io.github.sunshinewzy.shining.core.data.DataManager
 import io.github.sunshinewzy.shining.core.data.SerializationModules
@@ -237,6 +238,7 @@ object Shining : Plugin(), ShiningPlugin {
     private fun registerPermissions() {
         registerPermission(Permission(ShiningGuideSettings.PERMISSION_EDIT, PermissionDefault.OP))
         registerPermission(Permission(ShiningGuideSettings.PERMISSION_TEAM, PermissionDefault.TRUE))
+        registerPermission(Permission(CommandGuide.PERMISSION_RELOAD, PermissionDefault.OP))
     }
 
 

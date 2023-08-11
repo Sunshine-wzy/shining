@@ -22,6 +22,16 @@ object GuideElementRegistry : LongIdTable() {
     private val elementCache: MutableMap<NamespacedId, IGuideElement> = ConcurrentHashMap()
     
     
+    suspend fun reload() {
+        stateCache.clear()
+        init()
+        elementCache.forEach { (id, element) -> 
+            getState(id)?.let { state ->
+                element.update(state, true)
+            }
+        }
+    }
+    
     fun <T: IGuideElement> register(element: T): T {
         val id = element.getId()
         getState(id)?.let { state ->
