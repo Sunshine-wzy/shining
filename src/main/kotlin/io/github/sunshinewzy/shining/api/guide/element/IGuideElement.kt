@@ -40,6 +40,8 @@ interface IGuideElement {
     fun unlock(player: Player, team: GuideTeam): Boolean
     
     fun complete(player: Player, team: GuideTeam, isSilent: Boolean = false)
+    
+    fun fail(player: Player)
 
     fun reward(player: Player)
     

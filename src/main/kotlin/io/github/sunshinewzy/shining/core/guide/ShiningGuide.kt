@@ -92,7 +92,11 @@ object ShiningGuide : GuideCategory(
     
     fun init() {
         GuideElementRegistry.getState(getId())?.let { 
-            update(it)
+            update(it, true)
+        } ?: kotlin.run { 
+            ShiningDispatchers.launchIO {
+                GuideElementRegistry.saveElement(this@ShiningGuide)
+            }
         }
     }
     

@@ -15,6 +15,7 @@ import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import java.util.*
 
 class ConsumableItemGroup(
     var isConsume: Boolean,
@@ -29,9 +30,21 @@ class ConsumableItemGroup(
     @JsonIgnore
     fun getItemStacks(): MutableList<ItemStack> = items.mapTo(ArrayList()) { it.getItemStack() }
     
+    @JsonIgnore
+    fun getMergedMap(): MutableMap<UniversalItem, Int> {
+        val map = TreeMap<UniversalItem, Int> { o1, o2 ->
+            if (o1.isSimilar(o2, false)) 0 else 1
+        }
+        
+        items.forEach { item ->
+            map[item] = map.getOrDefault(item, 0) + item.getItemAmount()
+        }
+        return map
+    }
+    
     fun contains(inventory: Inventory): Boolean {
-        items.forEach { 
-            if (!it.contains(inventory)) return false
+        getMergedMap().forEach { (item, amount) ->
+            if (!item.contains(inventory, amount)) return false
         }
         return true
     }

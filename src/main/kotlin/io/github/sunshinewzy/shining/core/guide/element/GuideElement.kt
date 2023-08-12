@@ -13,10 +13,14 @@ import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
+import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.state.GuideElementState
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeamData
 import io.github.sunshinewzy.shining.core.lang.getLangText
+import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
+import io.github.sunshinewzy.shining.core.menu.onBackMenu
+import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
@@ -117,6 +121,11 @@ abstract class GuideElement(
         player.sendTitle("§f[§e${description.name.colored()}§f]", player.getLangText("menu-shining_guide-element-complete").colored(), 10, 70, 20)
         reward(player)
         player.closeInventory()
+    }
+
+    override fun fail(player: Player) {
+        player.playSound(player.location, Sound.ENTITY_ITEM_BREAK, 1f, 1.2f)
+        player.sendPrefixedLangText("menu-shining_guide-element-fail", Shining.prefix, description.name)
     }
 
     override fun reward(player: Player) {
@@ -260,6 +269,22 @@ abstract class GuideElement(
 
     fun registerLock(lock: ElementLock) {
         locks += lock
+    }
+    
+    fun openViewRewardsMenu(player: Player, team: GuideTeam, context: GuideContext) {
+        player.openMultiPageMenu<IGuideReward>(player.getLangText("menu-shining_guide-element-view_rewards-title")) { 
+            elements { rewards }
+            
+            onGenerate { _, element, _, _ -> element.getIcon(player) }
+            
+            onClick { _, element -> 
+                element.openViewMenu(player, GuideEditorContext.BackNoEvent {
+                    openViewRewardsMenu(player, team, context)
+                })
+            }
+            
+            onBackMenu(player, team, context, 2 orderWith 1)
+        }
     }
 
     

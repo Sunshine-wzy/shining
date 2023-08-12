@@ -52,132 +52,158 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
     
 
     override fun openMenu(player: Player, team: GuideTeam, context: GuideContext) {
-        player.openMenu<Linked<IGuideElement>>(player.getLangText(ShiningGuide.TITLE)) {
-            rows(6)
-            slots(ShiningGuide.slotOrders)
-
-            elements { getElements() }
-
-            val dependencyLockedElements = LinkedList<IGuideElement>()
-            val lockLockedElements = LinkedList<IGuideElement>()
-            onGenerate(true) { player, element, index, slot ->
-                runBlocking(ShiningDispatchers.DB) {
-                    if (context[GuideEditModeContext]?.mode == true || team == GuideTeam.CompletedTeam) {
-                        return@runBlocking element.getUnlockedSymbol(player)
-                    }
-
-                    val condition = element.getCondition(team)
-                    if (condition == LOCKED_DEPENDENCY)
-                        dependencyLockedElements += element
-                    else if (condition == LOCKED_LOCK)
-                        lockLockedElements += element
-                    element.getSymbolByCondition(player, team, condition)
-                }
-            }
-
-            onBuild(false, ShiningGuide.onBuildEdge)
-
-            setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
-                if (hasPreviousPage) {
-                    ShiningIcon.PAGE_PREVIOUS_GLASS_PANE.item
-                } else ShiningIcon.EDGE.item
-            }
-
-            setNextPage(8 orderWith 6) { page, hasNextPage ->
-                if (hasNextPage) {
-                    ShiningIcon.PAGE_NEXT_GLASS_PANE.item
-                } else ShiningIcon.EDGE.item
-            }
-
-            onClick { event, element ->
-                if (context[GuideEditModeContext]?.isEditorEnabled() == true) {
-                    ShiningGuideEditor.openEditor(
-                        player, team, GuideEditorContext.Back {
-                            openMenu(player, team, context)
-                        } + ShiningGuideEditor.CreateContext {
-                            registerElement(it)
-                        }, element, this@GuideCategory
-                    )
-                    return@onClick
-                }
-                
-                // Select elements
-                context[GuideSelectElementsContext]?.let { ctxt ->
-                    if (ctxt.mode) {
-                        if (ctxt.elements.contains(element)) {
-                            ctxt.elements.remove(element)
-                        } else if (ctxt.filter(element)) {
-                            ctxt.elements.add(element)
-                        }
-
-                        // Update shortcut bar
-                        ShiningDispatchers.launchDB {
-                            val list = ctxt.elements.map {
-                                it.getUnlockedSymbol(player)
-                            }
-                            
-                            submit {
-                                context[GuideShortcutBarContext]?.setItems(list)
-                                openMenu(player, team, context)
-                            }
-                        }
-                        return@onClick
-                    }
-                }
-                
-                if (element in dependencyLockedElements) return@onClick
-
-                if (element in lockLockedElements) {
-                    if (element.unlock(player, team)) {
-                        ShiningGuide.fireworkCongratulate(player)
-                        open(player, team, null, context)
-                    }
-                    return@onClick
-                }
-
-                element.open(event.clicker, team, this@GuideCategory, context)
-            }
-
-            if (context[GuideEditModeContext]?.isEditorEnabled() == true) {
-                onClick(lock = true) {
-                    if (ShiningGuide.isClickEmptySlot(it)) {
-                        ShiningGuideEditor.openEditor(
-                            player, team, GuideEditorContext.Back {
-                                openMenu(player, team, context)
-                            } + ShiningGuideEditor.CreateContext {
-                                registerElement(it)
-                            },null, this@GuideCategory
-                        )
-                    }
-                }
-            }
-
-            setEditor(player, context) {
-                openMenu(player, team, context)
-            }
-
-            if (this@GuideCategory !== ShiningGuide) {
-                setBackButton(player, team, context)
-            }
-
-            set(5 orderWith 1, ShiningIcon.SETTINGS.getLanguageItem().toLocalizedItem(player)) {
-                ShiningGuideSettings.openSettingsMenu(player, team)
-            }
+        ShiningDispatchers.launchDB { 
+            val isCompleted = isTeamCompleted(team)
             
-            // Select elements
-            context[GuideSelectElementsContext]?.let { ctxt ->
-                set(4 orderWith 1, ctxt.getSelectorItem(player)) {
-                    if (clickEvent().isShiftClick) {
-                        ctxt.submit()
+            submit {
+                player.openMenu<Linked<IGuideElement>>(player.getLangText(ShiningGuide.TITLE)) {
+                    rows(6)
+                    slots(ShiningGuide.slotOrders)
+
+                    elements { getElements() }
+
+                    val dependencyLockedElements = LinkedList<IGuideElement>()
+                    val lockLockedElements = LinkedList<IGuideElement>()
+                    onGenerate(true) { player, element, index, slot ->
+                        runBlocking(ShiningDispatchers.DB) {
+                            if (context[GuideEditModeContext]?.mode == true || team == GuideTeam.CompletedTeam) {
+                                return@runBlocking element.getUnlockedSymbol(player)
+                            }
+
+                            val condition = element.getCondition(team)
+                            if (condition == LOCKED_DEPENDENCY)
+                                dependencyLockedElements += element
+                            else if (condition == LOCKED_LOCK)
+                                lockLockedElements += element
+                            element.getSymbolByCondition(player, team, condition)
+                        }
+                    }
+
+                    onBuild(false, ShiningGuide.onBuildEdge)
+
+                    setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
+                        if (hasPreviousPage) {
+                            ShiningIcon.PAGE_PREVIOUS_GLASS_PANE.item
+                        } else ShiningIcon.EDGE.item
+                    }
+
+                    setNextPage(8 orderWith 6) { page, hasNextPage ->
+                        if (hasNextPage) {
+                            ShiningIcon.PAGE_NEXT_GLASS_PANE.item
+                        } else ShiningIcon.EDGE.item
+                    }
+
+                    onClick { event, element ->
+                        if (context[GuideEditModeContext]?.isEditorEnabled() == true) {
+                            ShiningGuideEditor.openEditor(
+                                player, team, GuideEditorContext.Back {
+                                    openMenu(player, team, context)
+                                } + ShiningGuideEditor.CreateContext {
+                                    registerElement(it)
+                                }, element, this@GuideCategory
+                            )
+                            return@onClick
+                        }
+
+                        // Select elements
+                        context[GuideSelectElementsContext]?.let { ctxt ->
+                            if (ctxt.mode) {
+                                if (ctxt.elements.contains(element)) {
+                                    ctxt.elements.remove(element)
+                                } else if (ctxt.filter(element)) {
+                                    ctxt.elements.add(element)
+                                }
+
+                                // Update shortcut bar
+                                ShiningDispatchers.launchDB {
+                                    val list = ctxt.elements.map {
+                                        it.getUnlockedSymbol(player)
+                                    }
+
+                                    submit {
+                                        context[GuideShortcutBarContext]?.setItems(list)
+                                        openMenu(player, team, context)
+                                    }
+                                }
+                                return@onClick
+                            }
+                        }
+
+                        if (element in dependencyLockedElements) return@onClick
+
+                        if (element in lockLockedElements) {
+                            if (element.unlock(player, team)) {
+                                ShiningGuide.fireworkCongratulate(player)
+                                open(player, team, null, context)
+                            }
+                            return@onClick
+                        }
+
+                        element.open(event.clicker, team, this@GuideCategory, context)
+                    }
+
+                    if (context[GuideEditModeContext]?.isEditorEnabled() == true) {
+                        onClick(lock = true) { event ->
+                            if (ShiningGuide.isClickEmptySlot(event)) {
+                                ShiningGuideEditor.openEditor(
+                                    player, team, GuideEditorContext.Back {
+                                        openMenu(player, team, context)
+                                    } + ShiningGuideEditor.CreateContext {
+                                        registerElement(it)
+                                    },null, this@GuideCategory
+                                )
+                            }
+                        }
                     } else {
-                        ctxt.switchMode()
+                        if (isCompleted) {
+                            set(5 orderWith 6, ShiningIcon.VIEW_REWARDS.toLocalizedItem(player)) {
+                                openViewRewardsMenu(player, team, context)
+                            }
+                        } else {
+                            set(5 orderWith 6, ShiningIcon.VIEW_REWARDS_AND_SUBMIT.toLocalizedItem(player)) {
+                                openViewRewardsMenu(player, team, context)
+                                ShiningDispatchers.launchDB {
+                                    val checkCompleted = checkChildElementsCompleted(team)
+                                    submit {
+                                        if (checkCompleted) {
+                                            complete(player, team)
+                                        } else {
+                                            fail(player)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    setEditor(player, context) {
                         openMenu(player, team, context)
                     }
+
+                    if (this@GuideCategory !== ShiningGuide) {
+                        setBackButton(player, team, context)
+                    }
+
+                    set(5 orderWith 1, ShiningIcon.SETTINGS.getLanguageItem().toLocalizedItem(player)) {
+                        ShiningGuideSettings.openSettingsMenu(player, team)
+                    }
+
+                    // Select elements
+                    context[GuideSelectElementsContext]?.let { ctxt ->
+                        set(4 orderWith 1, ctxt.getSelectorItem(player)) {
+                            if (clickEvent().isShiftClick) {
+                                ctxt.submit()
+                            } else {
+                                ctxt.switchMode()
+                                openMenu(player, team, context)
+                            }
+                        }
+                    }
+
+                    // Shortcut bar
+                    context[GuideShortcutBarContext]?.update(this)
                 }
             }
-            
-            // Shortcut bar
-            context[GuideShortcutBarContext]?.update(this)
         }
     }
 
@@ -327,6 +353,16 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
             idToPriority[id] = it
             removedElements -= id
         }
+    }
+    
+    private suspend fun checkChildElementsCompleted(team: GuideTeam): Boolean {
+        priorityToElements.forEach { (_, elements) -> 
+            elements.forEach { element ->
+                if (!element.isTeamCompleted(team))
+                    return false
+            }
+        }
+        return true
     }
 
 }

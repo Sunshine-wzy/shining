@@ -17,6 +17,8 @@ interface IGuideReward : Cloneable {
     @JsonIgnore
     fun getIcon(player: Player): ItemStack
     
+    fun openViewMenu(player: Player, context: GuideContext)
+    
     fun openEditor(player: Player, context: GuideContext)
 
     public override fun clone(): IGuideReward

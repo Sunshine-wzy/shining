@@ -38,7 +38,12 @@ class DictionaryUniversalItem(
             it.amount = amount
         } ?: ItemStack(Material.AIR)
 
+    override fun getItemAmount(): Int = amount
+
     override fun contains(inventory: Inventory): Boolean =
+        inventory.containsDictionaryItem(name, amount)
+
+    override fun contains(inventory: Inventory, amount: Int): Boolean =
         inventory.containsDictionaryItem(name, amount)
 
     override fun consume(inventory: Inventory): Boolean =
@@ -111,8 +116,30 @@ class DictionaryUniversalItem(
     }
 
     override fun clone(): DictionaryUniversalItem = DictionaryUniversalItem(name, amount)
-    
-    
+
+    override fun isSimilar(other: UniversalItem, checkAmount: Boolean): Boolean {
+        if (this === other) return true
+        if (other !is DictionaryUniversalItem) return false
+        
+        if (name != other.name) return false
+        return !checkAmount || amount == other.amount
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is DictionaryUniversalItem) return false
+
+        if (name != other.name) return false
+        return amount == other.amount
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + amount
+        return result
+    }
+
+
     companion object {
         private val itemEditName = NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "item-universal-dictionary-name"))
         private val itemEditAmount = NamespacedIdItem(Material.TORCH, NamespacedId(Shining, "item-universal-dictionary-amount"))

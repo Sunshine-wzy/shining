@@ -25,6 +25,7 @@ import taboolib.common.platform.function.submit
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Linked
 import taboolib.platform.util.buildItem
+import java.util.*
 
 open class GuideItem : GuideElement {
     
@@ -58,8 +59,17 @@ open class GuideItem : GuideElement {
 
                     val playerInventory = player.inventory
                     val missingItems = ArrayList<ItemStack>()
+                    val containedItems = TreeSet<UniversalItem> { o1, o2 ->
+                        if (o1.isSimilar(o2, false)) 0 else 1
+                    }
+                    val mergedMap = itemGroup.getMergedMap()
+                    mergedMap.forEach { (itemUniversal, itemAmount) -> 
+                        if (itemUniversal.contains(playerInventory, itemAmount)) {
+                            containedItems += itemUniversal
+                        }
+                    }
                     onGenerate { _, element, _, _ ->
-                        if (element.contains(playerInventory))
+                        if (element in containedItems)
                             buildItem(element.getItemStack()) { shiny() }
                         else element.getItemStack().also { missingItems += it }
                     }
@@ -96,6 +106,10 @@ open class GuideItem : GuideElement {
                         if (itemGroup.isConsume) ShiningIcon.IS_CONSUME.toStateShinyLocalizedItem("open", player)
                         else ShiningIcon.IS_CONSUME.toStateLocalizedItem("close", player)
                     )
+                    
+                    set(5 orderWith 5, ShiningIcon.VIEW_REWARDS.toLocalizedItem(player)) {
+                        openViewRewardsMenu(player, team, context)
+                    }
                 }
             }
         }

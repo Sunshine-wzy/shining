@@ -10,10 +10,7 @@ import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
-import io.github.sunshinewzy.shining.utils.ItemEditor
-import io.github.sunshinewzy.shining.utils.containsItem
-import io.github.sunshinewzy.shining.utils.getDisplayName
-import io.github.sunshinewzy.shining.utils.removeSItem
+import io.github.sunshinewzy.shining.utils.*
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
@@ -29,8 +26,16 @@ class VanillaUniversalItem(var item: ItemStack) : UniversalItem {
     
     override fun getItemStack(): ItemStack = item.clone()
 
+    override fun getItemAmount(): Int = item.amount
+
     override fun contains(inventory: Inventory): Boolean =
         inventory.containsItem(item)
+
+    override fun contains(inventory: Inventory, amount: Int): Boolean {
+        val singleItem = item.clone()
+        singleItem.amount = 1
+        return inventory.containsItem(singleItem, amount)
+    }
 
     override fun consume(inventory: Inventory): Boolean =
         inventory.removeSItem(item)
@@ -79,7 +84,23 @@ class VanillaUniversalItem(var item: ItemStack) : UniversalItem {
     }
 
     override fun clone(): VanillaUniversalItem = VanillaUniversalItem(item.clone())
-    
+
+    override fun isSimilar(other: UniversalItem, checkAmount: Boolean): Boolean {
+        if (this === other) return true
+        if (other !is VanillaUniversalItem) return false
+        return item.isItemSimilar(other.item, checkAmount = checkAmount)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is VanillaUniversalItem) return false
+        return item.isItemSimilar(other.item)
+    }
+
+    override fun hashCode(): Int {
+        return item.hashCode()
+    }
+
 
     companion object {
         val itemCurrent = NamespacedIdItem(Material.ITEM_FRAME, NamespacedId(Shining, "item-universal-vanilla-current"))

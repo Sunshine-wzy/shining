@@ -40,7 +40,8 @@ enum class ShiningIcon(val item: ItemStack) : Itemable {
     MOVE_LEFT(NamespacedIdItem(Material.LIME_STAINED_GLASS_PANE, NamespacedId(Shining, "icon-move_left"))),
     MOVE_UP(NamespacedIdItem(Material.LIME_STAINED_GLASS_PANE, NamespacedId(Shining, "icon-move_up"))),
     MOVE_DOWN(NamespacedIdItem(Material.LIME_STAINED_GLASS_PANE, NamespacedId(Shining, "icon-move_down"))),
-    
+    VIEW_REWARDS(NamespacedIdItem(Material.GOLDEN_APPLE, NamespacedId(Shining, "icon-view_rewards"))),
+    VIEW_REWARDS_AND_SUBMIT(NamespacedIdItem(Material.GOLDEN_APPLE, NamespacedId(Shining, "icon-view_rewards_and_submit"))),
     
     ;
 

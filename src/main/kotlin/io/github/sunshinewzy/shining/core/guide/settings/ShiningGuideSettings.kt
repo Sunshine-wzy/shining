@@ -21,7 +21,8 @@ object ShiningGuideSettings {
     private val itemEditModeClose = itemEditMode.toStateItem("close")
     private val itemEditModeOpen = itemEditMode.toStateItem("open").shiny()
     private val itemDraftBox = NamespacedIdItem(Material.BOOKSHELF, NamespacedId(Shining, "shining_guide-settings-draft_box"))
-
+    private val itemEditMain = NamespacedIdItem(Material.BOOK, NamespacedId(Shining, "shining_guide-settings-edit_main"))
+    
     const val PERMISSION_EDIT = "shining.guide.edit"
     const val PERMISSION_TEAM = "shining.guide.team"
     
@@ -33,7 +34,7 @@ object ShiningGuideSettings {
             map(
                 "-B-------",
                 "-a     e-",
-                "-      f-",
+                "-     gf-",
                 "-       -",
                 "-       -",
                 "---------"
@@ -62,6 +63,10 @@ object ShiningGuideSettings {
                 if (ShiningGuideEditor.isEditModeEnabled(player)) {
                     set('f', itemDraftBox.toLocalizedItem(player)) {
                         ShiningGuideDraft.openLastMenu(player)
+                    }
+                    
+                    set('g', itemEditMain.toLocalizedItem(player)) {
+                        ShiningGuide.getState().openEditor(player, team)
                     }
                 }
             }

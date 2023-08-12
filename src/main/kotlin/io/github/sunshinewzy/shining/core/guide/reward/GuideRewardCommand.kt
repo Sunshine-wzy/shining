@@ -8,6 +8,7 @@ import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
 import io.github.sunshinewzy.shining.core.editor.chat.type.TextList
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
+import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.utils.getDisplayName
 import org.bukkit.Bukkit
@@ -30,6 +31,16 @@ class GuideRewardCommand(val commands: MutableList<String>) : IGuideReward {
     }
 
     override fun getIcon(player: Player): ItemStack = itemIcon.toLocalizedItem(player)
+
+    override fun openViewMenu(player: Player, context: GuideContext) {
+        player.openChatEditor<TextList>(player.getLangText("menu-shining_guide-element-view_rewards-title")) { 
+            list(commands)
+            
+            context[GuideEditorContext.BackNoEvent]?.let { ctxt ->
+                onFinal { ctxt.onBack() }
+            }
+        }
+    }
 
     override fun openEditor(player: Player, context: GuideContext) {
         player.openChatEditor<TextList>(itemIcon.toLocalizedItem(player).getDisplayName()) { 

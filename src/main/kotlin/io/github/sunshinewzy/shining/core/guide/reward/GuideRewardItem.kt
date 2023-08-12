@@ -35,6 +35,18 @@ class GuideRewardItem(val items: MutableList<UniversalItem>) : IGuideReward {
 
     override fun getIcon(player: Player): ItemStack = itemIcon.toLocalizedItem(player)
 
+    override fun openViewMenu(player: Player, context: GuideContext) {
+        player.openMultiPageMenu<UniversalItem>(player.getLangText("menu-shining_guide-element-view_rewards-title")) { 
+            elements { this@GuideRewardItem.items }
+            
+            onGenerate { _, element, _, _ -> element.getItemStack() }
+            
+            context[GuideEditorContext.BackNoEvent]?.let { 
+                onBack { it.onBack() }
+            }
+        }
+    }
+
     override fun openEditor(player: Player, context: GuideContext) {
         val (ctxt, ctxtRemove) = GuideEditorContext.Remove.getOrNew(context)
         
