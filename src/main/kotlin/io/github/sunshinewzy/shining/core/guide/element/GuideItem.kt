@@ -107,8 +107,10 @@ open class GuideItem : GuideElement {
                         else ShiningIcon.IS_CONSUME.toStateLocalizedItem("close", player)
                     )
                     
-                    set(5 orderWith 5, ShiningIcon.VIEW_REWARDS.toLocalizedItem(player)) {
-                        openViewRewardsMenu(player, team, context)
+                    if (getRewards().isNotEmpty()) {
+                        set(5 orderWith 5, ShiningIcon.VIEW_REWARDS.toLocalizedItem(player)) {
+                            openViewRewardsMenu(player, team, context)
+                        }
                     }
                 }
             }

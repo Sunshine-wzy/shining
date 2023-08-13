@@ -154,10 +154,12 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
                                 )
                             }
                         }
-                    } else {
+                    } else if (this@GuideCategory !== ShiningGuide) {
                         if (isCompleted) {
-                            set(5 orderWith 6, ShiningIcon.VIEW_REWARDS.toLocalizedItem(player)) {
-                                openViewRewardsMenu(player, team, context)
+                            if (getRewards().isNotEmpty()) {
+                                set(5 orderWith 6, ShiningIcon.VIEW_REWARDS.toLocalizedItem(player)) {
+                                    openViewRewardsMenu(player, team, context)
+                                }
                             }
                         } else {
                             set(5 orderWith 6, ShiningIcon.VIEW_REWARDS_AND_SUBMIT.toLocalizedItem(player)) {

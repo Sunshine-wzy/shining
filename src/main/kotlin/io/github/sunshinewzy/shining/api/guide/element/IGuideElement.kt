@@ -3,6 +3,7 @@ package io.github.sunshinewzy.shining.api.guide.element
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
@@ -44,6 +45,8 @@ interface IGuideElement {
     fun fail(player: Player)
 
     fun reward(player: Player)
+    
+    fun getRewards(): List<IGuideReward>
     
     fun saveToState(state: IGuideElementState): Boolean
 

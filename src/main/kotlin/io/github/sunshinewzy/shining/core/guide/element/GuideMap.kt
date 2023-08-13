@@ -151,8 +151,10 @@ class GuideMap : GuideElement, IGuideElementContainer {
                         }
                     } else {
                         if (isCompleted) {
-                            set(5 orderWith 6, ShiningIcon.VIEW_REWARDS.toLocalizedItem(player)) {
-                                openViewRewardsMenu(player, team, context)
+                            if (getRewards().isNotEmpty()) {
+                                set(5 orderWith 6, ShiningIcon.VIEW_REWARDS.toLocalizedItem(player)) {
+                                    openViewRewardsMenu(player, team, context)
+                                }
                             }
                         } else {
                             set(5 orderWith 6, ShiningIcon.VIEW_REWARDS_AND_SUBMIT.toLocalizedItem(player)) {

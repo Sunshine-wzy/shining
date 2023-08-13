@@ -134,6 +134,8 @@ abstract class GuideElement(
         }
     }
 
+    override fun getRewards(): List<IGuideReward> = rewards
+
     override fun update(state: IGuideElementState, isMerge: Boolean): Boolean {
         if (state !is GuideElementState) return false
 
