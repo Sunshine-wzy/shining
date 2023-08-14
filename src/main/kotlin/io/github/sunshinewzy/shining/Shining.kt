@@ -118,7 +118,7 @@ object Shining : Plugin(), ShiningPlugin {
     }
     val coroutineScope: CoroutineScope by lazy { CoroutineScope(SupervisorJob()) }
 
-    private val namespace = Namespace[NAME.lowercase()]
+    private val namespace = Namespace.get(NAME.lowercase())
 
 
     override fun onEnable() {
