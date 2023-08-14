@@ -1,6 +1,7 @@
-package io.github.sunshinewzy.shining.api.dictionary
+package io.github.sunshinewzy.shining.core.dictionary
 
 import com.fasterxml.jackson.annotation.JsonCreator
+import io.github.sunshinewzy.shining.api.dictionary.IDictionaryItem
 import io.github.sunshinewzy.shining.api.dictionary.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.utils.getShiningNBT
@@ -9,10 +10,10 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import taboolib.platform.util.isAir
 
-open class DictionaryItem {
-    val name: NamespacedId
+open class DictionaryItem : IDictionaryItem {
+    private val name: NamespacedId
     private val item: ItemStack
-    val behaviors: List<ItemBehavior>
+    private val behaviors: List<ItemBehavior>
 
 
     constructor(name: NamespacedId, item: ItemStack, behaviors: List<ItemBehavior>) {
@@ -32,9 +33,14 @@ open class DictionaryItem {
     constructor(item: ItemStack, vararg behaviors: ItemBehavior) : this(item, behaviors.toList())
     
 
-    fun hasName(): Boolean = name != NamespacedId.NULL
-    
-    fun getItemStack(): ItemStack = item.clone()
+    override fun hasName(): Boolean = name != NamespacedId.NULL
+
+    override fun getName(): NamespacedId = name
+
+    override fun getItemStack(): ItemStack = item.clone()
+
+    override fun getBehaviors(): MutableList<ItemBehavior> = behaviors.toMutableList()
+
 
     companion object {
         

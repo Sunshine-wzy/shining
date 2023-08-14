@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.core.machine
 
-import io.github.sunshinewzy.shining.api.dictionary.DictionaryItem
+import io.github.sunshinewzy.shining.core.dictionary.DictionaryItem
 import io.github.sunshinewzy.shining.core.machine.recipe.MachineRecipe
 
 /**

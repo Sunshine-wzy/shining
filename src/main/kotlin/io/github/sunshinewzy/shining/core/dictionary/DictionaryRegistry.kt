@@ -1,5 +1,6 @@
-package io.github.sunshinewzy.shining.api.dictionary
+package io.github.sunshinewzy.shining.core.dictionary
 
+import io.github.sunshinewzy.shining.api.dictionary.IDictionaryRegistry
 import io.github.sunshinewzy.shining.api.dictionary.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.utils.putListElement

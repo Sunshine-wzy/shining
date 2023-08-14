@@ -67,11 +67,11 @@ class DataTest {
 
 
     private fun getDataRoot(id: String): IDataRoot {
-        return container[NamespacedId(Namespace["shining"], id)]
+        return container[NamespacedId(Namespace.get("shining"), id)]
     }
 
     private fun getSerialDataRoot(id: String): ISerialDataRoot {
-        return serialContainer[NamespacedId(Namespace["shining"], id)]
+        return serialContainer[NamespacedId(Namespace.get("shining"), id)]
     }
 
 }

@@ -1,8 +1,8 @@
 package io.github.sunshinewzy.shining.core.machine
 
-import io.github.sunshinewzy.shining.api.dictionary.dictionaryItem
 import io.github.sunshinewzy.shining.api.machine.IMachine
 import io.github.sunshinewzy.shining.api.machine.IMachineRegistrationProcessor
+import io.github.sunshinewzy.shining.core.dictionary.dictionaryItem
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerInteractEvent
