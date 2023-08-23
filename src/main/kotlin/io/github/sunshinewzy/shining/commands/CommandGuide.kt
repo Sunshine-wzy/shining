@@ -4,6 +4,7 @@ import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.settings.ShiningGuideSettings
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeam.Companion.letGuideTeamOrWarn
+import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -50,9 +51,10 @@ internal object CommandGuide {
         }
         
         literal("reload", permission = PERMISSION_RELOAD) {
-            execute<CommandSender> { _, _, _ ->
+            execute<CommandSender> { sender, _, _ ->
                 ShiningDispatchers.launchDB { 
                     GuideElementRegistry.reload()
+                    sender.sendPrefixedLangText("text-shining_guide-reload-success")
                 }
             }
         }

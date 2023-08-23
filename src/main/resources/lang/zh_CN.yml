@@ -208,3 +208,4 @@ text-shining_guide-draft-load-failure-null: '&f草稿载入&c失败&f，原因�
 text-shining_guide-draft-load-failure-duplication: '&f草稿载入&c失败&f，原因：ID重复'
 text-shining_guide-draft-load-failure-save_element: '&f草稿载入&c失败&f，原因：元素保存失败'
 text-shining_guide-draft-load-failure-save_container: '&f草稿载入&c失败&f，原因：元素容器保存失败'
+text-shining_guide-reload-success: '&aShining指南重载成功'

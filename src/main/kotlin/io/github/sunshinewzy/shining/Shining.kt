@@ -79,16 +79,16 @@ import taboolib.module.metrics.Metrics
 import taboolib.platform.BukkitPlugin
 
 @RuntimeDependencies(
-    RuntimeDependency(value = "org.jetbrains.kotlin:kotlin-reflect:1.7.21", isolated = true),
-    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.0", isolated = true),
-    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0", isolated = true),
-    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4", isolated = true),
-    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4", isolated = true),
-    RuntimeDependency(value = "org.jetbrains.exposed:exposed-core:0.41.1", isolated = true),
-    RuntimeDependency(value = "org.jetbrains.exposed:exposed-dao:0.41.1", isolated = true),
-    RuntimeDependency(value = "org.jetbrains.exposed:exposed-jdbc:0.41.1", isolated = true),
-    RuntimeDependency(value = "!com.zaxxer:HikariCP:4.0.3", isolated = true),
-    RuntimeDependency(value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0", transitive = false, isolated = true)
+    RuntimeDependency(value = "org.jetbrains.kotlin:kotlin-reflect:1.7.21", isolated = true, transitive = false),
+    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.4.0", isolated = true, transitive = false),
+    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.4.0", isolated = true, transitive = false),
+    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.4", isolated = true, transitive = false),
+    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4", isolated = true, transitive = false),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-core:0.41.1", isolated = true, transitive = false),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-dao:0.41.1", isolated = true, transitive = false),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-jdbc:0.41.1", isolated = true, transitive = false),
+    RuntimeDependency(value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0", isolated = true, transitive = false),
+    RuntimeDependency(value = "!com.zaxxer:HikariCP:4.0.3", isolated = true)
 )
 object Shining : Plugin(), ShiningPlugin {
     const val NAME = "shining"
@@ -126,7 +126,7 @@ object Shining : Plugin(), ShiningPlugin {
 
         val metrics = Metrics(19323, pluginVersion, Platform.BUKKIT)
 
-        info("Shining 加载成功！")
+        info("Shining loaded successfully!")
 
         if (System.getProperty("shining.debug") == "true")
             test()
