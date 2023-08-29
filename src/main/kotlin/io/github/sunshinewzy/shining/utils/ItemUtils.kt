@@ -20,6 +20,7 @@ import taboolib.module.nms.getItemTag
 import taboolib.module.nms.setItemTag
 import taboolib.platform.util.ItemBuilder
 import taboolib.platform.util.buildItem
+import taboolib.platform.util.isAir
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
@@ -252,7 +253,8 @@ fun NamespacedIdItem.toCurrentLocalizedItem(player: Player, currentLore: List<St
 }
 
 
-fun ItemStack.getShiningNBT(): ItemTag? = getItemTag()[Shining.NAME] as? ItemTag
+fun ItemStack.getShiningNBT(): ItemTag? =
+    if (isAir()) null else getItemTag()[Shining.NAME] as? ItemTag
 
 @JvmOverloads
 fun ItemStack.setShiningNBT(key: String, value: ItemTagData, isDeep: Boolean = false): ItemStack {

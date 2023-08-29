@@ -10,6 +10,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
 import taboolib.platform.BukkitListener
+import taboolib.platform.BukkitPlugin
 import java.io.Closeable
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -31,7 +32,9 @@ open class ShiningAddonManager(private val addon: ShiningAddon) : IShiningAddonM
     ): ShiningListener {
         listenEvents += event
         val closeableListener = CloseableListener(this)
-        val listener = ShiningListener(BukkitListener.BukkitListener(event) { func(closeableListener, it as T) })
+        val listener = ShiningListener(BukkitListener.BukkitListener(event) { 
+            BukkitPlugin.getIsolatedClassLoader()?.runIsolated { func(closeableListener, it as T) }
+        })
         closeableListener.listener = listener
         Shining.pluginManager.registerEvent(event, listener, priority, listener, Shining.plugin, ignoreCancelled)
         registeredListeners += listener
