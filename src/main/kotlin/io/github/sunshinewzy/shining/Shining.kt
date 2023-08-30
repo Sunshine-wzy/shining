@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.type.TypeFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
@@ -107,11 +108,15 @@ object Shining : Plugin(), ShiningPlugin {
     val prefix: String by lazy { config.getString("prefix")?.colored() ?: COLOR_NAME }
     val machineManager: IMachineManager by lazy { MachineManager }
     val objectMapper: ObjectMapper = jsonMapper {
+        typeFactory(TypeFactory.defaultInstance().withClassLoader(BukkitPlugin.getIsolatedClassLoader()))
+        
         addModule(kotlinModule())
         addModule(SerializationModules.shining)
         addModule(SerializationModules.bukkit)
     }
     val yamlObjectMapper: ObjectMapper = ObjectMapper(YAMLFactory()).apply { 
+        setTypeFactory(TypeFactory.defaultInstance().withClassLoader(BukkitPlugin.getIsolatedClassLoader()))
+        
         registerModule(kotlinModule())
         registerModule(SerializationModules.shining)
         registerModule(SerializationModules.bukkit)
