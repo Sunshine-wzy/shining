@@ -99,7 +99,7 @@ object ShiningGuideEditor {
             }
             
             onClick { _, element -> 
-                val state = element.first.newInstance()
+                val state = element.first.getConstructor().newInstance()
                 state.openEditor(player, context = GuideEditorContext.Back {
                     openCreateNewStateEditor(player, context, elementContainer, elementContainerState)
                     

@@ -3,7 +3,9 @@ package io.github.sunshinewzy.shining.api.guide.element
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
 import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
+import io.github.sunshinewzy.shining.api.guide.settings.RepeatableSettings
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
@@ -19,6 +21,14 @@ interface IGuideElement {
     fun getDescription(): ElementDescription
 
     fun getSymbol(): ItemStack
+    
+    fun getDependencies(): Map<NamespacedId, IGuideElement>
+    
+    fun getLocks(): List<ElementLock>
+
+    fun getRewards(): List<IGuideReward>
+    
+    fun getRepeatableSettings(): RepeatableSettings
 
     /**
      * Let the [player] in [team] open the element.
@@ -45,8 +55,6 @@ interface IGuideElement {
     fun fail(player: Player)
 
     fun reward(player: Player)
-    
-    fun getRewards(): List<IGuideReward>
     
     fun saveToState(state: IGuideElementState): Boolean
 
@@ -79,5 +87,11 @@ interface IGuideElement {
      * with parameter id by [getId]
      */
     fun register(): IGuideElement
+
+    fun registerDependency(element: IGuideElement): IGuideElement
+
+    fun registerLock(lock: ElementLock): IGuideElement
+    
+    fun registerReward(reward: IGuideReward): IGuideElement
     
 }

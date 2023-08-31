@@ -9,6 +9,7 @@ import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
 import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
 import io.github.sunshinewzy.shining.api.guide.reward.GuideRewardRegistry
 import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
+import io.github.sunshinewzy.shining.api.guide.settings.RepeatableSettings
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
@@ -38,10 +39,7 @@ import io.github.sunshinewzy.shining.core.menu.openDeleteConfirmMenu
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
-import io.github.sunshinewzy.shining.utils.getDisplayName
-import io.github.sunshinewzy.shining.utils.insertLore
-import io.github.sunshinewzy.shining.utils.orderWith
-import io.github.sunshinewzy.shining.utils.toCurrentLocalizedItem
+import io.github.sunshinewzy.shining.utils.*
 import kotlinx.coroutines.runBlocking
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -64,6 +62,7 @@ abstract class GuideElementState : IGuideElementState {
     override var descriptionName: String? = null
     override var descriptionLore: MutableList<String> = LinkedList()
     override var symbol: ItemStack = ItemStack(Material.STONE)
+    override var repeatableSettings: RepeatableSettings? = null
 
     var dependencies: MutableSet<NamespacedId> = HashSet()
     var locks: MutableList<ElementLock> = LinkedList()
@@ -86,6 +85,7 @@ abstract class GuideElementState : IGuideElementState {
         state.descriptionLore.clear()
         state.descriptionLore += descriptionLore
         state.symbol = symbol.clone()
+        state.repeatableSettings = repeatableSettings?.copy()
         
         state.dependencies.clear()
         state.dependencies += dependencies
@@ -229,8 +229,8 @@ abstract class GuideElementState : IGuideElementState {
 
             map(
                 "-B-------",
-                "- a b c -",
-                "- def g  -",
+                "- abc g -",
+                "- def t -",
                 "---------"
             )
 
@@ -316,6 +316,10 @@ abstract class GuideElementState : IGuideElementState {
             set('g', itemEditRewards.toLocalizedItem(player)) {
                 openRewardsEditor(player, team, context)
             }
+            
+            set('t', itemEditRepeatableSettings.toLocalizedItem(player)) {
+                openRepeatableSettingsEditor(player, team, context)
+            }
 
             onClick(lock = true)
         }
@@ -356,6 +360,49 @@ abstract class GuideElementState : IGuideElementState {
 
             symbol.let { set('i', it) }
             
+            onClick(lock = true)
+        }
+    }
+    
+    fun openRepeatableSettingsEditor(player: Player, team: GuideTeam, context: GuideContext) {
+        player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-repeatable_settings-title")) {
+            rows(3)
+
+            map(
+                "-B-------",
+                "-  a t  -",
+                "---------"
+            )
+
+            set('-', ShiningIcon.EDGE.item)
+
+            set('B', ShiningIcon.BACK.toLocalizedItem(player)) {
+                openBasicEditor(player, team, context)
+            }
+
+            val theRepeatableSettings = repeatableSettings ?: RepeatableSettings().also { repeatableSettings = it }
+            val tempItemMode = if (theRepeatableSettings.repeatable) {
+                ShiningIcon.MODE.toStateShinyLocalizedItem("open", player)
+            } else ShiningIcon.MODE.toStateLocalizedItem("close", player)
+            val itemMode = tempItemMode.clone().setName(player.getLangText("menu-shining_guide-editor-state-basic-repeatable_settings-repeatable"))
+            set('a', itemMode) {
+                theRepeatableSettings.repeatable = !theRepeatableSettings.repeatable
+                openRepeatableSettingsEditor(player, team, context)
+            }
+
+            val theItemEditRepeatableSettingsPeriod = itemEditRepeatableSettingsPeriod.toCurrentLocalizedItem(player, listOf("&f${theRepeatableSettings.period}ms", "&f(${theRepeatableSettings.period / 1000L}s)"))
+            set('t', theItemEditRepeatableSettingsPeriod) {
+                player.openChatEditor<Text>(theItemEditRepeatableSettingsPeriod.getDisplayName()) { 
+                    text(theRepeatableSettings.period.toString())
+                    
+                    predicate { it.toLongOrNull() != null }
+                    
+                    onSubmit { theRepeatableSettings.period = it.toLong() }
+                    
+                    onFinal { openRepeatableSettingsEditor(player, team, context) }
+                }
+            }
+
             onClick(lock = true)
         }
     }
@@ -525,7 +572,7 @@ abstract class GuideElementState : IGuideElementState {
             }
             
             onClick { _, element -> 
-                val reward = element.first.newInstance()
+                val reward = element.first.getConstructor().newInstance()
                 rewards += reward
                 reward.openEditor(player, GuideEditorContext.BackNoEvent {
                     openRewardsEditor(player, team, context)
@@ -572,9 +619,11 @@ abstract class GuideElementState : IGuideElementState {
         private val itemEditDescriptionLore = NamespacedIdItem(Material.BREAD, NamespacedId(Shining, "shining_guide-editor-state-element-description_lore"))
         private val itemEditSymbol = NamespacedIdItem(Material.EMERALD, NamespacedId(Shining, "shining_guide-editor-state-element-symbol"))
         private val itemEditSymbolCurrent = NamespacedIdItem(Material.EMERALD, NamespacedId(Shining, "shining_guide-editor-state-element-symbol-current"))
+        private val itemEditRepeatableSettingsPeriod = NamespacedIdItem(Material.CLOCK, NamespacedId(Shining, "shining_guide-editor-state-element-repeatable_settings-period"))
         private val itemEditDependencies = NamespacedIdItem(Material.CHEST, NamespacedId(Shining, "shining_guide-editor-state-element-dependencies"))
         private val itemEditLocks = NamespacedIdItem(Material.TRIPWIRE_HOOK, NamespacedId(Shining, "shining_guide-editor-state-element-locks"))
         private val itemEditRewards = NamespacedIdItem(Material.GOLDEN_APPLE, NamespacedId(Shining, "shining_guide-editor-state-element-rewards"))
+        private val itemEditRepeatableSettings = NamespacedIdItem(Material.CLOCK, NamespacedId(Shining, "shining_guide-editor-state-element-repeatable_settings"))
         
         private val itemCreateLockExperience = NamespacedIdItem(Material.EXPERIENCE_BOTTLE, NamespacedId(Shining, "shining_guide-editor-state-basic-locks-create-experience"))
         private val itemCreateLockItem = NamespacedIdItem(Material.ITEM_FRAME, NamespacedId(Shining, "shining_guide-editor-state-basic-locks-create-item"))

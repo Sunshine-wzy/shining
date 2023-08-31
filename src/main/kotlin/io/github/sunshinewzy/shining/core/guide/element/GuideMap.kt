@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.core.guide.element
 
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
+import io.github.sunshinewzy.shining.api.guide.ElementCondition.*
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
@@ -30,7 +31,6 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.submit
 import taboolib.module.ui.openMenu
-import java.util.*
 
 class GuideMap : GuideElement, IGuideElementContainer {
 
@@ -57,7 +57,8 @@ class GuideMap : GuideElement, IGuideElementContainer {
     override fun openMenu(player: Player, team: GuideTeam, context: GuideContext) {
         ShiningDispatchers.launchDB { 
             val isCompleted = isTeamCompleted(team)
-            
+            val remainingTime = if (getRepeatableSettings().hasRepeatablePeriod()) getRepeatablePeriodRemainingTime(team) else 0
+
             submit {
                 player.openMenu<MapMenu<IGuideElement>>(player.getLangText(ShiningGuide.TITLE)) {
                     rows(6)
@@ -66,8 +67,9 @@ class GuideMap : GuideElement, IGuideElementContainer {
                     base(basePoint)
                     elements { elements }
 
-                    val dependencyLockedElements = LinkedList<IGuideElement>()
-                    val lockLockedElements = LinkedList<IGuideElement>()
+                    val dependencyLockedElements = HashSet<IGuideElement>()
+                    val lockLockedElements = HashSet<IGuideElement>()
+                    val repeatableElements = HashMap<IGuideElement, Long>()
                     onGenerate(true) { player, element, _, _ ->
                         runBlocking(ShiningDispatchers.DB) {
                             if (context[GuideEditModeContext]?.mode == true || team == GuideTeam.CompletedTeam) {
@@ -75,10 +77,12 @@ class GuideMap : GuideElement, IGuideElementContainer {
                             }
 
                             val condition = element.getCondition(team)
-                            if (condition == ElementCondition.LOCKED_DEPENDENCY)
-                                dependencyLockedElements += element
-                            else if (condition == ElementCondition.LOCKED_LOCK)
-                                lockLockedElements += element
+                            when (condition) {
+                                LOCKED_DEPENDENCY -> dependencyLockedElements += element
+                                LOCKED_LOCK -> lockLockedElements += element
+                                REPEATABLE -> repeatableElements[element] = getRepeatablePeriodRemainingTime(team)
+                                else -> {}
+                            }
                             element.getSymbolByCondition(player, team, condition)
                         }
                     }
@@ -136,6 +140,10 @@ class GuideMap : GuideElement, IGuideElementContainer {
                             return@onClick
                         }
 
+                        repeatableElements[element]?.let { remainingTime ->
+                            if (remainingTime > 0) return@onClick
+                        }
+
                         element.open(event.clicker, team, this@GuideMap, context)
                     }
 
@@ -150,7 +158,7 @@ class GuideMap : GuideElement, IGuideElementContainer {
                             )
                         }
                     } else {
-                        if (isCompleted) {
+                        if (canComplete(isCompleted, remainingTime)) {
                             if (getRewards().isNotEmpty()) {
                                 set(5 orderWith 6, ShiningIcon.VIEW_REWARDS.toLocalizedItem(player)) {
                                     openViewRewardsMenu(player, team, context)
@@ -309,10 +317,10 @@ class GuideMap : GuideElement, IGuideElementContainer {
                 val elementCondition = element.getCondition(team)
                 if (element is IGuideElementContainer) {
                     when (elementCondition) {
-                        ElementCondition.COMPLETE, ElementCondition.UNLOCKED -> {
+                        COMPLETE, UNLOCKED, REPEATABLE -> {
                             list += element.getElementsByCondition(team, condition, true)
                         }
-                        ElementCondition.LOCKED_DEPENDENCY, ElementCondition.LOCKED_LOCK -> {
+                        LOCKED_DEPENDENCY, LOCKED_LOCK -> {
                             if (elementCondition == condition) {
                                 list += element
                             }

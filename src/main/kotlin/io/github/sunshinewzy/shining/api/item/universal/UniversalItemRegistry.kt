@@ -21,7 +21,7 @@ object UniversalItemRegistry : AbstractClassRegistry<UniversalItem>() {
             }
             
             onClick { _, element -> 
-                val theItem = element.first.newInstance()
+                val theItem = element.first.getConstructor().newInstance()
                 context[CreateContext]?.let { it.onCreate(theItem) }
                 theItem.openEditor(player, context)
             }

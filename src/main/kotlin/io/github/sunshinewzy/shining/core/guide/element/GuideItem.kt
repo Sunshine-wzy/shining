@@ -49,6 +49,7 @@ open class GuideItem : GuideElement {
     override fun openMenu(player: Player, team: GuideTeam, context: GuideContext) {
         ShiningDispatchers.launchDB { 
             val isCompleted = isTeamCompleted(team)
+            val remainingTime = if (getRepeatableSettings().hasRepeatablePeriod()) getRepeatablePeriodRemainingTime(team) else 0
             
             submit {
                 player.openMenu<Linked<UniversalItem>>(player.getLangText(ShiningGuide.TITLE)) {
@@ -90,7 +91,7 @@ open class GuideItem : GuideElement {
 
                     set(2 orderWith 3, itemTip.toLocalizedItem(player))
 
-                    if (!isCompleted) {
+                    if (!canComplete(isCompleted, remainingTime)) {
                         set(8 orderWith 3, ShiningIcon.SUBMIT.toLocalizedItem(player)) {
                             if (itemGroup.contains(player)) {
                                 if (itemGroup.isConsume) itemGroup.consume(player)

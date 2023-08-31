@@ -10,6 +10,7 @@ import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
 import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
+import io.github.sunshinewzy.shining.api.guide.settings.RepeatableSettings
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
@@ -43,6 +44,7 @@ abstract class GuideElement(
     private val dependencyMap: MutableMap<NamespacedId, IGuideElement> = HashMap()
     private val locks: MutableList<ElementLock> = LinkedList()
     private val rewards: MutableList<IGuideReward> = LinkedList()
+    private var repeatableSettings: RepeatableSettings = RepeatableSettings()
 
     private val previousElementMap: MutableMap<UUID, IGuideElement> = HashMap()
 
@@ -56,13 +58,21 @@ abstract class GuideElement(
 
     override fun getSymbol(): ItemStack = symbol
 
+    override fun getDependencies(): Map<NamespacedId, IGuideElement> = dependencyMap
+
+    override fun getLocks(): List<ElementLock> = locks
+
+    override fun getRewards(): List<IGuideReward> = rewards
+
+    override fun getRepeatableSettings(): RepeatableSettings = repeatableSettings
+
     override fun open(player: Player, team: GuideTeam, previousElement: IGuideElement?, context: GuideContext) {
         if (previousElement != null)
             previousElementMap[player.uniqueId] = previousElement
 
         ShiningGuide.recordLastOpenElement(player, this)
 
-        ShiningGuide.soundOpen.playSound(player)    // TODO: Allow every element to customize the open sound
+        ShiningGuide.soundOpen.playSound(player)    // TODO: Customize the open sound
         openMenu(player, team, context)
     }
 
@@ -113,6 +123,9 @@ abstract class GuideElement(
             val data = getTeamData(team)
             data.setElementCondition(this@GuideElement, COMPLETE)
             data.setLastCompletedElement(this@GuideElement)
+            if (repeatableSettings.hasRepeatablePeriod()) {
+                data.elementRepeatablePeriodMap[getId()] = System.currentTimeMillis()
+            }
             team.updateTeamData()
         }
         if (isSilent) return
@@ -134,14 +147,13 @@ abstract class GuideElement(
         }
     }
 
-    override fun getRewards(): List<IGuideReward> = rewards
-
     override fun update(state: IGuideElementState, isMerge: Boolean): Boolean {
         if (state !is GuideElementState) return false
 
         state.id?.let { id = it }
         state.descriptionName?.let { description = ElementDescription(it, ArrayList(state.descriptionLore)) }
         state.symbol.let { symbol = it.clone() }
+        state.repeatableSettings?.let { repeatableSettings = it.copy() }
         
         dependencyMap.clear()
         state.getDependencyElementMapTo(dependencyMap)
@@ -162,6 +174,7 @@ abstract class GuideElement(
         state.descriptionLore.clear()
         state.descriptionLore += description.lore
         state.symbol = symbol.clone()
+        state.repeatableSettings = repeatableSettings.copy()
         
         state.dependencies.clear()
         state.dependencies += dependencyMap.keys
@@ -195,7 +208,8 @@ abstract class GuideElement(
 
     override suspend fun getCondition(team: GuideTeam): ElementCondition =
         if (isTeamCompleted(team)) {
-            COMPLETE
+            if (repeatableSettings.repeatable) REPEATABLE
+            else COMPLETE
         } else if (isTeamUnlocked(team)) {
             UNLOCKED
         } else if (!isTeamDependencyCompleted(team)) {
@@ -256,6 +270,23 @@ abstract class GuideElement(
 
                 SItem(Material.BARRIER, description.name, lore)
             }
+
+            REPEATABLE -> {
+                val symbolItem = symbol.clone()
+                val loreList = ArrayList<String>()
+                loreList += player.getLangText(TEXT_REPEATABLE)
+                
+                if (repeatableSettings.hasRepeatablePeriod()) {
+                    val remainingTime = getRepeatablePeriodRemainingTime(team)
+                    if (remainingTime > 0) {
+                        loreList += player.getLangText(TEXT_REPEATABLE_REMAINING_TIME, (remainingTime / 1000L).toString())
+                    }
+                }
+                
+                loreList += ""
+                loreList += description.lore
+                symbolItem.setNameAndLore(description.name, loreList)
+            }
         }
 
     override fun register(): GuideElement {
@@ -265,14 +296,21 @@ abstract class GuideElement(
     override suspend fun getTeamData(team: GuideTeam): GuideTeamData =
         team.getTeamData()
 
-    fun registerDependency(element: IGuideElement) {
+    override fun registerDependency(element: IGuideElement): GuideElement {
         dependencyMap[element.getId()] = element
+        return this
     }
 
-    fun registerLock(lock: ElementLock) {
+    override fun registerLock(lock: ElementLock): GuideElement {
         locks += lock
+        return this
     }
-    
+
+    override fun registerReward(reward: IGuideReward): GuideElement {
+        rewards += reward
+        return this
+    }
+
     fun openViewRewardsMenu(player: Player, team: GuideTeam, context: GuideContext) {
         player.openMultiPageMenu<IGuideReward>(player.getLangText("menu-shining_guide-element-view_rewards-title")) { 
             elements { rewards }
@@ -288,7 +326,27 @@ abstract class GuideElement(
             onBackMenu(player, team, context, 2 orderWith 1)
         }
     }
-
+    
+    suspend fun getRepeatablePeriodRemainingTime(team: GuideTeam): Long {
+        val data = getTeamData(team)
+        val startTime = data.elementRepeatablePeriodMap[getId()] ?: System.currentTimeMillis().also {
+            if (repeatableSettings.hasRepeatablePeriod()) {
+                data.elementRepeatablePeriodMap[getId()] = it
+                team.updateTeamData()
+            } else return 0
+        }
+        val passedTime = System.currentTimeMillis() - startTime
+        if (passedTime < 0) {
+            return if (repeatableSettings.hasRepeatablePeriod()) {
+                data.elementRepeatablePeriodMap[getId()] = System.currentTimeMillis()
+                team.updateTeamData()
+                repeatableSettings.period
+            } else 0
+        }
+        return repeatableSettings.period - passedTime
+    }
+    
+    fun canComplete(isCompleted: Boolean, remainingTime: Long): Boolean = isCompleted && (!getRepeatableSettings().repeatable || remainingTime > 0)
     
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -326,6 +384,8 @@ abstract class GuideElement(
     companion object {
         const val TEXT_LOCKED = "menu-shining_guide-element-text-locked"
         const val TEXT_COMPLETE = "menu-shining_guide-element-text-complete"
+        const val TEXT_REPEATABLE = "menu-shining_guide-element-text-repeatable"
+        const val TEXT_REPEATABLE_REMAINING_TIME = "menu-shining_guide-element-text-repeatable-remaining_time"
     }
 
 }

@@ -54,7 +54,8 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
     override fun openMenu(player: Player, team: GuideTeam, context: GuideContext) {
         ShiningDispatchers.launchDB { 
             val isCompleted = isTeamCompleted(team)
-            
+            val remainingTime = if (getRepeatableSettings().hasRepeatablePeriod()) getRepeatablePeriodRemainingTime(team) else 0
+
             submit {
                 player.openMenu<Linked<IGuideElement>>(player.getLangText(ShiningGuide.TITLE)) {
                     rows(6)
@@ -62,8 +63,9 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
 
                     elements { getElements() }
 
-                    val dependencyLockedElements = LinkedList<IGuideElement>()
-                    val lockLockedElements = LinkedList<IGuideElement>()
+                    val dependencyLockedElements = HashSet<IGuideElement>()
+                    val lockLockedElements = HashSet<IGuideElement>()
+                    val repeatableElements = HashMap<IGuideElement, Long>()
                     onGenerate(true) { player, element, index, slot ->
                         runBlocking(ShiningDispatchers.DB) {
                             if (context[GuideEditModeContext]?.mode == true || team == GuideTeam.CompletedTeam) {
@@ -71,10 +73,12 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
                             }
 
                             val condition = element.getCondition(team)
-                            if (condition == LOCKED_DEPENDENCY)
-                                dependencyLockedElements += element
-                            else if (condition == LOCKED_LOCK)
-                                lockLockedElements += element
+                            when (condition) {
+                                LOCKED_DEPENDENCY -> dependencyLockedElements += element
+                                LOCKED_LOCK -> lockLockedElements += element
+                                REPEATABLE -> repeatableElements[element] = getRepeatablePeriodRemainingTime(team)
+                                else -> {}
+                            }
                             element.getSymbolByCondition(player, team, condition)
                         }
                     }
@@ -138,6 +142,10 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
                             }
                             return@onClick
                         }
+                        
+                        repeatableElements[element]?.let { remainingTime ->
+                            if (remainingTime > 0) return@onClick
+                        }
 
                         element.open(event.clicker, team, this@GuideCategory, context)
                     }
@@ -155,7 +163,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
                             }
                         }
                     } else if (this@GuideCategory !== ShiningGuide) {
-                        if (isCompleted) {
+                        if (canComplete(isCompleted, remainingTime)) {
                             if (getRewards().isNotEmpty()) {
                                 set(5 orderWith 6, ShiningIcon.VIEW_REWARDS.toLocalizedItem(player)) {
                                     openViewRewardsMenu(player, team, context)
@@ -323,7 +331,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
                     val elementCondition = element.getCondition(team)
                     if (element is IGuideElementContainer) {
                         when (elementCondition) {
-                            COMPLETE, UNLOCKED -> {
+                            COMPLETE, UNLOCKED, REPEATABLE -> {
                                 list += element.getElementsByCondition(team, condition, true)
                             }
                             LOCKED_DEPENDENCY, LOCKED_LOCK -> {

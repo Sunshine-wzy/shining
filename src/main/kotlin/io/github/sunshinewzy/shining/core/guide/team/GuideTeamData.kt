@@ -10,6 +10,7 @@ class GuideTeamData {
     
     val elementConditionMap: MutableMap<NamespacedId, ElementCondition> = HashMap()
     var lastCompletedElementId: NamespacedId = NamespacedId.NULL
+    val elementRepeatablePeriodMap: MutableMap<NamespacedId, Long> = HashMap()
     
     
     @JsonIgnore

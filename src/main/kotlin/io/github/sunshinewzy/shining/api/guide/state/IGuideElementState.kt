@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
+import io.github.sunshinewzy.shining.api.guide.settings.RepeatableSettings
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
@@ -28,6 +29,7 @@ interface IGuideElementState : Cloneable {
     var descriptionName: String?
     var descriptionLore: MutableList<String>
     var symbol: ItemStack
+    var repeatableSettings: RepeatableSettings?
     
     /**
      * Updates the state to the element if exists.
