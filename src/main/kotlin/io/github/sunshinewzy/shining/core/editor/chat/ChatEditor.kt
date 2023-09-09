@@ -15,8 +15,8 @@ import java.util.concurrent.ConcurrentHashMap
 object ChatEditor {
     private val sessionMap: ConcurrentHashMap<UUID, ChatEditorSession<*>> = ConcurrentHashMap()
 
-    fun open(player: Player, session: ChatEditorSession<*>) {
-        sessionMap[player.uniqueId] = session
+    fun open(player: Player, session: ChatEditorSession<*>, capture: Boolean = true) {
+        if (capture) sessionMap[player.uniqueId] = session
         session.send(player)
     }
 
@@ -75,9 +75,10 @@ inline fun <reified T : ChatEditorSession<*>> buildChatEditorSession(name: Strin
 
 inline fun <reified T : ChatEditorSession<*>> Player.openChatEditor(
     name: String = "",
+    capture: Boolean = true,
     closeInventory: Boolean = true,
     builder: T.() -> Unit
 ) {
-    ChatEditor.open(this, buildChatEditorSession(name, builder))
+    ChatEditor.open(this, buildChatEditorSession(name, builder), capture)
     if (closeInventory) closeInventory()
 }

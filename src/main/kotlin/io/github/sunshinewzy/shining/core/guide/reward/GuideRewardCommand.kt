@@ -33,7 +33,10 @@ class GuideRewardCommand(val commands: MutableList<String>) : IGuideReward {
     override fun getIcon(player: Player): ItemStack = itemIcon.toLocalizedItem(player)
 
     override fun openViewMenu(player: Player, context: GuideContext) {
-        player.openChatEditor<TextList>(player.getLangText("menu-shining_guide-element-view_rewards-title")) { 
+        player.openChatEditor<TextList>(
+            player.getLangText("menu-shining_guide-element-view_rewards-title"),
+            capture = false
+        ) { 
             list(commands)
             
             context[GuideEditorContext.BackNoEvent]?.let { ctxt ->
