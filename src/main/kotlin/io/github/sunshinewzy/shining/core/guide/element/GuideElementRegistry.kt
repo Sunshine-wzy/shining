@@ -88,6 +88,8 @@ object GuideElementRegistry : LongIdTable() {
     fun getElementOrDefault(default: IGuideElement): IGuideElement =
         getElementOrDefault(default.getId(), default)
     
+    fun getElementCache(): Map<NamespacedId, IGuideElement> = HashMap(elementCache)
+    
     suspend fun saveElement(element: IGuideElement, isCheckExists: Boolean = false, checkId: NamespacedId = element.getId(), actionBeforeInsert: () -> Boolean = { true }): Boolean {
         val oldId = element.getId()
         val existsCache = elementCache.containsKey(checkId)

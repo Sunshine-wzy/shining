@@ -7,6 +7,7 @@ import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.item.universal.UniversalItem
 import io.github.sunshinewzy.shining.api.item.universal.UniversalItemRegistry
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.commands.CommandGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.lang.getLangText
@@ -14,6 +15,7 @@ import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.onBack
 import io.github.sunshinewzy.shining.core.menu.openDeleteConfirmMenu
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
+import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.giveItem
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.Material
@@ -43,6 +45,12 @@ class GuideRewardItem(val items: MutableList<UniversalItem>) : IGuideReward {
             
             context[GuideEditorContext.BackNoEvent]?.let { 
                 onBack { it.onBack() }
+            }
+            
+            if (player.hasPermission(CommandGuide.PERMISSION_EDIT)) {
+                set(5 orderWith 6, ShiningIcon.GET_REWARDS.toLocalizedItem(player)) {
+                    reward(player)
+                }
             }
         }
     }
@@ -75,6 +83,10 @@ class GuideRewardItem(val items: MutableList<UniversalItem>) : IGuideReward {
             set(8 orderWith 1, ctxtRemove.getIcon(player)) {
                 ctxtRemove.switchMode()
                 openEditor(player, ctxt)
+            }
+
+            set(5 orderWith 6, ShiningIcon.GET_REWARDS.toLocalizedItem(player)) {
+                reward(player)
             }
             
             onClick(lock = true) { event ->

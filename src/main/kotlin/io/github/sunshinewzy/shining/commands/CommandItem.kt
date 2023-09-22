@@ -7,7 +7,7 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.subCommand
 
-internal object CommandItem {
+object CommandItem {
 
     val item = subCommand {
         execute<Player> { sender, context, argument ->

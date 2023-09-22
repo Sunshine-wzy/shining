@@ -84,6 +84,10 @@ object ItemEditor {
             onClick('c') {
                 editLoreWithGUI(item, player, context)
             }
+            
+            onClick('i') {
+                player.giveItem(item.clone())
+            }
 
             onClick(lock = true)
             

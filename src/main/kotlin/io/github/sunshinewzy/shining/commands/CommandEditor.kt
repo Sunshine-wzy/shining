@@ -4,7 +4,7 @@ import io.github.sunshinewzy.shining.core.editor.chat.ChatEditor
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.subCommand
 
-internal object CommandEditor {
+object CommandEditor {
 
     val editor = subCommand {
         literal("chat") {

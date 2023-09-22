@@ -31,7 +31,6 @@ import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
 import io.github.sunshinewzy.shining.core.guide.reward.GuideRewardCommand
 import io.github.sunshinewzy.shining.core.guide.reward.GuideRewardItem
-import io.github.sunshinewzy.shining.core.guide.settings.ShiningGuideSettings
 import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
 import io.github.sunshinewzy.shining.core.guide.state.GuideItemState
 import io.github.sunshinewzy.shining.core.guide.state.GuideMapState
@@ -241,8 +240,9 @@ object Shining : Plugin(), ShiningPlugin {
     }
     
     private fun registerPermissions() {
-        registerPermission(Permission(ShiningGuideSettings.PERMISSION_EDIT, PermissionDefault.OP))
-        registerPermission(Permission(ShiningGuideSettings.PERMISSION_TEAM, PermissionDefault.TRUE))
+        registerPermission(Permission(CommandGuide.PERMISSION_EDIT, PermissionDefault.OP))
+        registerPermission(Permission(CommandGuide.PERMISSION_TEAM, PermissionDefault.OP))
+        registerPermission(Permission(CommandGuide.PERMISSION_OPEN_TEAM, PermissionDefault.TRUE))
         registerPermission(Permission(CommandGuide.PERMISSION_RELOAD, PermissionDefault.OP))
     }
 

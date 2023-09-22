@@ -95,6 +95,7 @@ item-shining-icon-move_up: '&e⇧ &a向上移动'
 item-shining-icon-move_down: '&a向下移动 &e⇩'
 item-shining-icon-view_rewards: '&e查看奖励'
 item-shining-icon-view_rewards_and_submit: '&e查看奖励并提交任务'
+item-shining-icon-get_rewards: '&e获取奖励'
 item-shining-icon-mode:
   close: [ '&e模式', '&c&l已关闭', '', '&a> 点击开启' ]
   open: [ '&e模式', '&a&l已开启', '', '&c> 点击关闭' ]

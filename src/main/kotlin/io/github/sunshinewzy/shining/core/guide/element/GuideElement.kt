@@ -13,6 +13,7 @@ import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.guide.settings.RepeatableSettings
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.commands.CommandGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.state.GuideElementState
@@ -321,6 +322,12 @@ abstract class GuideElement(
                 element.openViewMenu(player, GuideEditorContext.BackNoEvent {
                     openViewRewardsMenu(player, team, context)
                 })
+            }
+
+            if (player.hasPermission(CommandGuide.PERMISSION_EDIT)) {
+                set(5 orderWith 6, ShiningIcon.GET_REWARDS.toLocalizedItem(player)) {
+                    reward(player)
+                }
             }
             
             onBackMenu(player, team, context, 2 orderWith 1)
