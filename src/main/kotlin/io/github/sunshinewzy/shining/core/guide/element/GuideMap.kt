@@ -11,10 +11,7 @@ import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor.setEditor
-import io.github.sunshinewzy.shining.core.guide.context.GuideEditModeContext
-import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
-import io.github.sunshinewzy.shining.core.guide.context.GuideSelectElementsContext
-import io.github.sunshinewzy.shining.core.guide.context.GuideShortcutBarContext
+import io.github.sunshinewzy.shining.core.guide.context.*
 import io.github.sunshinewzy.shining.core.guide.settings.ShiningGuideSettings
 import io.github.sunshinewzy.shining.core.guide.state.GuideMapState
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
@@ -66,6 +63,10 @@ class GuideMap : GuideElement, IGuideElementContainer {
 
                     base(basePoint)
                     elements { elements }
+                    
+                    context[OffsetContext]?.let { 
+                        offset(it.offset)
+                    }
 
                     val dependencyLockedElements = HashSet<IGuideElement>()
                     val lockLockedElements = HashSet<IGuideElement>()
@@ -93,12 +94,13 @@ class GuideMap : GuideElement, IGuideElementContainer {
                     setMoveLeft(1 orderWith 4) { ShiningIcon.MOVE_LEFT.toLocalizedItem(player) }
                     setMoveUp(2 orderWith 6) { ShiningIcon.MOVE_UP.toLocalizedItem(player) }
                     setMoveDown(8 orderWith 6) { ShiningIcon.MOVE_DOWN.toLocalizedItem(player) }
-
+                    setMoveToOrigin(8 orderWith 1) { ShiningIcon.MOVE_TO_ORIGIN.toLocalizedItem(player) }
+                    
                     onClick { event, element, coordinate ->
                         if (context[GuideEditModeContext]?.isEditorEnabled() == true) {
                             ShiningGuideEditor.openEditor(
                                 player, team, GuideEditorContext.Back {
-                                    openMenu(player, team, context)
+                                    openMenu(player, team, context + OffsetContext(offset))
                                 } + ShiningGuideEditor.CreateContext {
                                     registerElement(it, coordinate)
                                 }, element, this@GuideMap
@@ -123,7 +125,7 @@ class GuideMap : GuideElement, IGuideElementContainer {
 
                                     submit {
                                         context[GuideShortcutBarContext]?.setItems(list)
-                                        openMenu(player, team, context)
+                                        openMenu(player, team, context + OffsetContext(offset))
                                     }
                                 }
                                 return@onClick
@@ -135,7 +137,7 @@ class GuideMap : GuideElement, IGuideElementContainer {
                         if (element in lockLockedElements) {
                             if (element.unlock(player, team)) {
                                 ShiningGuide.fireworkCongratulate(player)
-                                open(player, team, null, context)
+                                open(player, team, null, context + OffsetContext(offset))
                             }
                             return@onClick
                         }
@@ -151,7 +153,7 @@ class GuideMap : GuideElement, IGuideElementContainer {
                         onClickEmpty { _, coordinate ->
                             ShiningGuideEditor.openEditor(
                                 player, team, GuideEditorContext.Back {
-                                    openMenu(player, team, context)
+                                    openMenu(player, team, context + OffsetContext(offset))
                                 } + ShiningGuideEditor.CreateContext {
                                     registerElement(it, coordinate)
                                 },null, this@GuideMap
@@ -182,7 +184,7 @@ class GuideMap : GuideElement, IGuideElementContainer {
                     }
 
                     setEditor(player, context) {
-                        openMenu(player, team, context)
+                        openMenu(player, team, context + OffsetContext(offset))
                     }
 
                     setBackButton(player, team, context)
@@ -198,18 +200,26 @@ class GuideMap : GuideElement, IGuideElementContainer {
                                 ctxt.submit()
                             } else {
                                 ctxt.switchMode()
-                                openMenu(player, team, context)
+                                openMenu(player, team, context + OffsetContext(offset))
                             }
                         }
                     }
 
                     // Shortcut bar
                     context[GuideShortcutBarContext]?.update(this)
+                    
+                    onClose(once = false) {
+                        ShiningGuide.recordElementAdditionalContext(player, this@GuideMap,OffsetContext(offset))
+                    }
                 }
             }
         }
     }
-    
+
+    override fun back(player: Player, team: GuideTeam, context: GuideContext) {
+        super.back(player, team, context.minusKey(OffsetContext))
+    }
+
     override fun getState(): IGuideElementState =
         GuideMapState().correlateElement(this)
 
@@ -348,6 +358,10 @@ class GuideMap : GuideElement, IGuideElementContainer {
         return true
     }
     
+    
+    class OffsetContext(val offset: Coordinate2D) : AbstractGuideContextElement(OffsetContext) {
+        companion object Key : GuideContext.Key<OffsetContext>
+    }
 
     companion object {
         val edgeOrders: List<Int> = ArrayList(ShiningGuide.edgeOrders).also {

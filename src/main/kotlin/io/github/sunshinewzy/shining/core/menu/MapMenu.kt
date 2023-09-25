@@ -10,6 +10,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.type.Basic
+import taboolib.platform.util.buildItem
 import taboolib.platform.util.isAir
 import taboolib.platform.util.isNotAir
 import java.util.concurrent.ConcurrentHashMap
@@ -22,6 +23,8 @@ open class MapMenu<T>(title: String) : Basic(title) {
         private set
     var moveSpeed: Int = 2
         private set
+    var isShinyMoveItem: Boolean = true
+        private set
     internal var menuLocked: Boolean = true
     internal var menuArea: Rectangle = Rectangle.ORIGIN
     internal var offsetArea: Rectangle = Rectangle.ORIGIN
@@ -33,6 +36,7 @@ open class MapMenu<T>(title: String) : Basic(title) {
     internal var asyncGenerateCallback: ((player: Player, element: T, coordinate: Coordinate2D, slot: Int) -> ItemStack) = { _, _, _, _ -> ItemStack(Material.AIR) }
     
     private lateinit var player: Player
+    private val moveItems: Array<Pair<Int, (offset: Coordinate2D) -> ItemStack>?> = Array(4) { null }
     
     
     open fun speed(speed: Int) {
@@ -50,6 +54,15 @@ open class MapMenu<T>(title: String) : Basic(title) {
     
     open fun base(base: Coordinate2D) {
         baseCoordinate = base
+    }
+    
+    open fun offset(offset: Coordinate2D) {
+        this.offset = offset
+        updateOffsetArea()
+    }
+    
+    open fun shinyMoveItem(shinyMoveItem: Boolean) {
+        isShinyMoveItem = shinyMoveItem
     }
     
     open fun elements(elements: () -> Map<Coordinate2D, T>) {
@@ -70,7 +83,7 @@ open class MapMenu<T>(title: String) : Basic(title) {
     }
     
     open fun setMoveRight(slot: Int, callback: (offset: Coordinate2D) -> ItemStack) {
-        set(slot) { callback(offset) }
+        moveItems[Direction.RIGHT.ordinal] = slot to callback
         onClick(slot) { 
             offset = offset.add(moveSpeed, 0)
             updateOffsetArea()
@@ -79,7 +92,7 @@ open class MapMenu<T>(title: String) : Basic(title) {
     }
     
     open fun setMoveLeft(slot: Int, callback: (offset: Coordinate2D) -> ItemStack) {
-        set(slot) { callback(offset) }
+        moveItems[Direction.LEFT.ordinal] = slot to callback
         onClick(slot) {
             offset = offset.add(-moveSpeed, 0)
             updateOffsetArea()
@@ -88,7 +101,7 @@ open class MapMenu<T>(title: String) : Basic(title) {
     }
 
     open fun setMoveDown(slot: Int, callback: (offset: Coordinate2D) -> ItemStack) {
-        set(slot) { callback(offset) }
+        moveItems[Direction.DOWN.ordinal] = slot to callback
         onClick(slot) {
             offset = offset.add(0, moveSpeed)
             updateOffsetArea()
@@ -97,10 +110,18 @@ open class MapMenu<T>(title: String) : Basic(title) {
     }
 
     open fun setMoveUp(slot: Int, callback: (offset: Coordinate2D) -> ItemStack) {
-        set(slot) { callback(offset) }
+        moveItems[Direction.UP.ordinal] = slot to callback
         onClick(slot) {
             offset = offset.add(0, -moveSpeed)
             updateOffsetArea()
+            player.openInventory(build())
+        }
+    }
+    
+    open fun setMoveToOrigin(slot: Int, callback: () -> ItemStack) {
+        set(slot, callback)
+        onClick(slot) {
+            offset(Coordinate2D.ORIGIN)
             player.openInventory(build())
         }
     }
@@ -112,10 +133,10 @@ open class MapMenu<T>(title: String) : Basic(title) {
         
         fun processBuild(player: Player, inventory: Inventory, async: Boolean) {
             this.player = player
+            val flagShiny = BooleanArray(4) { false }
             elementsCache.forEach { (coordinate, element) -> 
                 val thePoint = baseCoordinate + coordinate
                 if (thePoint in offsetArea) {
-//                    val slot = (thePoint.x - offsetArea.first.x + menuArea.first.x) orderWith (thePoint.y - offsetArea.first.y + menuArea.first.y)
                     val slot = (thePoint.x - offset.x) orderWith (thePoint.y - offset.y)
                     elementMap[slot] = element to coordinate
                     val callback = if (async) asyncGenerateCallback else generateCallback
@@ -123,7 +144,25 @@ open class MapMenu<T>(title: String) : Basic(title) {
                     if (item.isNotAir()) {
                         inventory.setItem(slot, item)
                     }
+                } else if (isShinyMoveItem) {
+                    if (thePoint.x < offsetArea.first.x) {
+                        flagShiny[Direction.LEFT.ordinal] = true
+                    } else if (thePoint.x > offsetArea.second.x) {
+                        flagShiny[Direction.RIGHT.ordinal] = true
+                    }
+                    
+                    if (thePoint.y < offsetArea.first.y) {
+                        flagShiny[Direction.UP.ordinal] = true
+                    } else if (thePoint.y > offsetArea.second.y) {
+                        flagShiny[Direction.DOWN.ordinal] = true
+                    }
                 }
+            }
+            
+            for (i in 0 until 4) {
+                val (slot, callback) = moveItems[i] ?: continue
+                val itemStack = if (flagShiny[i]) buildItem(callback(offset)) { shiny() } else callback(offset)
+                inventory.setItem(slot, itemStack)
             }
         }
         
@@ -148,6 +187,11 @@ open class MapMenu<T>(title: String) : Basic(title) {
     
     private fun updateOffsetArea() {
         offsetArea = menuArea + offset
+    }
+    
+    
+    enum class Direction {
+        UP, DOWN, LEFT, RIGHT;
     }
     
 }

@@ -63,7 +63,8 @@ object ShiningGuide : GuideCategory(
         )
     }
     private val playerLastOpenElementMap: MutableMap<UUID, IGuideElement> = HashMap()
-
+    private val playerElementAdditionalContextMap: MutableMap<UUID, MutableMap<NamespacedId, GuideContext>> = HashMap()
+    
 
     val soundOpen: SoundSettings = SoundSettings(Sound.ENTITY_HORSE_ARMOR, 1.2f)
 
@@ -196,6 +197,23 @@ object ShiningGuide : GuideCategory(
     fun recordLastOpenElement(player: Player, element: IGuideElement) {
         recordLastOpenElement(player.uniqueId, element)
     }
+    
+    fun recordElementAdditionalContext(uuid: UUID, element: IGuideElement, context: GuideContext) {
+        val map = playerElementAdditionalContextMap.getOrPut(uuid) { HashMap() }
+        map[element.getId()] = context
+    }
+    
+    fun recordElementAdditionalContext(player: Player, element: IGuideElement, context: GuideContext) {
+        recordElementAdditionalContext(player.uniqueId, element, context)
+    }
+    
+    fun getElementAdditionalContext(uuid: UUID, element: IGuideElement): GuideContext? {
+        val map = playerElementAdditionalContextMap[uuid] ?: return null
+        return map[element.getId()]
+    }
+    
+    fun getElementAdditionalContext(player: Player, element: IGuideElement): GuideContext? =
+        getElementAdditionalContext(player.uniqueId, element)
 
     fun fireworkCongratulate(player: Player) {
         val firework = player.world.spawnEntity(player.location, EntityType.FIREWORK) as Firework

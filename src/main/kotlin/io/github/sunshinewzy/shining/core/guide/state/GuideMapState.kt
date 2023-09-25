@@ -87,6 +87,10 @@ class GuideMapState : GuideElementState(), IGuideElementContainerState {
             
             base(basePoint)
             elements { getElementsMap() }
+
+            context[GuideMap.OffsetContext]?.let {
+                offset(it.offset)
+            }
             
             onGenerate(true) { player, element, _, _ -> 
                 runBlocking(ShiningDispatchers.DB) { 
@@ -100,15 +104,16 @@ class GuideMapState : GuideElementState(), IGuideElementContainerState {
             setMoveLeft(1 orderWith 4) { ShiningIcon.MOVE_LEFT.toLocalizedItem(player) }
             setMoveUp(2 orderWith 6) { ShiningIcon.MOVE_UP.toLocalizedItem(player) }
             setMoveDown(8 orderWith 6) { ShiningIcon.MOVE_DOWN.toLocalizedItem(player) }
+            setMoveToOrigin(8 orderWith 1) { ShiningIcon.MOVE_TO_ORIGIN.toLocalizedItem(player) }
             
             onClick { event, element, coordinate ->
-                editElement(player, team, context, element, coordinate)
+                editElement(player, team, context + GuideMap.OffsetContext(offset), element, coordinate)
             }
             
             onClickEmpty { _, coordinate ->
                 ShiningGuideEditor.openEditor(
                     player, team, GuideEditorContext.Back {
-                        openAdvancedEditor(player, team, context)
+                        openAdvancedEditor(player, team, context + GuideMap.OffsetContext(offset))
                     } + ShiningGuideEditor.CreateContext {
                         addElement(it.getId(), coordinate)
                     }, null, null, this@GuideMapState
@@ -116,7 +121,7 @@ class GuideMapState : GuideElementState(), IGuideElementContainerState {
             }
             
             onBack(player) { 
-                openEditor(player, team, context)
+                openEditor(player, team, context.minusKey(GuideMap.OffsetContext))
             }
             
             val theItemEditBasePoint = itemEditBasePoint.toCurrentLocalizedItem(player, "(${basePoint.x}, ${basePoint.y})")
@@ -135,7 +140,7 @@ class GuideMapState : GuideElementState(), IGuideElementContainerState {
                         basePoint = Coordinate2D(x, y)
                     }
 
-                    onFinal { openAdvancedEditor(player, team, context) }
+                    onFinal { openAdvancedEditor(player, team, context + GuideMap.OffsetContext(offset)) }
                 }
             }
         }
