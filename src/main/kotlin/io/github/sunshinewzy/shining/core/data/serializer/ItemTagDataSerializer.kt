@@ -17,6 +17,8 @@ import taboolib.module.nms.ItemTagList
 import taboolib.module.nms.ItemTagType.*
 
 object ItemTagDataSerializer : StdSerializer<ItemTagData>(ItemTagData::class.java) {
+    
+    private fun readResolve(): Any = ItemTagDataSerializer
 
     override fun serialize(value: ItemTagData, gen: JsonGenerator, provider: SerializerProvider) {
         when (value.type) {
@@ -56,6 +58,8 @@ object ItemTagDataSerializer : StdSerializer<ItemTagData>(ItemTagData::class.jav
 }
 
 object ItemTagDataDeserializer : StdDeserializer<ItemTagData>(ItemTagData::class.java) {
+    
+    private fun readResolve(): Any = ItemTagDataDeserializer
 
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): ItemTagData {
         return when (val node = p.readValueAsTree<JsonNode>()) {
@@ -77,19 +81,15 @@ object ItemTagDataDeserializer : StdDeserializer<ItemTagData>(ItemTagData::class
 
             is ValueNode -> {
                 val str = node.asText()
-                if (str.endsWith(']')) {
+                if (str.endsWith("]")) {
                     when (val i = str.substring(str.length - 2, str.length - 1)) {
-                        "b" -> ItemTagData(str.substring(0, str.length - 2).split(",").map { Coerce.toByte(it) }
-                            .toByteArray())
-
-                        "i" -> ItemTagData(str.substring(0, str.length - 2).split(",").map { Coerce.toInteger(it) }
-                            .toIntArray())
-
+                        "b" -> ItemTagData(str.substring(0, str.length - 2).split(",").map { Coerce.toByte(it) }.toByteArray())
+                        "i" -> ItemTagData(str.substring(0, str.length - 2).split(",").map { Coerce.toInteger(it) }.toIntArray())
                         else -> error("unsupported array $node ($i)")
                     }
                 } else {
                     when (val i = str.substring(str.length - 1, str.length)) {
-                        "n" -> ItemTagData(Coerce.toByte(str.substring(0, str.length - 1)))
+                        "b" -> ItemTagData(Coerce.toByte(str.substring(0, str.length - 1)))
                         "s" -> ItemTagData(Coerce.toShort(str.substring(0, str.length - 1)))
                         "i" -> ItemTagData(Coerce.toInteger(str.substring(0, str.length - 1)))
                         "l" -> ItemTagData(Coerce.toLong(str.substring(0, str.length - 1)))

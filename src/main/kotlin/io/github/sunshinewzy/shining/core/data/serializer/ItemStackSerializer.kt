@@ -14,6 +14,8 @@ import taboolib.module.nms.getItemTag
 import taboolib.module.nms.setItemTag
 
 object ItemStackSerializer : StdSerializer<ItemStack>(ItemStack::class.java) {
+    
+    private fun readResolve(): Any = ItemStackSerializer
 
     override fun serialize(value: ItemStack, gen: JsonGenerator, provider: SerializerProvider) {
         gen.writeStartObject()
@@ -26,6 +28,8 @@ object ItemStackSerializer : StdSerializer<ItemStack>(ItemStack::class.java) {
 }
 
 object ItemStackDeserializer : StdDeserializer<ItemStack>(ItemStack::class.java) {
+    
+    private fun readResolve(): Any = ItemStackDeserializer
 
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): ItemStack {
         val node = p.readValueAsTree<JsonNode>()
