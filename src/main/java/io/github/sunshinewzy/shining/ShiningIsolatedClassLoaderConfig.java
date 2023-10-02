@@ -12,6 +12,7 @@ public class ShiningIsolatedClassLoaderConfig implements IsolatedClassLoaderConf
 		HashSet<String> packages = new HashSet<>();
 		packages.add("com.fasterxml.jackson.annotation.");
 		packages.add("io.github.sunshinewzy.shining.api.namespace.");
+		packages.add("io.github.sunshinewzy.shining.api.dictionary.");
 		return packages;
 	}
 	

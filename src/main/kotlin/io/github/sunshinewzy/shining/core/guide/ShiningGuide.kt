@@ -1,14 +1,14 @@
 package io.github.sunshinewzy.shining.core.guide
 
 import io.github.sunshinewzy.shining.Shining
-import io.github.sunshinewzy.shining.api.dictionary.DictionaryItem
-import io.github.sunshinewzy.shining.api.dictionary.DictionaryRegistry
+import io.github.sunshinewzy.shining.api.dictionary.IDictionaryItem
 import io.github.sunshinewzy.shining.api.dictionary.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.api.event.guide.ShiningGuideOpenEvent
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.dictionary.DictionaryRegistry
 import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditModeContext
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
@@ -34,6 +34,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.function.info
 import taboolib.common.platform.function.submit
 import taboolib.module.ui.ClickEvent
 import taboolib.platform.util.isAir
@@ -44,7 +45,7 @@ object ShiningGuide : GuideCategory(
     ElementDescription(getDefaultLangText("item-shining-shining_guide")),
     ItemStack(Material.ENCHANTED_BOOK)
 ) {
-    private val guideItem: DictionaryItem = NamespacedId(Shining, "shining_guide").let { id ->
+    private val guideItem: IDictionaryItem = NamespacedId(Shining, "shining_guide").let { id ->
         DictionaryRegistry.registerItem(
             id, LocalizedItem(Material.ENCHANTED_BOOK, id),
             object : ItemBehavior() {
@@ -92,6 +93,7 @@ object ShiningGuide : GuideCategory(
 
     
     fun init() {
+        info(guideItem.hasName())
         GuideElementRegistry.getState(getId())?.let { 
             update(it, true)
         } ?: kotlin.run { 

@@ -1,7 +1,6 @@
 package io.github.sunshinewzy.shining.core.dictionary
 
 import io.github.sunshinewzy.shining.api.dictionary.behavior.ItemBehavior
-import io.github.sunshinewzy.shining.api.dictionary.dictionaryItem
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -61,7 +60,7 @@ internal object DictionaryItemManager {
 
     private fun findBehaviors(item: ItemStack?): List<ItemBehavior>? {
         if (item.isAir()) return null
-        return item?.dictionaryItem?.behaviors
+        return item.dictionaryItem?.getBehaviors()
     }
 
 }

@@ -1,6 +1,7 @@
-package io.github.sunshinewzy.shining.api.dictionary
+package io.github.sunshinewzy.shining.core.dictionary
 
 import com.fasterxml.jackson.annotation.JsonCreator
+import io.github.sunshinewzy.shining.api.dictionary.IDictionaryItem
 import io.github.sunshinewzy.shining.api.dictionary.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.utils.getShiningNBT
@@ -9,10 +10,10 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import taboolib.platform.util.isAir
 
-open class DictionaryItem {
-    val name: NamespacedId
+open class DictionaryItem : IDictionaryItem {
+    private val name: NamespacedId
     private val item: ItemStack
-    val behaviors: List<ItemBehavior>
+    private val behaviors: List<ItemBehavior>
 
 
     constructor(name: NamespacedId, item: ItemStack, behaviors: List<ItemBehavior>) {
@@ -30,11 +31,16 @@ open class DictionaryItem {
     }
 
     constructor(item: ItemStack, vararg behaviors: ItemBehavior) : this(item, behaviors.toList())
-    
 
-    fun hasName(): Boolean = name != NamespacedId.NULL
+
+    override fun getName(): NamespacedId = name
+
+    override fun getItemStack(): ItemStack = item.clone()
     
-    fun getItemStack(): ItemStack = item.clone()
+    override fun getBehaviors(): List<ItemBehavior> = behaviors
+
+    override fun hasName(): Boolean = name != NamespacedId.NULL
+    
 
     companion object {
         
@@ -43,7 +49,7 @@ open class DictionaryItem {
         
         @JvmStatic
         @JsonCreator
-        fun getByName(name: NamespacedId): DictionaryItem? =
+        fun getByName(name: NamespacedId): IDictionaryItem? =
             DictionaryRegistry.get(name)
         
     }
@@ -51,7 +57,7 @@ open class DictionaryItem {
 }
 
 
-val ItemStack.dictionaryItem: DictionaryItem?
+val ItemStack.dictionaryItem: IDictionaryItem?
     get() = getDictionaryName()?.let {
         DictionaryRegistry.get(it)
     }
@@ -82,8 +88,8 @@ fun Inventory.containsDictionaryItem(name: NamespacedId, amount: Int = 1): Boole
     return false
 }
 
-fun Inventory.containsDictionaryItem(dictionaryItem: DictionaryItem, amount: Int = 1): Boolean =
-    containsDictionaryItem(dictionaryItem.name, amount)
+fun Inventory.containsDictionaryItem(dictionaryItem: IDictionaryItem, amount: Int = 1): Boolean =
+    containsDictionaryItem(dictionaryItem.getName(), amount)
 
 fun Inventory.removeDictionaryItem(name: NamespacedId, amount: Int = 1): Boolean {
     if (amount <= 0) return true
