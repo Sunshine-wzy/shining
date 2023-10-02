@@ -1,6 +1,4 @@
-package io.github.sunshinewzy.shining.api
-
-import io.github.sunshinewzy.shining.api.namespace.Namespace
+package io.github.sunshinewzy.shining.api.namespace
 
 interface ShiningPlugin {
 
@@ -13,7 +11,7 @@ interface ShiningPlugin {
      * The namespace may only contain lowercase alphanumeric characters, periods,
      * underscores, and hyphens.
      */
-    fun getNamespace(): Namespace = Namespace[getName().lowercase()]
+    fun getNamespace(): Namespace = Namespace.get(getName().lowercase())
 
     fun getPrefix(): String = getName()
 

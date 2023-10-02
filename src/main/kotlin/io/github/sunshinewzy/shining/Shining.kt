@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.type.TypeFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
-import io.github.sunshinewzy.shining.api.ShiningPlugin
 import io.github.sunshinewzy.shining.api.event.ShiningDataLoadingCompleteEvent
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.reward.GuideRewardRegistry
@@ -17,6 +16,7 @@ import io.github.sunshinewzy.shining.api.item.universal.VanillaUniversalItem
 import io.github.sunshinewzy.shining.api.machine.IMachineManager
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.api.namespace.ShiningPlugin
 import io.github.sunshinewzy.shining.commands.CommandGuide
 import io.github.sunshinewzy.shining.core.addon.ShiningAddonRegistry
 import io.github.sunshinewzy.shining.core.data.DataManager
@@ -122,7 +122,7 @@ object Shining : Plugin(), ShiningPlugin {
     }
     val coroutineScope: CoroutineScope by lazy { CoroutineScope(SupervisorJob()) }
 
-    private val namespace = Namespace[NAME.lowercase()]
+    private val namespace = Namespace.get(NAME.lowercase())
 
 
     override fun onEnable() {

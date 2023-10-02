@@ -1,7 +1,5 @@
 package io.github.sunshinewzy.shining.core.data
 
-import io.github.sunshinewzy.shining.api.data.IData
-import io.github.sunshinewzy.shining.api.data.IDataRoot
 import io.github.sunshinewzy.shining.utils.Coerce
 import java.util.concurrent.ConcurrentHashMap
 

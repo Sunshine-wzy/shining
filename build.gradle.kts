@@ -33,7 +33,7 @@ taboolib {
     options(
         "skip-kotlin-relocate",
         "enable-isolated-classloader",
-        "keep-kotlin-module"
+//        "keep-kotlin-module"
     )
     
 //    relocate("com.zaxxer.hikari.", "com.zaxxer.hikari_4_0_3.")
@@ -98,6 +98,7 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
+    testImplementation("com.google.guava:guava:21.0")
     testImplementation("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
     testImplementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
     testImplementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")

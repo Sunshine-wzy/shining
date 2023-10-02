@@ -1,6 +1,5 @@
 package io.github.sunshinewzy.shining.core.addon
 
-import io.github.sunshinewzy.shining.api.addon.ShiningAddon
 import io.github.sunshinewzy.shining.core.addon.loader.LibraryLoaderPools
 import io.github.sunshinewzy.shining.core.addon.loader.ShiningAddonInitializingException
 import io.github.sunshinewzy.shining.core.addon.loader.ShiningAddonJarLoader

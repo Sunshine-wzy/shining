@@ -1,7 +1,7 @@
-package io.github.sunshinewzy.shining.api.data.container
+package io.github.sunshinewzy.shining.core.data.container
 
-import io.github.sunshinewzy.shining.api.data.IDataRoot
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.data.IDataRoot
 
 /**
  * Represent a container of data

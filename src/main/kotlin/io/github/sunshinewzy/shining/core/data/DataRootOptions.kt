@@ -1,8 +1,5 @@
 package io.github.sunshinewzy.shining.core.data
 
-import io.github.sunshinewzy.shining.api.data.IData
-import io.github.sunshinewzy.shining.api.data.IDataRoot
-
 /**
  * Various settings for controlling the input and output of [IDataRoot]
  *

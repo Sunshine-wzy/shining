@@ -1,9 +1,8 @@
 package io.github.sunshinewzy.shining.core.data.container
 
-import io.github.sunshinewzy.shining.api.data.IDataRoot
-import io.github.sunshinewzy.shining.api.data.container.IDataContainer
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.data.DataRoot
+import io.github.sunshinewzy.shining.core.data.IDataRoot
 import java.util.concurrent.ConcurrentHashMap
 
 class DataContainer : IDataContainer {

@@ -1,10 +1,9 @@
-package io.github.sunshinewzy.shining.api.data
+package io.github.sunshinewzy.shining.core.data
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
-import io.github.sunshinewzy.shining.core.data.SerialData
 import java.io.OutputStream
 
 interface ISerialData : IData {

@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.api.data
+package io.github.sunshinewzy.shining.core.data
 
 import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.core.JsonGenerator

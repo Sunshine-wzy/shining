@@ -1,12 +1,11 @@
-package io.github.sunshinewzy.shining.api.data.container
+package io.github.sunshinewzy.shining.core.data.container
 
 import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.sunshinewzy.shining.api.data.ISerialDataRoot
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.data.container.SerialDataContainer
+import io.github.sunshinewzy.shining.core.data.ISerialDataRoot
 import java.io.OutputStream
 
 interface ISerialDataContainer : IDataContainer {

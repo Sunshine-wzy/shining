@@ -1,10 +1,9 @@
-package io.github.sunshinewzy.shining.api.data
+package io.github.sunshinewzy.shining.core.data
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.sunshinewzy.shining.api.data.container.ISerialDataContainer
-import io.github.sunshinewzy.shining.core.data.SerialDataRoot
+import io.github.sunshinewzy.shining.core.data.container.ISerialDataContainer
 
 interface ISerialDataRoot : ISerialData, IDataRoot {
 

@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.api.event
 
-import io.github.sunshinewzy.shining.api.addon.IShiningAddonManager
+import io.github.sunshinewzy.shining.core.addon.IShiningAddonManager
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
 import taboolib.common.platform.event.ProxyListener

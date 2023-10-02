@@ -2,9 +2,9 @@ package io.github.sunshinewzy.shining.core.lang
 
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.ShiningConfig.language
-import io.github.sunshinewzy.shining.api.addon.ShiningAddon
 import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.addon.ShiningAddon
 import io.github.sunshinewzy.shining.core.lang.node.ListNode
 import io.github.sunshinewzy.shining.core.lang.node.SectionNode
 import io.github.sunshinewzy.shining.core.lang.node.TextNode

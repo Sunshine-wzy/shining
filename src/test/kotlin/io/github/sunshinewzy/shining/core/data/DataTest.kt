@@ -1,14 +1,12 @@
 package io.github.sunshinewzy.shining.core.data
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.github.sunshinewzy.shining.api.data.IData.Companion.getWithType
-import io.github.sunshinewzy.shining.api.data.IDataRoot
-import io.github.sunshinewzy.shining.api.data.ISerialDataRoot
-import io.github.sunshinewzy.shining.api.data.container.IDataContainer
-import io.github.sunshinewzy.shining.api.data.container.ISerialDataContainer
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.data.IData.Companion.getWithType
 import io.github.sunshinewzy.shining.core.data.container.DataContainer
+import io.github.sunshinewzy.shining.core.data.container.IDataContainer
+import io.github.sunshinewzy.shining.core.data.container.ISerialDataContainer
 import io.github.sunshinewzy.shining.core.data.container.SerialDataContainer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -67,11 +65,11 @@ class DataTest {
 
 
     private fun getDataRoot(id: String): IDataRoot {
-        return container[NamespacedId(Namespace["shining"], id)]
+        return container[NamespacedId(Namespace.get("shining"), id)]
     }
 
     private fun getSerialDataRoot(id: String): ISerialDataRoot {
-        return serialContainer[NamespacedId(Namespace["shining"], id)]
+        return serialContainer[NamespacedId(Namespace.get("shining"), id)]
     }
 
 }

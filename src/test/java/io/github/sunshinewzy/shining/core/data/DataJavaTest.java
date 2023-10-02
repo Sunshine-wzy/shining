@@ -1,10 +1,9 @@
 package io.github.sunshinewzy.shining.core.data;
 
-import io.github.sunshinewzy.shining.api.data.IData;
-import io.github.sunshinewzy.shining.api.data.container.IDataContainer;
 import io.github.sunshinewzy.shining.api.namespace.Namespace;
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId;
 import io.github.sunshinewzy.shining.core.data.container.DataContainer;
+import io.github.sunshinewzy.shining.core.data.container.IDataContainer;
 import kotlin.Pair;
 import org.junit.jupiter.api.Test;
 

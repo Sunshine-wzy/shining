@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.shining.objects
 
-import io.github.sunshinewzy.shining.api.data.SerialDatable
-import io.github.sunshinewzy.shining.api.data.container.ISerialDataContainer
+import io.github.sunshinewzy.shining.core.data.SerialDatable
+import io.github.sunshinewzy.shining.core.data.container.ISerialDataContainer
 import io.github.sunshinewzy.shining.core.data.container.SerialDataContainer
 import io.github.sunshinewzy.shining.core.data.legacy.internal.SLocationData
 import io.github.sunshinewzy.shining.objects.legacy.SBlock

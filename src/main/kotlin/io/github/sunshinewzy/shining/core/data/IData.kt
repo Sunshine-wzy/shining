@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.api.data
+package io.github.sunshinewzy.shining.core.data
 
 /**
  * Represent a [Map] like object, capable of storing custom data in it.

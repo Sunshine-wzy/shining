@@ -1,8 +1,6 @@
 package io.github.sunshinewzy.shining.core.addon
 
 import io.github.sunshinewzy.shining.Shining
-import io.github.sunshinewzy.shining.api.addon.IShiningAddonManager
-import io.github.sunshinewzy.shining.api.addon.ShiningAddon
 import io.github.sunshinewzy.shining.api.event.CloseableListener
 import io.github.sunshinewzy.shining.api.event.ShiningListener
 import org.bukkit.event.Event

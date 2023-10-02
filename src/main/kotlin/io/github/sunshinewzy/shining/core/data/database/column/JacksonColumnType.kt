@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.api.data.database.column
+package io.github.sunshinewzy.shining.core.data.database.column
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JavaType

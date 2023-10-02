@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
-import io.github.sunshinewzy.shining.api.addon.ShiningAddonJarDescription
+import io.github.sunshinewzy.shining.core.addon.ShiningAddonJarDescription
 import io.github.sunshinewzy.shining.core.addon.loader.ShiningAddonLoadingException
 import taboolib.common.env.Dependency
 

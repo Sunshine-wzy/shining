@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.core.lang
 
-import io.github.sunshinewzy.shining.api.addon.ShiningAddon
+import io.github.sunshinewzy.shining.core.addon.ShiningAddon
 
 class AddonLanguageManager(val addon: ShiningAddon) : LanguageManager(addon.file) {
 

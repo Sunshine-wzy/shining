@@ -1,10 +1,10 @@
 package io.github.sunshinewzy.shining.core.guide.element
 
 import io.github.sunshinewzy.shining.Shining
-import io.github.sunshinewzy.shining.api.data.database.column.jackson
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.data.database.column.jackson
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable

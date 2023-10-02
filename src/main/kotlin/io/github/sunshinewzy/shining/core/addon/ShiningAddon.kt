@@ -1,6 +1,6 @@
-package io.github.sunshinewzy.shining.api.addon
+package io.github.sunshinewzy.shining.core.addon
 
-import io.github.sunshinewzy.shining.api.ShiningPlugin
+import io.github.sunshinewzy.shining.api.namespace.ShiningPlugin
 import java.io.File
 import java.util.logging.Logger
 
