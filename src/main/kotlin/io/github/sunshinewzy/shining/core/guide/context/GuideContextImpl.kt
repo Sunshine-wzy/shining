@@ -1,32 +1,40 @@
 package io.github.sunshinewzy.shining.core.guide.context
 
-import io.github.sunshinewzy.shining.api.guide.GuideContext
-import io.github.sunshinewzy.shining.api.guide.GuideContext.Element
-import io.github.sunshinewzy.shining.api.guide.GuideContext.Key
+import io.github.sunshinewzy.shining.api.guide.context.EmptyGuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext.Element
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext.Key
+import java.util.function.BiFunction
 
 /**
  * Base class for [GuideContext.Element] implementations.
  */
-abstract class AbstractGuideContextElement(override val key: Key<*>) : Element
+abstract class AbstractGuideContextElement(override val key: Key<*>) : AbstractGuideContext(), Element {
+    @Suppress("UNCHECKED_CAST")
+    override fun <E : Element> get(key: Key<E>): E? =
+        if (this.key == key) this as E else null
 
-object EmptyGuideContext : GuideContext {
-    override fun <E : Element> get(key: Key<E>): E? = null
+    override fun <R> fold(initial: R, operation: BiFunction<R, Element, R>): R =
+        operation.apply(initial, this)
 
-    override fun <R> fold(initial: R, operation: (R, Element) -> R): R = initial
+    override fun minusKey(key: Key<*>): GuideContext =
+        if (this.key == key) EmptyGuideContext else this
+}
 
-    override fun plus(context: GuideContext): GuideContext = context
-
-    override fun minusKey(key: Key<*>): GuideContext = this
-
-    override fun hashCode(): Int = 0
-
-    override fun toString(): String = "EmptyGuideContext"
+abstract class AbstractGuideContext : GuideContext {
+    override fun plus(context: GuideContext): GuideContext =
+        if (context === EmptyGuideContext) this
+        else context.fold(this as GuideContext) { acc, element ->
+            val removed = acc.minusKey(element.key)
+            if (removed === EmptyGuideContext) element
+            else CombinedGuideContext(removed, element)
+        }
 }
 
 internal class CombinedGuideContext(
     private val left: GuideContext,
     private val element: Element
-) : GuideContext {
+) : AbstractGuideContext() {
     override fun <E : Element> get(key: Key<E>): E? {
         var cur = this
         while (true) {
@@ -40,8 +48,8 @@ internal class CombinedGuideContext(
         }
     }
 
-    override fun <R> fold(initial: R, operation: (R, Element) -> R): R =
-        operation(left.fold(initial, operation), element)
+    override fun <R> fold(initial: R, operation: BiFunction<R, Element, R>): R =
+        operation.apply(left.fold(initial, operation), element)
 
     override fun minusKey(key: Key<*>): GuideContext {
         element[key]?.let { return left }

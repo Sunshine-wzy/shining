@@ -1,12 +1,12 @@
 package io.github.sunshinewzy.shining.utils
 
 import io.github.sunshinewzy.shining.Shining
-import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.api.guide.context.EmptyGuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
 import io.github.sunshinewzy.shining.core.editor.chat.type.Text
 import io.github.sunshinewzy.shining.core.editor.chat.type.TextList
-import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem

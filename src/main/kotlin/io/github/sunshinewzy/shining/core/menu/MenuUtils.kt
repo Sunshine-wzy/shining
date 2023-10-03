@@ -1,11 +1,11 @@
 package io.github.sunshinewzy.shining.core.menu
 
-import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.api.guide.context.EmptyGuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
+import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
 import io.github.sunshinewzy.shining.core.editor.chat.type.Text
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
-import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
-import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.addLore
@@ -174,7 +174,7 @@ fun Basic.onBack(
     onBack(slot, item, onClick)
 }
 
-fun Basic.onBackMenu(player: Player, team: GuideTeam, context: GuideContext = EmptyGuideContext, slot: Char = 'B') {
+fun Basic.onBackMenu(player: Player, team: IGuideTeam, context: GuideContext = EmptyGuideContext, slot: Char = 'B') {
     set(slot, ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
         if (clickEvent().isShiftClick) {
             ShiningGuide.openMainMenu(player, team, context)
@@ -184,7 +184,7 @@ fun Basic.onBackMenu(player: Player, team: GuideTeam, context: GuideContext = Em
     }
 }
 
-fun Basic.onBackMenu(player: Player, team: GuideTeam, context: GuideContext = EmptyGuideContext, slot: Int) {
+fun Basic.onBackMenu(player: Player, team: IGuideTeam, context: GuideContext = EmptyGuideContext, slot: Int) {
     set(slot, ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player)) {
         if (clickEvent().isShiftClick) {
             ShiningGuide.openMainMenu(player, team, context)

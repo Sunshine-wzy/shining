@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.api.event.guide
 
+import io.github.sunshinewzy.shining.api.event.ShiningEvent
 import org.bukkit.entity.Player
-import taboolib.platform.type.BukkitProxyEvent
 
-class ShiningGuideTeamSetupEvent(val player: Player) : BukkitProxyEvent()
+class ShiningGuideTeamSetupEvent(val player: Player) : ShiningEvent()

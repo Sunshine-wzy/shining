@@ -1,7 +1,6 @@
 package io.github.sunshinewzy.shining.core.guide.draft
 
 import io.github.sunshinewzy.shining.Shining
-import io.github.sunshinewzy.shining.api.guide.draft.IGuideDraft
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.data.JacksonWrapper

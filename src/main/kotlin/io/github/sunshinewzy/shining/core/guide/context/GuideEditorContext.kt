@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.core.guide.context
 
-import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
 import io.github.sunshinewzy.shining.core.guide.draft.GuideDraft
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon

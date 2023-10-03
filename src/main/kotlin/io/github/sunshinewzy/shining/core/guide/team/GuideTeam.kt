@@ -537,7 +537,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id), IGuideTeam {
         suspend fun Player.getGuideTeam(): GuideTeam? {
             val event = ShiningGuideTeamGetAsyncEvent(this)
             event.call()
-            event.team?.let { return it }
+            event.team?.let { return it as? GuideTeam }
             if (event.isCancelled) return null
             
             return newSuspendedTransaction transaction@{
@@ -774,8 +774,5 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id), IGuideTeam {
             }
         }
     }
-
-
-    object CompletedTeam : GuideTeam(EntityID(-1, GuideTeams))
 
 }

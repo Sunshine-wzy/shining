@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.shining.api.item
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.item.universal.UniversalItem
 import io.github.sunshinewzy.shining.api.item.universal.UniversalItemRegistry
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide

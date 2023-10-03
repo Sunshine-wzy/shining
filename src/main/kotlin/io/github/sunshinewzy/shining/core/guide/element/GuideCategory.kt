@@ -3,11 +3,12 @@ package io.github.sunshinewzy.shining.core.guide.element
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.ElementCondition.*
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
-import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
-import io.github.sunshinewzy.shining.api.guide.element.IGuideElementPriorityContainer
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
+import io.github.sunshinewzy.shining.api.guide.team.CompletedGuideTeam
+import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
@@ -18,7 +19,6 @@ import io.github.sunshinewzy.shining.core.guide.context.GuideSelectElementsConte
 import io.github.sunshinewzy.shining.core.guide.context.GuideShortcutBarContext
 import io.github.sunshinewzy.shining.core.guide.settings.ShiningGuideSettings
 import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
-import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
@@ -38,7 +38,7 @@ import java.util.*
  * @param id to identify this [GuideCategory]
  * @param symbol to display this [GuideCategory] in guide
  */
-open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
+open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
     
     private val priorityToElements: TreeMap<Int, MutableSet<IGuideElement>> =
         TreeMap { o1, o2 -> o2 - o1 }
@@ -51,7 +51,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
     constructor() : super()
     
 
-    override fun openMenu(player: Player, team: GuideTeam, context: GuideContext) {
+    override fun openMenu(player: Player, team: IGuideTeam, context: GuideContext) {
         ShiningDispatchers.launchDB { 
             val isCompleted = isTeamCompleted(team)
             val remainingTime = if (getRepeatableSettings().hasRepeatablePeriod()) getRepeatablePeriodRemainingTime(team) else 0
@@ -66,9 +66,10 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
                     val dependencyLockedElements = HashSet<IGuideElement>()
                     val lockLockedElements = HashSet<IGuideElement>()
                     val repeatableElements = HashMap<IGuideElement, Long>()
-                    onGenerate(true) { player, element, index, slot ->
+                    onGenerate(true) { player, elementFuture, index, slot ->
+                        val element = elementFuture as IGuideElementSuspend
                         runBlocking(ShiningDispatchers.DB) {
-                            if (context[GuideEditModeContext]?.mode == true || team == GuideTeam.CompletedTeam) {
+                            if (context[GuideEditModeContext]?.mode == true || team == CompletedGuideTeam.getInstance()) {
                                 return@runBlocking element.getUnlockedSymbol(player)
                             }
 
@@ -121,7 +122,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
                                 // Update shortcut bar
                                 ShiningDispatchers.launchDB {
                                     val list = ctxt.elements.map {
-                                        it.getUnlockedSymbol(player)
+                                        (it as IGuideElementSuspend).getUnlockedSymbol(player)
                                     }
 
                                     submit {
@@ -323,13 +324,14 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
         return list
     }
 
-    override suspend fun getElementsByCondition(team: GuideTeam, condition: ElementCondition, isDeep: Boolean): List<IGuideElement> {
+    override suspend fun getElementsByCondition(team: IGuideTeam, condition: ElementCondition, isDeep: Boolean): List<IGuideElement> {
         val list = ArrayList<IGuideElement>()
         if (isDeep) {
             priorityToElements.forEach { (_, elements) ->
-                elements.forEach { element ->
+                elements.forEach { elementFuture ->
+                    val element = elementFuture as IGuideElementSuspend
                     val elementCondition = element.getCondition(team)
-                    if (element is IGuideElementContainer) {
+                    if (element is IGuideElementContainerSuspend) {
                         when (elementCondition) {
                             COMPLETE, UNLOCKED, REPEATABLE -> {
                                 list += element.getElementsByCondition(team, condition, true)
@@ -348,7 +350,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
         } else {
             priorityToElements.forEach { (_, elements) ->
                 elements.forEach { element ->
-                    if (element.getCondition(team) == condition) {
+                    if ((element as IGuideElementSuspend).getCondition(team) == condition) {
                         list += elements
                     }
                 }
@@ -365,10 +367,10 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainer {
         }
     }
     
-    private suspend fun checkChildElementsCompleted(team: GuideTeam): Boolean {
+    private suspend fun checkChildElementsCompleted(team: IGuideTeam): Boolean {
         priorityToElements.forEach { (_, elements) -> 
             elements.forEach { element ->
-                if (!element.isTeamCompleted(team))
+                if (!(element as IGuideElementSuspend).isTeamCompleted(team))
                     return false
             }
         }

@@ -2,17 +2,19 @@ package io.github.sunshinewzy.shining.api.guide.element
 
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
-import io.github.sunshinewzy.shining.api.guide.GuideContext
-import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
+import io.github.sunshinewzy.shining.api.guide.context.EmptyGuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
+import io.github.sunshinewzy.shining.api.guide.lock.IElementLock
 import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.guide.settings.RepeatableSettings
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
+import io.github.sunshinewzy.shining.api.guide.team.CompletedGuideTeam
+import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.guide.team.IGuideTeamData
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
-import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import java.util.concurrent.CompletableFuture
 
 interface IGuideElement {
 
@@ -24,7 +26,7 @@ interface IGuideElement {
     
     fun getDependencies(): Map<NamespacedId, IGuideElement>
     
-    fun getLocks(): List<ElementLock>
+    fun getLocks(): List<IElementLock>
 
     fun getRewards(): List<IGuideReward>
     
@@ -33,24 +35,24 @@ interface IGuideElement {
     /**
      * Let the [player] in [team] open the element.
      * 
-     * @param team If it is [GuideTeam.CompletedTeam], all elements in the element will be shown completed.
+     * @param team If it is [CompletedGuideTeam], all elements in the element will be shown completed.
      * @param previousElement The previous element which calls the current element.
      */
-    fun open(player: Player, team: GuideTeam, previousElement: IGuideElement? = null, context: GuideContext = EmptyGuideContext)
+    fun open(player: Player, team: IGuideTeam, previousElement: IGuideElement? = null, context: GuideContext = EmptyGuideContext)
 
     /**
      * Let the [player] open the previous element.
      */
-    fun back(player: Player, team: GuideTeam, context: GuideContext = EmptyGuideContext)
+    fun back(player: Player, team: IGuideTeam, context: GuideContext = EmptyGuideContext)
 
     /**
      * Let the [player] try to unlock the element.
      * 
      * @return True when the [player] unlock the element successfully.
      */
-    fun unlock(player: Player, team: GuideTeam): Boolean
+    fun unlock(player: Player, team: IGuideTeam): Boolean
     
-    fun complete(player: Player, team: GuideTeam, isSilent: Boolean = false)
+    fun complete(player: Player, team: IGuideTeam, isSilent: Boolean = false)
     
     fun fail(player: Player)
 
@@ -64,20 +66,20 @@ interface IGuideElement {
     
     fun update(state: IGuideElementState): Boolean = update(state, false)
 
-    suspend fun getTeamData(team: GuideTeam): IGuideTeamData
+    fun getTeamDataFuture(team: IGuideTeam): CompletableFuture<IGuideTeamData>
     
-    suspend fun getCondition(team: GuideTeam): ElementCondition
+    fun getConditionFuture(team: IGuideTeam): CompletableFuture<ElementCondition>
 
-    suspend fun getSymbolByCondition(player: Player, team: GuideTeam, condition: ElementCondition): ItemStack
+    fun getSymbolByConditionFuture(player: Player, team: IGuideTeam, condition: ElementCondition): CompletableFuture<ItemStack>
     
-    suspend fun getUnlockedSymbol(player: Player): ItemStack =
-        getSymbolByCondition(player, GuideTeam.CompletedTeam, ElementCondition.UNLOCKED)
+    fun getUnlockedSymbolFuture(player: Player): CompletableFuture<ItemStack> =
+        getSymbolByConditionFuture(player, CompletedGuideTeam.getInstance(), ElementCondition.UNLOCKED)
     
-    suspend fun isTeamCompleted(team: GuideTeam): Boolean
+    fun isTeamCompletedFuture(team: IGuideTeam): CompletableFuture<Boolean>
 
-    suspend fun isTeamUnlocked(team: GuideTeam): Boolean
+    fun isTeamUnlockedFuture(team: IGuideTeam): CompletableFuture<Boolean>
 
-    suspend fun isTeamDependencyCompleted(team: GuideTeam): Boolean
+    fun isTeamDependencyCompletedFuture(team: IGuideTeam): CompletableFuture<Boolean>
 
     /**
      * Register the element
@@ -90,7 +92,7 @@ interface IGuideElement {
 
     fun registerDependency(element: IGuideElement): IGuideElement
 
-    fun registerLock(lock: ElementLock): IGuideElement
+    fun registerLock(lock: IElementLock): IGuideElement
     
     fun registerReward(reward: IGuideReward): IGuideElement
     

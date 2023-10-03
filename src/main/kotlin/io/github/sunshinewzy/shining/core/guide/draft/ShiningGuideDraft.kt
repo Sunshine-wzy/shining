@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.core.guide.draft
 
-import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import org.bukkit.entity.Player
 import java.util.*

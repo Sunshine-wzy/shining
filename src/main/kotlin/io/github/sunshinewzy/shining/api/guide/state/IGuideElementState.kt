@@ -2,13 +2,16 @@ package io.github.sunshinewzy.shining.api.guide.state
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.api.guide.context.EmptyGuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
+import io.github.sunshinewzy.shining.api.guide.lock.IElementLock
+import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.guide.settings.RepeatableSettings
+import io.github.sunshinewzy.shining.api.guide.team.CompletedGuideTeam
+import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
-import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -30,6 +33,13 @@ interface IGuideElementState : Cloneable {
     var descriptionLore: MutableList<String>
     var symbol: ItemStack
     var repeatableSettings: RepeatableSettings?
+
+    var dependencies: MutableSet<NamespacedId>
+    var locks: MutableList<IElementLock>
+    var rewards: MutableList<IGuideReward>
+
+    
+    fun openAdvancedEditor(player: Player, team: IGuideTeam, context: GuideContext)
     
     /**
      * Updates the state to the element if exists.
@@ -41,7 +51,7 @@ interface IGuideElementState : Cloneable {
     /**
      * Opens an editor to edit the state.
      */
-    fun openEditor(player: Player, team: GuideTeam = GuideTeam.CompletedTeam, context: GuideContext = EmptyGuideContext)
+    fun openEditor(player: Player, team: IGuideTeam = CompletedGuideTeam.getInstance(), context: GuideContext = EmptyGuideContext)
 
     /**
      * Creates a new element from this state.
@@ -66,6 +76,31 @@ interface IGuideElementState : Cloneable {
         element.saveToState(this)
         return this
     }
+
+    fun addDependency(element: IGuideElement)
+
+    fun addDependencies(elements: Collection<IGuideElement>)
+
+    @JsonIgnore
+    fun getDependencyElements(): List<IGuideElement>
+    
+    @JsonIgnore
+    fun getDependencyElementMapTo(map: MutableMap<NamespacedId, IGuideElement>): MutableMap<NamespacedId, IGuideElement>
+    
+    @JsonIgnore
+    fun getDependencyElementMap(): Map<NamespacedId, IGuideElement> = getDependencyElementMapTo(HashMap())
+
+    fun openBasicEditor(player: Player, team: IGuideTeam, context: GuideContext)
+
+    fun openSymbolEditor(player: Player, team: IGuideTeam, context: GuideContext)
+
+    fun openRepeatableSettingsEditor(player: Player, team: IGuideTeam, context: GuideContext)
+
+    fun openDependenciesEditor(player: Player, team: IGuideTeam, context: GuideContext)
+
+    fun openLocksEditor(player: Player, team: IGuideTeam, context: GuideContext = EmptyGuideContext)
+
+    fun openRewardsEditor(player: Player, team: IGuideTeam, context: GuideContext)
 
     public override fun clone(): IGuideElementState
     

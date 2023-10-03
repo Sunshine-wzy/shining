@@ -1,10 +1,10 @@
 package io.github.sunshinewzy.shining.api.event.guide
 
-import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
+import io.github.sunshinewzy.shining.api.event.ShiningEvent
+import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import org.bukkit.entity.Player
-import taboolib.platform.type.BukkitProxyEvent
 
 class ShiningGuideTeamGetAsyncEvent(
     val player: Player,
-    var team: GuideTeam? = null
-) : BukkitProxyEvent()
+    var team: IGuideTeam? = null
+) : ShiningEvent()

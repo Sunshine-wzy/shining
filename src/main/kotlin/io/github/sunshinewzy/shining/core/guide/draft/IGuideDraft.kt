@@ -1,6 +1,5 @@
-package io.github.sunshinewzy.shining.api.guide.draft
+package io.github.sunshinewzy.shining.core.guide.draft
 
-import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftFolder
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 

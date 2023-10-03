@@ -2,13 +2,12 @@ package io.github.sunshinewzy.shining.core.guide.lock
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import io.github.sunshinewzy.shining.Shining
-import io.github.sunshinewzy.shining.api.guide.GuideContext
-import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
+import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
+import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
 import io.github.sunshinewzy.shining.core.editor.chat.type.Text
-import io.github.sunshinewzy.shining.core.guide.state.GuideElementState
-import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.objects.SItem
@@ -40,7 +39,7 @@ class LockExperience(
         player.level -= level
     }
 
-    override fun openEditor(player: Player, team: GuideTeam, context: GuideContext, state: GuideElementState) {
+    override fun openEditor(player: Player, team: IGuideTeam, context: GuideContext, state: IGuideElementState) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-lock-experience-title").colored()) {
             rows(3)
 
@@ -62,7 +61,7 @@ class LockExperience(
                 openEditor(player, team, context, state)
             }
             
-            set('a', itemEditExperience.toLocalizedItem(player).clone().addLore(description(player))) {
+            set('a', itemEditExperience.toLocalizedItem(player).clone().addLore(description.apply(player))) {
                 player.openChatEditor<Text>(itemEditExperience.toLocalizedItem(player).getDisplayName()) {
                     text(level.toString())
                     
@@ -93,7 +92,7 @@ class LockExperience(
         SItem(
             Material.EXPERIENCE_BOTTLE,
             player.getLangText("menu-shining_guide-lock-experience-title"),
-            description(player)
+            description.apply(player)
         )
 
     override fun clone(): LockExperience =

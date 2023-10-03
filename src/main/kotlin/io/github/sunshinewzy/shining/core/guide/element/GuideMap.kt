@@ -3,10 +3,12 @@ package io.github.sunshinewzy.shining.core.guide.element
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.ElementCondition.*
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
-import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
+import io.github.sunshinewzy.shining.api.guide.team.CompletedGuideTeam
+import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
@@ -14,7 +16,6 @@ import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor.setEditor
 import io.github.sunshinewzy.shining.core.guide.context.*
 import io.github.sunshinewzy.shining.core.guide.settings.ShiningGuideSettings
 import io.github.sunshinewzy.shining.core.guide.state.GuideMapState
-import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.menu.MapMenu
 import io.github.sunshinewzy.shining.core.menu.onBuildEdge
@@ -29,7 +30,7 @@ import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.submit
 import taboolib.module.ui.openMenu
 
-class GuideMap : GuideElement, IGuideElementContainer {
+class GuideMap : GuideElement, IGuideElementContainerSuspend {
 
     private var basePoint: Coordinate2D
     private val elements: MutableMap<Coordinate2D, IGuideElement> = HashMap()
@@ -51,7 +52,7 @@ class GuideMap : GuideElement, IGuideElementContainer {
     }
 
 
-    override fun openMenu(player: Player, team: GuideTeam, context: GuideContext) {
+    override fun openMenu(player: Player, team: IGuideTeam, context: GuideContext) {
         ShiningDispatchers.launchDB { 
             val isCompleted = isTeamCompleted(team)
             val remainingTime = if (getRepeatableSettings().hasRepeatablePeriod()) getRepeatablePeriodRemainingTime(team) else 0
@@ -71,9 +72,10 @@ class GuideMap : GuideElement, IGuideElementContainer {
                     val dependencyLockedElements = HashSet<IGuideElement>()
                     val lockLockedElements = HashSet<IGuideElement>()
                     val repeatableElements = HashMap<IGuideElement, Long>()
-                    onGenerate(true) { player, element, _, _ ->
+                    onGenerate(true) { player, elementFuture, _, _ ->
+                        val element = elementFuture as IGuideElementSuspend
                         runBlocking(ShiningDispatchers.DB) {
-                            if (context[GuideEditModeContext]?.mode == true || team == GuideTeam.CompletedTeam) {
+                            if (context[GuideEditModeContext]?.mode == true || team == CompletedGuideTeam.getInstance()) {
                                 return@runBlocking element.getUnlockedSymbol(player)
                             }
 
@@ -120,7 +122,7 @@ class GuideMap : GuideElement, IGuideElementContainer {
                                 // Update shortcut bar
                                 ShiningDispatchers.launchDB {
                                     val list = ctxt.elements.map {
-                                        it.getUnlockedSymbol(player)
+                                        (it as IGuideElementSuspend).getUnlockedSymbol(player)
                                     }
 
                                     submit {
@@ -216,7 +218,7 @@ class GuideMap : GuideElement, IGuideElementContainer {
         }
     }
 
-    override fun back(player: Player, team: GuideTeam, context: GuideContext) {
+    override fun back(player: Player, team: IGuideTeam, context: GuideContext) {
         super.back(player, team, context.minusKey(OffsetContext))
     }
 
@@ -320,12 +322,13 @@ class GuideMap : GuideElement, IGuideElementContainer {
         return list
     }
 
-    override suspend fun getElementsByCondition(team: GuideTeam, condition: ElementCondition, isDeep: Boolean): List<IGuideElement> {
+    override suspend fun getElementsByCondition(team: IGuideTeam, condition: ElementCondition, isDeep: Boolean): List<IGuideElement> {
         val list = ArrayList<IGuideElement>()
         if (isDeep) {
-            elements.forEach { (_, element) ->
+            elements.forEach { (_, elementFuture) ->
+                val element = elementFuture as IGuideElementSuspend
                 val elementCondition = element.getCondition(team)
-                if (element is IGuideElementContainer) {
+                if (element is IGuideElementContainerSuspend) {
                     when (elementCondition) {
                         COMPLETE, UNLOCKED, REPEATABLE -> {
                             list += element.getElementsByCondition(team, condition, true)
@@ -342,7 +345,7 @@ class GuideMap : GuideElement, IGuideElementContainer {
             }
         } else {
             elements.forEach { (_, element) ->
-                if (element.getCondition(team) == condition) {
+                if ((element as IGuideElementSuspend).getCondition(team) == condition) {
                     list += element
                 }
             }
@@ -350,9 +353,9 @@ class GuideMap : GuideElement, IGuideElementContainer {
         return list
     }
     
-    private suspend fun checkChildElementsCompleted(team: GuideTeam): Boolean {
+    private suspend fun checkChildElementsCompleted(team: IGuideTeam): Boolean {
         elements.forEach { (_, element) -> 
-            if (!element.isTeamCompleted(team))
+            if (!(element as IGuideElementSuspend).isTeamCompleted(team))
                 return false
         }
         return true

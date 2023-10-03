@@ -1,13 +1,12 @@
 package io.github.sunshinewzy.shining.core.guide.draft
 
-import io.github.sunshinewzy.shining.api.guide.GuideContext
-import io.github.sunshinewzy.shining.api.guide.draft.IGuideDraft
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementContainerState
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
+import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.core.guide.context.AbstractGuideContextElement
-import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 
 class GuideDraftContext {
 
@@ -19,7 +18,7 @@ class GuideDraftContext {
 
     class Save(
         val state: IGuideElementState,
-        val team: GuideTeam,
+        val team: IGuideTeam,
         val context: GuideContext
     ) : AbstractGuideContextElement(Save) {
         companion object : GuideContext.Key<Save>
@@ -33,7 +32,7 @@ class GuideDraftContext {
     }
     
     class Load(
-        val team: GuideTeam,
+        val team: IGuideTeam,
         val context: GuideContext,
         val element: IGuideElement?,
         val elementContainer: IGuideElementContainer?,

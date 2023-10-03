@@ -2,14 +2,14 @@ package io.github.sunshinewzy.shining.core.guide.element
 
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
-import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
+import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.item.ConsumableItemGroup
 import io.github.sunshinewzy.shining.api.item.universal.UniversalItem
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.state.GuideItemState
-import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.onBack
@@ -46,7 +46,7 @@ open class GuideItem : GuideElement {
     }
     
 
-    override fun openMenu(player: Player, team: GuideTeam, context: GuideContext) {
+    override fun openMenu(player: Player, team: IGuideTeam, context: GuideContext) {
         ShiningDispatchers.launchDB { 
             val isCompleted = isTeamCompleted(team)
             val remainingTime = if (getRepeatableSettings().hasRepeatablePeriod()) getRepeatablePeriodRemainingTime(team) else 0
@@ -118,7 +118,7 @@ open class GuideItem : GuideElement {
         }
     }
     
-    fun openMissingItemsMenu(player: Player, team: GuideTeam, context: GuideContext, missingItems: List<ItemStack>) {
+    fun openMissingItemsMenu(player: Player, team: IGuideTeam, context: GuideContext, missingItems: List<ItemStack>) {
         player.openMenu<Linked<ItemStack>>(player.getLangText(ShiningGuide.TITLE)) {
             rows(5)
             slots(slotOrders)

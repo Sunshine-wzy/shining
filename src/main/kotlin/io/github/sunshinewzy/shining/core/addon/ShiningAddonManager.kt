@@ -1,8 +1,8 @@
 package io.github.sunshinewzy.shining.core.addon
 
 import io.github.sunshinewzy.shining.Shining
-import io.github.sunshinewzy.shining.api.event.CloseableListener
-import io.github.sunshinewzy.shining.api.event.ShiningListener
+import io.github.sunshinewzy.shining.core.event.CloseableListener
+import io.github.sunshinewzy.shining.core.event.ShiningListener
 import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
 import org.bukkit.event.HandlerList

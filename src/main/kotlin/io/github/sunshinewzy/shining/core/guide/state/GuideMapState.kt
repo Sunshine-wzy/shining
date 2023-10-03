@@ -3,9 +3,10 @@ package io.github.sunshinewzy.shining.core.guide.state
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSetter
 import io.github.sunshinewzy.shining.Shining
-import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementContainerState
+import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
 import io.github.sunshinewzy.shining.core.editor.chat.type.TextMap
@@ -13,7 +14,7 @@ import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.element.GuideMap
-import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
+import io.github.sunshinewzy.shining.core.guide.element.IGuideElementSuspend
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.MapMenu
@@ -80,7 +81,7 @@ class GuideMapState : GuideElementState(), IGuideElementContainerState {
         return removeElement(coordinate)
     }
 
-    override fun openAdvancedEditor(player: Player, team: GuideTeam, context: GuideContext) {
+    override fun openAdvancedEditor(player: Player, team: IGuideTeam, context: GuideContext) {
         player.openMenu<MapMenu<IGuideElement>>(player.getLangText("menu-shining_guide-editor-state-map-title")) { 
             rows(6)
             area(Rectangle(2, 2, 8, 5))
@@ -94,9 +95,9 @@ class GuideMapState : GuideElementState(), IGuideElementContainerState {
             
             onGenerate(true) { player, element, _, _ -> 
                 runBlocking(ShiningDispatchers.DB) { 
-                    element.getUnlockedSymbol(player)
+                    (element as IGuideElementSuspend).getUnlockedSymbol(player)
                 }
-            }
+            }   
 
             onBuildEdge(GuideMap.edgeOrders)
 
@@ -146,7 +147,7 @@ class GuideMapState : GuideElementState(), IGuideElementContainerState {
         }
     }
 
-    fun editElement(player: Player, team: GuideTeam, context: GuideContext, element: IGuideElement, coordinate: Coordinate2D) {
+    fun editElement(player: Player, team: IGuideTeam, context: GuideContext, element: IGuideElement, coordinate: Coordinate2D) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-map-element-title")) {
             rows(3)
 

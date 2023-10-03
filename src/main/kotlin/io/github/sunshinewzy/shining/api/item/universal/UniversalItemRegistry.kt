@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.shining.api.item.universal
 
 import io.github.sunshinewzy.shining.api.AbstractClassRegistry
-import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.core.guide.context.AbstractGuideContextElement
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.lang.getLangText

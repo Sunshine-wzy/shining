@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.core.guide.context
 
-import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack

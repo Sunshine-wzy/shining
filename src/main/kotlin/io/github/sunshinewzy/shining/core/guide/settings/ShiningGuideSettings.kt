@@ -1,12 +1,13 @@
 package io.github.sunshinewzy.shining.core.guide.settings
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.guide.team.CompletedGuideTeam
+import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.commands.CommandGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
 import io.github.sunshinewzy.shining.core.guide.draft.ShiningGuideDraft
-import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
@@ -25,7 +26,7 @@ object ShiningGuideSettings {
     private val itemEditMain = NamespacedIdItem(Material.BOOK, NamespacedId(Shining, "shining_guide-settings-edit_main"))
     
 
-    fun openSettingsMenu(player: Player, team: GuideTeam) {
+    fun openSettingsMenu(player: Player, team: IGuideTeam) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-settings-title")) {
             rows(6)
 
@@ -42,7 +43,7 @@ object ShiningGuideSettings {
 
             set('B', ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player), ShiningGuide.onClickBack)
 
-            if (team !== GuideTeam.CompletedTeam && player.hasPermission(CommandGuide.PERMISSION_OPEN_TEAM)) {
+            if (team !== CompletedGuideTeam.getInstance() && player.hasPermission(CommandGuide.PERMISSION_OPEN_TEAM)) {
                 set('a', itemTeamInfo.toLocalizedItem(player)) {
                     team.openInfoMenu(player)
                 }

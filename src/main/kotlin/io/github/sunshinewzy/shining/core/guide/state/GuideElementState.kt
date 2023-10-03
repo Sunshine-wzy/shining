@@ -1,16 +1,17 @@
 package io.github.sunshinewzy.shining.core.guide.state
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
-import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
-import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
+import io.github.sunshinewzy.shining.api.guide.lock.IElementLock
 import io.github.sunshinewzy.shining.api.guide.reward.GuideRewardRegistry
 import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.guide.settings.RepeatableSettings
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
+import io.github.sunshinewzy.shining.api.guide.team.CompletedGuideTeam
+import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
@@ -19,16 +20,15 @@ import io.github.sunshinewzy.shining.core.editor.chat.type.Text
 import io.github.sunshinewzy.shining.core.editor.chat.type.TextList
 import io.github.sunshinewzy.shining.core.editor.chat.type.TextMap
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
-import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideSelectElementsContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideShortcutBarContext
 import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftContext
 import io.github.sunshinewzy.shining.core.guide.draft.ShiningGuideDraft
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
+import io.github.sunshinewzy.shining.core.guide.element.IGuideElementSuspend
 import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
-import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.LanguageItem
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
@@ -64,16 +64,16 @@ abstract class GuideElementState : IGuideElementState {
     override var symbol: ItemStack = ItemStack(Material.STONE)
     override var repeatableSettings: RepeatableSettings? = null
 
-    var dependencies: MutableSet<NamespacedId> = HashSet()
-    var locks: MutableList<ElementLock> = LinkedList()
-    var rewards: MutableList<IGuideReward> = LinkedList()
+    override var dependencies: MutableSet<NamespacedId> = HashSet()
+    override var locks: MutableList<IElementLock> = LinkedList()
+    override var rewards: MutableList<IGuideReward> = LinkedList()
     
     
-    fun addDependency(element: IGuideElement) {
+    override fun addDependency(element: IGuideElement) {
         dependencies += element.getId()
     }
     
-    fun addDependencies(elements: Collection<IGuideElement>) {
+    override fun addDependencies(elements: Collection<IGuideElement>) {
         elements.forEach { 
             addDependency(it)
         }
@@ -97,9 +97,6 @@ abstract class GuideElementState : IGuideElementState {
         return state
     }
     
-
-    abstract fun openAdvancedEditor(player: Player, team: GuideTeam, context: GuideContext)
-
     override fun update(): Boolean =
         element?.update(this) ?: false
     
@@ -138,14 +135,12 @@ abstract class GuideElementState : IGuideElementState {
     
     fun updateElement(): IGuideElement? = elementDelegate.update()
     
-    @JsonIgnore
-    fun getDependencyElements(): List<IGuideElement> =
+    override fun getDependencyElements(): List<IGuideElement> =
         dependencies.mapNotNull { 
             GuideElementRegistry.getElement(it)
         }
     
-    @JsonIgnore
-    fun getDependencyElementMapTo(map: MutableMap<NamespacedId, IGuideElement>): MutableMap<NamespacedId, IGuideElement> {
+    override fun getDependencyElementMapTo(map: MutableMap<NamespacedId, IGuideElement>): MutableMap<NamespacedId, IGuideElement> {
         dependencies.forEach { id ->
             GuideElementRegistry.getElement(id)?.let {
                 map[id] = it
@@ -154,10 +149,9 @@ abstract class GuideElementState : IGuideElementState {
         return map
     }
     
-    @JsonIgnore
-    fun getDependencyElementMap(): Map<NamespacedId, IGuideElement> = getDependencyElementMapTo(HashMap())
+    override fun getDependencyElementMap(): Map<NamespacedId, IGuideElement> = getDependencyElementMapTo(HashMap())
 
-    override fun openEditor(player: Player, team: GuideTeam, context: GuideContext) {
+    override fun openEditor(player: Player, team: IGuideTeam, context: GuideContext) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-title")) {
             rows(4)
 
@@ -223,7 +217,7 @@ abstract class GuideElementState : IGuideElementState {
         }
     }
 
-    open fun openBasicEditor(player: Player, team: GuideTeam, context: GuideContext) {
+    override fun openBasicEditor(player: Player, team: IGuideTeam, context: GuideContext) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-title")) {
             rows(4)
 
@@ -325,8 +319,7 @@ abstract class GuideElementState : IGuideElementState {
         }
     }
 
-    
-    fun openSymbolEditor(player: Player, team: GuideTeam, context: GuideContext) {
+    override fun openSymbolEditor(player: Player, team: IGuideTeam, context: GuideContext) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-symbol-title")) { 
             rows(4)
             
@@ -364,7 +357,7 @@ abstract class GuideElementState : IGuideElementState {
         }
     }
     
-    fun openRepeatableSettingsEditor(player: Player, team: GuideTeam, context: GuideContext) {
+    override fun openRepeatableSettingsEditor(player: Player, team: IGuideTeam, context: GuideContext) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-repeatable_settings-title")) {
             rows(3)
 
@@ -407,13 +400,13 @@ abstract class GuideElementState : IGuideElementState {
         }
     }
 
-    fun openDependenciesEditor(player: Player, team: GuideTeam, context: GuideContext) {
+    override fun openDependenciesEditor(player: Player, team: IGuideTeam, context: GuideContext) {
         player.openMultiPageMenu<IGuideElement>(player.getLangText("menu-shining_guide-editor-state-basic-dependencies-title")) {
             elements { getDependencyElements() }
 
             onGenerate(true) { player, element, index, slot ->
                 runBlocking(ShiningDispatchers.DB) {
-                    element.getSymbolByCondition(player, GuideTeam.CompletedTeam, ElementCondition.UNLOCKED)
+                    (element as IGuideElementSuspend).getSymbolByCondition(player, CompletedGuideTeam.getInstance(), ElementCondition.UNLOCKED)
                         .insertLore(0, "&7${element.getId()}", "")
                 }
             }
@@ -446,7 +439,7 @@ abstract class GuideElementState : IGuideElementState {
         }
     }
 
-    fun openDependencyEditor(player: Player, team: GuideTeam, element: IGuideElement, context: GuideContext) {
+    fun openDependencyEditor(player: Player, team: IGuideTeam, element: IGuideElement, context: GuideContext) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-dependencies-title")) {
             rows(3)
 
@@ -471,8 +464,8 @@ abstract class GuideElementState : IGuideElementState {
         }
     }
 
-    fun openLocksEditor(player: Player, team: GuideTeam, context: GuideContext = EmptyGuideContext) {
-        player.openMultiPageMenu<ElementLock>(player.getLangText("menu-shining_guide-editor-state-basic-locks-title")) {
+    override fun openLocksEditor(player: Player, team: IGuideTeam, context: GuideContext) {
+        player.openMultiPageMenu<IElementLock>(player.getLangText("menu-shining_guide-editor-state-basic-locks-title")) {
             elements { locks }
             
             onGenerate(async = true) { player, element, _, _ -> 
@@ -495,7 +488,7 @@ abstract class GuideElementState : IGuideElementState {
         }
     }
     
-    fun openCreateNewLockMenu(player: Player, team: GuideTeam, context: GuideContext) {
+    fun openCreateNewLockMenu(player: Player, team: IGuideTeam, context: GuideContext) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-locks-create-title")) {
             rows(3)
 
@@ -527,7 +520,7 @@ abstract class GuideElementState : IGuideElementState {
         }
     }
     
-    fun openRewardsEditor(player: Player, team: GuideTeam, context: GuideContext) {
+    override fun openRewardsEditor(player: Player, team: IGuideTeam, context: GuideContext) {
         val (ctxt, ctxtRemove) = GuideEditorContext.Remove.getOrNew(context)
         
         player.openMultiPageMenu<IGuideReward>(player.getLangText("menu-shining_guide-editor-state-basic-rewards-title")) { 
@@ -563,7 +556,7 @@ abstract class GuideElementState : IGuideElementState {
         }
     }
     
-    fun openCreateNewRewardEditor(player: Player, team: GuideTeam, context: GuideContext) {
+    fun openCreateNewRewardEditor(player: Player, team: IGuideTeam, context: GuideContext) {
         player.openMultiPageMenu<Pair<Class<out IGuideReward>, LanguageItem>>(player.getLangText("menu-shining_guide-editor-state-basic-rewards-create-title")) { 
             elements { GuideRewardRegistry.getRegisteredClassPairList() }
             

@@ -6,12 +6,14 @@ import io.github.sunshinewzy.shining.api.event.guide.ShiningGuideElementUnlockEv
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.ElementCondition.*
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
-import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
-import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
+import io.github.sunshinewzy.shining.api.guide.lock.IElementLock
 import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.guide.settings.RepeatableSettings
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
+import io.github.sunshinewzy.shining.api.guide.team.CompletedGuideTeam
+import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.guide.team.IGuideTeamData
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.commands.CommandGuide
@@ -41,9 +43,9 @@ abstract class GuideElement(
     private var id: NamespacedId,
     private var description: ElementDescription,
     private var symbol: ItemStack
-) : IGuideElement {
+) : IGuideElementSuspend {
     private val dependencyMap: MutableMap<NamespacedId, IGuideElement> = HashMap()
-    private val locks: MutableList<ElementLock> = LinkedList()
+    private val locks: MutableList<IElementLock> = LinkedList()
     private val rewards: MutableList<IGuideReward> = LinkedList()
     private var repeatableSettings: RepeatableSettings = RepeatableSettings()
 
@@ -61,13 +63,13 @@ abstract class GuideElement(
 
     override fun getDependencies(): Map<NamespacedId, IGuideElement> = dependencyMap
 
-    override fun getLocks(): List<ElementLock> = locks
+    override fun getLocks(): List<IElementLock> = locks
 
     override fun getRewards(): List<IGuideReward> = rewards
 
     override fun getRepeatableSettings(): RepeatableSettings = repeatableSettings
 
-    override fun open(player: Player, team: GuideTeam, previousElement: IGuideElement?, context: GuideContext) {
+    override fun open(player: Player, team: IGuideTeam, previousElement: IGuideElement?, context: GuideContext) {
         if (previousElement != null)
             previousElementMap[player.uniqueId] = previousElement
 
@@ -79,9 +81,9 @@ abstract class GuideElement(
         openMenu(player, team, ctxt)
     }
 
-    protected abstract fun openMenu(player: Player, team: GuideTeam, context: GuideContext)
+    protected abstract fun openMenu(player: Player, team: IGuideTeam, context: GuideContext)
 
-    override fun back(player: Player, team: GuideTeam, context: GuideContext) {
+    override fun back(player: Player, team: IGuideTeam, context: GuideContext) {
         previousElementMap[player.uniqueId]?.let {
             it.open(player, team, null, context)
             return
@@ -90,12 +92,12 @@ abstract class GuideElement(
         ShiningGuide.openMainMenu(player, team, context)
     }
 
-    override fun unlock(player: Player, team: GuideTeam): Boolean {
+    override fun unlock(player: Player, team: IGuideTeam): Boolean {
         for (lock in locks) {
             if (!lock.check(player)) {
                 player.sendMsg(
                     Shining.prefix,
-                    "${player.getLangText("menu-shining_guide-element-unlock-fail")}: ${lock.description(player)}"
+                    "${player.getLangText("menu-shining_guide-element-unlock-fail")}: ${lock.description.apply(player)}"
                 )
                 lock.tip(player)
                 return false
@@ -113,12 +115,12 @@ abstract class GuideElement(
 
         ShiningDispatchers.launchDB {
             getTeamData(team).setElementCondition(this@GuideElement, UNLOCKED)
-            team.updateTeamData()
+            (team as GuideTeam).updateTeamData()
         }
         return true
     }
 
-    override fun complete(player: Player, team: GuideTeam, isSilent: Boolean) {
+    override fun complete(player: Player, team: IGuideTeam, isSilent: Boolean) {
         if (!ShiningGuideElementCompleteEvent(this, player, team, isSilent).call())
             return
         
@@ -129,7 +131,7 @@ abstract class GuideElement(
             if (repeatableSettings.hasRepeatablePeriod()) {
                 data.setElementRepeatablePeriod(getId(), System.currentTimeMillis())
             }
-            team.updateTeamData()
+            (team as GuideTeam).updateTeamData()
         }
         if (isSilent) return
 
@@ -189,12 +191,12 @@ abstract class GuideElement(
         return true
     }
 
-    override suspend fun isTeamCompleted(team: GuideTeam): Boolean =
-        team === GuideTeam.CompletedTeam || getTeamData(team).getElementCondition(this) == COMPLETE
+    override suspend fun isTeamCompleted(team: IGuideTeam): Boolean =
+        team === CompletedGuideTeam.getInstance() || getTeamData(team).getElementCondition(this) == COMPLETE
 
-    override suspend fun isTeamDependencyCompleted(team: GuideTeam): Boolean {
+    override suspend fun isTeamDependencyCompleted(team: IGuideTeam): Boolean {
         for (dependency in dependencyMap.values) {
-            if (!dependency.isTeamCompleted(team)) {
+            if (!(dependency as IGuideElementSuspend).isTeamCompleted(team)) {
                 return false
             }
         }
@@ -202,14 +204,14 @@ abstract class GuideElement(
         return true
     }
 
-    override suspend fun isTeamUnlocked(team: GuideTeam): Boolean =
+    override suspend fun isTeamUnlocked(team: IGuideTeam): Boolean =
         getTeamData(team).getElementCondition(this)?.let {
             it == UNLOCKED || it == COMPLETE
         } ?: false
 
     fun hasLock(): Boolean = locks.isNotEmpty()
 
-    override suspend fun getCondition(team: GuideTeam): ElementCondition =
+    override suspend fun getCondition(team: IGuideTeam): ElementCondition =
         if (isTeamCompleted(team)) {
             if (repeatableSettings.repeatable) REPEATABLE
             else COMPLETE
@@ -223,7 +225,7 @@ abstract class GuideElement(
             UNLOCKED
         }
 
-    override suspend fun getSymbolByCondition(player: Player, team: GuideTeam, condition: ElementCondition): ItemStack =
+    override suspend fun getSymbolByCondition(player: Player, team: IGuideTeam, condition: ElementCondition): ItemStack =
         when (condition) {
             COMPLETE -> {
                 val symbolItem = symbol.clone()
@@ -246,7 +248,7 @@ abstract class GuideElement(
                 lore += ""
 
                 dependencyMap.values.forEach {
-                    if (!it.isTeamCompleted(team)) {
+                    if (!(it as IGuideElementSuspend).isTeamCompleted(team)) {
                         lore += it.getDescription().name
                     }
                 }
@@ -265,9 +267,9 @@ abstract class GuideElement(
 
                 locks.forEach {
                     lore += if (it.isConsume) {
-                        "${player.getLangText("menu-shining_guide-element-symbol-locked_lock-need_consume")} ${it.description(player)}"
+                        "${player.getLangText("menu-shining_guide-element-symbol-locked_lock-need_consume")} ${it.description.apply(player)}"
                     } else {
-                        "${player.getLangText("menu-shining_guide-element-symbol-locked_lock-need")} ${it.description(player)}"
+                        "${player.getLangText("menu-shining_guide-element-symbol-locked_lock-need")} ${it.description.apply(player)}"
                     }
                 }
 
@@ -296,15 +298,15 @@ abstract class GuideElement(
         return GuideElementRegistry.register(this)
     }
 
-    override suspend fun getTeamData(team: GuideTeam): IGuideTeamData =
-        team.getTeamData()
+    override suspend fun getTeamData(team: IGuideTeam): IGuideTeamData =
+        (team as GuideTeam).getTeamData()
 
     override fun registerDependency(element: IGuideElement): GuideElement {
         dependencyMap[element.getId()] = element
         return this
     }
 
-    override fun registerLock(lock: ElementLock): GuideElement {
+    override fun registerLock(lock: IElementLock): GuideElement {
         locks += lock
         return this
     }
@@ -314,7 +316,7 @@ abstract class GuideElement(
         return this
     }
 
-    fun openViewRewardsMenu(player: Player, team: GuideTeam, context: GuideContext) {
+    fun openViewRewardsMenu(player: Player, team: IGuideTeam, context: GuideContext) {
         player.openMultiPageMenu<IGuideReward>(player.getLangText("menu-shining_guide-element-view_rewards-title")) { 
             elements { rewards }
             
@@ -336,7 +338,8 @@ abstract class GuideElement(
         }
     }
     
-    suspend fun getRepeatablePeriodRemainingTime(team: GuideTeam): Long {
+    suspend fun getRepeatablePeriodRemainingTime(team: IGuideTeam): Long {
+        if (team !is GuideTeam) return -1
         val data = getTeamData(team)
         val startTime = data.getElementRepeatablePeriod(getId()) ?: System.currentTimeMillis().also {
             if (repeatableSettings.hasRepeatablePeriod()) {
@@ -369,7 +372,7 @@ abstract class GuideElement(
     }
     
     
-    fun Basic.setBackButton(player: Player, team: GuideTeam, context: GuideContext, slot: Int = 2 orderWith 1) {
+    fun Basic.setBackButton(player: Player, team: IGuideTeam, context: GuideContext, slot: Int = 2 orderWith 1) {
         set(slot, ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
             if (clickEvent().isShiftClick) {
                 ShiningGuide.openMainMenu(player, team, context)
@@ -379,7 +382,7 @@ abstract class GuideElement(
         }
     }
     
-    fun Basic.setBackButton(player: Player, team: GuideTeam, context: GuideContext, slot: Char) {
+    fun Basic.setBackButton(player: Player, team: IGuideTeam, context: GuideContext, slot: Char) {
         set(slot, ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
             if (clickEvent().isShiftClick) {
                 ShiningGuide.openMainMenu(player, team, context)

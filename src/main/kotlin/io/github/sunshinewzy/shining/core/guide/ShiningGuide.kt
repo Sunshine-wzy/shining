@@ -5,16 +5,17 @@ import io.github.sunshinewzy.shining.api.dictionary.IDictionaryItem
 import io.github.sunshinewzy.shining.api.dictionary.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.api.event.guide.ShiningGuideOpenEvent
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
-import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.api.guide.context.EmptyGuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
+import io.github.sunshinewzy.shining.api.guide.team.CompletedGuideTeam
+import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.dictionary.DictionaryRegistry
-import io.github.sunshinewzy.shining.core.guide.context.EmptyGuideContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditModeContext
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.settings.SoundSettings
-import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeam.Companion.getGuideTeam
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeam.Companion.setupGuideTeam
 import io.github.sunshinewzy.shining.core.lang.getDefaultLangText
@@ -123,7 +124,7 @@ object ShiningGuide : GuideCategory(
     }
 
     @JvmOverloads
-    fun openMainMenu(player: Player, team: GuideTeam, context: GuideContext = EmptyGuideContext) {
+    fun openMainMenu(player: Player, team: IGuideTeam, context: GuideContext = EmptyGuideContext) {
         playerLastOpenElementMap -= player.uniqueId
         soundOpen.playSound(player)
 
@@ -153,7 +154,7 @@ object ShiningGuide : GuideCategory(
     }
 
     @JvmOverloads
-    fun openLastElement(player: Player, team: GuideTeam, context: GuideContext = EmptyGuideContext) {
+    fun openLastElement(player: Player, team: IGuideTeam, context: GuideContext = EmptyGuideContext) {
         playerLastOpenElementMap[player.uniqueId]?.let {
             var ctxt = context
             if (ctxt[GuideEditModeContext] == null && ShiningGuideEditor.isEditModeEnabled(player)) {
@@ -175,7 +176,7 @@ object ShiningGuide : GuideCategory(
         if (ctxt[GuideEditModeContext] == null) {
             ctxt += GuideEditModeContext(false)
         }
-        openMainMenu(player, GuideTeam.CompletedTeam, ctxt)
+        openMainMenu(player, CompletedGuideTeam.getInstance(), ctxt)
     }
 
     @JvmOverloads
@@ -185,7 +186,7 @@ object ShiningGuide : GuideCategory(
             if (ctxt[GuideEditModeContext] == null) {
                 ctxt += GuideEditModeContext(false)
             }
-            it.open(player, GuideTeam.CompletedTeam, null, ctxt)
+            it.open(player, CompletedGuideTeam.getInstance(), null, ctxt)
             return
         }
 

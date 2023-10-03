@@ -4,9 +4,10 @@ import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSetter
 import io.github.sunshinewzy.shining.Shining
-import io.github.sunshinewzy.shining.api.guide.GuideContext
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementPriorityContainerState
+import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
 import io.github.sunshinewzy.shining.core.editor.chat.type.Text
@@ -15,7 +16,7 @@ import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
-import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
+import io.github.sunshinewzy.shining.core.guide.element.IGuideElementSuspend
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.onBack
@@ -141,13 +142,13 @@ class GuideCategoryState : GuideElementState(), IGuideElementPriorityContainerSt
         return state
     }
 
-    override fun openAdvancedEditor(player: Player, team: GuideTeam, context: GuideContext) {
+    override fun openAdvancedEditor(player: Player, team: IGuideTeam, context: GuideContext) {
         player.openMultiPageMenu<IGuideElement>(player.getLangText("menu-shining_guide-editor-state-category-title")) {
             elements { getElements() }
             
             onGenerate(true) { player, element, _, _ -> 
                 runBlocking(ShiningDispatchers.DB) {
-                    element.getUnlockedSymbol(player)
+                    (element as IGuideElementSuspend).getUnlockedSymbol(player)
                 }
             }
             
@@ -173,7 +174,7 @@ class GuideCategoryState : GuideElementState(), IGuideElementPriorityContainerSt
         }
     }
     
-    fun editElement(player: Player, team: GuideTeam, context: GuideContext, element: IGuideElement) {
+    fun editElement(player: Player, team: IGuideTeam, context: GuideContext, element: IGuideElement) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-category-element-title")) { 
             rows(3)
 

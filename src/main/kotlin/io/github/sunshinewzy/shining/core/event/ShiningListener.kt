@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.api.event
+package io.github.sunshinewzy.shining.core.event
 
 import io.github.sunshinewzy.shining.core.addon.IShiningAddonManager
 import org.bukkit.event.Listener
