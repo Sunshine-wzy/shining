@@ -2,6 +2,8 @@ package io.github.sunshinewzy.shining.objects
 
 import io.github.sunshinewzy.shining.Shining
 import kotlinx.coroutines.*
+import kotlinx.coroutines.future.future
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.atomic.AtomicInteger
@@ -43,6 +45,24 @@ object ShiningDispatchers {
     ): Job {
         return if (context == EmptyCoroutineContext) Shining.coroutineScope.launch(Dispatchers.IO, start, block)
         else Shining.coroutineScope.launch(context + Dispatchers.IO, start, block)
+    }
+    
+    fun <T> futureDB(
+        context: CoroutineContext = EmptyCoroutineContext,
+        start: CoroutineStart = CoroutineStart.DEFAULT,
+        block: suspend CoroutineScope.() -> T
+    ): CompletableFuture<T> {
+        return if (context == EmptyCoroutineContext) Shining.coroutineScope.future(DB, start, block)
+        else Shining.coroutineScope.future(context + DB, start, block)
+    }
+
+    fun <T> futureIO(
+        context: CoroutineContext = EmptyCoroutineContext,
+        start: CoroutineStart = CoroutineStart.DEFAULT,
+        block: suspend CoroutineScope.() -> T
+    ): CompletableFuture<T> {
+        return if (context == EmptyCoroutineContext) Shining.coroutineScope.future(Dispatchers.IO, start, block)
+        else Shining.coroutineScope.future(context + Dispatchers.IO, start, block)
     }
     
 }

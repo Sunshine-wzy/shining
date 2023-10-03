@@ -103,7 +103,7 @@ object CommandGuide {
                                             val thePlayer = Bukkit.getPlayer(context["player"]) ?: return@launchDB
                                             val theTeam = thePlayer.getGuideTeam() ?: return@launchDB
 
-                                            theTeam.getTeamData().elementConditionMap.remove(theId)
+                                            theTeam.getTeamData().removeElementCondition(theId)
                                             theTeam.updateTeamData()
                                         }
                                     }
@@ -116,7 +116,7 @@ object CommandGuide {
                                             val thePlayer = Bukkit.getPlayer(context["player"]) ?: return@launchDB
                                             val theTeam = thePlayer.getGuideTeam() ?: return@launchDB
 
-                                            val elementCondition = theTeam.getTeamData().elementConditionMap[theId] ?: return@launchDB
+                                            val elementCondition = theTeam.getTeamData().getElementCondition(theId) ?: return@launchDB
                                             sender.sendMsg(Shining.prefix, "$theId -> $elementCondition")
                                         }
                                     }

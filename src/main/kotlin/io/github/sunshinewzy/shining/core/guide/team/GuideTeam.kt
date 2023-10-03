@@ -3,6 +3,8 @@ package io.github.sunshinewzy.shining.core.guide.team
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.event.guide.ShiningGuideTeamGetAsyncEvent
 import io.github.sunshinewzy.shining.api.event.guide.ShiningGuideTeamSetupEvent
+import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
+import io.github.sunshinewzy.shining.api.guide.team.IGuideTeamData
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.data.JacksonWrapper
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerDatabaseHandler.executePlayerDataContainer
@@ -36,8 +38,9 @@ import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 import taboolib.platform.util.buildItem
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
-open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
+open class GuideTeam(id: EntityID<Int>) : IntEntity(id), IGuideTeam {
     var name: String by GuideTeams.name
     var captain: UUID by GuideTeams.captain
     var symbol: ItemStack by GuideTeams.symbol
@@ -59,6 +62,18 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         }
     }
 
+    override fun joinFuture(player: Player): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureDB {
+            join(player)
+            true
+        }
+
+    override fun joinFuture(uuid: UUID): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureDB {
+            join(uuid)
+            true
+        }
+
     private suspend fun joinByUUID(uuid: UUID) {
         newSuspendedTransaction {
             members.value.let {
@@ -79,6 +94,18 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
             it.delete(GUIDE_TEAM_ID)
         }
     }
+
+    override fun leaveFuture(player: Player): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureDB { 
+            leave(player)
+            true
+        }
+
+    override fun leaveFuture(uuid: UUID): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureDB { 
+            leave(uuid)
+            true
+        }
 
     private suspend fun leaveByUUID(uuid: UUID) {
         newSuspendedTransaction {
@@ -102,6 +129,18 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         }
         notifyCaptainApplication()
     }
+
+    override fun applyFuture(player: Player): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureDB { 
+            apply(player)
+            true
+        }
+
+    override fun applyFuture(uuid: UUID): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureDB { 
+            apply(uuid)
+            true
+        }
 
     private suspend fun applyByUUID(uuid: UUID) {
         newSuspendedTransaction {
@@ -127,7 +166,19 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
             it[GUIDE_TEAM_ID] = id
         }
     }
-    
+
+    override fun changeCaptainFuture(player: Player): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureDB { 
+            changeCaptain(player)
+            true
+        }
+
+    override fun changeCaptainFuture(uuid: UUID): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureDB { 
+            changeCaptain(uuid)
+            true
+        }
+
     private suspend fun changeCaptainByUUID(uuid: UUID) {
         newSuspendedTransaction { 
             captain = uuid
@@ -139,10 +190,19 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
             this@GuideTeam.name = name
         }
     }
-    
-    suspend fun getTeamData(): GuideTeamData =
+
+    override fun changeNameFuture(name: String): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureDB { 
+            changeName(name)
+            true
+        }
+
+    suspend fun getTeamData(): IGuideTeamData =
         newSuspendedTransaction { data.value }
-    
+
+    override fun getTeamDataFuture(): CompletableFuture<IGuideTeamData> =
+        ShiningDispatchers.futureDB { getTeamData() }
+
     suspend fun updateTeamData() {
         newSuspendedTransaction { 
             data.value.let { 
@@ -150,6 +210,12 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
             }
         }
     }
+
+    override fun updateTeamDataFuture(): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureDB { 
+            updateTeamData()
+            true
+        }
 
     suspend fun approveApplication(uuid: UUID): Boolean {
         if (!applicants.value.contains(uuid))
@@ -170,6 +236,9 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         return true
     }
 
+    override fun approveApplicationFuture(uuid: UUID): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureDB { approveApplication(uuid) }
+
     suspend fun refuseApplication(uuid: UUID): Boolean {
         if (!applicants.value.contains(uuid))
             return false
@@ -187,7 +256,10 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         return true
     }
 
-    fun notifyCaptainApplication() {
+    override fun refuseApplicationFuture(uuid: UUID): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureDB { refuseApplication(uuid) }
+
+    override fun notifyCaptainApplication() {
         if (applicants.value.isEmpty()) return
 
         captain.player?.let { player ->
@@ -199,14 +271,14 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         }
     }
 
-    fun getOnlinePlayers(): List<Player> {
+    override fun getOnlinePlayers(): List<Player> {
         val list = ArrayList<Player>()
         captain.player?.let { list += it }
         members.value.mapNotNullTo(list) { it.player }
         return list
     }
 
-    fun welcome(uuid: UUID) {
+    override fun welcome(uuid: UUID) {
         uuid.player?.let { player ->
             ShiningGuide.fireworkCongratulate(player)
         }
@@ -218,7 +290,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         }
     }
 
-    fun openInfoMenu(player: Player) {
+    override fun openInfoMenu(player: Player) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-team-info-title")) {
             rows(5)
 
@@ -269,7 +341,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         }
     }
 
-    fun openManageMenu(player: Player) {
+    override fun openManageMenu(player: Player) {
         if (player.uniqueId != captain) {
             player.sendPrefixedLangText("menu-shining_guide-team-manage-no_permission")
             return
@@ -300,7 +372,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id) {
         }
     }
 
-    fun openManageApplicationMenu(player: Player) {
+    override fun openManageApplicationMenu(player: Player) {
         player.openMultiPageMenu<UUID>(player.getLangText("menu-shining_guide-team-manage-application-title")) {
             elements { applicants.value.toList() }
 

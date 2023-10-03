@@ -12,13 +12,13 @@ import io.github.sunshinewzy.shining.api.guide.lock.ElementLock
 import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.guide.settings.RepeatableSettings
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
+import io.github.sunshinewzy.shining.api.guide.team.IGuideTeamData
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.commands.CommandGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.state.GuideElementState
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeam
-import io.github.sunshinewzy.shining.core.guide.team.GuideTeamData
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
 import io.github.sunshinewzy.shining.core.menu.onBackMenu
@@ -127,7 +127,7 @@ abstract class GuideElement(
             data.setElementCondition(this@GuideElement, COMPLETE)
             data.setLastCompletedElement(this@GuideElement)
             if (repeatableSettings.hasRepeatablePeriod()) {
-                data.elementRepeatablePeriodMap[getId()] = System.currentTimeMillis()
+                data.setElementRepeatablePeriod(getId(), System.currentTimeMillis())
             }
             team.updateTeamData()
         }
@@ -296,7 +296,7 @@ abstract class GuideElement(
         return GuideElementRegistry.register(this)
     }
 
-    override suspend fun getTeamData(team: GuideTeam): GuideTeamData =
+    override suspend fun getTeamData(team: GuideTeam): IGuideTeamData =
         team.getTeamData()
 
     override fun registerDependency(element: IGuideElement): GuideElement {
@@ -338,16 +338,16 @@ abstract class GuideElement(
     
     suspend fun getRepeatablePeriodRemainingTime(team: GuideTeam): Long {
         val data = getTeamData(team)
-        val startTime = data.elementRepeatablePeriodMap[getId()] ?: System.currentTimeMillis().also {
+        val startTime = data.getElementRepeatablePeriod(getId()) ?: System.currentTimeMillis().also {
             if (repeatableSettings.hasRepeatablePeriod()) {
-                data.elementRepeatablePeriodMap[getId()] = it
+                data.setElementRepeatablePeriod(getId(), it)
                 team.updateTeamData()
             } else return 0
         }
         val passedTime = System.currentTimeMillis() - startTime
         if (passedTime < 0) {
             return if (repeatableSettings.hasRepeatablePeriod()) {
-                data.elementRepeatablePeriodMap[getId()] = System.currentTimeMillis()
+                data.setElementRepeatablePeriod(getId(), System.currentTimeMillis())
                 team.updateTeamData()
                 repeatableSettings.period
             } else 0
