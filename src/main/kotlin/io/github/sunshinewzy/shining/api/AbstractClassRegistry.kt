@@ -1,11 +1,12 @@
 package io.github.sunshinewzy.shining.api
 
 import io.github.sunshinewzy.shining.api.lang.item.ILanguageItem
+import io.github.sunshinewzy.shining.api.objects.SPair
 
 abstract class AbstractClassRegistry<T> : IClassRegistry<T> {
 
     protected val classMap: MutableMap<Class<out T>, ILanguageItem> = HashMap()
-    protected val classPairListCache: MutableList<Pair<Class<out T>, ILanguageItem>> = ArrayList()
+    protected val classPairListCache: MutableList<SPair<Class<out T>, ILanguageItem>> = ArrayList()
     
     
     override fun register(clazz: Class<out T>, icon: ILanguageItem) {
@@ -20,12 +21,12 @@ abstract class AbstractClassRegistry<T> : IClassRegistry<T> {
 
     override fun getRegisteredClassMap(): Map<Class<out T>, ILanguageItem> = classMap
 
-    override fun getRegisteredClassPairList(): List<Pair<Class<out T>, ILanguageItem>> = classPairListCache
+    override fun getRegisteredClassPairList(): List<SPair<Class<out T>, ILanguageItem>> = classPairListCache
     
     
     protected open fun updateClassPairListCache() {
         classPairListCache.clear()
-        getRegisteredClassMap().mapTo(classPairListCache) { it.key to it.value }
+        getRegisteredClassMap().mapTo(classPairListCache) { SPair(it.key, it.value) }
     }
     
 }

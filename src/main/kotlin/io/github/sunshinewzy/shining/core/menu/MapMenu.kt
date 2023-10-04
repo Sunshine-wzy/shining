@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.shining.core.menu
 
-import io.github.sunshinewzy.shining.objects.coordinate.Coordinate2D
-import io.github.sunshinewzy.shining.objects.coordinate.Rectangle
+import io.github.sunshinewzy.shining.api.objects.coordinate.Coordinate2D
+import io.github.sunshinewzy.shining.api.objects.coordinate.Rectangle
 import io.github.sunshinewzy.shining.utils.orderWith
 import io.github.sunshinewzy.shining.utils.toCoordinate2D
 import org.bukkit.Material

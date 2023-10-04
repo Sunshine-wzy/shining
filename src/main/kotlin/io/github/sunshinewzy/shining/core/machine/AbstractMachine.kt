@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.core.machine
 
 import io.github.sunshinewzy.shining.api.machine.IMachine
+import io.github.sunshinewzy.shining.api.machine.MachineProperty
 
 abstract class AbstractMachine(override val property: MachineProperty) : IMachine {
 

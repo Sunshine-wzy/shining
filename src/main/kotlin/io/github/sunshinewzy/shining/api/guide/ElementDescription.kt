@@ -1,21 +1,16 @@
 package io.github.sunshinewzy.shining.api.guide
 
-import io.github.sunshinewzy.shining.utils.setNameAndLore
-import org.bukkit.inventory.ItemStack
+import java.util.*
 
 class ElementDescription(val name: String, val lore: List<String>) {
 
-    constructor(name: String) : this(name, emptyList())
+    constructor(name: String) : this(name, Collections.emptyList())
 
-    constructor(name: String, vararg lore: String) : this(name, lore.toList())
-
-
-    fun setOnItem(item: ItemStack): ItemStack =
-        item.setNameAndLore(name, lore)
+    constructor(name: String, vararg lore: String) : this(name, Arrays.asList(*lore))
 
     
     companion object {
-        val NULL: ElementDescription = ElementDescription("", emptyList())
+        val NULL: ElementDescription = ElementDescription("", Collections.emptyList())
     }
     
 }

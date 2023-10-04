@@ -1,8 +1,7 @@
-package io.github.sunshinewzy.shining.objects.coordinate
+package io.github.sunshinewzy.shining.api.objects.coordinate
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
-import io.github.sunshinewzy.shining.utils.orderWith
 
 data class Coordinate2D(val x: Int, val y: Int) {
 
@@ -17,7 +16,7 @@ data class Coordinate2D(val x: Int, val y: Int) {
     fun add(x: Int, y: Int): Coordinate2D =
         Coordinate2D(this.x + x, this.y + y)
     
-    fun toOrder(): Int = x orderWith y
+    fun toOrder(): Int = CoordinateUtils.orderWith(x, y)
     
     @JsonValue
     override fun toString(): String {
@@ -33,13 +32,8 @@ data class Coordinate2D(val x: Int, val y: Int) {
         
         @JvmStatic
         @JsonCreator
-        fun fromString(source: String): Coordinate2D? {
-            val list = source.split(",")
-            if (list.size != 2) return null
-            val x = list[0].toIntOrNull() ?: return null
-            val y = list[1].toIntOrNull() ?: return null
-            return Coordinate2D(x, y)
-        }
+        fun fromString(source: String): Coordinate2D? =
+            CoordinateUtils.coordinate2DFromString(source)
         
     }
     

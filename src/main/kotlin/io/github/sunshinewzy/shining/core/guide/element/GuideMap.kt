@@ -10,6 +10,8 @@ import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.guide.team.CompletedGuideTeam
 import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.api.objects.coordinate.Coordinate2D
+import io.github.sunshinewzy.shining.api.objects.coordinate.Rectangle
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor.setEditor
@@ -20,8 +22,6 @@ import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.menu.MapMenu
 import io.github.sunshinewzy.shining.core.menu.onBuildEdge
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
-import io.github.sunshinewzy.shining.objects.coordinate.Coordinate2D
-import io.github.sunshinewzy.shining.objects.coordinate.Rectangle
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
 import kotlinx.coroutines.runBlocking

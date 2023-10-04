@@ -2,12 +2,12 @@ package io.github.sunshinewzy.shining.core.lang
 
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.ShiningConfig.language
+import io.github.sunshinewzy.shining.api.lang.node.IListNode
+import io.github.sunshinewzy.shining.api.lang.node.ISectionNode
+import io.github.sunshinewzy.shining.api.lang.node.ITextNode
 import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.addon.ShiningAddon
-import io.github.sunshinewzy.shining.core.lang.node.ListNode
-import io.github.sunshinewzy.shining.core.lang.node.SectionNode
-import io.github.sunshinewzy.shining.core.lang.node.TextNode
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.module.chat.colored
@@ -32,13 +32,13 @@ fun NamespacedId.getLanguageNode(prefix: String = "", locale: String = language)
 fun getDefaultLanguageNode(node: String): LanguageNode? =
     ShiningLanguageManager.getLanguageNode(language, node)
 
-fun getDefaultLangTextNode(node: String): TextNode? =
+fun getDefaultLangTextNode(node: String): ITextNode? =
     ShiningLanguageManager.getLangTextNode(language, node)
 
-fun getDefaultLangListNode(node: String): ListNode? =
+fun getDefaultLangListNode(node: String): IListNode? =
     ShiningLanguageManager.getLangListNode(language, node)
 
-fun getDefaultLangSectionNode(node: String): SectionNode? =
+fun getDefaultLangSectionNode(node: String): ISectionNode? =
     ShiningLanguageManager.getLangSectionNode(language, node)
 
 fun getDefaultLangTextOrNull(node: String): String? =
@@ -57,13 +57,13 @@ fun getDefaultLangText(node: String, vararg args: String?): String =
 fun getDefaultLanguageNode(addon: ShiningAddon, node: String): LanguageNode? =
     ShiningLanguageManager.getAddonLanguageManager(addon)?.getLanguageNode(language, node)
 
-fun getDefaultLangTextNode(addon: ShiningAddon, node: String): TextNode? =
+fun getDefaultLangTextNode(addon: ShiningAddon, node: String): ITextNode? =
     ShiningLanguageManager.getAddonLanguageManager(addon)?.getLangTextNode(language, node)
 
-fun getDefaultLangListNode(addon: ShiningAddon, node: String): ListNode? =
+fun getDefaultLangListNode(addon: ShiningAddon, node: String): IListNode? =
     ShiningLanguageManager.getAddonLanguageManager(addon)?.getLangListNode(language, node)
 
-fun getDefaultLangSectionNode(addon: ShiningAddon, node: String): SectionNode? =
+fun getDefaultLangSectionNode(addon: ShiningAddon, node: String): ISectionNode? =
     ShiningLanguageManager.getAddonLanguageManager(addon)?.getLangSectionNode(language, node)
 
 fun getDefaultLangTextOrNull(addon: ShiningAddon, node: String): String? =
@@ -87,13 +87,13 @@ fun CommandSender.getLocale(): String =
 fun CommandSender.getLanguageNode(node: String): LanguageNode? =
     ShiningLanguageManager.getLanguageNode(getLocale(), node)
 
-fun CommandSender.getLangTextNode(node: String): TextNode? =
+fun CommandSender.getLangTextNode(node: String): ITextNode? =
     ShiningLanguageManager.getLangTextNode(getLocale(), node)
 
-fun CommandSender.getLangListNode(node: String): ListNode? =
+fun CommandSender.getLangListNode(node: String): IListNode? =
     ShiningLanguageManager.getLangListNode(getLocale(), node)
 
-fun CommandSender.getLangSectionNode(node: String): SectionNode? =
+fun CommandSender.getLangSectionNode(node: String): ISectionNode? =
     ShiningLanguageManager.getLangSectionNode(getLocale(), node)
 
 fun CommandSender.getLangTextOrNull(node: String): String? =
@@ -136,13 +136,13 @@ fun CommandSender.sendPrefixedLangText(node: String, prefix: String = Shining.pr
 fun CommandSender.getLanguageNode(addon: ShiningAddon, node: String): LanguageNode? =
     ShiningLanguageManager.getAddonLanguageManager(addon)?.getLanguageNode(getLocale(), node)
 
-fun CommandSender.getLangTextNode(addon: ShiningAddon, node: String): TextNode? =
+fun CommandSender.getLangTextNode(addon: ShiningAddon, node: String): ITextNode? =
     ShiningLanguageManager.getAddonLanguageManager(addon)?.getLangTextNode(getLocale(), node)
 
-fun CommandSender.getLangListNode(addon: ShiningAddon, node: String): ListNode? =
+fun CommandSender.getLangListNode(addon: ShiningAddon, node: String): IListNode? =
     ShiningLanguageManager.getAddonLanguageManager(addon)?.getLangListNode(getLocale(), node)
 
-fun CommandSender.getLangSectionNode(addon: ShiningAddon, node: String): SectionNode? =
+fun CommandSender.getLangSectionNode(addon: ShiningAddon, node: String): ISectionNode? =
     ShiningLanguageManager.getAddonLanguageManager(addon)?.getLangSectionNode(getLocale(), node)
 
 fun CommandSender.getLangTextOrNull(addon: ShiningAddon, node: String): String? =

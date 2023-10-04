@@ -8,6 +8,8 @@ import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementContainerState
 import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.api.objects.coordinate.Coordinate2D
+import io.github.sunshinewzy.shining.api.objects.coordinate.Rectangle
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
 import io.github.sunshinewzy.shining.core.editor.chat.type.TextMap
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
@@ -22,8 +24,6 @@ import io.github.sunshinewzy.shining.core.menu.onBack
 import io.github.sunshinewzy.shining.core.menu.onBuildEdge
 import io.github.sunshinewzy.shining.core.menu.openDeleteConfirmMenu
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
-import io.github.sunshinewzy.shining.objects.coordinate.Coordinate2D
-import io.github.sunshinewzy.shining.objects.coordinate.Rectangle
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.getDisplayName
 import io.github.sunshinewzy.shining.utils.orderWith

@@ -33,7 +33,7 @@ taboolib {
     options(
         "skip-kotlin-relocate",
         "enable-isolated-classloader",
-//        "keep-kotlin-module"
+        "keep-kotlin-module"
     )
     
 //    relocate("com.zaxxer.hikari.", "com.zaxxer.hikari_4_0_3.")

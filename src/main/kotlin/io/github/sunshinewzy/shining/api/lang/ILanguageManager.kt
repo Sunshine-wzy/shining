@@ -1,11 +1,10 @@
 package io.github.sunshinewzy.shining.api.lang
 
 import io.github.sunshinewzy.shining.api.ShiningConfig
+import io.github.sunshinewzy.shining.api.lang.node.IListNode
+import io.github.sunshinewzy.shining.api.lang.node.ISectionNode
+import io.github.sunshinewzy.shining.api.lang.node.ITextNode
 import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
-import io.github.sunshinewzy.shining.core.lang.LanguageFile
-import io.github.sunshinewzy.shining.core.lang.node.ListNode
-import io.github.sunshinewzy.shining.core.lang.node.SectionNode
-import io.github.sunshinewzy.shining.core.lang.node.TextNode
 
 interface ILanguageManager {
 
@@ -22,19 +21,19 @@ interface ILanguageManager {
             it.nodeMap[node]
         }
 
-    fun getLangTextNode(locale: String, node: String): TextNode? =
+    fun getLangTextNode(locale: String, node: String): ITextNode? =
         getLanguageNode(locale, node)?.let {
-            it as? TextNode
+            it as? ITextNode
         }
 
-    fun getLangListNode(locale: String, node: String): ListNode? =
+    fun getLangListNode(locale: String, node: String): IListNode? =
         getLanguageNode(locale, node)?.let {
-            it as? ListNode
+            it as? IListNode
         }
 
-    fun getLangSectionNode(locale: String, node: String): SectionNode? =
+    fun getLangSectionNode(locale: String, node: String): ISectionNode? =
         getLanguageNode(locale, node)?.let {
-            it as? SectionNode
+            it as? ISectionNode
         }
 
     fun getLangTextOrNull(locale: String, node: String): String? =

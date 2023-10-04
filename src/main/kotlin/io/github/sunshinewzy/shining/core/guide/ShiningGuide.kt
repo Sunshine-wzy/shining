@@ -5,7 +5,7 @@ import io.github.sunshinewzy.shining.api.dictionary.IDictionaryItem
 import io.github.sunshinewzy.shining.api.dictionary.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.api.event.guide.ShiningGuideOpenEvent
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
-import io.github.sunshinewzy.shining.api.guide.context.EmptyGuideContext
+import io.github.sunshinewzy.shining.api.guide.IShiningGuide
 import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.team.CompletedGuideTeam
@@ -35,7 +35,6 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import taboolib.common.platform.function.info
 import taboolib.common.platform.function.submit
 import taboolib.module.ui.ClickEvent
 import taboolib.platform.util.isAir
@@ -45,7 +44,7 @@ object ShiningGuide : GuideCategory(
     NamespacedId(Shining, "shining_guide"),
     ElementDescription(getDefaultLangText("item-shining-shining_guide")),
     ItemStack(Material.ENCHANTED_BOOK)
-) {
+), IShiningGuide {
     private val guideItem: IDictionaryItem = NamespacedId(Shining, "shining_guide").let { id ->
         DictionaryRegistry.registerItem(
             id, LocalizedItem(Material.ENCHANTED_BOOK, id),
@@ -93,8 +92,7 @@ object ShiningGuide : GuideCategory(
     val slotOrders: List<Int> = ((1 orderWith 2)..(8 orderWith 5)).toList()
 
     
-    fun init() {
-        info(guideItem.hasName())
+    override fun reload() {
         GuideElementRegistry.getState(getId())?.let { 
             update(it, true)
         } ?: kotlin.run { 
@@ -105,8 +103,7 @@ object ShiningGuide : GuideCategory(
     }
     
 
-    @JvmOverloads
-    fun openMainMenu(player: Player, context: GuideContext = EmptyGuideContext) {
+    override fun openMainMenu(player: Player, context: GuideContext) {
         if (!ShiningGuideOpenEvent(player, context, false).call()) return
         
         ShiningDispatchers.launchDB {
@@ -123,8 +120,7 @@ object ShiningGuide : GuideCategory(
         }
     }
 
-    @JvmOverloads
-    fun openMainMenu(player: Player, team: IGuideTeam, context: GuideContext = EmptyGuideContext) {
+    override fun openMainMenu(player: Player, team: IGuideTeam, context: GuideContext) {
         playerLastOpenElementMap -= player.uniqueId
         soundOpen.playSound(player)
 
@@ -135,8 +131,7 @@ object ShiningGuide : GuideCategory(
         openMenu(player, team, ctxt)
     }
 
-    @JvmOverloads
-    fun openLastElement(player: Player, context: GuideContext = EmptyGuideContext) {
+    override fun openLastElement(player: Player, context: GuideContext) {
         if (!ShiningGuideOpenEvent(player, context, true).call()) return
         
         ShiningDispatchers.launchDB {
@@ -153,8 +148,7 @@ object ShiningGuide : GuideCategory(
         }
     }
 
-    @JvmOverloads
-    fun openLastElement(player: Player, team: IGuideTeam, context: GuideContext = EmptyGuideContext) {
+    override fun openLastElement(player: Player, team: IGuideTeam, context: GuideContext) {
         playerLastOpenElementMap[player.uniqueId]?.let {
             var ctxt = context
             if (ctxt[GuideEditModeContext] == null && ShiningGuideEditor.isEditModeEnabled(player)) {
@@ -167,8 +161,7 @@ object ShiningGuide : GuideCategory(
         openMainMenu(player, team, context)
     }
 
-    @JvmOverloads
-    fun openCompletedMainMenu(player: Player, context: GuideContext = EmptyGuideContext) {
+    override fun openCompletedMainMenu(player: Player, context: GuideContext) {
         playerLastOpenElementMap -= player.uniqueId
         soundOpen.playSound(player)
 
@@ -179,8 +172,7 @@ object ShiningGuide : GuideCategory(
         openMainMenu(player, CompletedGuideTeam.getInstance(), ctxt)
     }
 
-    @JvmOverloads
-    fun openCompletedLastElement(player: Player, context: GuideContext = EmptyGuideContext) {
+    override fun openCompletedLastElement(player: Player, context: GuideContext) {
         playerLastOpenElementMap[player.uniqueId]?.let {
             var ctxt = context
             if (ctxt[GuideEditModeContext] == null) {
@@ -193,32 +185,21 @@ object ShiningGuide : GuideCategory(
         openCompletedMainMenu(player, context)
     }
 
-    fun recordLastOpenElement(uuid: UUID, element: IGuideElement) {
+    override fun recordLastOpenElement(uuid: UUID, element: IGuideElement) {
         playerLastOpenElementMap[uuid] = element
     }
     
-    fun recordLastOpenElement(player: Player, element: IGuideElement) {
-        recordLastOpenElement(player.uniqueId, element)
-    }
-    
-    fun recordElementAdditionalContext(uuid: UUID, element: IGuideElement, context: GuideContext) {
+    override fun recordElementAdditionalContext(uuid: UUID, element: IGuideElement, context: GuideContext) {
         val map = playerElementAdditionalContextMap.getOrPut(uuid) { HashMap() }
         map[element.getId()] = context
     }
     
-    fun recordElementAdditionalContext(player: Player, element: IGuideElement, context: GuideContext) {
-        recordElementAdditionalContext(player.uniqueId, element, context)
-    }
-    
-    fun getElementAdditionalContext(uuid: UUID, element: IGuideElement): GuideContext? {
+    override fun getElementAdditionalContext(uuid: UUID, element: IGuideElement): GuideContext? {
         val map = playerElementAdditionalContextMap[uuid] ?: return null
         return map[element.getId()]
     }
-    
-    fun getElementAdditionalContext(player: Player, element: IGuideElement): GuideContext? =
-        getElementAdditionalContext(player.uniqueId, element)
 
-    fun fireworkCongratulate(player: Player) {
+    override fun fireworkCongratulate(player: Player) {
         val firework = player.world.spawnEntity(player.location, EntityType.FIREWORK) as Firework
         val meta = firework.fireworkMeta
         meta.addEffect(
@@ -229,7 +210,7 @@ object ShiningGuide : GuideCategory(
         firework.fireworkMeta = meta
     }
 
-    fun getItem(): ItemStack = guideItem.getItemStack()
+    override fun getItemStack(): ItemStack = guideItem.getItemStack()
     
     fun isClickEmptySlot(event: ClickEvent): Boolean =
         event.rawSlot in slotOrders && event.currentItem.isAir()

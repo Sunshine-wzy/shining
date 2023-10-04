@@ -9,6 +9,7 @@ import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.lang.item.ILanguageItem
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.api.objects.SPair
 import io.github.sunshinewzy.shining.core.guide.context.AbstractGuideContextElement
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditModeContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
@@ -92,7 +93,7 @@ object ShiningGuideEditor {
     }
     
     fun openCreateNewStateEditor(player: Player, context: GuideContext, elementContainer: IGuideElementContainer?, elementContainerState: IGuideElementContainerState?) {
-        player.openMultiPageMenu<Pair<Class<out IGuideElementState>, ILanguageItem>>(player.getLangText("menu-shining_guide-editor-create_new_state-title")) { 
+        player.openMultiPageMenu<SPair<Class<out IGuideElementState>, ILanguageItem>>(player.getLangText("menu-shining_guide-editor-create_new_state-title")) { 
             elements { GuideElementStateRegistry.getRegisteredClassPairList() }
             
             onGenerate { _, element, _, _ -> 

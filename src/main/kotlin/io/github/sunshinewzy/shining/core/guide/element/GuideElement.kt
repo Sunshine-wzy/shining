@@ -31,6 +31,7 @@ import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
 import io.github.sunshinewzy.shining.utils.sendMsg
 import io.github.sunshinewzy.shining.utils.setNameAndLore
+import io.github.sunshinewzy.shining.utils.setOnItem
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player

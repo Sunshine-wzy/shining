@@ -1,6 +1,6 @@
 package io.github.sunshinewzy.shining.core.data
 
-import io.github.sunshinewzy.shining.utils.Coerce
+import io.github.sunshinewzy.shining.api.utils.Coerce
 import java.util.concurrent.ConcurrentHashMap
 
 open class Data : IData {

@@ -2,16 +2,17 @@ package io.github.sunshinewzy.shining.api.guide.state
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import io.github.sunshinewzy.shining.api.ShiningAPIProvider
 import io.github.sunshinewzy.shining.api.guide.context.EmptyGuideContext
 import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
+import io.github.sunshinewzy.shining.api.guide.element.IGuideElementRegistry
 import io.github.sunshinewzy.shining.api.guide.lock.IElementLock
 import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.guide.settings.RepeatableSettings
 import io.github.sunshinewzy.shining.api.guide.team.CompletedGuideTeam
 import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -59,11 +60,11 @@ interface IGuideElementState : Cloneable {
     fun toElement(): IGuideElement
     
     /**
-     * Gets the element by [id] from [GuideElementRegistry].
+     * Gets the element by [id] from [IGuideElementRegistry].
      */
     @JsonIgnore
     fun getElementById(): IGuideElement? = id?.let {
-        GuideElementRegistry.getElement(it)
+        ShiningAPIProvider.api().getGuideElementRegistry().getElement(it)
     }
 
     /**

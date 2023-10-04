@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.core.machine
+package io.github.sunshinewzy.shining.api.machine
 
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 

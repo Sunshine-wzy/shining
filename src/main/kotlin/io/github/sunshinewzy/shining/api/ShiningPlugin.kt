@@ -1,4 +1,6 @@
-package io.github.sunshinewzy.shining.api.namespace
+package io.github.sunshinewzy.shining.api
+
+import io.github.sunshinewzy.shining.api.namespace.Namespace
 
 interface ShiningPlugin {
 

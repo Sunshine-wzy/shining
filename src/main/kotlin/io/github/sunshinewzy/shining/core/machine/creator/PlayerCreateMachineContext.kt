@@ -1,8 +1,8 @@
 package io.github.sunshinewzy.shining.core.machine.creator
 
+import io.github.sunshinewzy.shining.api.objects.position.Position3D
 import io.github.sunshinewzy.shining.core.effect.EdgeCube
 import io.github.sunshinewzy.shining.core.effect.SParticle
-import io.github.sunshinewzy.shining.objects.SPosition
 import org.bukkit.Particle
 import org.bukkit.entity.Player
 import taboolib.common.util.Location
@@ -12,8 +12,8 @@ import taboolib.platform.util.toProxyLocation
 
 class PlayerCreateMachineContext(
     var status: Status = Status.SELECT_LEFT,
-    var leftPosition: SPosition? = null,
-    var rightPosition: SPosition? = null
+    var leftPosition: Position3D? = null,
+    var rightPosition: Position3D? = null
 ) {
 
 

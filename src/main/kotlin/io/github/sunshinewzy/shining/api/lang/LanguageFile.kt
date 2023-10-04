@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.core.lang
+package io.github.sunshinewzy.shining.api.lang
 
 import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
 import java.io.File

@@ -2,6 +2,7 @@ package io.github.sunshinewzy.shining.utils
 
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.Itemable
+import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
 import io.github.sunshinewzy.shining.core.lang.formatArgs
 import io.github.sunshinewzy.shining.core.lang.getLangText
@@ -283,3 +284,6 @@ fun ItemStack.setShiningNBT(action: (ItemTag) -> Unit): ItemStack {
     tag[Shining.NAME] = shiningTag
     return setItemTag(tag)
 }
+
+fun ElementDescription.setOnItem(item: ItemStack): ItemStack =
+    item.setNameAndLore(name, lore)

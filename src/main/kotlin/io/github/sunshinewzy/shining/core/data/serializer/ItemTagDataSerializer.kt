@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.ValueNode
 import com.fasterxml.jackson.databind.ser.std.StdSerializer
-import io.github.sunshinewzy.shining.utils.Coerce
+import io.github.sunshinewzy.shining.api.utils.Coerce
 import taboolib.module.nms.ItemTag
 import taboolib.module.nms.ItemTagData
 import taboolib.module.nms.ItemTagList

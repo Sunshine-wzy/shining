@@ -11,8 +11,7 @@ public class ShiningIsolatedClassLoaderConfig implements IsolatedClassLoaderConf
 	public Set<String> excludedPackages() {
 		HashSet<String> packages = new HashSet<>();
 		packages.add("com.fasterxml.jackson.annotation.");
-		packages.add("io.github.sunshinewzy.shining.api.namespace.");
-		packages.add("io.github.sunshinewzy.shining.api.dictionary.");
+		packages.add("io.github.sunshinewzy.shining.api.");
 		return packages;
 	}
 	

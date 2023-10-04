@@ -3,8 +3,8 @@ package io.github.sunshinewzy.shining.core.machine
 import io.github.sunshinewzy.shining.api.machine.IMachine
 import io.github.sunshinewzy.shining.api.machine.IMachineManager
 import io.github.sunshinewzy.shining.api.machine.IMachineRegistrationProcessor
-import io.github.sunshinewzy.shining.objects.SPosition
-import io.github.sunshinewzy.shining.objects.SPosition.Companion.position
+import io.github.sunshinewzy.shining.api.objects.position.Position3D
+import io.github.sunshinewzy.shining.utils.position3D
 import org.bukkit.Location
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
@@ -14,23 +14,23 @@ import java.util.concurrent.ConcurrentHashMap
 
 object MachineManager : IMachineManager {
     private val registeredProcessors = ConcurrentHashMap.newKeySet<IMachineRegistrationProcessor>()
-    private val activeMachineMap: MutableMap<SPosition, IMachine> = ConcurrentHashMap()
+    private val activeMachineMap: MutableMap<Position3D, IMachine> = ConcurrentHashMap()
 
-    val SPosition.machine: IMachine?
+    val Position3D.machine: IMachine?
         get() = activeMachineMap[this]
     val Location.machine: IMachine?
-        get() = position.machine
+        get() = position3D.machine
 
 
-    override fun activate(location: SPosition, machine: IMachine) {
+    override fun activate(location: Position3D, machine: IMachine) {
         activeMachineMap[location] = machine
     }
 
-    override fun deactivate(location: SPosition) {
+    override fun deactivate(location: Position3D) {
         activeMachineMap -= location
     }
 
-    override fun run(location: SPosition) {
+    override fun run(location: Position3D) {
         activeMachineMap[location]?.run()
     }
 

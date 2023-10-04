@@ -7,12 +7,13 @@ import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import io.github.sunshinewzy.shining.api.IShiningAPI
 import io.github.sunshinewzy.shining.api.ShiningAPIProvider
+import io.github.sunshinewzy.shining.api.ShiningPlugin
 import io.github.sunshinewzy.shining.api.event.ShiningDataLoadingCompleteEvent
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.machine.IMachineManager
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.api.namespace.ShiningPlugin
+import io.github.sunshinewzy.shining.api.objects.coordinate.Coordinate2D
 import io.github.sunshinewzy.shining.commands.CommandGuide
 import io.github.sunshinewzy.shining.core.ShiningAPI
 import io.github.sunshinewzy.shining.core.addon.ShiningAddonRegistry
@@ -46,7 +47,6 @@ import io.github.sunshinewzy.shining.core.task.TaskProgress
 import io.github.sunshinewzy.shining.listeners.SunSTSubscriber
 import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
-import io.github.sunshinewzy.shining.objects.coordinate.Coordinate2D
 import io.github.sunshinewzy.shining.objects.legacy.SBlock
 import io.github.sunshinewzy.shining.objects.machine.SunSTMachineManager
 import io.github.sunshinewzy.shining.utils.SReflect
@@ -182,7 +182,7 @@ object Shining : Plugin(), ShiningPlugin {
             GuideElementRegistry.init()
             
             submit {
-                ShiningGuide.init()
+                ShiningGuide.reload()
                 
                 pluginManager.callEvent(ShiningDataLoadingCompleteEvent())
             }
@@ -350,7 +350,7 @@ object Shining : Plugin(), ShiningPlugin {
                 val item = event.player.inventory.itemInMainHand
                 when (item.type) {
                     Material.DIAMOND -> {
-                        event.player.giveItem(ShiningGuide.getItem())
+                        event.player.giveItem(ShiningGuide.getItemStack())
                     }
 
                     Material.EMERALD -> {

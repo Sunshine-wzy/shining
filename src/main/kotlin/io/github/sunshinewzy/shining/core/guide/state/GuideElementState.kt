@@ -14,6 +14,7 @@ import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.lang.item.ILanguageItem
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.api.objects.SPair
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
 import io.github.sunshinewzy.shining.core.editor.chat.type.Item
 import io.github.sunshinewzy.shining.core.editor.chat.type.Text
@@ -557,7 +558,7 @@ abstract class GuideElementState : IGuideElementState {
     }
     
     fun openCreateNewRewardEditor(player: Player, team: IGuideTeam, context: GuideContext) {
-        player.openMultiPageMenu<Pair<Class<out IGuideReward>, ILanguageItem>>(player.getLangText("menu-shining_guide-editor-state-basic-rewards-create-title")) { 
+        player.openMultiPageMenu<SPair<Class<out IGuideReward>, ILanguageItem>>(player.getLangText("menu-shining_guide-editor-state-basic-rewards-create-title")) { 
             elements { GuideRewardRegistry.getRegisteredClassPairList() }
             
             onGenerate { _, element, _, _ -> 

@@ -4,6 +4,7 @@ import io.github.sunshinewzy.shining.api.AbstractClassRegistry
 import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.item.universal.UniversalItem
 import io.github.sunshinewzy.shining.api.lang.item.ILanguageItem
+import io.github.sunshinewzy.shining.api.objects.SPair
 import io.github.sunshinewzy.shining.core.guide.context.AbstractGuideContextElement
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.lang.getLangText
@@ -14,7 +15,7 @@ import org.bukkit.entity.Player
 object UniversalItemRegistry : AbstractClassRegistry<UniversalItem>() {
     
     fun openCreator(player: Player, context: GuideContext) {
-        player.openMultiPageMenu<Pair<Class<out UniversalItem>, ILanguageItem>>(player.getLangText("menu-item-universal-creator-title")) { 
+        player.openMultiPageMenu<SPair<Class<out UniversalItem>, ILanguageItem>>(player.getLangText("menu-item-universal-creator-title")) { 
             elements { getRegisteredClassPairList() }
             
             onGenerate { _, element, _, _ -> 

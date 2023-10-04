@@ -2,8 +2,8 @@ package io.github.sunshinewzy.shining.core.machine.creator
 
 import io.github.sunshinewzy.shining.core.machine.creator.PlayerCreateMachineContext.Status
 import io.github.sunshinewzy.shining.objects.SItem
-import io.github.sunshinewzy.shining.objects.SPosition.Companion.position
 import io.github.sunshinewzy.shining.utils.isClickBlock
+import io.github.sunshinewzy.shining.utils.position3D
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.block.Action
@@ -60,10 +60,10 @@ object MachineCreator {
             val status = context.status
 
             if (status == Status.SELECT_LEFT && event.action == Action.LEFT_CLICK_BLOCK) {
-                context.leftPosition = block.location.position
+                context.leftPosition = block.location.position3D
                 context.checkSelect()
             } else if (status == Status.SELECT_RIGHT && event.action == Action.RIGHT_CLICK_BLOCK) {
-                context.rightPosition = block.location.position
+                context.rightPosition = block.location.position3D
                 context.checkSelect()
             }
 

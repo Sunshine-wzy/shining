@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.shining.utils
 
+import io.github.sunshinewzy.shining.api.objects.coordinate.Coordinate2D
 import io.github.sunshinewzy.shining.objects.SFlatCoord
-import io.github.sunshinewzy.shining.objects.coordinate.Coordinate2D
 
 object OrderUtils {
     

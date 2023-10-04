@@ -35,7 +35,7 @@ object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
                 element.update(state, true)
             }
         }
-        ShiningGuide.init()
+        ShiningGuide.reload()
     }
 
     override fun reloadFuture(): CompletableFuture<Boolean> =

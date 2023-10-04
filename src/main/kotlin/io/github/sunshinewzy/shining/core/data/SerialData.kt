@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonEncoding
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
-import io.github.sunshinewzy.shining.utils.Coerce
+import io.github.sunshinewzy.shining.api.utils.Coerce
 import io.github.sunshinewzy.shining.utils.asPrimitiveOrNull
 import io.github.sunshinewzy.shining.utils.putPrimitive
 import io.github.sunshinewzy.shining.utils.writePrimitiveField

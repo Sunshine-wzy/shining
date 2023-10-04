@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package io.github.sunshinewzy.shining.utils;
+package io.github.sunshinewzy.shining.api.utils;
 
 import com.google.common.collect.Lists;
 import com.google.common.primitives.*;

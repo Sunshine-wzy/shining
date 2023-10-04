@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.objects.coordinate
+package io.github.sunshinewzy.shining.api.objects.coordinate
 
 data class Rectangle(val first: Coordinate2D, val second: Coordinate2D) {
     

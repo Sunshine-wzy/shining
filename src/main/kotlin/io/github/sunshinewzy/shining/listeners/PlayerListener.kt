@@ -19,7 +19,7 @@ object PlayerListener {
         player.setupDataContainer()
 
         if (!player.hasPlayedBefore()) {
-            player.giveItem(ShiningGuide.getItem())
+            player.giveItem(ShiningGuide.getItemStack())
         } else {
             player.letGuideTeam { team ->
                 if (player.uniqueId == team.captain) {

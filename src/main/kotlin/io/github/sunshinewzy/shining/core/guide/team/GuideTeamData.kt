@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.core.guide.team
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.team.IGuideTeamData
@@ -8,9 +9,11 @@ import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 
 class GuideTeamData : IGuideTeamData {
-    
+    @JsonProperty
     private val elementConditionMap: MutableMap<NamespacedId, ElementCondition> = HashMap()
+    @JsonProperty
     private var lastCompletedElementId: NamespacedId = NamespacedId.NULL
+    @JsonProperty
     private val elementRepeatablePeriodMap: MutableMap<NamespacedId, Long> = HashMap()
 
 

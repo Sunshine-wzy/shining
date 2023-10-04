@@ -3,6 +3,7 @@ package io.github.sunshinewzy.shining.api.namespace;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.base.Preconditions;
+import io.github.sunshinewzy.shining.api.ShiningPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

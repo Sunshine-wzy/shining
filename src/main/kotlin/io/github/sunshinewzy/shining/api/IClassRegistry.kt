@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.api
 
 import io.github.sunshinewzy.shining.api.lang.item.ILanguageItem
+import io.github.sunshinewzy.shining.api.objects.SPair
 
 interface IClassRegistry<T> {
     
@@ -10,6 +11,6 @@ interface IClassRegistry<T> {
     
     fun getRegisteredClassMap(): Map<Class<out T>, ILanguageItem>
     
-    fun getRegisteredClassPairList(): List<Pair<Class<out T>, ILanguageItem>>
-    
+    fun getRegisteredClassPairList(): List<SPair<Class<out T>, ILanguageItem>>
+
 }
