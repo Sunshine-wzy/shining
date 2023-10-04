@@ -5,19 +5,16 @@ import com.fasterxml.jackson.databind.type.TypeFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
+import io.github.sunshinewzy.shining.api.IShiningAPI
+import io.github.sunshinewzy.shining.api.ShiningAPIProvider
 import io.github.sunshinewzy.shining.api.event.ShiningDataLoadingCompleteEvent
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
-import io.github.sunshinewzy.shining.api.guide.reward.GuideRewardRegistry
-import io.github.sunshinewzy.shining.api.guide.state.GuideElementStateRegistry
-import io.github.sunshinewzy.shining.api.item.ConsumableItemGroup
-import io.github.sunshinewzy.shining.api.item.universal.DictionaryUniversalItem
-import io.github.sunshinewzy.shining.api.item.universal.UniversalItemRegistry
-import io.github.sunshinewzy.shining.api.item.universal.VanillaUniversalItem
 import io.github.sunshinewzy.shining.api.machine.IMachineManager
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.api.namespace.ShiningPlugin
 import io.github.sunshinewzy.shining.commands.CommandGuide
+import io.github.sunshinewzy.shining.core.ShiningAPI
 import io.github.sunshinewzy.shining.core.addon.ShiningAddonRegistry
 import io.github.sunshinewzy.shining.core.data.DataManager
 import io.github.sunshinewzy.shining.core.data.SerializationModules
@@ -31,9 +28,15 @@ import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
 import io.github.sunshinewzy.shining.core.guide.reward.GuideRewardCommand
 import io.github.sunshinewzy.shining.core.guide.reward.GuideRewardItem
+import io.github.sunshinewzy.shining.core.guide.reward.GuideRewardRegistry
 import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
+import io.github.sunshinewzy.shining.core.guide.state.GuideElementStateRegistry
 import io.github.sunshinewzy.shining.core.guide.state.GuideItemState
 import io.github.sunshinewzy.shining.core.guide.state.GuideMapState
+import io.github.sunshinewzy.shining.core.item.ConsumableItemGroup
+import io.github.sunshinewzy.shining.core.item.universal.DictionaryUniversalItem
+import io.github.sunshinewzy.shining.core.item.universal.UniversalItemRegistry
+import io.github.sunshinewzy.shining.core.item.universal.VanillaUniversalItem
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.machine.MachineManager
 import io.github.sunshinewzy.shining.core.machine.legacy.*
@@ -63,6 +66,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.permissions.Permission
 import org.bukkit.permissions.PermissionDefault
 import org.bukkit.plugin.PluginManager
+import org.bukkit.plugin.ServicePriority
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
 import taboolib.common.env.RuntimeDependencies
@@ -91,6 +95,7 @@ import taboolib.platform.BukkitPlugin
     RuntimeDependency(value = "!com.zaxxer:HikariCP:4.0.3", isolated = true)
 )
 object Shining : Plugin(), ShiningPlugin {
+    
     const val NAME = "shining"
     const val COLOR_NAME = "§eshining"
 
@@ -155,6 +160,11 @@ object Shining : Plugin(), ShiningPlugin {
     
 
     private fun init() {
+        // Initialize API
+        val api = ShiningAPI()
+        ShiningAPIProvider.api = api
+        Bukkit.getServicesManager().register(IShiningAPI::class.java, api, plugin, ServicePriority.Normal)
+        
         registerSerialization()
         registerClasses()
         registerListeners()
@@ -310,7 +320,8 @@ object Shining : Plugin(), ShiningPlugin {
                 ItemStack(Material.IRON_INGOT),
                 ConsumableItemGroup(true, VanillaUniversalItem(
                     SItem(Material.IRON_INGOT, "&7钢锭")
-                ))
+                )
+                )
             )
             electricityAge.registerElement(steelItem, Coordinate2D.ORIGIN)
             val steelBlockItem = GuideItem(
@@ -319,7 +330,8 @@ object Shining : Plugin(), ShiningPlugin {
                 ItemStack(Material.IRON_BLOCK),
                 ConsumableItemGroup(false, VanillaUniversalItem(
                     SItem(Material.IRON_BLOCK, "&7钢块")
-                ))
+                )
+                )
             )
             electricityAge.registerElement(steelBlockItem, Coordinate2D(1, 0))
             

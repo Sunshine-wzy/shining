@@ -1,11 +1,11 @@
 package io.github.sunshinewzy.shining.core.lang.node
 
-import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
+import io.github.sunshinewzy.shining.api.lang.node.ITextNode
 import io.github.sunshinewzy.shining.core.lang.formatArgs
 
-class TextNode(val text: String) : LanguageNode {
+class TextNode(override val text: String) : ITextNode {
 
-    fun format(vararg args: String?): String {
+    override fun format(vararg args: Any?): String {
         return text.formatArgs(*args)
     }
 

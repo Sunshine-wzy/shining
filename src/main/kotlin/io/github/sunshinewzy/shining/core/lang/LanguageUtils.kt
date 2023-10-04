@@ -188,8 +188,9 @@ fun CommandSender.sendPrefixedLangText(
         true
     } ?: false
 
+private val argRegex = Regex("\\{[0-9]+}")
 
-fun String.formatArgs(vararg args: String?): String {
+fun String.formatArgs(vararg args: Any?): String {
     val text = this
     var flag = true
     for (str in args) {
@@ -200,13 +201,13 @@ fun String.formatArgs(vararg args: String?): String {
     }
     if (flag) return this
 
-    val list = LanguageNode.argRegex.findAll(text).toList()
+    val list = argRegex.findAll(text).toList()
     if (list.isEmpty()) return text
 
     val map = TreeMap<Int, Pair<Int, String>>()
     list.forEach { res ->
         args.getOrNull(res.value.substring(1, res.value.lastIndex).toInt())?.let {
-            map[res.range.first] = res.range.last to it
+            map[res.range.first] = res.range.last to it.toString()
         }
     }
 

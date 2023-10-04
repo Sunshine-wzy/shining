@@ -5,11 +5,11 @@ import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.item.universal.UniversalItem
-import io.github.sunshinewzy.shining.api.item.universal.UniversalItemRegistry
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.commands.CommandGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
+import io.github.sunshinewzy.shining.core.item.universal.UniversalItemRegistry
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.onBack

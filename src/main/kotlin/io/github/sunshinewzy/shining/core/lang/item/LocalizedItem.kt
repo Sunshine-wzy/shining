@@ -1,18 +1,16 @@
 package io.github.sunshinewzy.shining.core.lang.item
 
+import io.github.sunshinewzy.shining.api.lang.item.ILocalizedItem
 import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.lang.LanguageNodePrefix.ITEM
 import io.github.sunshinewzy.shining.core.lang.getLanguageNode
-import io.github.sunshinewzy.shining.core.lang.node.ListNode
-import io.github.sunshinewzy.shining.core.lang.node.SectionNode
-import io.github.sunshinewzy.shining.core.lang.node.TextNode
 import io.github.sunshinewzy.shining.utils.localize
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import taboolib.platform.util.buildItem
 
-open class LocalizedItem(item: ItemStack, val languageNode: LanguageNode) : ItemStack(item) {
+open class LocalizedItem(item: ItemStack, final override val languageNode: LanguageNode) : ItemStack(item), ILocalizedItem {
 
     val shinyItem: ItemStack by lazy { buildItem(this) { shiny() } }
 
@@ -46,12 +44,6 @@ open class LocalizedItem(item: ItemStack, val languageNode: LanguageNode) : Item
         id.getLanguageNode(ITEM.prefix)
     )
 
-
-    fun getTextNode(): TextNode? = languageNode as? TextNode
-    fun getListNode(): ListNode? = languageNode as? ListNode
-    fun getSectionNode(): SectionNode? = languageNode as? SectionNode
-
-    fun getSectionString(path: String): String? =
-        getSectionNode()?.section?.getString(path)
-
+    override fun getItemStack(): ItemStack = this
+    
 }

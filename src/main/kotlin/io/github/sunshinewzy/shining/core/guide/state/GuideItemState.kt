@@ -2,9 +2,9 @@ package io.github.sunshinewzy.shining.core.guide.state
 
 import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
-import io.github.sunshinewzy.shining.api.item.ConsumableItemGroup
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.element.GuideItem
+import io.github.sunshinewzy.shining.core.item.ConsumableItemGroup
 import org.bukkit.entity.Player
 
 class GuideItemState : GuideElementState() {

@@ -1,19 +1,20 @@
 package io.github.sunshinewzy.shining.core.lang.node
 
+import io.github.sunshinewzy.shining.api.lang.node.IListNode
 import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
 import taboolib.module.chat.colored
 
-class ListNode(val list: List<LanguageNode>) : LanguageNode {
+class ListNode(override val list: List<LanguageNode>) : IListNode {
 
-    fun format(vararg args: String?): List<String> =
+    override fun format(vararg args: Any?): List<String> =
         list.filterIsInstance<TextNode>()
             .map { it.format(*args) }
 
-    fun getStringList(): List<String> =
+    override fun getStringList(): List<String> =
         list.filterIsInstance<TextNode>()
             .map { it.text }
 
-    fun getColoredStringList(): List<String> =
+    override fun getColoredStringList(): List<String> =
         list.filterIsInstance<TextNode>()
             .map { it.text.colored() }
 

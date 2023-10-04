@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.core.lang.item
 
+import io.github.sunshinewzy.shining.api.lang.item.INamespacedIdItem
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.lang.LanguageNodePrefix
 import io.github.sunshinewzy.shining.core.lang.getLanguageNode
@@ -10,8 +11,10 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.EnchantmentStorageMeta
 
-open class NamespacedIdItem(item: ItemStack, val id: NamespacedId) :
-    LanguageItem(item, { locale -> id.getLanguageNode(LanguageNodePrefix.ITEM.prefix, locale) }) {
+open class NamespacedIdItem(
+    item: ItemStack,
+    override val id: NamespacedId
+) : LanguageItem(item, { locale -> id.getLanguageNode(LanguageNodePrefix.ITEM.prefix, locale) }), INamespacedIdItem {
 
     constructor(item: ItemStack, amount: Int, id: NamespacedId) : this(item, id) {
         this.amount = amount

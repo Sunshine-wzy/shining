@@ -2,19 +2,23 @@ package io.github.sunshinewzy.shining.core.guide.element
 
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
+import io.github.sunshinewzy.shining.api.guide.element.IGuideElementRegistry
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.data.database.column.jackson
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
+import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
+import java.util.function.Supplier
 
-object GuideElementRegistry : LongIdTable() {
+object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
     
     val key = text("key").uniqueIndex()
     val element = jackson("element", Shining.objectMapper, IGuideElementState::class.java)
@@ -33,8 +37,14 @@ object GuideElementRegistry : LongIdTable() {
         }
         ShiningGuide.init()
     }
-    
-    fun <T: IGuideElement> register(element: T): T {
+
+    override fun reloadFuture(): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureDB { 
+            reload()
+            true
+        }
+
+    override fun <T: IGuideElement> register(element: T): T {
         val id = element.getId()
         getState(id)?.let { state ->
             element.update(state, true)
@@ -56,10 +66,16 @@ object GuideElementRegistry : LongIdTable() {
                 }
         }
     }
+
+    override fun initFuture(): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureDB { 
+            init()
+            true
+        }
     
-    fun getState(id: NamespacedId): IGuideElementState? = stateCache[id]
+    override fun getState(id: NamespacedId): IGuideElementState? = stateCache[id]
     
-    fun getElement(id: NamespacedId): IGuideElement? {
+    override fun getElement(id: NamespacedId): IGuideElement? {
         elementCache[id]?.let { return it }
         stateCache[id]?.let {
             val element = it.toElement()
@@ -70,7 +86,7 @@ object GuideElementRegistry : LongIdTable() {
     }
     
     @Suppress("UNCHECKED_CAST")
-    fun <T: IGuideElement> getElementByType(id: NamespacedId, type: Class<T>): T? {
+    override fun <T: IGuideElement> getElementByType(id: NamespacedId, type: Class<T>): T? {
         val theElement = getElement(id) ?: return null
         if (type.isInstance(theElement)) return theElement as T
         return null
@@ -82,15 +98,20 @@ object GuideElementRegistry : LongIdTable() {
         return null
     }
     
-    fun getElementOrDefault(id: NamespacedId, default: IGuideElement): IGuideElement =
+    override fun getElementOrDefault(id: NamespacedId, default: IGuideElement): IGuideElement =
         getElement(id) ?: default
     
-    fun getElementOrDefault(default: IGuideElement): IGuideElement =
+    override fun getElementOrDefault(default: IGuideElement): IGuideElement =
         getElementOrDefault(default.getId(), default)
     
-    fun getElementCache(): Map<NamespacedId, IGuideElement> = HashMap(elementCache)
+    override fun getElementCache(): Map<NamespacedId, IGuideElement> = HashMap(elementCache)
     
-    suspend fun saveElement(element: IGuideElement, isCheckExists: Boolean = false, checkId: NamespacedId = element.getId(), actionBeforeInsert: () -> Boolean = { true }): Boolean {
+    suspend fun saveElement(
+        element: IGuideElement,
+        isCheckExists: Boolean = false,
+        checkId: NamespacedId = element.getId(),
+        actionBeforeInsert: Supplier<Boolean> = Supplier { true }
+    ): Boolean {
         val oldId = element.getId()
         val existsCache = elementCache.containsKey(checkId)
         if (isCheckExists && existsCache)
@@ -101,7 +122,7 @@ object GuideElementRegistry : LongIdTable() {
             if (isCheckExists && existsDB)
                 return@transaction false
 
-            if (!actionBeforeInsert()) return@transaction false
+            if (!actionBeforeInsert.get()) return@transaction false
             
             if (existsDB) {
                 updateElement(element)
@@ -120,6 +141,14 @@ object GuideElementRegistry : LongIdTable() {
             true
         }
     }
+
+    override fun saveElementFuture(
+        element: IGuideElement,
+        isCheckExists: Boolean,
+        checkId: NamespacedId,
+        actionBeforeInsert: Supplier<Boolean>
+    ): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureDB { saveElement(element, isCheckExists, checkId, actionBeforeInsert) }
     
     suspend fun removeElement(element: IGuideElement) {
         val id = element.getId()
@@ -129,6 +158,12 @@ object GuideElementRegistry : LongIdTable() {
             deleteElement(id)
         }
     }
+
+    override fun removeElementFuture(element: IGuideElement): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureDB { 
+            removeElement(element)
+            true
+        }
     
     
     private fun insertElement(element: IGuideElement): EntityID<Long> =

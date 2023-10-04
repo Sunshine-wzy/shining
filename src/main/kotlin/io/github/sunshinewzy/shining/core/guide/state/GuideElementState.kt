@@ -6,12 +6,12 @@ import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
 import io.github.sunshinewzy.shining.api.guide.lock.IElementLock
-import io.github.sunshinewzy.shining.api.guide.reward.GuideRewardRegistry
 import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.guide.settings.RepeatableSettings
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.guide.team.CompletedGuideTeam
 import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
+import io.github.sunshinewzy.shining.api.lang.item.ILanguageItem
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
@@ -29,8 +29,8 @@ import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.element.IGuideElementSuspend
 import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
+import io.github.sunshinewzy.shining.core.guide.reward.GuideRewardRegistry
 import io.github.sunshinewzy.shining.core.lang.getLangText
-import io.github.sunshinewzy.shining.core.lang.item.LanguageItem
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
 import io.github.sunshinewzy.shining.core.menu.onBack
@@ -557,11 +557,11 @@ abstract class GuideElementState : IGuideElementState {
     }
     
     fun openCreateNewRewardEditor(player: Player, team: IGuideTeam, context: GuideContext) {
-        player.openMultiPageMenu<Pair<Class<out IGuideReward>, LanguageItem>>(player.getLangText("menu-shining_guide-editor-state-basic-rewards-create-title")) { 
+        player.openMultiPageMenu<Pair<Class<out IGuideReward>, ILanguageItem>>(player.getLangText("menu-shining_guide-editor-state-basic-rewards-create-title")) { 
             elements { GuideRewardRegistry.getRegisteredClassPairList() }
             
             onGenerate { _, element, _, _ -> 
-                element.second.toLocalizedItem(player)
+                element.second.toLocalizedItemStack(player)
             }
             
             onClick { _, element -> 

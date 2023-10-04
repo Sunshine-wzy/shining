@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.core.lang.item
 
 import io.github.sunshinewzy.shining.api.ShiningConfig
+import io.github.sunshinewzy.shining.api.lang.item.ILanguageItem
 import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
 import io.github.sunshinewzy.shining.core.lang.LanguageFileLoader
 import io.github.sunshinewzy.shining.core.lang.getLocale
@@ -14,8 +15,10 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.EnchantmentStorageMeta
 import java.util.concurrent.ConcurrentHashMap
 
-open class LanguageItem(item: ItemStack, val localeToNode: (locale: String) -> LanguageNode) :
-    LocalizedItem(item, localeToNode(ShiningConfig.language)) {
+open class LanguageItem(
+    item: ItemStack,
+    val localeToNode: (locale: String) -> LanguageNode
+) : LocalizedItem(item, localeToNode(ShiningConfig.language)), ILanguageItem {
 
     private val langItemCacheMap: MutableMap<String, LocalizedItem> by lazy { ConcurrentHashMap() }
     private val stateItemCacheMap: MutableMap<String, LanguageItem> by lazy { ConcurrentHashMap() }
@@ -42,7 +45,7 @@ open class LanguageItem(item: ItemStack, val localeToNode: (locale: String) -> L
     )
 
 
-    open fun shiny(): LanguageItem {
+    override fun shiny(): LanguageItem {
         if (isShiny) return this
 
         val meta = getMeta()
@@ -57,7 +60,7 @@ open class LanguageItem(item: ItemStack, val localeToNode: (locale: String) -> L
         return this
     }
 
-    fun toLocalizedItem(sender: CommandSender): LocalizedItem {
+    override fun toLocalizedItem(sender: CommandSender): LocalizedItem {
         val locale = sender.getLocale()
         if (locale == ShiningConfig.language)
             return this
@@ -69,7 +72,7 @@ open class LanguageItem(item: ItemStack, val localeToNode: (locale: String) -> L
         return LocalizedItem(clone(), localeToNode(locale)).also { langItemCacheMap[locale] = it }
     }
 
-    fun toStateItem(state: String): LanguageItem {
+    override fun toStateItem(state: String): LanguageItem {
         if (state.isEmpty()) return this
 
         stateItemCacheMap[state]?.let {

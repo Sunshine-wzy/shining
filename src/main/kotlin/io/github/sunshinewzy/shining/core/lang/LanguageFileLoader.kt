@@ -4,15 +4,15 @@ import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
 import io.github.sunshinewzy.shining.core.lang.node.ListNode
 import io.github.sunshinewzy.shining.core.lang.node.SectionNode
 import io.github.sunshinewzy.shining.core.lang.node.TextNode
+import org.bukkit.configuration.Configuration
+import org.bukkit.configuration.ConfigurationSection
+import org.bukkit.configuration.file.YamlConfiguration
 import taboolib.common.platform.function.releaseResourceFile
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
 import taboolib.common5.FileWatcher
-import taboolib.library.configuration.ConfigurationSection
-import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.SecuredFile
 import java.io.File
-import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 
 object LanguageFileLoader {
@@ -40,8 +40,7 @@ object LanguageFileLoader {
         languageCode.forEach { code ->
             classLoader.getResourceAsStream("$path/$code.yml")?.use { resourceAsStream ->
                 val nodes = HashMap<String, LanguageNode>()
-                val source = resourceAsStream.readBytes().toString(StandardCharsets.UTF_8)
-                val configuration = Configuration.loadFromString(source, taboolib.module.configuration.Type.YAML)
+                val configuration = YamlConfiguration.loadConfiguration(resourceAsStream.reader())
                 // Load the language file from the jar file
                 loadNodeMap(configuration, nodes, code)
                 // Release the language file in the data folder
@@ -52,7 +51,7 @@ object LanguageFileLoader {
                 }
                 val exists = HashMap<String, LanguageNode>()
                 // Load the language file from the data folder
-                loadNodeMap(Configuration.loadFromFile(file), exists, code)
+                loadNodeMap(YamlConfiguration.loadConfiguration(file), exists, code)
                 // Check missing nodes
                 if (checkMissingNodes) {
                     val missingNodes = nodes.keys.filter { !exists.containsKey(it) }
@@ -69,7 +68,7 @@ object LanguageFileLoader {
                         FileWatcher.INSTANCE.addSimpleListener(file) {
                             it.nodeMap.clear()
                             loadNodeMap(configuration, it.nodeMap, code)
-                            loadNodeMap(Configuration.loadFromFile(file), it.nodeMap, code)
+                            loadNodeMap(YamlConfiguration.loadConfiguration(file), it.nodeMap, code)
                         }
                     }
                 }

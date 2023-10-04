@@ -1,8 +1,9 @@
-package io.github.sunshinewzy.shining.api.item.universal
+package io.github.sunshinewzy.shining.core.item.universal
 
 import com.fasterxml.jackson.annotation.JsonTypeName
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.context.GuideContext
+import io.github.sunshinewzy.shining.api.item.universal.UniversalItem
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
 import io.github.sunshinewzy.shining.core.editor.chat.type.Item

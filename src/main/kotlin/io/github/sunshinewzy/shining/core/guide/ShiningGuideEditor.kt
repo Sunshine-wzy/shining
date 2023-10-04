@@ -4,10 +4,10 @@ import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementContainer
-import io.github.sunshinewzy.shining.api.guide.state.GuideElementStateRegistry
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementContainerState
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
+import io.github.sunshinewzy.shining.api.lang.item.ILanguageItem
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.context.AbstractGuideContextElement
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditModeContext
@@ -15,6 +15,7 @@ import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftContext
 import io.github.sunshinewzy.shining.core.guide.draft.ShiningGuideDraft
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
+import io.github.sunshinewzy.shining.core.guide.state.GuideElementStateRegistry
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.LanguageItem
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
@@ -91,11 +92,11 @@ object ShiningGuideEditor {
     }
     
     fun openCreateNewStateEditor(player: Player, context: GuideContext, elementContainer: IGuideElementContainer?, elementContainerState: IGuideElementContainerState?) {
-        player.openMultiPageMenu<Pair<Class<out IGuideElementState>, LanguageItem>>(player.getLangText("menu-shining_guide-editor-create_new_state-title")) { 
+        player.openMultiPageMenu<Pair<Class<out IGuideElementState>, ILanguageItem>>(player.getLangText("menu-shining_guide-editor-create_new_state-title")) { 
             elements { GuideElementStateRegistry.getRegisteredClassPairList() }
             
             onGenerate { _, element, _, _ -> 
-                element.second.toLocalizedItem(player)
+                element.second.toLocalizedItemStack(player)
             }
             
             onClick { _, element -> 
