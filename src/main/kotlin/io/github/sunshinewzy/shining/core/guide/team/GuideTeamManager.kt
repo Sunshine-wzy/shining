@@ -14,22 +14,22 @@ import java.util.concurrent.CompletableFuture
 object GuideTeamManager : IGuideTeamManager {
 
     override fun create(captain: Player, name: String, symbol: ItemStack): CompletableFuture<IGuideTeam?> =
-        ShiningDispatchers.futureDB { GuideTeam.create(captain, name, symbol) }
+        ShiningDispatchers.futureIO { GuideTeam.create(captain, name, symbol) }
 
     override fun create(captain: UUID, name: String, symbol: ItemStack): CompletableFuture<IGuideTeam?> =
-        ShiningDispatchers.futureDB { GuideTeam.create(captain, name, symbol) }
+        ShiningDispatchers.futureIO { GuideTeam.create(captain, name, symbol) }
 
     override fun hasGuideTeam(player: Player): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { player.hasGuideTeam() }
+        ShiningDispatchers.futureIO { player.hasGuideTeam() }
 
     override fun hasGuideTeam(uuid: UUID): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { GuideTeam.hasGuideTeam(uuid) }
+        ShiningDispatchers.futureIO { GuideTeam.hasGuideTeam(uuid) }
 
     override fun getGuideTeam(player: Player): CompletableFuture<IGuideTeam?> =
-        ShiningDispatchers.futureDB { player.getGuideTeam() }
+        ShiningDispatchers.futureIO { player.getGuideTeam() }
 
     override fun getGuideTeam(uuid: UUID): CompletableFuture<IGuideTeam?> =
-        ShiningDispatchers.futureDB { GuideTeam.getGuideTeam(uuid) }
+        ShiningDispatchers.futureIO { GuideTeam.getGuideTeam(uuid) }
 
     override fun setupGuideTeam(player: Player) {
         player.setupGuideTeam()

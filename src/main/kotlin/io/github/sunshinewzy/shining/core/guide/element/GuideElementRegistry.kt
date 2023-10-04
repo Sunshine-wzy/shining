@@ -39,7 +39,7 @@ object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
     }
 
     override fun reloadFuture(): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { 
+        ShiningDispatchers.futureIO { 
             reload()
             true
         }
@@ -68,7 +68,7 @@ object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
     }
 
     override fun initFuture(): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { 
+        ShiningDispatchers.futureIO { 
             init()
             true
         }
@@ -148,7 +148,7 @@ object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
         checkId: NamespacedId,
         actionBeforeInsert: Supplier<Boolean>
     ): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { saveElement(element, isCheckExists, checkId, actionBeforeInsert) }
+        ShiningDispatchers.futureIO { saveElement(element, isCheckExists, checkId, actionBeforeInsert) }
     
     suspend fun removeElement(element: IGuideElement) {
         val id = element.getId()
@@ -160,7 +160,7 @@ object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
     }
 
     override fun removeElementFuture(element: IGuideElement): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { 
+        ShiningDispatchers.futureIO { 
             removeElement(element)
             true
         }

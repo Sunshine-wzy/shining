@@ -63,13 +63,13 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id), IGuideTeam {
     }
 
     override fun joinFuture(player: Player): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB {
+        ShiningDispatchers.futureIO {
             join(player)
             true
         }
 
     override fun joinFuture(uuid: UUID): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB {
+        ShiningDispatchers.futureIO {
             join(uuid)
             true
         }
@@ -96,13 +96,13 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id), IGuideTeam {
     }
 
     override fun leaveFuture(player: Player): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { 
+        ShiningDispatchers.futureIO { 
             leave(player)
             true
         }
 
     override fun leaveFuture(uuid: UUID): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { 
+        ShiningDispatchers.futureIO { 
             leave(uuid)
             true
         }
@@ -131,13 +131,13 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id), IGuideTeam {
     }
 
     override fun applyFuture(player: Player): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { 
+        ShiningDispatchers.futureIO { 
             apply(player)
             true
         }
 
     override fun applyFuture(uuid: UUID): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { 
+        ShiningDispatchers.futureIO { 
             apply(uuid)
             true
         }
@@ -168,13 +168,13 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id), IGuideTeam {
     }
 
     override fun changeCaptainFuture(player: Player): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { 
+        ShiningDispatchers.futureIO { 
             changeCaptain(player)
             true
         }
 
     override fun changeCaptainFuture(uuid: UUID): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { 
+        ShiningDispatchers.futureIO { 
             changeCaptain(uuid)
             true
         }
@@ -192,7 +192,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id), IGuideTeam {
     }
 
     override fun changeNameFuture(name: String): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { 
+        ShiningDispatchers.futureIO { 
             changeName(name)
             true
         }
@@ -201,7 +201,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id), IGuideTeam {
         newSuspendedTransaction { data.value }
 
     override fun getTeamDataFuture(): CompletableFuture<IGuideTeamData> =
-        ShiningDispatchers.futureDB { getTeamData() }
+        ShiningDispatchers.futureIO { getTeamData() }
 
     suspend fun updateTeamData() {
         newSuspendedTransaction { 
@@ -212,7 +212,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id), IGuideTeam {
     }
 
     override fun updateTeamDataFuture(): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { 
+        ShiningDispatchers.futureIO { 
             updateTeamData()
             true
         }
@@ -237,7 +237,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id), IGuideTeam {
     }
 
     override fun approveApplicationFuture(uuid: UUID): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { approveApplication(uuid) }
+        ShiningDispatchers.futureIO { approveApplication(uuid) }
 
     suspend fun refuseApplication(uuid: UUID): Boolean {
         if (!applicants.value.contains(uuid))
@@ -257,7 +257,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id), IGuideTeam {
     }
 
     override fun refuseApplicationFuture(uuid: UUID): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { refuseApplication(uuid) }
+        ShiningDispatchers.futureIO { refuseApplication(uuid) }
 
     override fun notifyCaptainApplication() {
         if (applicants.value.isEmpty()) return

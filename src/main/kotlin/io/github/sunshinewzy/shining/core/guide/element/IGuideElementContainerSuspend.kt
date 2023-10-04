@@ -12,6 +12,6 @@ interface IGuideElementContainerSuspend : IGuideElementContainer, IGuideElementS
     suspend fun getElementsByCondition(team: IGuideTeam, condition: ElementCondition, isDeep: Boolean = false): List<IGuideElement>
 
     override fun getElementsByConditionFuture(team: IGuideTeam, condition: ElementCondition, isDeep: Boolean): CompletableFuture<List<IGuideElement>> =
-        ShiningDispatchers.futureDB { getElementsByCondition(team, condition, isDeep) }
+        ShiningDispatchers.futureIO { getElementsByCondition(team, condition, isDeep) }
 
 }

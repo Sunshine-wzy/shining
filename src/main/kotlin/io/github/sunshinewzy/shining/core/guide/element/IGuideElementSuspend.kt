@@ -28,21 +28,21 @@ interface IGuideElementSuspend : IGuideElement {
     suspend fun isTeamDependencyCompleted(team: IGuideTeam): Boolean
 
     override fun getTeamDataFuture(team: IGuideTeam): CompletableFuture<IGuideTeamData> =
-        ShiningDispatchers.futureDB { getTeamData(team) }
+        ShiningDispatchers.futureIO { getTeamData(team) }
 
     override fun getConditionFuture(team: IGuideTeam): CompletableFuture<ElementCondition> =
-        ShiningDispatchers.futureDB { getCondition(team) }
+        ShiningDispatchers.futureIO { getCondition(team) }
 
     override fun getSymbolByConditionFuture(player: Player, team: IGuideTeam, condition: ElementCondition): CompletableFuture<ItemStack> =
-        ShiningDispatchers.futureDB { getSymbolByCondition(player, team, condition) }
+        ShiningDispatchers.futureIO { getSymbolByCondition(player, team, condition) }
 
     override fun isTeamCompletedFuture(team: IGuideTeam): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { isTeamCompleted(team) }
+        ShiningDispatchers.futureIO { isTeamCompleted(team) }
 
     override fun isTeamUnlockedFuture(team: IGuideTeam): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { isTeamUnlocked(team) }
+        ShiningDispatchers.futureIO { isTeamUnlocked(team) }
 
     override fun isTeamDependencyCompletedFuture(team: IGuideTeam): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureDB { isTeamDependencyCompleted(team) }
+        ShiningDispatchers.futureIO { isTeamDependencyCompleted(team) }
     
 }
