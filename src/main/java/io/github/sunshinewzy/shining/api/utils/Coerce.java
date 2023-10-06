@@ -666,7 +666,7 @@ public final class Coerce {
 	 */
 	private static String sanitiseNumber(Object obj) {
 		String string = obj.toString().trim();
-		if (string.length() < 1) {
+		if (string.isEmpty()) {
 			return "0";
 		}
 

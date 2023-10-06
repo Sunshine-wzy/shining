@@ -22,16 +22,17 @@ object MachineManager : IMachineManager {
         get() = position3D.machine
 
 
-    override fun activate(location: Position3D, machine: IMachine) {
-        activeMachineMap[location] = machine
+    override fun activate(position: Position3D, machine: IMachine) {
+        activeMachineMap[position] = machine
     }
 
-    override fun deactivate(location: Position3D) {
-        activeMachineMap -= location
+    override fun deactivate(position: Position3D) {
+        activeMachineMap -= position
     }
 
-    override fun run(location: Position3D) {
-        activeMachineMap[location]?.run()
+    override fun run(position: Position3D) {
+        // TODO
+//        activeMachineMap[location]?.run()
     }
 
     override fun registerProcessor(processor: IMachineRegistrationProcessor) {

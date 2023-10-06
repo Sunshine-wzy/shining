@@ -10,16 +10,8 @@ import io.github.sunshinewzy.shining.core.machine.recipe.MachineRecipe
 open class SimpleMachine(
     property: MachineProperty,
     val item: DictionaryItem
-) : AbstractMachine(property) {
+) {
+    
     private val recipes: MutableList<MachineRecipe> = arrayListOf()
-
-
-    override fun run() {
-        TODO("Not yet implemented")
-    }
-
-    override fun edit() {
-        TODO("Not yet implemented")
-    }
 
 }

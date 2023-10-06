@@ -9,19 +9,19 @@ interface IMachineManager {
 
     /**
      * When a machine is created, it does not mean a new instance of [machine] will be created.
-     * However, it will execute [activate], which will bind the [location] to the [machine].
+     * However, it will execute [activate], which will bind the [position] to the [machine].
      */
-    fun activate(location: Position3D, machine: IMachine)
+    fun activate(position: Position3D, machine: IMachine)
 
     /**
-     * When a machine is destroyed, [deactivate] will be executed, which will unbind the [location] to the machine.
+     * When a machine is destroyed, [deactivate] will be executed, which will unbind the [position] to the machine.
      */
-    fun deactivate(location: Position3D)
+    fun deactivate(position: Position3D)
 
     /**
-     * Run the machine at [location].
+     * Run the machine at [position].
      */
-    fun run(location: Position3D)
+    fun run(position: Position3D)
 
     /**
      * Register a [processor].
