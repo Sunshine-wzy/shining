@@ -5,8 +5,8 @@ import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
-import io.github.sunshinewzy.shining.api.item.universal.UniversalItem
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.api.universal.item.UniversalItem
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.state.GuideItemState
 import io.github.sunshinewzy.shining.core.item.ConsumableItemGroup

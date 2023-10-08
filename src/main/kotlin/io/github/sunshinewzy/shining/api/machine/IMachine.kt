@@ -41,9 +41,15 @@ interface IMachine {
      * Remove the component from the machine.
      */
     fun <T : IMachineComponent> removeComponent(type: Class<T>): T?
-    
+
+    /**
+     * Check if the machine has the component of [type].
+     */
     fun <T : IMachineComponent> hasComponent(type: Class<T>): Boolean
-    
+
+    /**
+     * Check if [type] has the [lifeCycle].
+     */
     fun <T : IMachineComponent> hasComponentLifeCycle(type: Class<T>, lifeCycle: MachineComponentLifeCycle): Boolean
 
 }

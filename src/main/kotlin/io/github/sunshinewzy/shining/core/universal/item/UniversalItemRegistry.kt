@@ -1,10 +1,10 @@
-package io.github.sunshinewzy.shining.core.item.universal
+package io.github.sunshinewzy.shining.core.universal.item
 
 import io.github.sunshinewzy.shining.api.AbstractClassRegistry
 import io.github.sunshinewzy.shining.api.guide.context.GuideContext
-import io.github.sunshinewzy.shining.api.item.universal.UniversalItem
 import io.github.sunshinewzy.shining.api.lang.item.ILanguageItem
 import io.github.sunshinewzy.shining.api.objects.SPair
+import io.github.sunshinewzy.shining.api.universal.item.UniversalItem
 import io.github.sunshinewzy.shining.core.guide.context.AbstractGuideContextElement
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.lang.getLangText

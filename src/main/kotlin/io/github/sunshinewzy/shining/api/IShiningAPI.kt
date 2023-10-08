@@ -5,7 +5,7 @@ import io.github.sunshinewzy.shining.api.guide.element.IGuideElementRegistry
 import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.guide.team.IGuideTeamManager
-import io.github.sunshinewzy.shining.api.item.universal.UniversalItem
+import io.github.sunshinewzy.shining.api.universal.item.UniversalItem
 
 interface IShiningAPI {
 

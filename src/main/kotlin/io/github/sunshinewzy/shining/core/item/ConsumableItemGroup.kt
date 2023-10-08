@@ -2,14 +2,14 @@ package io.github.sunshinewzy.shining.core.item
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import io.github.sunshinewzy.shining.api.guide.context.GuideContext
-import io.github.sunshinewzy.shining.api.item.universal.UniversalItem
+import io.github.sunshinewzy.shining.api.universal.item.UniversalItem
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
-import io.github.sunshinewzy.shining.core.item.universal.UniversalItemRegistry
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.menu.onBack
 import io.github.sunshinewzy.shining.core.menu.openDeleteConfirmMenu
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
+import io.github.sunshinewzy.shining.core.universal.item.UniversalItemRegistry
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.entity.Player

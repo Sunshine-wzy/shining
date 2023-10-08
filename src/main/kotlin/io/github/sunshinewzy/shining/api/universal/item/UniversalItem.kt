@@ -1,4 +1,4 @@
-package io.github.sunshinewzy.shining.api.item.universal
+package io.github.sunshinewzy.shining.api.universal.item
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonTypeInfo

@@ -47,6 +47,19 @@ interface IMachineComponent {
         machine.removeComponent(type)
 
     /**
+     * Check if the machine has the component of [type].
+     */
+    fun <T : IMachineComponent> hasComponent(type: Class<T>): Boolean =
+        machine.hasComponent(type)
+
+    /**
+     * Check if [type] has the [lifeCycle].
+     */
+    fun <T : IMachineComponent> hasComponentLifeCycle(type: Class<T>, lifeCycle: MachineComponentLifeCycle): Boolean =
+        machine.hasComponentLifeCycle(type, lifeCycle)
+
+
+    /**
      * Executed when the component is added to the machine.
      */
     fun onLoad() {}
