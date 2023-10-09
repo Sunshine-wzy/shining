@@ -10,7 +10,6 @@ import io.github.sunshinewzy.shining.api.ShiningAPIProvider
 import io.github.sunshinewzy.shining.api.ShiningPlugin
 import io.github.sunshinewzy.shining.api.event.ShiningDataLoadingCompleteEvent
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
-import io.github.sunshinewzy.shining.api.machine.IMachineManager
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.api.objects.coordinate.Coordinate2D
@@ -36,7 +35,6 @@ import io.github.sunshinewzy.shining.core.guide.state.GuideItemState
 import io.github.sunshinewzy.shining.core.guide.state.GuideMapState
 import io.github.sunshinewzy.shining.core.item.ConsumableItemGroup
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
-import io.github.sunshinewzy.shining.core.machine.MachineManager
 import io.github.sunshinewzy.shining.core.machine.legacy.*
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipe
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipes
@@ -110,7 +108,6 @@ object Shining : Plugin(), ShiningPlugin {
 
     @get:JvmName("prefix")
     val prefix: String by lazy { config.getString("prefix")?.colored() ?: COLOR_NAME }
-    val machineManager: IMachineManager by lazy { MachineManager }
     val objectMapper: ObjectMapper = jsonMapper {
         typeFactory(TypeFactory.defaultInstance().withClassLoader(BukkitPlugin.getIsolatedClassLoader()))
         

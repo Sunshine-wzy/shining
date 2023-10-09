@@ -2,6 +2,7 @@ package io.github.sunshinewzy.shining.api.machine
 
 import io.github.sunshinewzy.shining.api.machine.component.IMachineComponent
 import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifeCycle
+import io.github.sunshinewzy.shining.api.machine.structure.IMachineStructure
 
 /**
  * Machine represents a block or a collection of blocks which can be interacted and has its own state.
@@ -9,8 +10,21 @@ import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifeC
 interface IMachine {
 
     val property: MachineProperty
+    
+    var structure: IMachineStructure
 
 
+    /**
+     * Register this [IMachine] which can be activated by [wrench].
+     */
+    fun register(wrench: IMachineWrench)
+
+    /**
+     * Register this [IMachine] which cannot be activated automatically.
+     * You need to call [IMachineManager.activate] manually.
+     */
+    fun register()
+    
     /**
      * @return A Component of the matching type, otherwise throw an exception.
      */

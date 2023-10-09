@@ -1,21 +1,31 @@
 package io.github.sunshinewzy.shining.core.machine
 
 import io.github.sunshinewzy.shining.api.machine.IMachine
+import io.github.sunshinewzy.shining.api.machine.IMachineWrench
 import io.github.sunshinewzy.shining.api.machine.MachineProperty
 import io.github.sunshinewzy.shining.api.machine.component.IMachineComponent
 import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifeCycle
+import io.github.sunshinewzy.shining.api.machine.structure.IMachineStructure
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-abstract class AbstractMachine(override val property: MachineProperty) : IMachine {
+abstract class AbstractMachine(
+    override val property: MachineProperty,
+    override var structure: IMachineStructure
+) : IMachine {
 
     private val componentRegistry: MutableMap<Class<out IMachineComponent>, IMachineComponent> = ConcurrentHashMap()
     private val componentLifeCycles: MutableMap<Class<out IMachineComponent>, MutableSet<MachineComponentLifeCycle>> = HashMap()
     private val componentLifeCycleRegistry: MutableMap<MachineComponentLifeCycle, MutableSet<Class<out IMachineComponent>>> = EnumMap(MachineComponentLifeCycle::class.java)
-    
-    
-    open fun register() {
-//        Shining.machineManager.register(this)
+
+
+    override fun register(wrench: IMachineWrench) {
+        register()
+        wrench.registerMachine(this)
+    }
+
+    override fun register() {
+        MachineRegistry.registerMachine(this)
     }
 
     override fun <T : IMachineComponent> getComponent(type: Class<T>): T =

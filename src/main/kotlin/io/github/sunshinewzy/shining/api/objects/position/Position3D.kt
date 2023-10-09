@@ -7,8 +7,7 @@ import org.bukkit.entity.Player
 
 data class Position3D @JvmOverloads constructor(val x: Int, val y: Int, val z: Int, val world: String? = null) {
 
-    @JvmOverloads
-    constructor(y: Int, world: String? = null) : this(0, y, 0, world)
+    constructor(location: Location) : this(location.blockX, location.blockY, location.blockZ, location.world?.name)
 
     override fun toString(): String = "$x,$y,$z;$world"
 

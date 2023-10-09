@@ -1,7 +1,6 @@
 package io.github.sunshinewzy.shining.core.guide
 
 import io.github.sunshinewzy.shining.Shining
-import io.github.sunshinewzy.shining.api.dictionary.IDictionaryItem
 import io.github.sunshinewzy.shining.api.dictionary.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.api.event.guide.ShiningGuideOpenEvent
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
@@ -45,24 +44,23 @@ object ShiningGuide : GuideCategory(
     ElementDescription(getDefaultLangText("item-shining-shining_guide")),
     ItemStack(Material.ENCHANTED_BOOK)
 ), IShiningGuide {
-    private val guideItem: IDictionaryItem = NamespacedId(Shining, "shining_guide").let { id ->
-        DictionaryRegistry.registerItem(
-            id, LocalizedItem(Material.ENCHANTED_BOOK, id),
-            object : ItemBehavior() {
-                override fun onInteract(event: PlayerInteractEvent, player: Player, item: ItemStack, action: Action) {
-                    if (event.hand != EquipmentSlot.HAND) return
+    private val guideItemId = NamespacedId(Shining, "shining_guide")
+    private val guideItem = DictionaryRegistry.registerItem(
+        guideItemId, LocalizedItem(Material.ENCHANTED_BOOK, guideItemId),
+        object : ItemBehavior() {
+            override fun onInteract(event: PlayerInteractEvent, player: Player, item: ItemStack, action: Action) {
+                if (event.hand != EquipmentSlot.HAND) return
 
-                    if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-                        event.isCancelled = true
-                        openLastElement(player)
-                    } else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-                        event.isCancelled = true
-                        openMainMenu(player)
-                    }
+                if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+                    event.isCancelled = true
+                    openLastElement(player)
+                } else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
+                    event.isCancelled = true
+                    openMainMenu(player)
                 }
             }
-        )
-    }
+        }
+    )
     private val playerLastOpenElementMap: MutableMap<UUID, IGuideElement> = HashMap()
     private val playerElementAdditionalContextMap: MutableMap<UUID, MutableMap<NamespacedId, GuideContext>> = HashMap()
     

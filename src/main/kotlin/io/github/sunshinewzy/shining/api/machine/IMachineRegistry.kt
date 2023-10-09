@@ -10,7 +10,6 @@ interface IMachineRegistry {
 
     fun getById(id: String): List<IMachine>
 
-
     fun registerMachine(machine: IMachine): IMachine
 
     fun hasMachine(name: NamespacedId): Boolean
