@@ -3,6 +3,7 @@ package io.github.sunshinewzy.shining.core.data
 import com.fasterxml.jackson.core.Version
 import com.fasterxml.jackson.databind.module.SimpleModule
 import io.github.sunshinewzy.shining.core.data.serializer.*
+import org.bukkit.block.data.BlockData
 import org.bukkit.inventory.ItemStack
 import taboolib.common.env.Dependency
 import taboolib.module.nms.ItemTagData
@@ -23,6 +24,9 @@ object SerializationModules {
 
         addSerializer(ItemTagData::class.java, ItemTagDataSerializer)
         addDeserializer(ItemTagData::class.java, ItemTagDataDeserializer)
+        
+        addSerializer(BlockData::class.java, BlockDataSerializer)
+        addDeserializer(BlockData::class.java, BlockDataDeserializer)
     }
 
 }
