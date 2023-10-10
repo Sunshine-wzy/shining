@@ -26,6 +26,8 @@ import java.util.*
 @JsonTypeName("item")
 class GuideRewardItem(val items: MutableList<UniversalItem>) : IGuideReward {
 
+    constructor(item: UniversalItem) : this(arrayListOf(item))
+    
     constructor() : this(LinkedList())
     
     

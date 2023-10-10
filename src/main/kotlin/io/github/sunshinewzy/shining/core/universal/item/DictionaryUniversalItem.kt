@@ -2,6 +2,7 @@ package io.github.sunshinewzy.shining.core.universal.item
 
 import com.fasterxml.jackson.annotation.JsonTypeName
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.dictionary.IDictionaryItem
 import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
@@ -30,6 +31,8 @@ class DictionaryUniversalItem(
     var name: NamespacedId,
     var amount: Int
 ) : UniversalItem {
+    
+    constructor(dictionaryItem: IDictionaryItem) : this(dictionaryItem.getName(), 1)
     
     constructor() : this(NamespacedId.NULL, 1)
     

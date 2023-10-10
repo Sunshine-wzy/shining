@@ -10,6 +10,7 @@ import io.github.sunshinewzy.shining.api.ShiningAPIProvider
 import io.github.sunshinewzy.shining.api.ShiningPlugin
 import io.github.sunshinewzy.shining.api.event.ShiningDataLoadingCompleteEvent
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
+import io.github.sunshinewzy.shining.api.machine.MachineProperty
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.api.objects.coordinate.Coordinate2D
@@ -35,10 +36,14 @@ import io.github.sunshinewzy.shining.core.guide.state.GuideItemState
 import io.github.sunshinewzy.shining.core.guide.state.GuideMapState
 import io.github.sunshinewzy.shining.core.item.ConsumableItemGroup
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
+import io.github.sunshinewzy.shining.core.machine.Machine
+import io.github.sunshinewzy.shining.core.machine.ShiningMachineWrench
 import io.github.sunshinewzy.shining.core.machine.legacy.*
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipe
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipes
+import io.github.sunshinewzy.shining.core.machine.structure.SingleMachineStructure
 import io.github.sunshinewzy.shining.core.task.TaskProgress
+import io.github.sunshinewzy.shining.core.universal.block.VanillaUniversalBlock
 import io.github.sunshinewzy.shining.core.universal.item.DictionaryUniversalItem
 import io.github.sunshinewzy.shining.core.universal.item.UniversalItemRegistry
 import io.github.sunshinewzy.shining.core.universal.item.VanillaUniversalItem
@@ -186,7 +191,6 @@ object Shining : Plugin(), ShiningPlugin {
         }
         
         SItem.initAction()
-        SMachineWrench.init()
         SLocationData.init()
         SSingleMachine.init()
         SFlatMachine.init()
@@ -256,6 +260,11 @@ object Shining : Plugin(), ShiningPlugin {
 
     @ShiningTestApi
     private fun test() {
+        val copperMachine = Machine(
+            MachineProperty(NamespacedId(Shining, "copper_machine"), "Copper Machine"),
+            SingleMachineStructure(VanillaUniversalBlock(Material.COPPER_BLOCK))
+        ).register(ShiningMachineWrench)
+        
         registerBukkitListener<ShiningDataLoadingCompleteEvent> {
             val stoneCategory = GuideCategory(
                 NamespacedId(Shining, "stone_age"),
@@ -315,20 +324,14 @@ object Shining : Plugin(), ShiningPlugin {
                 NamespacedId(Shining, "steel_ingot"),
                 ElementDescription("&f工业基础", "", "&7&l钢"),
                 ItemStack(Material.IRON_INGOT),
-                ConsumableItemGroup(true, VanillaUniversalItem(
-                    SItem(Material.IRON_INGOT, "&7钢锭")
-                )
-                )
+                ConsumableItemGroup(true, VanillaUniversalItem(SItem(Material.IRON_INGOT, "&7钢锭")))
             )
             electricityAge.registerElement(steelItem, Coordinate2D.ORIGIN)
             val steelBlockItem = GuideItem(
                 NamespacedId(Shining, "steel_block"),
                 ElementDescription("&b大炼钢铁", "&a多快好省"),
                 ItemStack(Material.IRON_BLOCK),
-                ConsumableItemGroup(false, VanillaUniversalItem(
-                    SItem(Material.IRON_BLOCK, "&7钢块")
-                )
-                )
+                ConsumableItemGroup(false, VanillaUniversalItem(SItem(Material.IRON_BLOCK, "&7钢块")))
             )
             electricityAge.registerElement(steelBlockItem, Coordinate2D(1, 0))
             

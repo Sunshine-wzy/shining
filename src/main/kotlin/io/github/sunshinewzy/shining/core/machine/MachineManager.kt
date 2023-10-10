@@ -6,10 +6,6 @@ import io.github.sunshinewzy.shining.api.machine.IMachineRegistrationProcessor
 import io.github.sunshinewzy.shining.api.objects.position.Position3D
 import io.github.sunshinewzy.shining.utils.position3D
 import org.bukkit.Location
-import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.inventory.EquipmentSlot
-import taboolib.common.platform.event.EventPriority
-import taboolib.common.platform.event.SubscribeEvent
 import java.util.concurrent.ConcurrentHashMap
 
 object MachineManager : IMachineManager {
@@ -35,6 +31,9 @@ object MachineManager : IMachineManager {
 //        activeMachineMap[location]?.run()
     }
 
+    override fun hasMachine(position: Position3D): Boolean =
+        activeMachineMap.containsKey(position)
+
     override fun registerProcessor(processor: IMachineRegistrationProcessor) {
         registeredProcessors += processor
     }
@@ -45,14 +44,6 @@ object MachineManager : IMachineManager {
 
     override fun isProcessorRegistered(processor: IMachineRegistrationProcessor): Boolean {
         return registeredProcessors.contains(processor)
-    }
-
-
-    @SubscribeEvent(EventPriority.HIGHEST)
-    fun onPlayerInteract(event: PlayerInteractEvent) {
-        if (event.hand != EquipmentSlot.HAND) return
-
-
     }
 
 }

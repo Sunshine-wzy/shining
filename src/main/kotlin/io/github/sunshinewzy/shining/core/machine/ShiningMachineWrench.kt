@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.core.machine
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.dictionary.IDictionaryItem
 import io.github.sunshinewzy.shining.api.dictionary.behavior.ItemBehavior
 import io.github.sunshinewzy.shining.api.machine.IMachine
 import io.github.sunshinewzy.shining.api.machine.IMachineWrench
@@ -24,9 +25,12 @@ object ShiningMachineWrench : IMachineWrench {
         wrenchItemId, LocalizedItem(Material.BONE, wrenchItemId),
         object : ItemBehavior() {
             override fun onInteract(event: PlayerInteractEvent, player: Player, item: ItemStack, action: Action) {
-                if (event.hand != EquipmentSlot.HAND) return
+                if (event.hand != EquipmentSlot.HAND || action != Action.RIGHT_CLICK_BLOCK) return
                 
+                val clickedBlock = event.clickedBlock ?: return
+                if (clickedBlock.type == Material.AIR) return
                 
+                check(clickedBlock.location, player)
             }
         }
     )
@@ -39,15 +43,23 @@ object ShiningMachineWrench : IMachineWrench {
     }
 
     override fun check(location: Location, player: Player?) {
+        val position = location.position3D
+        if (MachineManager.hasMachine(position)) return
+        
         for (machine in machineRegistry) {
             if (machine.structure.check(location)) {
-                MachineManager.activate(location.position3D, machine)
+                MachineManager.activate(position, machine)
                 
-                player?.playEffect<Int>(location, Effect.ENDER_SIGNAL, 1)
-                player?.playEffect<Int>(location, Effect.CLICK1, 1)
+                player?.sendMessage("机器构建成功!")
+                player?.playEffect(location, Effect.ENDER_SIGNAL, 1)
+                player?.playEffect(location, Effect.CLICK1, 1)
                 break
             }
         }
     }
+
+    override fun getItemStack(): ItemStack = wrenchItem.getItemStack()
+    
+    fun getDictionaryItem(): IDictionaryItem = wrenchItem
     
 }

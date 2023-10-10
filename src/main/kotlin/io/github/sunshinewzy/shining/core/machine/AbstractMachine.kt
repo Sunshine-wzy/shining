@@ -19,13 +19,15 @@ abstract class AbstractMachine(
     private val componentLifeCycleRegistry: MutableMap<MachineComponentLifeCycle, MutableSet<Class<out IMachineComponent>>> = EnumMap(MachineComponentLifeCycle::class.java)
 
 
-    override fun register(wrench: IMachineWrench) {
+    override fun register(wrench: IMachineWrench): AbstractMachine {
         register()
         wrench.registerMachine(this)
+        return this
     }
 
-    override fun register() {
+    override fun register(): AbstractMachine {
         MachineRegistry.registerMachine(this)
+        return this
     }
 
     override fun <T : IMachineComponent> getComponent(type: Class<T>): T =

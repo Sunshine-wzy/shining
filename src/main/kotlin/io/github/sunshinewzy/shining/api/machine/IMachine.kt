@@ -17,13 +17,13 @@ interface IMachine {
     /**
      * Register this [IMachine] which can be activated by [wrench].
      */
-    fun register(wrench: IMachineWrench)
+    fun register(wrench: IMachineWrench): IMachine
 
     /**
      * Register this [IMachine] which cannot be activated automatically.
      * You need to call [IMachineManager.activate] manually.
      */
-    fun register()
+    fun register(): IMachine
     
     /**
      * @return A Component of the matching type, otherwise throw an exception.

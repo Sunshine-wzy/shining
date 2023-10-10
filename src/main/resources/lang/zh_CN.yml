@@ -57,6 +57,7 @@ item-shining-shining_guide-state-category: [ '&eCategory - 分类', '', '&f能�
 item-shining-shining_guide-state-map: [ '&dMap - 图', '', '&f能灵活的容纳各种元素', '&f适合制作科技线' ]
 item-shining-shining_guide-reward-item-icon: [ '&bItem - 物品', '', '&f奖励物品' ]
 item-shining-shining_guide-reward-command-icon: [ '&cCommand - 指令', '', '&f执行指令', '&f支持PAPI变量' ]
+item-shining-shining_wrench: '&b扳手'
 item-shining-icon-back_menu: [ '&c⇦ 返回', '', '&f左键：&7返回上一页', '&fShift + 左键：&7返回主菜单' ]
 item-shining-icon-back: '&b⇦ 返回'
 item-shining-icon-submit: '&a>> 点击以提交任务 <<'
@@ -220,3 +221,5 @@ text-shining_guide-draft-load-failure-duplication: '&f草稿载入&c失败&f，�
 text-shining_guide-draft-load-failure-save_element: '&f草稿载入&c失败&f，原因：元素保存失败'
 text-shining_guide-draft-load-failure-save_container: '&f草稿载入&c失败&f，原因：元素容器保存失败'
 text-shining_guide-reload-success: '&aShining指南重载成功'
+task-shining_guide_task-map-description-name: '&aShining 引导'
+task-shining_guide_task-map-description-lore: '&7了解shining的基础设施'

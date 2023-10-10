@@ -24,6 +24,11 @@ interface IMachineManager {
     fun run(position: Position3D)
 
     /**
+     * Check if there is a machine at [position].
+     */
+    fun hasMachine(position: Position3D): Boolean
+
+    /**
      * Register a [processor].
      *
      * The [processor] decides how to activate machines.
