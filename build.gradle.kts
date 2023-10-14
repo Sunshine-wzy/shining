@@ -67,8 +67,8 @@ val exposedVersion: String by project
 val jacksonVersion: String by project
 dependencies {
     compileOnly("ink.ptms:nms-all:1.0.0")
-    compileOnly("ink.ptms.core:v11902:11902:universal")
-    compileOnly("ink.ptms.core:v11902:11902:mapped")
+    compileOnly("ink.ptms.core:v12001:12001:universal")
+    compileOnly("ink.ptms.core:v12001:12001:mapped")
     compileOnly(kotlin("stdlib"))
 
     compileOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
