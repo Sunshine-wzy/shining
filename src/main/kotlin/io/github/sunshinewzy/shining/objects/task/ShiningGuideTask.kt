@@ -26,7 +26,7 @@ object ShiningGuideTask {
         guideTaskMap.registerElement(wrenchItem, Coordinate2D(1, 0))
         
         guideTaskMap.register()
-        ShiningGuide.registerElement(guideTaskMap)
+        ShiningGuide.registerElement(guideTaskMap, 2023)
     }
 
     val guideTaskMap = GuideMap(

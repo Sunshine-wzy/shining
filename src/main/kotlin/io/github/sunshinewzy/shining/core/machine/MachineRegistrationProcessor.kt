@@ -13,19 +13,7 @@ object MachineRegistrationProcessor : IMachineRegistrationProcessor {
 
 
     override fun onRegister(machine: IMachine) {
-        when (machine) {
-            is SimpleMachine -> {
-
-            }
-
-            is PlaneMachine -> {
-
-            }
-
-            is MultiblockMachine -> {
-
-            }
-        }
+        
     }
 
 
