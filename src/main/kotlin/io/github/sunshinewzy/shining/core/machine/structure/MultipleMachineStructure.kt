@@ -9,36 +9,74 @@ import io.github.sunshinewzy.shining.api.universal.block.UniversalBlock
 import io.github.sunshinewzy.shining.core.universal.block.VanillaUniversalBlock
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.block.Block
+import org.bukkit.block.BlockFace
 import taboolib.module.nms.MinecraftVersion
+import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
 @JsonTypeName("multiple")
-class MultipleMachineStructure(var center: UniversalBlock) : AbstractMachineStructure() {
-    
+class MultipleMachineStructure : AbstractMachineStructure() {
+
+    var center: Int = 0
+    var directionMode: Boolean = true
+    var direction: BlockFace = BlockFace.SELF
     @JsonIgnore
     private val structure: MutableMap<Coordinate3D, Int> = HashMap()
     @JsonProperty
-    private val ingredients: MutableList<UniversalBlock> = ArrayList()
-    
-    constructor() : this(VanillaUniversalBlock())
+    private val ingredients: ArrayList<UniversalBlock> = ArrayList()
     
 
-    override fun check(location: Location): Boolean {
-        return false
+    override fun check(location: Location, direction: BlockFace?): Boolean {
+        if (directionMode) {
+            if (direction == null || direction !in blockFaces) return false
+            
+            val rotator = Rotator(this.direction, direction)
+            if (!compare(ingredients[center], location.block))
+                return false
+            
+            val centerX = location.blockX
+            val centerY = location.blockY
+            val centerZ = location.blockZ
+            val tempLocation = location.clone()
+            val rotatedIngredients = ingredients.map { ingredient ->
+                (ingredient as? VanillaUniversalBlock)?.let {
+                    VanillaUniversalBlock(rotator.rotate(it.data))
+                } ?: ingredient
+            }
+            
+            for ((coordinate, ingredient) in structure) {
+                rotator.setLocation(coordinate.x, coordinate.z)
+                tempLocation.x = (centerX + rotator.rotatedX).toDouble()
+                tempLocation.y = (centerY + coordinate.y).toDouble()
+                tempLocation.z = (centerZ + rotator.rotatedZ).toDouble()
+                if (!compare(rotatedIngredients[ingredient], tempLocation.block))
+                    return false
+            }
+        } else {
+            
+        }
+        
+        return true
     }
     
-    fun scan(centerLocation: Location, location1: Location, location2: Location) {
-        val world = location1.world ?: return
-        if (world != location2.world) return
+    fun compare(ingredient: UniversalBlock, block: Block): Boolean =
+        ingredient.compare(block, strictMode, ignoreAir)
+    
+    fun scan(centerLocation: Location, location1: Location, location2: Location, direction: BlockFace): Boolean {
+        val world = location1.world ?: return false
+        if (world != location2.world) return false
         structure.clear()
         ingredients.clear()
+        this.direction = direction
         
         val centerX = centerLocation.blockX
         val centerY = centerLocation.blockY
         val centerZ = centerLocation.blockZ
         val ingredientToCoordinates = HashMap<UniversalBlock, HashSet<Coordinate3D>>()
         val typeToIngredients = HashMap<Material, HashSet<UniversalBlock>>()
+        
         for (x in min(location1.blockX, location2.blockX)..max(location1.blockX, location2.blockX)) {
             for (y in min(location1.blockY, location2.blockY)..max(location1.blockY, location2.blockY)) {
                 for (z in min(location1.blockZ, location2.blockZ)..max(location1.blockZ, location2.blockZ)) {
@@ -82,6 +120,26 @@ class MultipleMachineStructure(var center: UniversalBlock) : AbstractMachineStru
                 }
             }
         }
+
+        var flagCenter = true
+        for ((ingredient, coordinates) in ingredientToCoordinates) {
+            if (coordinates.contains(Coordinate3D.ORIGIN)) {
+                flagCenter = false
+                break
+            }
+        }
+        if (flagCenter) return false
+        
+        var i = 0
+        ingredientToCoordinates.forEach { (ingredient, coordinates) -> 
+            ingredients += ingredient
+            coordinates.forEach { coordinate -> 
+                if (coordinate == Coordinate3D.ORIGIN) center = i
+                else structure[coordinate] = i
+            }
+            i++
+        }
+        return true
     }
     
     fun getData(): ArrayList<String> {
@@ -176,6 +234,7 @@ class MultipleMachineStructure(var center: UniversalBlock) : AbstractMachineStru
             return Coordinate3D(x1, y1, z1) to Coordinate3D(x2, y2, z2)
         }
         
+        scannedCoordinates += MutableCoordinate3D(0, 0, 0)
         val currentCoordinate = MutableCoordinate3D()
         structure.forEach { (coordinate, ingredient) -> 
             currentCoordinate.setCoordinate(coordinate.x, coordinate.y, coordinate.z)
@@ -244,6 +303,11 @@ class MultipleMachineStructure(var center: UniversalBlock) : AbstractMachineStru
                 }
             }
         }
+    }
+    
+    
+    companion object {
+        val blockFaces: Set<BlockFace> = EnumSet.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST)
     }
     
 }

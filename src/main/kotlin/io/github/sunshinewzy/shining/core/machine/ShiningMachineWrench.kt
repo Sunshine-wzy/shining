@@ -12,6 +12,7 @@ import io.github.sunshinewzy.shining.utils.position3D
 import org.bukkit.Effect
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
@@ -30,7 +31,7 @@ object ShiningMachineWrench : IMachineWrench {
                 val clickedBlock = event.clickedBlock ?: return
                 if (clickedBlock.type == Material.AIR) return
                 
-                check(clickedBlock.location, player)
+                check(clickedBlock.location, event.blockFace, player)
             }
         }
     )
@@ -42,12 +43,12 @@ object ShiningMachineWrench : IMachineWrench {
         machineRegistry += machine
     }
 
-    override fun check(location: Location, player: Player?) {
+    override fun check(location: Location, direction: BlockFace?, player: Player?) {
         val position = location.position3D
         if (MachineManager.hasMachine(position)) return
         
         for (machine in machineRegistry) {
-            if (machine.structure.check(location)) {
+            if (machine.structure.check(location, direction)) {
                 MachineManager.activate(position, machine)
                 
                 player?.sendMessage("机器构建成功!")

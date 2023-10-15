@@ -12,6 +12,9 @@ data class Coordinate3D(val x: Int, val y: Int, val z: Int) {
 
 
     companion object {
+        
+        @JvmField
+        val ORIGIN = Coordinate3D(0, 0, 0)
 
         @JvmStatic
         @JsonCreator
