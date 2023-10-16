@@ -11,8 +11,10 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
+import org.bukkit.entity.Player
 import taboolib.module.nms.MinecraftVersion
 import java.util.*
+import java.util.function.BiConsumer
 import kotlin.math.max
 import kotlin.math.min
 
@@ -33,36 +35,73 @@ class MultipleMachineStructure : AbstractMachineStructure() {
             if (direction == null || direction !in blockFaces) return false
             
             val rotator = Rotator(this.direction, direction)
-            if (!compare(ingredients[center], location.block))
-                return false
-            
-            val centerX = location.blockX
-            val centerY = location.blockY
-            val centerZ = location.blockZ
-            val tempLocation = location.clone()
-            val rotatedIngredients = ingredients.map { ingredient ->
-                (ingredient as? VanillaUniversalBlock)?.let {
-                    VanillaUniversalBlock(rotator.rotate(it.data))
-                } ?: ingredient
-            }
-            
-            for ((coordinate, ingredient) in structure) {
-                rotator.setLocation(coordinate.x, coordinate.z)
-                tempLocation.x = (centerX + rotator.rotatedX).toDouble()
-                tempLocation.y = (centerY + coordinate.y).toDouble()
-                tempLocation.z = (centerZ + rotator.rotatedZ).toDouble()
-                if (!compare(rotatedIngredients[ingredient], tempLocation.block))
-                    return false
-            }
+            return checkAt(location, rotator)
         } else {
-            
+            val rotator = Rotator(0, false)
+            for (rot in 0..3) {
+                rotator.setRotation(rot)
+                if (checkAt(location, rotator))
+                    return true
+            }
+            return false
         }
-        
-        return true
     }
-    
+
+    override fun build(location: Location, direction: BlockFace?) {
+        forEachBlock(location, direction) { loc, ingredient ->
+            ingredient.setBlock(loc.block)
+        }
+    }
+
+    override fun project(player: Player, location: Location, direction: BlockFace?) {
+        forEachBlock(location, direction) { loc, ingredient ->
+            ingredient.sendBlock(player, loc)
+        }
+    }
+
+    override fun forEachBlock(location: Location, direction: BlockFace?, action: BiConsumer<Location, UniversalBlock>) {
+        val rotator = if (direction == null) Rotator(0, false) else Rotator(this.direction, direction)
+        val rotatedIngredients = if (direction == null || direction == this.direction) ingredients else ingredients.map { it.rotate(rotator) }
+        action.accept(location, rotatedIngredients[center])
+
+        val centerX = location.blockX
+        val centerY = location.blockY
+        val centerZ = location.blockZ
+        val tempLocation = location.clone()
+
+        for ((coordinate, ingredient) in structure) {
+            rotator.setLocation(coordinate.x, coordinate.z)
+            tempLocation.x = (centerX + rotator.getRotatedX()).toDouble()
+            tempLocation.y = (centerY + coordinate.y).toDouble()
+            tempLocation.z = (centerZ + rotator.getRotatedZ()).toDouble()
+            action.accept(tempLocation, rotatedIngredients[ingredient])
+        }
+    }
+
     fun compare(ingredient: UniversalBlock, block: Block): Boolean =
         ingredient.compare(block, strictMode, ignoreAir)
+    
+    fun checkAt(location: Location, rotator: Rotator): Boolean {
+        val rotatedCenterIngredient = ingredients[center].rotate(rotator)
+        if (!compare(rotatedCenterIngredient, location.block))
+            return false
+
+        val centerX = location.blockX
+        val centerY = location.blockY
+        val centerZ = location.blockZ
+        val tempLocation = location.clone()
+        val rotatedIngredients = ingredients.map { it.rotate(rotator) }
+
+        for ((coordinate, ingredient) in structure) {
+            rotator.setLocation(coordinate.x, coordinate.z)
+            tempLocation.x = (centerX + rotator.getRotatedX()).toDouble()
+            tempLocation.y = (centerY + coordinate.y).toDouble()
+            tempLocation.z = (centerZ + rotator.getRotatedZ()).toDouble()
+            if (!compare(rotatedIngredients[ingredient], tempLocation.block))
+                return false
+        }
+        return true
+    }
     
     fun scan(centerLocation: Location, location1: Location, location2: Location, direction: BlockFace): Boolean {
         val world = location1.world ?: return false
@@ -122,7 +161,7 @@ class MultipleMachineStructure : AbstractMachineStructure() {
         }
 
         var flagCenter = true
-        for ((ingredient, coordinates) in ingredientToCoordinates) {
+        for ((_, coordinates) in ingredientToCoordinates) {
             if (coordinates.contains(Coordinate3D.ORIGIN)) {
                 flagCenter = false
                 break

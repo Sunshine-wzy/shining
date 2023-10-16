@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.core.machine.structure;
 
+import io.github.sunshinewzy.shining.api.machine.structure.IRotator;
 import org.bukkit.Axis;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -16,7 +17,7 @@ import taboolib.module.nms.MinecraftVersion;
  * Used to rotate blocks and block sections when building or testing for the presence of a MultiBlockStructure
  * @author Redempt
  */
-public class Rotator {
+public class Rotator implements IRotator {
 	
 	private static final BlockFace[] BLOCK_FACES = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
 	
@@ -101,13 +102,15 @@ public class Rotator {
 	public Rotator(@NotNull BlockFace from, @NotNull BlockFace to) {
 		this(from, to, false);
 	}
-	
+
 	/**
 	 * Rotates block data. NOTE: Only works for 1.13+
 	 * @param data The block data to rotate
 	 * @return The rotated block data
 	 */
-	public BlockData rotate(BlockData data) {
+	@Override
+	@NotNull
+	public BlockData rotateBlockData(@NotNull BlockData data) {
 		data = data.clone();
 		if (data instanceof Directional) {
 			Directional d = (Directional) data;
@@ -144,7 +147,7 @@ public class Rotator {
 		}
 		return data;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private <T> void rotate(T[] arr) {
 		Object[] rot = new Object[4];
@@ -167,7 +170,9 @@ public class Rotator {
 	 * @param face The BlockFace to rotate
 	 * @return The rotated BlockFace
 	 */
-	public BlockFace rotateBlockFace(BlockFace face) {
+	@Override
+	@NotNull
+	public BlockFace rotateBlockFace(@NotNull BlockFace face) {
 		return rotateBlockFace(face, rotation, mirrored);
 	}
 	
@@ -176,7 +181,9 @@ public class Rotator {
 	 * @param vector The Vector to rotate
 	 * @return The rotated Vector
 	 */
-	public Vector rotateVector(Vector vector) {
+	@Override
+	@NotNull
+	public Vector rotateVector(@NotNull Vector vector) {
 		setLocation(vector.getBlockX(), vector.getBlockZ());
 		return new Vector(getRotatedX(), vector.getY(), getRotatedZ());
 	}
@@ -186,6 +193,7 @@ public class Rotator {
 	 * @param x The relative X coordinate
 	 * @param z The relative Z coordinate
 	 */
+	@Override
 	public void setLocation(int x, int z) {
 		this.x = mirrored ? -x : x;
 		this.z = z;
@@ -194,6 +202,7 @@ public class Rotator {
 	/**
 	 * @return The rotated relative X
 	 */
+	@Override
 	public int getRotatedX() {
 		switch (rotation) {
 			case 0:
@@ -211,6 +220,7 @@ public class Rotator {
 	/**
 	 * @return The rotated relative Z
 	 */
+	@Override
 	public int getRotatedZ() {
 		switch (rotation) {
 			case 0:
@@ -229,6 +239,8 @@ public class Rotator {
 	 * Gets a Rotator which will negate the operations of this Rotator
 	 * @return The inverse Rotator
 	 */
+	@Override
+	@NotNull
 	public Rotator getInverse() {
 		return new Rotator(-rotation, mirrored);
 	}
@@ -239,6 +251,7 @@ public class Rotator {
 	 */
 	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	@Override
+	@NotNull
 	public Rotator clone() {
 		return new Rotator(rotation, mirrored);
 	}
@@ -247,6 +260,7 @@ public class Rotator {
 	 * Gets the rotation, in number of 90-degree clockwise rotations
 	 * @return The rotation
 	 */
+	@Override
 	public int getRotation() {
 		return rotation;
 	}
@@ -255,6 +269,7 @@ public class Rotator {
 	 * Sets the rotation
 	 * @param rotation The rotation to set
 	 */
+	@Override
 	public void setRotation(int rotation) {
 		this.rotation = rotation % 4;
 	}
@@ -263,6 +278,7 @@ public class Rotator {
 	 * Sets whether this rotator mirrors over the X axis
 	 * @param mirrored Whether this rotator mirrors over the X axis
 	 */
+	@Override
 	public void setMirrored(boolean mirrored) {
 		this.mirrored = mirrored;
 	}
@@ -271,6 +287,7 @@ public class Rotator {
 	 * Gets whether this rotator mirrors over the X axis
 	 * @return Whether this rotator mirrors over the X axis
 	 */
+	@Override
 	public boolean isMirrored() {
 		return mirrored;
 	}

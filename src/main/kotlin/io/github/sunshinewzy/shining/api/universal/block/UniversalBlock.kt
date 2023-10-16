@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.api.universal.block
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import io.github.sunshinewzy.shining.api.machine.structure.IRotator
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -55,5 +56,7 @@ interface UniversalBlock {
      * @return Whether the block matches this [UniversalBlock] within the given parameters
      */
     fun compare(block: Block, strict: Boolean, ignoreAir: Boolean): Boolean
-
+    
+    fun rotate(rotator: IRotator): UniversalBlock
+    
 }

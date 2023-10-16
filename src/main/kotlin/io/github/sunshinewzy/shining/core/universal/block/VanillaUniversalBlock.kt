@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.core.universal.block
 
 import com.fasterxml.jackson.annotation.JsonTypeName
+import io.github.sunshinewzy.shining.api.machine.structure.IRotator
 import io.github.sunshinewzy.shining.api.universal.block.UniversalBlock
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -46,5 +47,8 @@ class VanillaUniversalBlock(val data: BlockData) : UniversalBlock {
         if (!strict) return block.type == getType()
         return block.blockData.matches(data)
     }
+
+    override fun rotate(rotator: IRotator): VanillaUniversalBlock =
+        VanillaUniversalBlock(rotator.rotateBlockData(data))
     
 }
