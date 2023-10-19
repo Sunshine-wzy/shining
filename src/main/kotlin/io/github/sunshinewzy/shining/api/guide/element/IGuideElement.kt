@@ -52,11 +52,18 @@ interface IGuideElement {
      */
     fun unlock(player: Player, team: IGuideTeam): Boolean
     
-    fun complete(player: Player, team: IGuideTeam, isSilent: Boolean = false)
+    fun complete(player: Player, team: IGuideTeam, silent: Boolean = false)
     
     fun fail(player: Player)
 
     fun reward(player: Player)
+    
+    fun checkCompleteFuture(player: Player, team: IGuideTeam): CompletableFuture<Boolean>
+    
+    fun tryToCompleteFuture(player: Player, team: IGuideTeam, silent: Boolean): CompletableFuture<Boolean>
+    
+    fun tryToCompleteFuture(player: Player, team: IGuideTeam): CompletableFuture<Boolean> =
+        tryToCompleteFuture(player, team, false)
     
     fun saveToState(state: IGuideElementState): Boolean
 
@@ -80,6 +87,14 @@ interface IGuideElement {
     fun isTeamUnlockedFuture(team: IGuideTeam): CompletableFuture<Boolean>
 
     fun isTeamDependencyCompletedFuture(team: IGuideTeam): CompletableFuture<Boolean>
+
+    fun getTeamRepeatablePeriodRemainingTimeFuture(team: IGuideTeam): CompletableFuture<Long>
+
+    fun getTeamRemainingTimeFuture(team: IGuideTeam): CompletableFuture<Long>
+
+    fun canTeamCompleteFuture(team: IGuideTeam): CompletableFuture<Boolean>
+    
+    fun canComplete(isCompleted: Boolean, remainingTime: Long): Boolean
 
     /**
      * Register the element

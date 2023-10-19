@@ -81,6 +81,7 @@ class DictionaryUniversalItem(
                                 val namespacedId = NamespacedId.fromString(it) ?: return@predicate false
                                 content["namespace"] = namespacedId.namespace.toString()
                                 content["id"] = namespacedId.id
+                                checkCorrect()
                                 true
                             }
                             "namespace" -> Namespace.VALID_NAMESPACE.matcher(it).matches()

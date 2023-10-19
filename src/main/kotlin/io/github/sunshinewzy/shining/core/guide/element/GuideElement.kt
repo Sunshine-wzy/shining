@@ -36,6 +36,7 @@ import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.function.submit
 import taboolib.module.chat.colored
 import taboolib.module.ui.type.Basic
 import java.util.*
@@ -121,8 +122,8 @@ abstract class GuideElement(
         return true
     }
 
-    override fun complete(player: Player, team: IGuideTeam, isSilent: Boolean) {
-        if (!ShiningGuideElementCompleteEvent(this, player, team, isSilent).call())
+    override fun complete(player: Player, team: IGuideTeam, silent: Boolean) {
+        if (!ShiningGuideElementCompleteEvent(this, player, team, silent).call())
             return
         
         ShiningDispatchers.launchDB { 
@@ -134,7 +135,7 @@ abstract class GuideElement(
             }
             (team as GuideTeam).updateTeamData()
         }
-        if (isSilent) return
+        if (silent) return
 
         player.world.playSound(player.location, Sound.UI_TOAST_CHALLENGE_COMPLETE, 1f, 2f)
         player.sendTitle("§f[§e${description.name.colored()}§f]", player.getLangText("menu-shining_guide-element-complete").colored(), 10, 70, 20)
@@ -150,6 +151,16 @@ abstract class GuideElement(
     override fun reward(player: Player) {
         rewards.forEach { 
             it.reward(player)
+        }
+    }
+
+    override suspend fun tryToComplete(player: Player, team: IGuideTeam, silent: Boolean): Boolean {
+        return if (checkComplete(player, team)) {
+            submit { complete(player, team, silent) }
+            true
+        } else {
+            fail(player)
+            false
         }
     }
 
@@ -283,7 +294,7 @@ abstract class GuideElement(
                 loreList += player.getLangText(TEXT_REPEATABLE)
                 
                 if (repeatableSettings.hasRepeatablePeriod()) {
-                    val remainingTime = getRepeatablePeriodRemainingTime(team)
+                    val remainingTime = getTeamRepeatablePeriodRemainingTime(team)
                     if (remainingTime > 0) {
                         loreList += player.getLangText(TEXT_REPEATABLE_REMAINING_TIME, (remainingTime / 1000L).toString())
                     }
@@ -339,7 +350,7 @@ abstract class GuideElement(
         }
     }
     
-    suspend fun getRepeatablePeriodRemainingTime(team: IGuideTeam): Long {
+    override suspend fun getTeamRepeatablePeriodRemainingTime(team: IGuideTeam): Long {
         if (team !is GuideTeam) return -1
         val data = getTeamData(team)
         val startTime = data.getElementRepeatablePeriod(getId()) ?: System.currentTimeMillis().also {
@@ -359,7 +370,13 @@ abstract class GuideElement(
         return repeatableSettings.period - passedTime
     }
     
-    fun canComplete(isCompleted: Boolean, remainingTime: Long): Boolean = isCompleted && (!getRepeatableSettings().repeatable || remainingTime > 0)
+    override suspend fun getTeamRemainingTime(team: IGuideTeam): Long =
+        if (getRepeatableSettings().hasRepeatablePeriod()) getTeamRepeatablePeriodRemainingTime(team) else 0
+    
+    override fun canComplete(isCompleted: Boolean, remainingTime: Long): Boolean = !isCompleted || (getRepeatableSettings().repeatable && remainingTime <= 0)
+    
+    override suspend fun canTeamComplete(team: IGuideTeam): Boolean =
+        canComplete(isTeamCompleted(team), getTeamRemainingTime(team))
     
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

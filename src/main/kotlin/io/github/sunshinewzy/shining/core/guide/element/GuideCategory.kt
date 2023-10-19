@@ -52,8 +52,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
 
     override fun openMenu(player: Player, team: IGuideTeam, context: GuideContext) {
         ShiningDispatchers.launchDB { 
-            val isCompleted = isTeamCompleted(team)
-            val remainingTime = if (getRepeatableSettings().hasRepeatablePeriod()) getRepeatablePeriodRemainingTime(team) else 0
+            val canComplete = canTeamComplete(team)
 
             submit {
                 player.openMenu<Linked<IGuideElement>>(player.getLangText(ShiningGuide.TITLE)) {
@@ -76,7 +75,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
                             when (condition) {
                                 LOCKED_DEPENDENCY -> dependencyLockedElements += element
                                 LOCKED_LOCK -> lockLockedElements += element
-                                REPEATABLE -> repeatableElements[element] = getRepeatablePeriodRemainingTime(team)
+                                REPEATABLE -> repeatableElements[element] = getTeamRepeatablePeriodRemainingTime(team)
                                 else -> {}
                             }
                             element.getSymbolByCondition(player, team, condition)
@@ -163,24 +162,17 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
                             }
                         }
                     } else if (this@GuideCategory !== ShiningGuide) {
-                        if (canComplete(isCompleted, remainingTime)) {
-                            if (getRewards().isNotEmpty()) {
-                                set(5 orderWith 6, ShiningIcon.VIEW_REWARDS.toLocalizedItem(player)) {
-                                    openViewRewardsMenu(player, team, context)
+                        if (canComplete) {
+                            set(5 orderWith 6, ShiningIcon.VIEW_REWARDS_AND_SUBMIT.toLocalizedItem(player)) {
+                                openViewRewardsMenu(player, team, context)
+                                ShiningDispatchers.launchIO { 
+                                    tryToComplete(player, team)
                                 }
                             }
                         } else {
-                            set(5 orderWith 6, ShiningIcon.VIEW_REWARDS_AND_SUBMIT.toLocalizedItem(player)) {
-                                openViewRewardsMenu(player, team, context)
-                                ShiningDispatchers.launchDB {
-                                    val checkCompleted = checkChildElementsCompleted(team)
-                                    submit {
-                                        if (checkCompleted) {
-                                            complete(player, team)
-                                        } else {
-                                            fail(player)
-                                        }
-                                    }
+                            if (getRewards().isNotEmpty()) {
+                                set(5 orderWith 6, ShiningIcon.VIEW_REWARDS.toLocalizedItem(player)) {
+                                    openViewRewardsMenu(player, team, context)
                                 }
                             }
                         }
@@ -215,6 +207,10 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
                 }
             }
         }
+    }
+
+    override suspend fun checkComplete(player: Player, team: IGuideTeam): Boolean {
+        return checkChildElementsCompleted(team)
     }
 
     override fun saveToState(state: IGuideElementState): Boolean {

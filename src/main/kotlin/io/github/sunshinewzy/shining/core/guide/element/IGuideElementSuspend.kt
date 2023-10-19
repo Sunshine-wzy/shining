@@ -27,6 +27,19 @@ interface IGuideElementSuspend : IGuideElement {
 
     suspend fun isTeamDependencyCompleted(team: IGuideTeam): Boolean
 
+    suspend fun getTeamRepeatablePeriodRemainingTime(team: IGuideTeam): Long
+
+    suspend fun getTeamRemainingTime(team: IGuideTeam): Long
+
+    suspend fun canTeamComplete(team: IGuideTeam): Boolean
+
+    suspend fun checkComplete(player: Player, team: IGuideTeam): Boolean
+
+    suspend fun tryToComplete(player: Player, team: IGuideTeam, silent: Boolean): Boolean
+
+    suspend fun tryToComplete(player: Player, team: IGuideTeam): Boolean =
+        tryToComplete(player, team, false)
+    
     override fun getTeamDataFuture(team: IGuideTeam): CompletableFuture<IGuideTeamData> =
         ShiningDispatchers.futureIO { getTeamData(team) }
 
@@ -44,5 +57,20 @@ interface IGuideElementSuspend : IGuideElement {
 
     override fun isTeamDependencyCompletedFuture(team: IGuideTeam): CompletableFuture<Boolean> =
         ShiningDispatchers.futureIO { isTeamDependencyCompleted(team) }
+
+    override fun getTeamRepeatablePeriodRemainingTimeFuture(team: IGuideTeam): CompletableFuture<Long> =
+        ShiningDispatchers.futureIO { getTeamRepeatablePeriodRemainingTime(team) }
+
+    override fun getTeamRemainingTimeFuture(team: IGuideTeam): CompletableFuture<Long> =
+        ShiningDispatchers.futureIO { getTeamRemainingTime(team) }
+
+    override fun canTeamCompleteFuture(team: IGuideTeam): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureIO { canTeamComplete(team) }
+
+    override fun checkCompleteFuture(player: Player, team: IGuideTeam): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureIO { checkComplete(player, team) }
+
+    override fun tryToCompleteFuture(player: Player, team: IGuideTeam, silent: Boolean): CompletableFuture<Boolean> =
+        ShiningDispatchers.futureIO { tryToComplete(player, team, silent) }
     
 }

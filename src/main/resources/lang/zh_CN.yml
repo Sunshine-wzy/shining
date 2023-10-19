@@ -55,6 +55,7 @@ item-shining-shining_guide-draft-folder-editor: '&e编辑文件夹'
 item-shining-shining_guide-state-item: [ '&bItem - 物品', '', '&f取得指定的物品' ]
 item-shining-shining_guide-state-category: [ '&eCategory - 分类', '', '&f能有序的容纳各种元素' ]
 item-shining-shining_guide-state-map: [ '&dMap - 图', '', '&f能灵活的容纳各种元素', '&f适合制作科技线' ]
+item-shining-shining_guide-state-empty: [ '&dEmpty - 空', '', '&f没有界面的元素', '&f可以作为提示' ]
 item-shining-shining_guide-reward-item-icon: [ '&bItem - 物品', '', '&f奖励物品' ]
 item-shining-shining_guide-reward-command-icon: [ '&cCommand - 指令', '', '&f执行指令', '&f支持PAPI变量' ]
 item-shining-shining_wrench: '&b扳手'

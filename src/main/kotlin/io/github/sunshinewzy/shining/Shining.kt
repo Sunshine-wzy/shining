@@ -30,10 +30,7 @@ import io.github.sunshinewzy.shining.core.guide.lock.LockItem
 import io.github.sunshinewzy.shining.core.guide.reward.GuideRewardCommand
 import io.github.sunshinewzy.shining.core.guide.reward.GuideRewardItem
 import io.github.sunshinewzy.shining.core.guide.reward.GuideRewardRegistry
-import io.github.sunshinewzy.shining.core.guide.state.GuideCategoryState
-import io.github.sunshinewzy.shining.core.guide.state.GuideElementStateRegistry
-import io.github.sunshinewzy.shining.core.guide.state.GuideItemState
-import io.github.sunshinewzy.shining.core.guide.state.GuideMapState
+import io.github.sunshinewzy.shining.core.guide.state.*
 import io.github.sunshinewzy.shining.core.item.ConsumableItemGroup
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.machine.Machine
@@ -226,7 +223,8 @@ object Shining : Plugin(), ShiningPlugin {
         GuideElementStateRegistry.register(mapOf(
             GuideItemState::class.java to NamespacedIdItem(Material.STICK, NamespacedId(Shining, "shining_guide-state-item")),
             GuideCategoryState::class.java to NamespacedIdItem(Material.BOOK, NamespacedId(Shining, "shining_guide-state-category")),
-            GuideMapState::class.java to NamespacedIdItem(Material.MAP, NamespacedId(Shining, "shining_guide-state-map"))
+            GuideMapState::class.java to NamespacedIdItem(Material.MAP, NamespacedId(Shining, "shining_guide-state-map")),
+            GuideEmptyState::class.java to NamespacedIdItem(Material.PAPER, NamespacedId(Shining, "shining_guide-state-empty"))
         ))
         
         GuideRewardRegistry.register(mapOf(

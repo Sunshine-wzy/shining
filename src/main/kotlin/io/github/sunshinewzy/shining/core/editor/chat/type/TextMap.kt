@@ -72,8 +72,7 @@ open class TextMap(name: String) : ChatEditorSession<MutableMap<String, String>>
         isCorrect = false
     }
 
-
-    private fun checkCorrect() {
+    fun checkCorrect() {
         for (value in content.values) {
             if (value.isEmpty()) {
                 isCorrect = false

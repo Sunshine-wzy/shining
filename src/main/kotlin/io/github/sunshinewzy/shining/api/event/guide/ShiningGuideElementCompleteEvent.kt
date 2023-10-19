@@ -8,5 +8,5 @@ class ShiningGuideElementCompleteEvent(
     element: IGuideElement,
     val player: Player,
     val team: IGuideTeam,
-    val isSilent: Boolean
+    val silent: Boolean
 ) : ShiningGuideElementEvent(element)

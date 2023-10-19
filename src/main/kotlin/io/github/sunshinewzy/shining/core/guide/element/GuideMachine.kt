@@ -24,5 +24,8 @@ open class GuideMachine : GuideElement {
     }
 
     override fun register(): GuideMachine = super.register() as GuideMachine
-    
+
+    override suspend fun checkComplete(player: Player, team: IGuideTeam): Boolean {
+        TODO("Not yet implemented")
+    }
 }
