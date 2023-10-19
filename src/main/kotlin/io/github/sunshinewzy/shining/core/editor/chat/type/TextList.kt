@@ -6,7 +6,7 @@ import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
 import org.bukkit.entity.Player
 import org.bukkit.event.player.AsyncPlayerChatEvent
-import taboolib.module.chat.TellrawJson
+import taboolib.module.chat.ComponentText
 import taboolib.module.chat.colored
 import java.util.*
 
@@ -19,29 +19,43 @@ open class TextList(name: String) : ChatEditorSession<MutableList<String>>(name)
         private set
 
 
-    override fun display(player: Player, json: TellrawJson) {
+    override fun display(player: Player, component: ComponentText) {
         content.forEachIndexed { index, str ->
-            json.append(if (mode == EDIT && index == this.index) "§7| §d${index + 1}. §f${str.colored()}" else "§7| ${index + 1}. §f${str.colored()}")
+            component.append(if (mode == EDIT && index == this.index) "§7| §d${index + 1}. §f${str.colored()}" else "§7| ${index + 1}. §f${str.colored()}")
                 .hoverText(player.getLangText("text-editor-chat-session-text_list-edit").colored())
-                .runCommand("/shiningapi editor chat mode EDIT.$index")
+                .clickRunCommand("/shiningapi editor chat mode EDIT.$index")
                 .append("    ")
                 .append("§7[§b#§7]")
                 .hoverText(player.getLangText("text-editor-chat-session-text_list-input").colored())
-                .suggestCommand(str)
+                .clickSuggestCommand(str)
                 .append(" ")
                 .append(if (mode == ADD && index == this.index) "§d[§a+§d]" else "§7[§a+§7]")
                 .hoverText(player.getLangText("text-editor-chat-session-text_list-add").colored())
-                .runCommand("/shiningapi editor chat mode ADD.$index")
+                .clickRunCommand("/shiningapi editor chat mode ADD.$index")
                 .append(" ")
                 .append("§7[§c-§7]")
                 .hoverText(player.getLangText("text-editor-chat-session-text_list-remove").colored())
-                .runCommand("/shiningapi editor chat mode REMOVE.$index")
-                .newLine()
+                .clickRunCommand("/shiningapi editor chat mode REMOVE.$index")
+            
+            if (index > 0) {
+                component.append(" ")
+                    .append("§7[§e↑§7]")
+                    .hoverText(player.getLangText("text-editor-chat-session-text_list-up").colored())
+                    .clickRunCommand("/shiningapi editor chat mode UP.$index")
+            }
+            if (index < content.size - 1) {
+                component.append(" ")
+                    .append("§7[§e↓§7]")
+                    .hoverText(player.getLangText("text-editor-chat-session-text_list-down").colored())
+                    .clickRunCommand("/shiningapi editor chat mode DOWN.$index")
+            }
+            
+            component.newLine()
         }
 
-        json.append(if (mode == ADD && this.index == content.size) "§7| §d[§a+§d]" else "§7| [§a+§7]")
+        component.append(if (mode == ADD && index == content.size) "§7| §d[§a+§d]" else "§7| [§a+§7]")
             .hoverText(player.getLangText("text-editor-chat-session-text_list-add").colored())
-            .runCommand("/shiningapi editor chat mode ADD.${content.size}")
+            .clickRunCommand("/shiningapi editor chat mode ADD.${content.size}")
     }
 
     override fun update(event: AsyncPlayerChatEvent) {
@@ -64,7 +78,7 @@ open class TextList(name: String) : ChatEditorSession<MutableList<String>>(name)
                 }
             }
 
-            REMOVE -> {}
+            else -> {}
         }
 
         isCorrect = content.isNotEmpty()
@@ -77,17 +91,41 @@ open class TextList(name: String) : ChatEditorSession<MutableList<String>>(name)
         val theMode = Mode.fromString(split[0]) ?: return
         val theIndex = split[1].toIntOrNull() ?: return
 
-        if (theMode == REMOVE) {
-            if (theIndex in content.indices) {
-                content.removeAt(theIndex)
-                send(player)
-            } else {
-                player.sendPrefixedLangText("text-editor-chat-session-text_list-index_out_of_bounds")
+        when (theMode) {
+            REMOVE -> {
+                if (theIndex in content.indices) {
+                    content.removeAt(theIndex)
+                } else {
+                    player.sendPrefixedLangText("text-editor-chat-session-text_list-index_out_of_bounds")
+                    return
+                }
             }
-            return
+            
+            UP -> {
+                if (theIndex in 1..content.lastIndex) {
+                    val theText = content.removeAt(theIndex)
+                    content.add(theIndex - 1, theText)
+                } else {
+                    player.sendPrefixedLangText("text-editor-chat-session-text_list-index_out_of_bounds")
+                    return
+                }
+            }
+            
+            DOWN -> {
+                if (theIndex in 0 until content.lastIndex) {
+                    val theText = content.removeAt(theIndex)
+                    content.add(theIndex + 1, theText)
+                } else {
+                    player.sendPrefixedLangText("text-editor-chat-session-text_list-index_out_of_bounds")
+                    return
+                }
+            }
+            
+            else -> {
+                this.mode = theMode
+            }
         }
-
-        this.mode = theMode
+        
         this.index = theIndex
         send(player)
     }
@@ -107,7 +145,9 @@ open class TextList(name: String) : ChatEditorSession<MutableList<String>>(name)
     enum class Mode {
         EDIT,
         ADD,
-        REMOVE;
+        REMOVE,
+        UP,
+        DOWN;
 
         companion object {
             fun fromString(mode: String): Mode? {
@@ -115,6 +155,8 @@ open class TextList(name: String) : ChatEditorSession<MutableList<String>>(name)
                     "EDIT" -> EDIT
                     "ADD" -> ADD
                     "REMOVE" -> REMOVE
+                    "UP" -> UP
+                    "DOWN" -> DOWN
                     else -> null
                 }
             }

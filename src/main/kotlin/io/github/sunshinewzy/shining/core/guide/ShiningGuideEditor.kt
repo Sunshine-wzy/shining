@@ -11,7 +11,6 @@ import io.github.sunshinewzy.shining.api.lang.item.ILanguageItem
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.api.objects.SPair
 import io.github.sunshinewzy.shining.core.guide.context.AbstractGuideContextElement
-import io.github.sunshinewzy.shining.core.guide.context.GuideEditModeContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftContext
 import io.github.sunshinewzy.shining.core.guide.draft.ShiningGuideDraft
@@ -160,24 +159,25 @@ object ShiningGuideEditor {
         (!isEditorEnabled(player)).also { 
             editorMap[player.uniqueId] = it
         }
+    
+    fun isEditModeAndEditorEnabled(player: Player): Boolean =
+        isEditModeEnabled(player) && isEditorEnabled(player)
         
 
     fun Basic.setEditor(
         player: Player,
-        context: GuideContext,
         slot: Int = 6 orderWith 1,
         item: LanguageItem = itemEditor,
         onClick: ClickEvent.() -> Unit = {}
     ) {
-        val editorContext = context[GuideEditModeContext] ?: return
-        if (!editorContext.mode) return
+        if (!isEditModeEnabled(player)) return
         
         set(
             slot,
-            if (editorContext.editor) item.toStateItem("open").shiny().toLocalizedItem(player)
+            if (isEditorEnabled(player)) item.toStateItem("open").shiny().toLocalizedItem(player)
             else item.toStateItem("close").toLocalizedItem(player)
         ) {
-            editorContext.editor = !editorContext.editor
+            switchEditor(player)
             onClick(this)
         }
     }

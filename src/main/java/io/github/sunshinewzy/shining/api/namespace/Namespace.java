@@ -42,6 +42,10 @@ public class Namespace {
 		return name.hashCode();
 	}
 
+	@Override
+	public String toString() {
+		return name;
+	}
 
 	public static final Pattern VALID_NAMESPACE = Pattern.compile("[a-z0-9_-]+");
 	private static final ConcurrentMap<String, Namespace> cache = new ConcurrentHashMap<>();

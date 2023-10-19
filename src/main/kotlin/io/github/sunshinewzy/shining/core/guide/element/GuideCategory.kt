@@ -13,7 +13,6 @@ import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor.setEditor
-import io.github.sunshinewzy.shining.core.guide.context.GuideEditModeContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideSelectElementsContext
 import io.github.sunshinewzy.shining.core.guide.context.GuideShortcutBarContext
@@ -69,7 +68,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
                     onGenerate(true) { player, elementFuture, index, slot ->
                         val element = elementFuture as IGuideElementSuspend
                         runBlocking(ShiningDispatchers.DB) {
-                            if (context[GuideEditModeContext]?.mode == true || team == CompletedGuideTeam.getInstance()) {
+                            if (ShiningGuideEditor.isEditModeEnabled(player) || team == CompletedGuideTeam.getInstance()) {
                                 return@runBlocking element.getUnlockedSymbol(player)
                             }
 
@@ -99,7 +98,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
                     }
 
                     onClick { event, element ->
-                        if (context[GuideEditModeContext]?.isEditorEnabled() == true) {
+                        if (ShiningGuideEditor.isEditModeAndEditorEnabled(player)) {
                             ShiningGuideEditor.openEditor(
                                 player, team, GuideEditorContext.Back {
                                     openMenu(player, team, context)
@@ -151,7 +150,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
                         element.open(event.clicker, team, this@GuideCategory, context)
                     }
 
-                    if (context[GuideEditModeContext]?.isEditorEnabled() == true) {
+                    if (ShiningGuideEditor.isEditModeAndEditorEnabled(player)) {
                         onClick(lock = true) { event ->
                             if (ShiningGuide.isClickEmptySlot(event)) {
                                 ShiningGuideEditor.openEditor(
@@ -187,7 +186,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
                         }
                     }
 
-                    setEditor(player, context) {
+                    setEditor(player) {
                         openMenu(player, team, context)
                     }
 

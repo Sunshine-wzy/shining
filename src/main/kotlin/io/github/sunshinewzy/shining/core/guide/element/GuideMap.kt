@@ -15,7 +15,10 @@ import io.github.sunshinewzy.shining.api.objects.coordinate.Rectangle
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor.setEditor
-import io.github.sunshinewzy.shining.core.guide.context.*
+import io.github.sunshinewzy.shining.core.guide.context.AbstractGuideContextElement
+import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
+import io.github.sunshinewzy.shining.core.guide.context.GuideSelectElementsContext
+import io.github.sunshinewzy.shining.core.guide.context.GuideShortcutBarContext
 import io.github.sunshinewzy.shining.core.guide.settings.ShiningGuideSettings
 import io.github.sunshinewzy.shining.core.guide.state.GuideMapState
 import io.github.sunshinewzy.shining.core.lang.getLangText
@@ -75,7 +78,7 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
                     onGenerate(true) { player, elementFuture, _, _ ->
                         val element = elementFuture as IGuideElementSuspend
                         runBlocking(ShiningDispatchers.DB) {
-                            if (context[GuideEditModeContext]?.mode == true || team == CompletedGuideTeam.getInstance()) {
+                            if (ShiningGuideEditor.isEditModeEnabled(player) || team == CompletedGuideTeam.getInstance()) {
                                 return@runBlocking element.getUnlockedSymbol(player)
                             }
 
@@ -99,7 +102,7 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
                     setMoveToOrigin(8 orderWith 1) { ShiningIcon.MOVE_TO_ORIGIN.toLocalizedItem(player) }
                     
                     onClick { event, element, coordinate ->
-                        if (context[GuideEditModeContext]?.isEditorEnabled() == true) {
+                        if (ShiningGuideEditor.isEditModeAndEditorEnabled(player)) {
                             ShiningGuideEditor.openEditor(
                                 player, team, GuideEditorContext.Back {
                                     openMenu(player, team, context + OffsetContext(offset))
@@ -151,7 +154,7 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
                         element.open(event.clicker, team, this@GuideMap, context)
                     }
 
-                    if (context[GuideEditModeContext]?.isEditorEnabled() == true) {
+                    if (ShiningGuideEditor.isEditModeAndEditorEnabled(player)) {
                         onClickEmpty { _, coordinate ->
                             ShiningGuideEditor.openEditor(
                                 player, team, GuideEditorContext.Back {
@@ -185,7 +188,7 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
                         }
                     }
 
-                    setEditor(player, context) {
+                    setEditor(player) {
                         openMenu(player, team, context + OffsetContext(offset))
                     }
 

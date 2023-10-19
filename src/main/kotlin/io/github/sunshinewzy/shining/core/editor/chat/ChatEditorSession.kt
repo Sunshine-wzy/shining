@@ -4,7 +4,8 @@ import io.github.sunshinewzy.shining.core.lang.getLangText
 import org.bukkit.entity.Player
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import taboolib.common.platform.function.adaptPlayer
-import taboolib.module.chat.TellrawJson
+import taboolib.module.chat.ComponentText
+import taboolib.module.chat.Components
 import taboolib.module.chat.colored
 
 abstract class ChatEditorSession<T>(val name: String) {
@@ -24,13 +25,13 @@ abstract class ChatEditorSession<T>(val name: String) {
         private set
 
 
-    abstract fun display(player: Player, json: TellrawJson)
+    abstract fun display(player: Player, component: ComponentText)
 
     abstract fun update(event: AsyncPlayerChatEvent)
 
 
     open fun send(player: Player) {
-        TellrawJson().newLine()
+        Components.empty().newLine()
             .append(player.getLangText("text-editor-chat-edit", name).colored())
             .newLine()
             .append("§7|")
@@ -40,11 +41,11 @@ abstract class ChatEditorSession<T>(val name: String) {
             .append("       ")
             .append(if (isCorrect) "§7[§a√§7]" else "§7[√]")
             .hoverText(player.getLangText("text-editor-chat-session-button-submit").colored())
-            .runCommand("/shiningapi editor chat submit")
+            .clickRunCommand("/shiningapi editor chat submit")
             .append("       ")
             .append("§7[§c×§7]")
             .hoverText(player.getLangText("text-editor-chat-session-button-cancel").colored())
-            .runCommand("/shiningapi editor chat cancel")
+            .clickRunCommand("/shiningapi editor chat cancel")
             .newLine()
             .sendTo(adaptPlayer(player))
     }

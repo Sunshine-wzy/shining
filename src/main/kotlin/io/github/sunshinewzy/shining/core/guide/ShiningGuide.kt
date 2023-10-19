@@ -11,7 +11,6 @@ import io.github.sunshinewzy.shining.api.guide.team.CompletedGuideTeam
 import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.dictionary.DictionaryRegistry
-import io.github.sunshinewzy.shining.core.guide.context.GuideEditModeContext
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.settings.SoundSettings
@@ -122,11 +121,7 @@ object ShiningGuide : GuideCategory(
         playerLastOpenElementMap -= player.uniqueId
         soundOpen.playSound(player)
 
-        var ctxt = context
-        if (ctxt[GuideEditModeContext] == null && ShiningGuideEditor.isEditModeEnabled(player)) {
-            ctxt += GuideEditModeContext()
-        }
-        openMenu(player, team, ctxt)
+        openMenu(player, team, context)
     }
 
     override fun openLastElement(player: Player, context: GuideContext) {
@@ -148,11 +143,7 @@ object ShiningGuide : GuideCategory(
 
     override fun openLastElement(player: Player, team: IGuideTeam, context: GuideContext) {
         playerLastOpenElementMap[player.uniqueId]?.let {
-            var ctxt = context
-            if (ctxt[GuideEditModeContext] == null && ShiningGuideEditor.isEditModeEnabled(player)) {
-                ctxt += GuideEditModeContext()
-            }
-            it.open(player, team, null, ctxt)
+            it.open(player, team, null, context)
             return
         }
 
@@ -163,20 +154,12 @@ object ShiningGuide : GuideCategory(
         playerLastOpenElementMap -= player.uniqueId
         soundOpen.playSound(player)
 
-        var ctxt = context
-        if (ctxt[GuideEditModeContext] == null) {
-            ctxt += GuideEditModeContext(false)
-        }
-        openMainMenu(player, CompletedGuideTeam.getInstance(), ctxt)
+        openMainMenu(player, CompletedGuideTeam.getInstance(), context)
     }
 
     override fun openCompletedLastElement(player: Player, context: GuideContext) {
         playerLastOpenElementMap[player.uniqueId]?.let {
-            var ctxt = context
-            if (ctxt[GuideEditModeContext] == null) {
-                ctxt += GuideEditModeContext(false)
-            }
-            it.open(player, CompletedGuideTeam.getInstance(), null, ctxt)
+            it.open(player, CompletedGuideTeam.getInstance(), null, context)
             return
         }
 
