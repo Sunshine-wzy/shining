@@ -23,18 +23,18 @@ class EdgeCube @JvmOverloads constructor(
 ) : ParticleObj(spawner) {
 
     init {
-        require(minLoc.world == maxLoc.world) { "这两个坐标的所对应的世界不相同" }
+        require(minLoc.world == maxLoc.world) { "These two coordinates correspond to different worlds." }
     }
 
     override fun show() {
         // 获得最大最小的两个点
-        val minX = min(minLoc.x, maxLoc.x)
-        val minY = min(minLoc.y, maxLoc.y)
-        val minZ = min(minLoc.z, maxLoc.z)
-        val maxX = max(minLoc.x, maxLoc.x)
-        val maxY = max(minLoc.y, maxLoc.y)
-        val maxZ = max(minLoc.z, maxLoc.z)
-        val minLoc = Location(minLoc.world, minX, minY, minZ)
+        val minX = min(minLoc.blockX, maxLoc.blockX) - 0.5
+        val minY = min(minLoc.blockY, maxLoc.blockY) - 0.5
+        val minZ = min(minLoc.blockZ, maxLoc.blockZ) - 0.5
+        val maxX = max(minLoc.blockX, maxLoc.blockX) + 0.5
+        val maxY = max(minLoc.blockY, maxLoc.blockY) + 0.5
+        val maxZ = max(minLoc.blockZ, maxLoc.blockZ) + 0.5
+        val minLoc = Location(this.minLoc.world, minX, minY, minZ)
 
         // 获得立方体的 长 宽 高
         val width = maxX - minX
@@ -50,16 +50,14 @@ class EdgeCube @JvmOverloads constructor(
             length = if (i % 2 == 0) depth else width
 
             // 4条高
-            run {
-                var j = 0.0
-                while (j < height) {
-                    spawnParticle(newOrigin.clone().add(UP.clone().multiply(j)))
-                    j += step
-                }
+            var j = 0.0
+            while (j < height) {
+                spawnParticle(newOrigin.clone().add(UP.clone().multiply(j)))
+                j += step
             }
 
             // 第n条边
-            var j = 0.0
+            j = 0.0
             while (j < length) {
                 val spawnLoc = newOrigin.clone().add(vector.clone().multiply(j))
                 spawnParticle(spawnLoc)

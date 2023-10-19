@@ -108,7 +108,14 @@ class MultipleMachineStructure : AbstractMachineStructure() {
         if (world != location2.world) return false
         structure.clear()
         ingredients.clear()
-        this.direction = direction
+        
+        if (blockFaces.contains(direction)) {
+            this.direction = direction
+            this.directionMode = true
+        } else {
+            this.direction = BlockFace.SELF
+            this.directionMode = false
+        }
         
         val centerX = centerLocation.blockX
         val centerY = centerLocation.blockY

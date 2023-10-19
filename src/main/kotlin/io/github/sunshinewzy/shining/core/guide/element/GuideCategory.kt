@@ -234,9 +234,9 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
     override fun getState(): IGuideElementState =
         GuideCategoryState().correlateElement(this)
 
-    override fun update(state: IGuideElementState, isMerge: Boolean): Boolean {
+    override fun update(state: IGuideElementState, merge: Boolean): Boolean {
         if (state !is GuideCategoryState) return false
-        if (!super<GuideElement>.update(state, isMerge)) return false
+        if (!super<GuideElement>.update(state, merge)) return false
 
         removedElements.clear()
         removedElements += state.removedElements
@@ -246,7 +246,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
             }
         }
         
-        if (!isMerge) {
+        if (!merge) {
             priorityToElements.clear()
             idToPriority.clear()
         }

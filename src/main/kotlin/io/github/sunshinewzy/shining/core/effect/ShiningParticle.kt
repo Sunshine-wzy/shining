@@ -9,7 +9,7 @@ import taboolib.common.platform.function.submit
 import taboolib.module.effect.ParticleObj
 import java.util.*
 
-object SParticle {
+object ShiningParticle {
     const val PERIOD = 20L
 
     private val particles: MutableList<ParticleObj> = LinkedList()

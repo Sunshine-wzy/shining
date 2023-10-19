@@ -160,9 +160,9 @@ open class GuideItem : GuideElement {
         return true
     }
 
-    override fun update(state: IGuideElementState, isMerge: Boolean): Boolean {
+    override fun update(state: IGuideElementState, merge: Boolean): Boolean {
         if (state !is GuideItemState) return false
-        if (!super.update(state, isMerge)) return false
+        if (!super.update(state, merge)) return false
         
         state.itemGroup?.let { itemGroup = it }
         return true

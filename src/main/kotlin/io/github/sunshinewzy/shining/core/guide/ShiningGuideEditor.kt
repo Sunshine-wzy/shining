@@ -38,6 +38,7 @@ import java.util.*
 object ShiningGuideEditor {
 
     private val editModeMap: MutableMap<UUID, Boolean> = HashMap()
+    private val editorMap: MutableMap<UUID, Boolean> = HashMap()
 
     private val itemEditor = NamespacedIdItem(Material.COMPARATOR, NamespacedId(Shining, "shining_guide-editor"))
     private val itemCreateStateCopy = NamespacedIdItem(Material.REDSTONE_LAMP, NamespacedId(Shining, "shining_guide-editor-create_state_copy"))
@@ -151,6 +152,15 @@ object ShiningGuideEditor {
         (!isEditModeEnabled(player)).also {
             editModeMap[player.uniqueId] = it
         }
+    
+    fun isEditorEnabled(player: Player): Boolean =
+        editorMap.getOrDefault(player.uniqueId, false)
+    
+    fun switchEditor(player: Player): Boolean =
+        (!isEditorEnabled(player)).also { 
+            editorMap[player.uniqueId] = it
+        }
+        
 
     fun Basic.setEditor(
         player: Player,

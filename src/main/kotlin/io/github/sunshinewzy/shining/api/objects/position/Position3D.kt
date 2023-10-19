@@ -3,6 +3,7 @@ package io.github.sunshinewzy.shining.api.objects.position
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Particle
+import org.bukkit.block.Block
 import org.bukkit.entity.Player
 
 data class Position3D @JvmOverloads constructor(val x: Int, val y: Int, val z: Int, val world: String? = null) {
@@ -11,10 +12,22 @@ data class Position3D @JvmOverloads constructor(val x: Int, val y: Int, val z: I
 
     override fun toString(): String = "$x,$y,$z;$world"
 
-    fun toLocation(): Location? {
+    fun toLocationOrNull(): Location? {
         if (world == null) return null
         return Location(Bukkit.getWorld(world), OFFSET + x, OFFSET + y, OFFSET + z)
     }
+    
+    fun toLocation(): Location =
+        toLocationOrNull() ?: throw IllegalStateException("The world cannot be null.")
+    
+    fun getBlockOrNull(): Block? {
+        val loc = toLocationOrNull() ?: return null
+        val world = loc.world ?: return null
+        return world.getBlockAt(loc)
+    }
+    
+    fun getBlock(): Block =
+        getBlockOrNull() ?: throw IllegalStateException("The world cannot be null.")
 
     fun spawnParticle(
         player: Player,

@@ -2,43 +2,41 @@ package io.github.sunshinewzy.shining.core.machine.creator
 
 import io.github.sunshinewzy.shining.api.objects.position.Position3D
 import io.github.sunshinewzy.shining.core.effect.EdgeCube
-import io.github.sunshinewzy.shining.core.effect.SParticle
+import io.github.sunshinewzy.shining.core.effect.ShiningParticle
 import org.bukkit.Particle
+import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import taboolib.common.util.Location
 import taboolib.module.effect.ParticleSpawner
 import taboolib.platform.util.toBukkitLocation
 import taboolib.platform.util.toProxyLocation
 
-class PlayerCreateMachineContext(
-    var status: Status = Status.SELECT_LEFT,
-    var leftPosition: Position3D? = null,
-    var rightPosition: Position3D? = null
+data class MachineCreatorContext(
+    var center: Position3D? = null,
+    var direction: BlockFace? = null,
+    var first: Position3D? = null,
+    var second: Position3D? = null
 ) {
 
-
-    fun checkSelect() {
-        if (isFinishedSelect()) {
-
-        }
-
-    }
-
     fun isFinishedSelect(): Boolean =
-        leftPosition != null && rightPosition != null
+        center != null && direction != null && first != null && second != null
 
     fun playParticle(player: Player) {
-        leftPosition?.let { pos ->
-            SParticle.aroundBlock(player, Particle.VILLAGER_HAPPY, pos)
+        center?.let { pos ->
+            ShiningParticle.aroundBlock(player, Particle.REDSTONE, pos)
+        }
+        
+        first?.let { pos ->
+            ShiningParticle.aroundBlock(player, Particle.LAVA, pos)
         }
 
-        rightPosition?.let { pos ->
-            SParticle.aroundBlock(player, Particle.VILLAGER_HAPPY, pos)
+        second?.let { pos ->
+            ShiningParticle.aroundBlock(player, Particle.LAVA, pos)
         }
 
-        if (leftPosition != null && rightPosition != null) {
-            val leftLoc = leftPosition?.toLocation() ?: return
-            val rightLoc = rightPosition?.toLocation() ?: return
+        if (first != null && second != null) {
+            val leftLoc = first?.toLocationOrNull() ?: return
+            val rightLoc = second?.toLocationOrNull() ?: return
 
             EdgeCube(
                 leftLoc.toProxyLocation(),
@@ -50,13 +48,6 @@ class PlayerCreateMachineContext(
                 }
             ).show()
         }
-    }
-
-
-    enum class Status {
-        SELECT_LEFT,
-        SELECT_RIGHT,
-
     }
 
 }

@@ -211,7 +211,7 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
                     context[GuideShortcutBarContext]?.update(this)
                     
                     onClose(once = false) {
-                        ShiningGuide.recordElementAdditionalContext(player, this@GuideMap,OffsetContext(offset))
+                        ShiningGuide.recordElementAdditionalContext(player, this@GuideMap, OffsetContext(offset))
                     }
                 }
             }
@@ -239,9 +239,9 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
         return true
     }
 
-    override fun update(state: IGuideElementState, isMerge: Boolean): Boolean {
+    override fun update(state: IGuideElementState, merge: Boolean): Boolean {
         if (state !is GuideMapState) return false
-        if (!super<GuideElement>.update(state, isMerge)) return false
+        if (!super<GuideElement>.update(state, merge)) return false
         
         removedElements.clear()
         removedElements += state.removedElements
@@ -252,7 +252,7 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
         }
         
         basePoint = state.basePoint
-        if (!isMerge) {
+        if (!merge) {
             elements.clear()
             idToCoordinate.clear()
         }
