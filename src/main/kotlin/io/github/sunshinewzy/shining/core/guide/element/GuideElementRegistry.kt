@@ -25,6 +25,7 @@ object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
     
     private val stateCache: MutableMap<NamespacedId, IGuideElementState> = ConcurrentHashMap()
     private val elementCache: MutableMap<NamespacedId, IGuideElement> = ConcurrentHashMap()
+    private val stateToElementCache: MutableSet<NamespacedId> = ConcurrentHashMap.newKeySet()
     
     
     suspend fun reload() {
@@ -77,9 +78,15 @@ object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
     
     override fun getElement(id: NamespacedId): IGuideElement? {
         elementCache[id]?.let { return it }
+        
+        if (stateToElementCache.contains(id))
+            return null
+        
         stateCache[id]?.let {
+            stateToElementCache += id
             val element = it.toElement()
             elementCache[id] = element
+            stateToElementCache -= id
             return element
         }
         return null
