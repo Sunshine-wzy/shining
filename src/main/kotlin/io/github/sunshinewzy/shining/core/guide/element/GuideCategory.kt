@@ -237,7 +237,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
         removedElements += state.removedElements
         removedElements.forEach { id ->
             if (idToPriority.contains(id)) {
-                unregisterElement(id)
+                unregisterElement(id, true)
             }
         }
         
@@ -257,11 +257,15 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
         removedElements -= id
     }
 
-    override fun unregisterElement(id: NamespacedId) {
+    override fun unregisterElement(id: NamespacedId, cascade: Boolean) {
         val priority = idToPriority[id] ?: return
         priorityToElements[priority]?.let { elementSet ->
             for (element in elementSet) {
                 if (element.getId() == id) {
+                    if (cascade && element is IGuideElementContainer) {
+                        element.unregisterAllElements(true)
+                    }
+                    
                     idToPriority -= id
                     elementSet -= element
                     ShiningDispatchers.launchDB {
@@ -271,6 +275,24 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
                 }
             }
         }
+    }
+
+    override fun unregisterAllElements(cascade: Boolean) {
+        priorityToElements.forEach { (_, elementSet) -> 
+            elementSet.forEach { element ->
+                if (cascade && element is IGuideElementContainer) {
+                    element.unregisterAllElements(true)
+                }
+                
+                ShiningDispatchers.launchDB { 
+                    GuideElementRegistry.removeElement(element)
+                }
+            }
+            elementSet.clear()
+        }
+        
+        priorityToElements.clear()
+        idToPriority.clear()
     }
 
     override fun register(): GuideCategory {

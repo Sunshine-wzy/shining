@@ -9,11 +9,13 @@ interface IGuideElementContainer : IGuideElement {
 
     fun registerElement(element: IGuideElement)
     
-    fun unregisterElement(id: NamespacedId)
+    fun unregisterElement(id: NamespacedId, cascade: Boolean)
     
-    fun unregisterElement(element: IGuideElement) {
-        unregisterElement(element.getId())
+    fun unregisterElement(element: IGuideElement, cascade: Boolean) {
+        unregisterElement(element.getId(), cascade)
     }
+    
+    fun unregisterAllElements(cascade: Boolean)
     
     fun getElement(id: NamespacedId, isDeep: Boolean = false): IGuideElement?
     

@@ -79,7 +79,7 @@ abstract class GuideElement(
 
         ShiningGuide.soundOpen.playSound(player)    // TODO: Customize the open sound
         
-        val ctxt = ShiningGuide.getElementAdditionalContext(player, this)?.let { it + context } ?: context
+        val ctxt = ShiningGuide.getElementAdditionalContext(player, this)?.let { context + it } ?: context
         openMenu(player, team, ctxt)
     }
 

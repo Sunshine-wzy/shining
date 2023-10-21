@@ -2,6 +2,7 @@ package io.github.sunshinewzy.shining.core.guide.element
 
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.context.GuideContext
+import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.guide.team.IGuideTeam
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
@@ -21,10 +22,8 @@ open class GuideEmpty : GuideElement {
     
     constructor() : super()
 
-
-    override fun openMenu(player: Player, team: IGuideTeam, context: GuideContext) {
-        back(player, team, context)
-        ShiningDispatchers.launchDB { 
+    override fun open(player: Player, team: IGuideTeam, previousElement: IGuideElement?, context: GuideContext) {
+        ShiningDispatchers.launchDB {
             if (canTeamComplete(team)) {
                 submit {
                     complete(player, team)
@@ -32,6 +31,8 @@ open class GuideEmpty : GuideElement {
             }
         }
     }
+
+    override fun openMenu(player: Player, team: IGuideTeam, context: GuideContext) {}
 
     override suspend fun checkComplete(player: Player, team: IGuideTeam): Boolean {
         return true

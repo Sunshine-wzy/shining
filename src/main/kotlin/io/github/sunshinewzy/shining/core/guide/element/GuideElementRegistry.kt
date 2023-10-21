@@ -30,12 +30,8 @@ object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
     
     suspend fun reload() {
         stateCache.clear()
+        elementCache.clear()
         init()
-        elementCache.forEach { (id, element) -> 
-            getState(id)?.let { state ->
-                element.update(state, true)
-            }
-        }
         ShiningGuide.reload()
     }
 
@@ -115,18 +111,18 @@ object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
     
     suspend fun saveElement(
         element: IGuideElement,
-        isCheckExists: Boolean = false,
+        checkExists: Boolean = false,
         checkId: NamespacedId = element.getId(),
         actionBeforeInsert: Supplier<Boolean> = Supplier { true }
     ): Boolean {
         val oldId = element.getId()
         val existsCache = elementCache.containsKey(checkId)
-        if (isCheckExists && existsCache)
+        if (checkExists && existsCache)
             return false
         
         return newSuspendedTransaction transaction@{
             val existsDB = containsElement(checkId)
-            if (isCheckExists && existsDB)
+            if (checkExists && existsDB)
                 return@transaction false
 
             if (!actionBeforeInsert.get()) return@transaction false
@@ -135,10 +131,13 @@ object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
                 updateElement(element)
             } else {
                 insertElement(element)
-                if (isCheckExists && checkId != oldId) {
+                if (checkExists && checkId != oldId) {
                     transaction {
                         deleteElement(oldId)
                     }
+                    
+                    stateCache -= oldId
+                    elementCache -= oldId
                 }
             }
 
@@ -185,9 +184,7 @@ object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
         }
     
     private fun deleteElement(id: NamespacedId): Int =
-        deleteWhere { 
-            key eq id.toString()
-        }
+        deleteWhere { key eq id.toString() }
 
     private fun deleteElement(element: IGuideElement): Int =
         deleteElement(element.getId())
@@ -204,10 +201,10 @@ object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
         readState(id)?.toElement()
     
     private fun containsElement(id: NamespacedId): Boolean =
-        GuideElementRegistry
+        !GuideElementRegistry
             .slice(key)
             .select { key eq id.toString() }
-            .firstOrNull() != null
+            .empty()
     
     private fun containsElement(element: IGuideElement): Boolean =
         containsElement(element.getId())

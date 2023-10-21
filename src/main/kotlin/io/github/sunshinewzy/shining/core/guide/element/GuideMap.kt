@@ -104,7 +104,7 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
                         if (ShiningGuideEditor.isEditModeAndEditorEnabled(player)) {
                             ShiningGuideEditor.openEditor(
                                 player, team, GuideEditorContext.Back {
-                                    openMenu(player, team, context + OffsetContext(offset))
+                                    open(player, team, null, context)
                                 } + ShiningGuideEditor.CreateContext {
                                     registerElement(it, coordinate)
                                 }, element, this@GuideMap
@@ -129,7 +129,7 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
 
                                     submit {
                                         context[GuideShortcutBarContext]?.setItems(list)
-                                        openMenu(player, team, context + OffsetContext(offset))
+                                        open(player, team, null, context)
                                     }
                                 }
                                 return@onClick
@@ -141,7 +141,7 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
                         if (element in lockLockedElements) {
                             if (element.unlock(player, team)) {
                                 ShiningGuide.fireworkCongratulate(player)
-                                open(player, team, null, context + OffsetContext(offset))
+                                open(player, team, null, context)
                             }
                             return@onClick
                         }
@@ -157,7 +157,7 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
                         onClickEmpty { _, coordinate ->
                             ShiningGuideEditor.openEditor(
                                 player, team, GuideEditorContext.Back {
-                                    openMenu(player, team, context + OffsetContext(offset))
+                                    open(player, team, null, context)
                                 } + ShiningGuideEditor.CreateContext {
                                     registerElement(it, coordinate)
                                 },null, this@GuideMap
@@ -181,7 +181,7 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
                     }
 
                     setEditor(player) {
-                        openMenu(player, team, context + OffsetContext(offset))
+                        open(player, team, null, context)
                     }
 
                     setBackButton(player, team, context)
@@ -197,7 +197,7 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
                                 ctxt.submit()
                             } else {
                                 ctxt.switchMode()
-                                openMenu(player, team, context + OffsetContext(offset))
+                                open(player, team, null, context)
                             }
                         }
                     }
@@ -215,10 +215,6 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
 
     override suspend fun checkComplete(player: Player, team: IGuideTeam): Boolean {
         return checkChildElementsCompleted(team)
-    }
-
-    override fun back(player: Player, team: IGuideTeam, context: GuideContext) {
-        super.back(player, team, context.minusKey(OffsetContext))
     }
 
     override fun getState(): IGuideElementState =
@@ -246,7 +242,7 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
         removedElements += state.removedElements
         removedElements.forEach { id ->
             if (idToCoordinate.contains(id)) {
-                unregisterElement(id)
+                unregisterElement(id, true)
             }
         }
         
@@ -276,16 +272,36 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
         registerElement(element, Coordinate2D.ORIGIN)
     }
 
-    override fun unregisterElement(id: NamespacedId) {
+    override fun unregisterElement(id: NamespacedId, cascade: Boolean) {
         val coordinate = idToCoordinate[id] ?: return
         elements[coordinate]?.let { element ->
             if (element.getId() == id) {
+                if (cascade && element is IGuideElementContainer) {
+                    element.unregisterAllElements(true)
+                }
+                
                 elements -= coordinate
+                idToCoordinate -= id
                 ShiningDispatchers.launchDB {
                     GuideElementRegistry.removeElement(element)
                 }
             }
         }
+    }
+
+    override fun unregisterAllElements(cascade: Boolean) {
+        elements.forEach { (_, element) -> 
+            if (cascade && element is IGuideElementContainer) {
+                element.unregisterAllElements(true)
+            }
+            
+            ShiningDispatchers.launchDB { 
+                GuideElementRegistry.removeElement(element)
+            }
+        }
+        
+        elements.clear()
+        idToCoordinate.clear()
     }
 
     override fun getElement(id: NamespacedId, isDeep: Boolean): IGuideElement? {

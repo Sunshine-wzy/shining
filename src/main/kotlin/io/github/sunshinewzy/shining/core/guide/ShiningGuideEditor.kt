@@ -79,9 +79,7 @@ object ShiningGuideEditor {
             }
 
             set('b', itemCreateStateNew.toLocalizedItem(player)) {
-                openCreateNewStateEditor(player, context + GuideEditorContext.Back {
-                    openEditor(player, team, context, element, elementContainer, elementContainerState)
-                }, elementContainer, elementContainerState)
+                openCreateNewStateEditor(player, team, context, element, elementContainer, elementContainerState)
             }
             
             set('c', itemLoadFromDraftBox.toLocalizedItem(player)) {
@@ -92,7 +90,14 @@ object ShiningGuideEditor {
         }
     }
     
-    fun openCreateNewStateEditor(player: Player, context: GuideContext, elementContainer: IGuideElementContainer?, elementContainerState: IGuideElementContainerState?) {
+    private fun openCreateNewStateEditor(
+        player: Player,
+        team: IGuideTeam,
+        context: GuideContext,
+        element: IGuideElement?,
+        elementContainer: IGuideElementContainer?,
+        elementContainerState: IGuideElementContainerState?
+    ) {
         player.openMultiPageMenu<SPair<Class<out IGuideElementState>, ILanguageItem>>(player.getLangText("menu-shining_guide-editor-create_new_state-title")) { 
             elements { GuideElementStateRegistry.getRegisteredClassPairList() }
             
@@ -103,7 +108,11 @@ object ShiningGuideEditor {
             onClick { _, element -> 
                 val state = element.first.getConstructor().newInstance()
                 state.openEditor(player, context = GuideEditorContext.Back {
-                    openCreateNewStateEditor(player, context, elementContainer, elementContainerState)
+                    submit(delay = 2) {
+                        context[GuideEditorContext.Back]?.let {
+                            it.onBack(this@Back)
+                        } ?: openCreateNewStateEditor(player, team, context, elementContainer, elementContainer, elementContainerState)
+                    }
                     
                     context[CreateContext]?.let { ctxtCreate ->
                         if (elementContainer != null) {
@@ -137,8 +146,8 @@ object ShiningGuideEditor {
                 })
             }
 
-            context[GuideEditorContext.Back]?.let { 
-                onBack(player) { it.onBack(this) }
+            onBack(player) {
+                openEditor(player, team, context, element, elementContainer, elementContainerState)
             }
         }
     }
