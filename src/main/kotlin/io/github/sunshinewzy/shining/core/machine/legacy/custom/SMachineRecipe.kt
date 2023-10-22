@@ -312,7 +312,7 @@ sealed class SMachineRecipe(
                     }
                 }
 
-                Type.INVENTORY -> inv.removeSItem(items)
+                Type.INVENTORY -> inv.removeVanillaItem(items)
             }
         }
 

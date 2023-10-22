@@ -157,6 +157,8 @@ fun ItemStack?.isItemSimilar(
     item: ItemStack,
     checkLore: Boolean = true,
     checkAmount: Boolean = true,
+    checkName: Boolean = true,
+    checkMeta: Boolean = true,
     checkDurability: Boolean = false
 ): Boolean {
     return if (this == null) {
@@ -167,12 +169,14 @@ fun ItemStack?.isItemSimilar(
         false
     } else if (checkDurability && durability != item.durability) {
         false
+    } else if (!checkMeta) {
+        true
     } else if (hasItemMeta()) {
         val itemMeta = itemMeta ?: return true
 
         if (item.hasItemMeta()) {
             val itemMeta2 = item.itemMeta ?: return true
-            itemMeta.isMetaSimilar(itemMeta2, checkLore)
+            itemMeta.isMetaSimilar(itemMeta2, checkLore, checkName)
         } else false
     } else !item.hasItemMeta()
 }
@@ -181,17 +185,19 @@ fun ItemStack?.isItemSimilar(
     item: Itemable,
     checkLore: Boolean = true,
     checkAmount: Boolean = true,
+    checkName: Boolean = true,
+    checkMeta: Boolean = true,
     checkDurability: Boolean = false
-): Boolean = isItemSimilar(item.getItemStack(), checkLore, checkAmount, checkDurability)
+): Boolean = isItemSimilar(item.getItemStack(), checkLore, checkAmount, checkName, checkMeta, checkDurability)
 
 fun ItemStack?.isItemSimilar(item: ItemStack): Boolean = isItemSimilar(item, true)
 
 fun ItemStack?.isItemSimilar(item: ItemStack, checkLore: Boolean): Boolean = isItemSimilar(item, checkLore, true)
 
-fun ItemMeta.isMetaSimilar(itemMeta: ItemMeta, checkLore: Boolean = true): Boolean {
-    return if (itemMeta.hasDisplayName() != hasDisplayName()) {
+fun ItemMeta.isMetaSimilar(itemMeta: ItemMeta, checkLore: Boolean = true, checkName: Boolean = true): Boolean {
+    return if (checkName && itemMeta.hasDisplayName() != hasDisplayName()) {
         false
-    } else if (itemMeta.hasDisplayName() && hasDisplayName() && itemMeta.displayName != displayName) {
+    } else if (checkName && itemMeta.hasDisplayName() && hasDisplayName() && itemMeta.displayName != displayName) {
         false
     } else if (!checkLore) {
         true

@@ -95,6 +95,10 @@ item-shining-icon-move_right: '&a向右移动 &e⇨'
 item-shining-icon-move_left: '&e⇦ &a向左移动'
 item-shining-icon-move_up: '&e⇧ &a向上移动'
 item-shining-icon-move_down: '&a向下移动 &e⇩'
+item-shining-icon-move_up_left: '&e↖ &a向左上移动'
+item-shining-icon-move_up_right: '&a向右上移动 &e↗'
+item-shining-icon-move_down_left: '&e↙ &a向左下移动'
+item-shining-icon-move_down_right: '&a向右下移动 &e↘'
 item-shining-icon-move_to_origin: '&a移动至原点 &e○'
 item-shining-icon-view_rewards: '&e查看奖励'
 item-shining-icon-view_rewards_and_submit: '&e查看奖励并提交任务'
@@ -102,6 +106,15 @@ item-shining-icon-get_rewards: '&e获取奖励'
 item-shining-icon-mode:
   close: [ '&e模式', '&c&l已关闭', '', '&a> 点击开启' ]
   open: [ '&e模式', '&a&l已开启', '', '&c> 点击关闭' ]
+item-shining-icon-check_meta:
+  close: [ '&f匹配&e元数据meta', '&c&l已关闭', '', '&a> 点击开启' ]
+  open: [ '&f匹配&e元数据meta', '&a&l已开启', '', '&c> 点击关闭' ]
+item-shining-icon-check_name:
+  close: [ '&f匹配&e名称name', '&c&l已关闭', '', '&a> 点击开启' ]
+  open: [ '&f匹配&e名称name', '&a&l已开启', '', '&c> 点击关闭' ]
+item-shining-icon-check_lore:
+  close: [ '&f匹配&e描述lore', '&c&l已关闭', '', '&a> 点击开启' ]
+  open: [ '&f匹配&e描述lore', '&a&l已开启', '', '&c> 点击关闭' ]
 item-shining-editor-item-lore-chat_editor: [ '&a编辑Lore', '', '&7> 使用&eChatEditor' ]
 item-shining-editor-item-lore-gui: [ '&a编辑Lore', '', '&7> 使用&bGUI' ]
 item-shining-item-universal-vanilla-icon: '&f普通物品'
@@ -225,6 +238,7 @@ text-shining_guide-editor-state-element-update-success: '&f状态更新&a成功'
 text-shining_guide-editor-state-element-update-failure: '&f状态更新&c失败&f（ID重复）'
 text-shining_guide-editor-state-element-save-success: '&f状态保存&a成功'
 text-shining_guide-editor-state-element-basic-id-duplication: '&fID编辑&c失败&f，原因：ID已存在'
+text-shining_guide-editor-state-map-duplicate_coordinate: '&f坐标编辑&c失败&f，原因：坐标已存在'
 text-shining_guide-draft-load-success: '&f草稿载入&a成功'
 text-shining_guide-draft-load-failure-mismatching: '&f草稿载入&c失败&f，原因：元素种类不匹配（当前：{0}，草稿：{1}）'
 text-shining_guide-draft-load-failure-null: '&f草稿载入&c失败&f，原因：元素和元素容器均为null'

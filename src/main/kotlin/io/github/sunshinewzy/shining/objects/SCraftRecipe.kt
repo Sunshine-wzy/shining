@@ -80,7 +80,7 @@ sealed class SCraftRecipe(
         if (items.size != input.size) return false
 
         for (i in input.indices) {
-            if (!items[i].isItemSimilar(input[i], checkLore, checkAmount, checkDurability))
+            if (!items[i].isItemSimilar(input[i], checkLore, checkAmount, checkDurability = checkDurability))
                 return false
         }
 

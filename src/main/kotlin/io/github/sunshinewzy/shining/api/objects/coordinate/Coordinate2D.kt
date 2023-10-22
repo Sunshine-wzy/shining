@@ -26,9 +26,8 @@ data class Coordinate2D(val x: Int, val y: Int) {
     
     companion object {
         
-        @JvmStatic
+        @JvmField
         val ORIGIN: Coordinate2D = Coordinate2D(0, 0)
-        
         
         @JvmStatic
         @JsonCreator

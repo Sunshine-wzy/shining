@@ -152,7 +152,7 @@ class ItemCraftTask(
     }
 
     override fun submit(player: Player) {
-        if (player.inventory.containsItem(craftItem))
+        if (player.inventory.containsVanillaItem(craftItem))
             completeTask(player)
         else requireNotEnough(player)
     }

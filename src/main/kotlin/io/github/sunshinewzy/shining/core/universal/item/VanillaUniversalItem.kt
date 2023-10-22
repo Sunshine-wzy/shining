@@ -29,17 +29,23 @@ class VanillaUniversalItem(var item: ItemStack) : UniversalItem {
 
     override fun getItemAmount(): Int = item.amount
 
-    override fun contains(inventory: Inventory): Boolean =
-        inventory.containsItem(item)
+    override fun contains(inventory: Inventory, checkMeta: Boolean, checkName: Boolean, checkLore: Boolean): Boolean =
+        inventory.containsVanillaItem(item) { contentItem, targetItem ->
+            contentItem.isItemSimilar(targetItem, checkMeta = checkMeta, checkName = checkName, checkLore = checkLore)
+        }
 
-    override fun contains(inventory: Inventory, amount: Int): Boolean {
+    override fun contains(inventory: Inventory, amount: Int, checkMeta: Boolean, checkName: Boolean, checkLore: Boolean): Boolean {
         val singleItem = item.clone()
         singleItem.amount = 1
-        return inventory.containsItem(singleItem, amount)
+        return inventory.containsVanillaItem(singleItem, amount) { contentItem, targetItem ->
+            contentItem.isItemSimilar(targetItem, checkMeta = checkMeta, checkName = checkName, checkLore = checkLore)
+        }
     }
 
-    override fun consume(inventory: Inventory): Boolean =
-        inventory.removeSItem(item)
+    override fun consume(inventory: Inventory, checkMeta: Boolean, checkName: Boolean, checkLore: Boolean): Boolean =
+        inventory.removeVanillaItem(item) { contentItem, targetItem ->
+            contentItem.isItemSimilar(targetItem, checkMeta = checkMeta, checkName = checkName, checkLore = checkLore)
+        }
 
     override fun openEditor(player: Player, context: GuideContext) {
         player.openMenu<Basic>(player.getLangText("menu-item-universal-vanilla-title")) { 
@@ -86,10 +92,16 @@ class VanillaUniversalItem(var item: ItemStack) : UniversalItem {
 
     override fun clone(): VanillaUniversalItem = VanillaUniversalItem(item.clone())
 
-    override fun isSimilar(other: UniversalItem, checkAmount: Boolean): Boolean {
+    override fun isSimilar(other: UniversalItem, checkAmount: Boolean, checkMeta: Boolean, checkName: Boolean, checkLore: Boolean): Boolean {
         if (this === other) return true
         if (other !is VanillaUniversalItem) return false
-        return item.isItemSimilar(other.item, checkAmount = checkAmount)
+        return item.isItemSimilar(
+            other.item,
+            checkAmount = checkAmount,
+            checkMeta = checkMeta,
+            checkName = checkName,
+            checkLore = checkLore
+        )
     }
 
     override fun equals(other: Any?): Boolean {

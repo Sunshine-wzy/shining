@@ -44,13 +44,13 @@ class DictionaryUniversalItem(
 
     override fun getItemAmount(): Int = amount
 
-    override fun contains(inventory: Inventory): Boolean =
+    override fun contains(inventory: Inventory, checkMeta: Boolean, checkName: Boolean, checkLore: Boolean): Boolean =
         inventory.containsDictionaryItem(name, amount)
 
-    override fun contains(inventory: Inventory, amount: Int): Boolean =
+    override fun contains(inventory: Inventory, amount: Int, checkMeta: Boolean, checkName: Boolean, checkLore: Boolean): Boolean =
         inventory.containsDictionaryItem(name, amount)
 
-    override fun consume(inventory: Inventory): Boolean =
+    override fun consume(inventory: Inventory, checkMeta: Boolean, checkName: Boolean, checkLore: Boolean): Boolean =
         inventory.removeDictionaryItem(name, amount)
 
     override fun openEditor(player: Player, context: GuideContext) {
@@ -128,7 +128,7 @@ class DictionaryUniversalItem(
 
     override fun clone(): DictionaryUniversalItem = DictionaryUniversalItem(name, amount)
 
-    override fun isSimilar(other: UniversalItem, checkAmount: Boolean): Boolean {
+    override fun isSimilar(other: UniversalItem, checkAmount: Boolean, checkMeta: Boolean, checkName: Boolean, checkLore: Boolean): Boolean {
         if (this === other) return true
         if (other !is DictionaryUniversalItem) return false
         

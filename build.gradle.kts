@@ -28,7 +28,7 @@ taboolib {
     install("platform-bukkit")
     
     classifier = null
-    version = "6.0.12-local"
+    version = "6.0.12-33"
     
     options(
         "skip-kotlin-relocate",

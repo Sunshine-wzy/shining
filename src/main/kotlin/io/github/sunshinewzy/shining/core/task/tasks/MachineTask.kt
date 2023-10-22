@@ -168,7 +168,7 @@ class MachineTask(
 
         if (lastAddMachine.first == sMachine.id && lastAddMachine.second == level) {
             if (requireItems.isNotEmpty()) {
-                if (inv.containsItem(requireItems))
+                if (inv.containsVanillaItem(requireItems))
                     completeTask(player)
                 else requireNotEnough(player)
             } else completeTask(player)

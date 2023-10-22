@@ -19,16 +19,28 @@ interface UniversalItem : Cloneable {
     @JsonIgnore
     fun getItemAmount(): Int
     
-    fun contains(inventory: Inventory): Boolean
+    fun contains(inventory: Inventory, checkMeta: Boolean, checkName: Boolean, checkLore: Boolean): Boolean
     
-    fun contains(inventory: Inventory, amount: Int): Boolean
+    fun contains(inventory: Inventory): Boolean =
+        contains(inventory, checkMeta = true, checkName = true, checkLore = true)
     
-    fun consume(inventory: Inventory): Boolean
+    fun contains(inventory: Inventory, amount: Int, checkMeta: Boolean, checkName: Boolean, checkLore: Boolean): Boolean
+    
+    fun contain(inventory: Inventory, amount: Int): Boolean =
+        contains(inventory, amount, checkMeta = true, checkName = true, checkLore = true)
+    
+    fun consume(inventory: Inventory, checkMeta: Boolean, checkName: Boolean, checkLore: Boolean): Boolean
+    
+    fun consume(inventory: Inventory): Boolean =
+        consume(inventory, checkMeta = true, checkName = true, checkLore = true)
     
     fun openEditor(player: Player, context: GuideContext)
     
-    fun isSimilar(other: UniversalItem, checkAmount: Boolean): Boolean
+    fun isSimilar(other: UniversalItem, checkAmount: Boolean, checkMeta: Boolean, checkName: Boolean, checkLore: Boolean): Boolean
 
+    fun isSimilar(other: UniversalItem): Boolean =
+        isSimilar(other, checkAmount = true, checkMeta = true, checkName = true, checkLore = true)
+    
     public override fun clone(): UniversalItem
     
 }

@@ -19,6 +19,7 @@ import io.github.sunshinewzy.shining.core.guide.element.GuideMap
 import io.github.sunshinewzy.shining.core.guide.element.IGuideElementSuspend
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
+import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
 import io.github.sunshinewzy.shining.core.menu.MapMenu
 import io.github.sunshinewzy.shining.core.menu.onBack
 import io.github.sunshinewzy.shining.core.menu.onBuildEdge
@@ -153,7 +154,9 @@ class GuideMapState : GuideElementState(), IGuideElementContainerState {
 
             map(
                 "-B-------",
-                "-  a d  -",
+                "- mun   -",
+                "- lar d -",
+                "- obp  -",
                 "---------"
             )
 
@@ -178,9 +181,13 @@ class GuideMapState : GuideElementState(), IGuideElementContainerState {
                         val y = content["y"]?.toIntOrNull() ?: return@onSubmit
                         val newCoordinate = Coordinate2D(x, y)
                         
-                        removeElement(coordinate)
-                        addElement(element.getId(), newCoordinate)
-                        editElement(player, team, context, element, newCoordinate)
+                        if (elements.containsKey(newCoordinate)) {
+                            player.sendPrefixedLangText("text-shining_guide-editor-state-map-duplicate_coordinate")
+                        } else {
+                            removeElement(coordinate)
+                            addElement(element.getId(), newCoordinate)
+                        }
+                        openAdvancedEditor(player, team, context)
                     }
                     
                     onCancel { editElement(player, team, context, element, coordinate) }
@@ -192,6 +199,49 @@ class GuideMapState : GuideElementState(), IGuideElementContainerState {
                     onConfirm { removeElement(coordinate) }
                     onFinal { openAdvancedEditor(player, team, context) }
                 }
+            }
+            
+            fun move(offsetX: Int, offsetY: Int) {
+                val newCoordinate = coordinate.add(offsetX, offsetY)
+                if (elements.containsKey(newCoordinate)) {
+                    player.sendPrefixedLangText("text-shining_guide-editor-state-map-duplicate_coordinate")
+                } else {
+                    removeElement(coordinate)
+                    addElement(element.getId(), newCoordinate)
+                }
+                openAdvancedEditor(player, team, context)
+            }
+            
+            set('u', ShiningIcon.MOVE_UP.toLocalizedItem(player)) {
+                move(0, -1)
+            }
+            
+            set('b', ShiningIcon.MOVE_DOWN.toLocalizedItem(player)) {
+                move(0, 1)
+            }
+            
+            set('l', ShiningIcon.MOVE_LEFT.toLocalizedItem(player)) {
+                move(-1, 0)
+            }
+            
+            set('r', ShiningIcon.MOVE_RIGHT.toLocalizedItem(player)) {
+                move(1, 0)
+            }
+            
+            set('m', ShiningIcon.MOVE_UP_LEFT.toLocalizedItem(player)) {
+                move(-1, -1)
+            }
+            
+            set('n', ShiningIcon.MOVE_UP_RIGHT.toLocalizedItem(player)) {
+                move(1, -1)
+            }
+            
+            set('o', ShiningIcon.MOVE_DOWN_LEFT.toLocalizedItem(player)) {
+                move(-1, 1)
+            }
+            
+            set('p', ShiningIcon.MOVE_DOWN_RIGHT.toLocalizedItem(player)) {
+                move(1, 1)
             }
 
             onClick(lock = true)

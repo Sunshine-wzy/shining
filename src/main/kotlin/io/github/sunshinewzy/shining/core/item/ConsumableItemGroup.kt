@@ -19,12 +19,21 @@ import java.util.*
 
 class ConsumableItemGroup(
     var isConsume: Boolean,
-    val items: MutableList<UniversalItem> = ArrayList()
+    val items: MutableList<UniversalItem> = ArrayList(),
+    var checkMeta: Boolean = true,
+    var checkName: Boolean = true,
+    var checkLore: Boolean = true
 ): Cloneable {
     
     constructor() : this(true)
     
-    constructor(isConsume: Boolean, item: UniversalItem) : this(isConsume, arrayListOf(item))
+    constructor(
+        isConsume: Boolean,
+        item: UniversalItem,
+        checkMeta: Boolean = true,
+        checkName: Boolean = true,
+        checkLore: Boolean = true
+    ) : this(isConsume, arrayListOf(item), checkMeta, checkName, checkLore)
     
     
     @JsonIgnore
@@ -33,7 +42,7 @@ class ConsumableItemGroup(
     @JsonIgnore
     fun getMergedMap(): MutableMap<UniversalItem, Int> {
         val map = TreeMap<UniversalItem, Int> { o1, o2 ->
-            if (o1.isSimilar(o2, false)) 0 else 1
+            if (o1.isSimilar(o2, false, checkMeta = checkMeta, checkName = checkName, checkLore = checkLore)) 0 else 1
         }
         
         items.forEach { item ->
@@ -44,7 +53,7 @@ class ConsumableItemGroup(
     
     fun contains(inventory: Inventory): Boolean {
         getMergedMap().forEach { (item, amount) ->
-            if (!item.contains(inventory, amount)) return false
+            if (!item.contains(inventory, amount, checkMeta = checkMeta, checkName = checkName, checkLore = checkLore)) return false
         }
         return true
     }
@@ -54,7 +63,7 @@ class ConsumableItemGroup(
     
     fun consume(inventory: Inventory): Boolean {
         items.forEach { 
-            if (!it.consume(inventory)) return false
+            if (!it.consume(inventory, checkMeta = checkMeta, checkName = checkName, checkLore = checkLore)) return false
         }
         return true
     }
@@ -100,6 +109,22 @@ class ConsumableItemGroup(
                 isConsume = !isConsume
                 openEditor(player, context)
             }
+            
+            set(4 orderWith 6, ShiningIcon.CHECK_META.toOpenOrCloseLocalizedItem(checkMeta, player)) {
+                checkMeta = !checkMeta
+                openEditor(player, context)
+            }
+
+            set(5 orderWith 6, ShiningIcon.CHECK_NAME.toOpenOrCloseLocalizedItem(checkName, player)) {
+                checkName = !checkName
+                openEditor(player, context)
+            }
+
+            set(6 orderWith 6, ShiningIcon.CHECK_LORE.toOpenOrCloseLocalizedItem(checkLore, player)) {
+                checkLore = !checkLore
+                openEditor(player, context)
+            }
+            
             
             onClick(lock = true) { event ->
                 if (ShiningGuide.isClickEmptySlot(event)) {

@@ -10,7 +10,6 @@ import io.github.sunshinewzy.shining.core.task.TaskBase
 import io.github.sunshinewzy.shining.core.task.TaskProgress
 import io.github.sunshinewzy.shining.core.task.TaskProject
 import io.github.sunshinewzy.shining.core.task.TaskStage
-import io.github.sunshinewzy.shining.interfaces.Materialsable
 import io.github.sunshinewzy.shining.listeners.BlockListener
 import io.github.sunshinewzy.shining.objects.SCoordinate
 import io.github.sunshinewzy.shining.objects.SFlatCoord
@@ -298,139 +297,6 @@ fun UUID.findPlayer(): Player? =
 
 //region Inventory 物品栏
 
-/**
- * 判断物品栏中是否含有 [amount] 数量的物品 [item]
- */
-fun Inventory.containsItem(item: ItemStack, amount: Int = 1): Boolean {
-    if (amount <= 0) return true
-
-    val theItem = item.clone()
-    var cnt = theItem.amount * amount
-    theItem.amount = 1
-
-    storageContents.forEach {
-        if (it == null) return@forEach
-
-        if (it.isItemSimilar(theItem)) {
-            cnt -= it.amount
-            if (cnt <= 0) return true
-        }
-    }
-
-    return false
-}
-
-fun Inventory.containsItem(items: Array<ItemStack>): Boolean {
-    items.forEach {
-        if (!containsItem(it)) return false
-    }
-    return true
-}
-
-fun Inventory.containsItem(types: List<Material>, amount: Int = 1): Boolean {
-    if (amount <= 0) return true
-    var cnt = amount
-
-    storageContents.forEach {
-        if (it == null) return@forEach
-
-        if (it.type in types) {
-            cnt -= it.amount
-            if (cnt <= 0) return true
-        }
-    }
-
-    return false
-}
-
-fun Inventory.containsItem(types: Materialsable, amount: Int = 1): Boolean = containsItem(types.types(), amount)
-
-/**
- * 移除物品栏中 [amount] 数量的物品 [item]
- */
-fun Inventory.removeSItem(item: ItemStack, amount: Int = 1): Boolean {
-    if (amount <= 0) return true
-
-    val theItem = item.clone()
-    var cnt = theItem.amount * amount
-    theItem.amount = 1
-
-    storageContents.forEach {
-        if (it == null) return@forEach
-
-        if (it.isItemSimilar(theItem)) {
-            val theCnt = cnt
-            cnt -= it.amount
-
-            if (it.amount > theCnt) it.amount -= theCnt
-            else it.amount = 0
-
-            if (cnt <= 0) return true
-        }
-    }
-
-    return false
-}
-
-fun Inventory.removeSItem(items: Array<ItemStack>): Boolean {
-    items.forEach {
-        if (!removeSItem(it)) return false
-    }
-    return true
-}
-
-fun Inventory.removeSItem(items: List<ItemStack>): Boolean {
-    items.forEach {
-        if (!removeSItem(it)) return false
-    }
-    return true
-}
-
-fun Inventory.removeSItem(type: Material, amount: Int = 1): Boolean {
-    if (amount <= 0) return true
-    var cnt = amount
-
-    storageContents.forEach {
-        if (it == null) return@forEach
-
-        if (it.type == type) {
-            val theCnt = cnt
-            cnt -= it.amount
-
-            if (it.amount > theCnt) it.amount -= theCnt
-            else it.amount = 0
-
-            if (cnt <= 0) return true
-        }
-    }
-
-    return false
-}
-
-fun Inventory.removeSItem(types: List<Material>, amount: Int = 1): Boolean {
-    if (amount <= 0) return true
-    var cnt = amount
-
-    storageContents.forEach {
-        if (it == null) return@forEach
-
-        if (it.type in types) {
-            val theCnt = cnt
-            cnt -= it.amount
-
-            if (it.amount > theCnt) it.amount -= theCnt
-            else it.amount = 0
-
-            if (cnt <= 0) return true
-        }
-    }
-
-    return false
-}
-
-fun Inventory.removeSItem(types: Materialsable, amount: Int = 1): Boolean = removeSItem(types.types(), amount)
-
-
 fun PlayerInventory.removeHandItem(item: ItemStack, amount: Int = 1): Boolean {
     if (amount <= 0) return true
     val handItem = itemInMainHand
@@ -474,9 +340,6 @@ fun PlayerInventory.removeOffHandItem(item: ItemStack, amount: Int = 1): Boolean
 
     return false
 }
-
-
-fun Inventory.isFull(): Boolean = firstEmpty() == -1 || firstEmpty() > size
 
 fun Inventory.setItem(order: Int, item: Itemable) {
     setItem(order, item.getItemStack())

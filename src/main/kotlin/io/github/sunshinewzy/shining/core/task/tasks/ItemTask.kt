@@ -2,7 +2,7 @@ package io.github.sunshinewzy.shining.core.task.tasks
 
 import io.github.sunshinewzy.shining.core.task.TaskBase
 import io.github.sunshinewzy.shining.core.task.TaskStage
-import io.github.sunshinewzy.shining.utils.containsItem
+import io.github.sunshinewzy.shining.utils.containsVanillaItem
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
@@ -31,7 +31,7 @@ class ItemTask(
     }
 
     override fun submit(player: Player) {
-        if (player.inventory.containsItem(requireItems))
+        if (player.inventory.containsVanillaItem(requireItems))
             completeTask(player)
         else requireNotEnough(player)
     }

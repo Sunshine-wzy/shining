@@ -92,4 +92,8 @@ open class LanguageItem(
         }.also { stateItemCacheMap[state] = it }
     }
 
+    fun toOpenOrCloseLocalizedItem(state: Boolean, sender: CommandSender): LocalizedItem =
+        if (state) toStateItem("open").shiny().toLocalizedItem(sender)
+        else toStateItem("close").toLocalizedItem(sender)
+    
 }

@@ -182,7 +182,7 @@ class MachineUpgradeTask(
     }
 
     override fun submit(player: Player) {
-        if (player.inventory.containsItem(requireItems))
+        if (player.inventory.containsVanillaItem(requireItems))
             completeTask(player)
         else requireNotEnough(player)
     }

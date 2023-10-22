@@ -60,11 +60,11 @@ open class GuideItem : GuideElement {
                     val playerInventory = player.inventory
                     val missingItems = ArrayList<ItemStack>()
                     val containedItems = TreeSet<UniversalItem> { o1, o2 ->
-                        if (o1.isSimilar(o2, false)) 0 else 1
+                        if (o1.isSimilar(o2, false, checkMeta = itemGroup.checkMeta, checkName = itemGroup.checkName, checkLore = itemGroup.checkLore)) 0 else 1
                     }
                     val mergedMap = itemGroup.getMergedMap()
                     mergedMap.forEach { (itemUniversal, itemAmount) -> 
-                        if (itemUniversal.contains(playerInventory, itemAmount)) {
+                        if (itemUniversal.contains(playerInventory, itemAmount, checkMeta = itemGroup.checkMeta, checkName = itemGroup.checkName, checkLore = itemGroup.checkLore)) {
                             containedItems += itemUniversal
                         }
                     }

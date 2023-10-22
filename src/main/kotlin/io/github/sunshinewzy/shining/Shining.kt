@@ -373,10 +373,6 @@ object Shining : Plugin(), ShiningPlugin {
                     else -> {
 //                        val json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item)
 //                        event.player.sendMessage(json)
-//                        player.openMenu<Basic> { 
-//                            rows(3)
-//                            set(5 orderWith 2, mapper.readValue(json, ItemStack::class.java))
-//                        }
                     }
                 }
 

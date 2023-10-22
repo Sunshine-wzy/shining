@@ -12,10 +12,10 @@ import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
-import io.github.sunshinewzy.shining.utils.containsItem
+import io.github.sunshinewzy.shining.utils.containsVanillaItem
 import io.github.sunshinewzy.shining.utils.getDisplayName
 import io.github.sunshinewzy.shining.utils.getLoreOrNull
-import io.github.sunshinewzy.shining.utils.removeSItem
+import io.github.sunshinewzy.shining.utils.removeVanillaItem
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -37,10 +37,10 @@ class LockItem(
     
     
     override fun check(player: Player): Boolean =
-        player.inventory.containsItem(item)
+        player.inventory.containsVanillaItem(item)
 
     override fun consume(player: Player) {
-        player.inventory.removeSItem(item)
+        player.inventory.removeVanillaItem(item)
     }
 
     override fun openEditor(player: Player, team: IGuideTeam, context: GuideContext, state: IGuideElementState) {
