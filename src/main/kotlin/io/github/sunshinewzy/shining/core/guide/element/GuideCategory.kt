@@ -268,7 +268,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
                     
                     idToPriority -= id
                     elementSet -= element
-                    ShiningDispatchers.launchDB {
+                    ShiningDispatchers.transactionIO {
                         GuideElementRegistry.removeElement(element)
                     }
                     return
@@ -284,7 +284,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
                     element.unregisterAllElements(true)
                 }
                 
-                ShiningDispatchers.launchDB { 
+                ShiningDispatchers.transactionIO { 
                     GuideElementRegistry.removeElement(element)
                 }
             }

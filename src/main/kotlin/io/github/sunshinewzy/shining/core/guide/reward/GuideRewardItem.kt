@@ -43,7 +43,9 @@ class GuideRewardItem(val items: MutableList<UniversalItem>) : IGuideReward {
         player.openMultiPageMenu<UniversalItem>(player.getLangText("menu-shining_guide-element-view_rewards-title")) { 
             elements { this@GuideRewardItem.items }
             
-            onGenerate { _, element, _, _ -> element.getItemStack() }
+            onGenerate { _, element, _, _ -> 
+                element.getItemStack()
+            }
             
             context[GuideEditorContext.BackNoEvent]?.let { 
                 onBack { it.onBack() }

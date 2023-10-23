@@ -26,6 +26,7 @@ object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
     private val stateCache: MutableMap<NamespacedId, IGuideElementState> = ConcurrentHashMap()
     private val elementCache: MutableMap<NamespacedId, IGuideElement> = ConcurrentHashMap()
     private val stateToElementCache: MutableSet<NamespacedId> = ConcurrentHashMap.newKeySet()
+    private val codeElementCache: MutableMap<NamespacedId, IGuideElement> = ConcurrentHashMap()
     
     
     suspend fun reload() {
@@ -73,6 +74,7 @@ object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
     override fun getState(id: NamespacedId): IGuideElementState? = stateCache[id]
     
     override fun getElement(id: NamespacedId): IGuideElement? {
+        if (id == ShiningGuide.getId()) return ShiningGuide
         elementCache[id]?.let { return it }
         
         if (stateToElementCache.contains(id))
@@ -155,18 +157,19 @@ object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
         actionBeforeInsert: Supplier<Boolean>
     ): CompletableFuture<Boolean> =
         ShiningDispatchers.futureIO { saveElement(element, isCheckExists, checkId, actionBeforeInsert) }
-    
-    suspend fun removeElement(element: IGuideElement) {
+
+    /**
+     * Must be called from within a transaction.
+     */
+    fun removeElement(element: IGuideElement) {
         val id = element.getId()
         stateCache -= id
         elementCache -= id
-        newSuspendedTransaction { 
-            deleteElement(id)
-        }
+        deleteElement(id)
     }
 
     override fun removeElementFuture(element: IGuideElement): CompletableFuture<Boolean> =
-        ShiningDispatchers.futureIO { 
+        ShiningDispatchers.futureIO {
             removeElement(element)
             true
         }

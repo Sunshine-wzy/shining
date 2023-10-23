@@ -3,6 +3,8 @@ package io.github.sunshinewzy.shining.objects
 import io.github.sunshinewzy.shining.Shining
 import kotlinx.coroutines.*
 import kotlinx.coroutines.future.future
+import org.jetbrains.exposed.sql.Transaction
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
@@ -63,6 +65,22 @@ object ShiningDispatchers {
     ): CompletableFuture<T> {
         return if (context == EmptyCoroutineContext) Shining.coroutineScope.future(Dispatchers.IO, start, block)
         else Shining.coroutineScope.future(context + Dispatchers.IO, start, block)
+    }
+    
+    fun transactionIO(
+        context: CoroutineContext = EmptyCoroutineContext,
+        start: CoroutineStart = CoroutineStart.DEFAULT,
+        block: Transaction.() -> Unit
+    ): Job {
+        return if (context == EmptyCoroutineContext) {
+            Shining.coroutineScope.launch(Dispatchers.IO, start) {
+                transaction { block(this) }
+            }
+        } else {
+            Shining.coroutineScope.launch(context + Dispatchers.IO, start) {
+                transaction { block(this) }
+            }
+        }
     }
     
 }

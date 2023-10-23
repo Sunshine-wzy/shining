@@ -24,6 +24,7 @@ object ShiningGuideSettings {
     private val itemEditModeOpen = itemEditMode.toStateItem("open").shiny()
     private val itemDraftBox = NamespacedIdItem(Material.BOOKSHELF, NamespacedId(Shining, "shining_guide-settings-draft_box"))
     private val itemEditMain = NamespacedIdItem(Material.BOOK, NamespacedId(Shining, "shining_guide-settings-edit_main"))
+    private val itemRecycleBin = NamespacedIdItem(Material.LAVA_BUCKET, NamespacedId(Shining, "shining_guide-settings-recycle_bin"))
     
 
     fun openSettingsMenu(player: Player, team: IGuideTeam) {
@@ -34,7 +35,7 @@ object ShiningGuideSettings {
                 "-B-------",
                 "-a     e-",
                 "-     gf-",
-                "-       -",
+                "-      h-",
                 "-       -",
                 "---------"
             )
@@ -66,6 +67,10 @@ object ShiningGuideSettings {
                     
                     set('g', itemEditMain.toLocalizedItem(player)) {
                         ShiningGuide.getState().openEditor(player, team)
+                    }
+                    
+                    set('h', itemRecycleBin.toLocalizedItem(player)) {
+                        
                     }
                 }
             }

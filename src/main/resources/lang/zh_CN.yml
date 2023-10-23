@@ -14,6 +14,7 @@ item-shining-shining_guide-settings-edit_mode:
   open: [ '&e编辑模式', '&a&l已开启', '', '&c> 点击关闭' ]
 item-shining-shining_guide-settings-draft_box: '&e草稿箱'
 item-shining-shining_guide-settings-edit_main: '&e编辑主元素'
+item-shining-shining_guide-settings-recycle_bin: '&e回收站'
 item-shining-shining_guide-element-item-tip: [ '&b&l提示', '', '&f取得右侧物品 &a⇨' ]
 item-shining-shining_guide-element-item-tip_missing_items: [ '&b&l提示', '', '&f缺少右侧物品 &a⇨' ]
 item-shining-shining_guide-selector:

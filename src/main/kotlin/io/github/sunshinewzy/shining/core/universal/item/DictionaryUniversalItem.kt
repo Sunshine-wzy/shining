@@ -40,7 +40,7 @@ class DictionaryUniversalItem(
     override fun getItemStack(): ItemStack =
         DictionaryRegistry.get(name)?.getItemStack()?.also { 
             it.amount = amount
-        } ?: ItemStack(Material.AIR)
+        } ?: ItemStack(Material.STONE)
 
     override fun getItemAmount(): Int = amount
 

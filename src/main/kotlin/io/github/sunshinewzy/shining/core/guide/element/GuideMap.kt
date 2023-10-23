@@ -282,7 +282,7 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
                 
                 elements -= coordinate
                 idToCoordinate -= id
-                ShiningDispatchers.launchDB {
+                ShiningDispatchers.transactionIO {
                     GuideElementRegistry.removeElement(element)
                 }
             }
@@ -295,7 +295,7 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
                 element.unregisterAllElements(true)
             }
             
-            ShiningDispatchers.launchDB { 
+            ShiningDispatchers.transactionIO { 
                 GuideElementRegistry.removeElement(element)
             }
         }

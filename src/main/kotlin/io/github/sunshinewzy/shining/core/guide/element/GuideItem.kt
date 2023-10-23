@@ -159,7 +159,7 @@ open class GuideItem : GuideElement {
         if (state !is GuideItemState) return false
         if (!super.saveToState(state)) return false
         
-        state.itemGroup = itemGroup
+        state.itemGroup = itemGroup.clone()
         return true
     }
 
@@ -167,7 +167,7 @@ open class GuideItem : GuideElement {
         if (state !is GuideItemState) return false
         if (!super.update(state, merge)) return false
         
-        state.itemGroup?.let { itemGroup = it }
+        state.itemGroup?.let { itemGroup = it.clone() }
         return true
     }
 

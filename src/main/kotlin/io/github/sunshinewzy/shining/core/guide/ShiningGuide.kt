@@ -91,7 +91,7 @@ object ShiningGuide : GuideCategory(
     
     override fun reload() {
         GuideElementRegistry.getState(getId())?.let { 
-            update(it, true)
+            update(it, false)
         } ?: kotlin.run { 
             ShiningDispatchers.launchIO {
                 GuideElementRegistry.saveElement(this@ShiningGuide)

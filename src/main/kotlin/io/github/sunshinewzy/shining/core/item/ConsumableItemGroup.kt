@@ -139,6 +139,12 @@ class ConsumableItemGroup(
     }
 
     public override fun clone(): ConsumableItemGroup =
-        ConsumableItemGroup(isConsume, items.mapTo(ArrayList()) { it.clone() })
+        ConsumableItemGroup(
+            isConsume,
+            items.mapTo(ArrayList()) { it.clone() },
+            checkMeta = checkMeta,
+            checkName = checkName,
+            checkLore = checkLore
+        )
     
 }
