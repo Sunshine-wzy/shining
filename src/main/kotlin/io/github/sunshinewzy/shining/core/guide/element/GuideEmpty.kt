@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.core.guide.element
 
+import io.github.sunshinewzy.shining.api.guide.ElementCondition
 import io.github.sunshinewzy.shining.api.guide.ElementDescription
 import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElement
@@ -14,15 +15,31 @@ import taboolib.common.platform.function.submit
 
 open class GuideEmpty : GuideElement {
     
+    private var defaultComplete: Boolean
+    
+    
     constructor(
         id: NamespacedId,
         description: ElementDescription,
-        symbol: ItemStack
-    ) : super(id, description, symbol)
+        symbol: ItemStack,
+        defaultComplete: Boolean
+    ) : super(id, description, symbol) {
+        this.defaultComplete = defaultComplete
+    }
     
-    constructor() : super()
+    constructor() : super() {
+        this.defaultComplete = false
+    }
+
+
+    override suspend fun getCondition(team: IGuideTeam): ElementCondition {
+        if (defaultComplete) return ElementCondition.COMPLETE
+        return super.getCondition(team)
+    }
 
     override fun open(player: Player, team: IGuideTeam, previousElement: IGuideElement?, context: GuideContext) {
+        if (defaultComplete) return
+        
         ShiningDispatchers.launchDB {
             if (canTeamComplete(team)) {
                 submit {
@@ -38,9 +55,30 @@ open class GuideEmpty : GuideElement {
         return true
     }
 
+    override suspend fun isTeamCompleted(team: IGuideTeam): Boolean {
+        if (defaultComplete) return true
+        return super.isTeamCompleted(team)
+    }
+
     override fun getState(): IGuideElementState =
         GuideEmptyState().correlateElement(this)
 
     override fun register(): GuideEmpty = super.register() as GuideEmpty
+
+    override fun saveToState(state: IGuideElementState): Boolean {
+        if (state !is GuideEmptyState) return false
+        if (!super.saveToState(state)) return false
+        
+        state.defaultComplete = defaultComplete
+        return true
+    }
+
+    override fun update(state: IGuideElementState, merge: Boolean): Boolean {
+        if (state !is GuideEmptyState) return false
+        if (!super.update(state, merge)) return false
+        
+        defaultComplete = state.defaultComplete
+        return true
+    }
     
 }

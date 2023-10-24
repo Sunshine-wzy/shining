@@ -47,6 +47,9 @@ item-shining-shining_guide-editor-state-map-base_point: '&b基点'
 item-shining-shining_guide-editor-state-map-coordinate: '&d相对坐标'
 item-shining-shining_guide-editor-state-basic-locks-create-experience: '&b经验锁'
 item-shining-shining_guide-editor-state-basic-locks-create-item: '&e物品锁'
+item-shining-shining_guide-editor-state-empty-default_complete:
+  close: [ '&e默认完成', '&c&l已关闭', '', '&a> 点击开启' ]
+  open: [ '&e默认完成', '&a&l已开启', '', '&c> 点击关闭' ]
 item-shining-shining_guide-editor-lock-experience: [ '&b所需经验', '', '&a> 当前' ]
 item-shining-shining_guide-editor-lock-item: [ '&b所需物品', '', '&a↓ 当前 ↓' ]
 item-shining-shining_guide-draft-editor-state: '&b状态'
@@ -56,7 +59,7 @@ item-shining-shining_guide-draft-folder-editor: '&e编辑文件夹'
 item-shining-shining_guide-state-item: [ '&bItem - 物品', '', '&f取得指定的物品' ]
 item-shining-shining_guide-state-category: [ '&eCategory - 分类', '', '&f能有序的容纳各种元素' ]
 item-shining-shining_guide-state-map: [ '&dMap - 图', '', '&f能灵活的容纳各种元素', '&f适合制作科技线' ]
-item-shining-shining_guide-state-empty: [ '&dEmpty - 空', '', '&f没有界面的元素', '&f可以作为提示' ]
+item-shining-shining_guide-state-empty: [ '&7Empty - 空', '', '&f没有界面的元素', '&f可以作为提示' ]
 item-shining-shining_guide-reward-item-icon: [ '&bItem - 物品', '', '&f奖励物品' ]
 item-shining-shining_guide-reward-command-icon: [ '&cCommand - 指令', '', '&f执行指令', '&f支持PAPI变量' ]
 item-shining-shining_wrench: '&b扳手'
@@ -116,6 +119,8 @@ item-shining-icon-check_name:
 item-shining-icon-check_lore:
   close: [ '&f匹配&e描述lore', '&c&l已关闭', '', '&a> 点击开启' ]
   open: [ '&f匹配&e描述lore', '&a&l已开启', '', '&c> 点击关闭' ]
+item-shining-icon-cut: '&c剪切'
+item-shining-icon-paste: '&a粘贴'
 item-shining-editor-item-lore-chat_editor: [ '&a编辑Lore', '', '&7> 使用&eChatEditor' ]
 item-shining-editor-item-lore-gui: [ '&a编辑Lore', '', '&7> 使用&bGUI' ]
 item-shining-item-universal-vanilla-icon: '&f普通物品'
@@ -197,6 +202,7 @@ menu-shining_guide-editor-state-category-title: 'Shining 指南 - 类别状态�
 menu-shining_guide-editor-state-category-element-title: '类别状态编辑 - 元素'
 menu-shining_guide-editor-state-map-title: 'Shining 指南 - 图状态编辑'
 menu-shining_guide-editor-state-map-element-title: '图状态编辑 - 元素'
+menu-shining_guide-editor-state-empty-title: 'Shining 指南 - 空状态编辑'
 menu-shining_guide-draft-title: '草稿箱'
 menu-shining_guide-draft-symbol-folder: '&7&l文件夹'
 menu-shining_guide-draft-symbol-draft: '&7&l草稿'

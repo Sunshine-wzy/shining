@@ -52,7 +52,8 @@ enum class ShiningIcon(val item: ItemStack) : Itemable {
     CHECK_META(NamespacedIdItem(Material.SNOWBALL, NamespacedId(Shining, "icon-check_meta"))),
     CHECK_NAME(NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "icon-check_name"))),
     CHECK_LORE(NamespacedIdItem(Material.BREAD, NamespacedId(Shining, "icon-check_lore"))),
-    
+    CUT(NamespacedIdItem(Material.SHEARS, NamespacedId(Shining, "icon-cut"))),
+    PASTE(NamespacedIdItem(Material.SLIME_BLOCK, NamespacedId(Shining, "icon-paste"))),
     
     ;
 

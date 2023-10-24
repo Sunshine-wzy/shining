@@ -43,7 +43,7 @@ object ShiningGuideEditor {
     private val itemCreateStateCopy = NamespacedIdItem(Material.REDSTONE_LAMP, NamespacedId(Shining, "shining_guide-editor-create_state_copy"))
     private val itemCreateStateNew = NamespacedIdItem(Material.GLASS, NamespacedId(Shining, "shining_guide-editor-create_state_new"))
     private val itemLoadFromDraftBox = NamespacedIdItem(Material.BOOKSHELF, NamespacedId(Shining, "shining_guide-editor-load_from_draft_box"))
-
+    
 
     @JvmOverloads
     fun openEditor(
@@ -59,7 +59,8 @@ object ShiningGuideEditor {
 
             map(
                 "-B-------",
-                "- a b c -",
+                "-  a b  -",
+                "- c p d -",
                 "---------"
             )
 
@@ -68,6 +69,18 @@ object ShiningGuideEditor {
             context[GuideEditorContext.Back]?.let { 
                 onBack(player) { it.onBack(this) }
             } ?: onBackMenu(player, team)
+            
+            fun back(event: ClickEvent) {
+                context[GuideEditorContext.Back]?.let {
+                    it.onBack(event)
+                } ?: kotlin.run {
+                    if (event.clickEvent().isShiftClick) {
+                        ShiningGuide.openMainMenu(player, team, context)
+                    } else {
+                        ShiningGuide.openLastElement(player, team, context)
+                    }
+                }
+            }
 
             if (element != null) {
                 set('a', itemCreateStateCopy.toLocalizedItem(player)) {
@@ -76,15 +89,32 @@ object ShiningGuideEditor {
                         state.openEditor(player, team, GuideEditorContext.Update(elementContainer))
                     } else state.openEditor(player, team)
                 }
+                
+                if (elementContainer != null) {
+                    set('c', ShiningIcon.CUT.toLocalizedItem(player)) {
+                        ShiningGuideClipboard.copy(player, GuideClipboardSession(element, elementContainer, GuideClipboardSession.Mode.CUT))
+                        back(this)
+                    }
+                }
             }
 
             set('b', itemCreateStateNew.toLocalizedItem(player)) {
                 openCreateNewStateEditor(player, team, context, element, elementContainer, elementContainerState)
             }
             
-            set('c', itemLoadFromDraftBox.toLocalizedItem(player)) {
+            set('d', itemLoadFromDraftBox.toLocalizedItem(player)) {
                 ShiningGuideDraft.openLastSelectMenu(player, context + GuideDraftContext.Load(team, context, element, elementContainer, elementContainerState))
             }
+            
+//            context[CreateContext]?.let { ctxt ->
+//                if (ShiningGuideClipboard.hasClipboard(player)) {
+//                    set('p', ShiningIcon.PASTE.toLocalizedItem(player)) {
+//                        val session = ShiningGuideClipboard.paste(player) ?: return@set
+//                        ctxt.onCreate(session.element)
+//                        back(this)
+//                    }
+//                }
+//            }
 
             onClick(lock = true)
         }
