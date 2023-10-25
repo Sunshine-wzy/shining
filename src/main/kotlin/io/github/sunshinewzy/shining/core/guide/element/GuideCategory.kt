@@ -257,19 +257,21 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
         removedElements -= id
     }
 
-    override fun unregisterElement(id: NamespacedId, cascade: Boolean) {
+    override fun unregisterElement(id: NamespacedId, cascade: Boolean, remove: Boolean) {
         val priority = idToPriority[id] ?: return
         priorityToElements[priority]?.let { elementSet ->
             for (element in elementSet) {
                 if (element.getId() == id) {
                     if (cascade && element is IGuideElementContainer) {
-                        element.unregisterAllElements(true)
+                        element.unregisterAllElements(true, remove)
                     }
                     
                     idToPriority -= id
                     elementSet -= element
-                    ShiningDispatchers.transactionIO {
-                        GuideElementRegistry.removeElement(element)
+                    if (remove) {
+                        ShiningDispatchers.transactionIO {
+                            GuideElementRegistry.removeElement(element)
+                        }
                     }
                     return
                 }
@@ -277,15 +279,17 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
         }
     }
 
-    override fun unregisterAllElements(cascade: Boolean) {
+    override fun unregisterAllElements(cascade: Boolean, remove: Boolean) {
         priorityToElements.forEach { (_, elementSet) -> 
             elementSet.forEach { element ->
                 if (cascade && element is IGuideElementContainer) {
-                    element.unregisterAllElements(true)
+                    element.unregisterAllElements(true, remove)
                 }
                 
-                ShiningDispatchers.transactionIO { 
-                    GuideElementRegistry.removeElement(element)
+                if (remove) {
+                    ShiningDispatchers.transactionIO {
+                        GuideElementRegistry.removeElement(element)
+                    }
                 }
             }
             elementSet.clear()
@@ -323,12 +327,13 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
         return null
     }
 
-    override fun getElements(isDeep: Boolean): List<IGuideElement> {
+    override fun getElements(isDeep: Boolean, container: Boolean): List<IGuideElement> {
         val list = ArrayList<IGuideElement>()
         if (isDeep) {
             priorityToElements.forEach { (_, elements) ->
                 elements.forEach { element ->
                     if (element is IGuideElementContainer) {
+                        if (container) list += element
                         list += element.getElements(true)
                     } else list += element
                 }

@@ -55,7 +55,7 @@ object ShiningGuideEditor {
         elementContainerState: IGuideElementContainerState? = null
     ) {
         player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-title")) {
-            rows(3)
+            rows(4)
 
             map(
                 "-B-------",
@@ -89,11 +89,26 @@ object ShiningGuideEditor {
                         state.openEditor(player, team, GuideEditorContext.Update(elementContainer))
                     } else state.openEditor(player, team)
                 }
-                
-                if (elementContainer != null) {
+            }
+            
+            if (elementContainer != null) {
+                if (element != null) {
                     set('c', ShiningIcon.CUT.toLocalizedItem(player)) {
                         ShiningGuideClipboard.copy(player, GuideClipboardSession(element, elementContainer, GuideClipboardSession.Mode.CUT))
                         back(this)
+                    }
+                } else {
+                    context[CreateContext]?.let { ctxt ->
+                        if (ShiningGuideClipboard.hasClipboard(player)) {
+                            set('p', ShiningIcon.PASTE.toLocalizedItem(player)) {
+                                val session = ShiningGuideClipboard.paste(player) ?: return@set
+                                ctxt.onCreate(session.element)
+                                ShiningDispatchers.launchDB { 
+                                    GuideElementRegistry.saveElement(elementContainer)
+                                }
+                                back(this)
+                            }
+                        }
                     }
                 }
             }
@@ -106,16 +121,6 @@ object ShiningGuideEditor {
                 ShiningGuideDraft.openLastSelectMenu(player, context + GuideDraftContext.Load(team, context, element, elementContainer, elementContainerState))
             }
             
-//            context[CreateContext]?.let { ctxt ->
-//                if (ShiningGuideClipboard.hasClipboard(player)) {
-//                    set('p', ShiningIcon.PASTE.toLocalizedItem(player)) {
-//                        val session = ShiningGuideClipboard.paste(player) ?: return@set
-//                        ctxt.onCreate(session.element)
-//                        back(this)
-//                    }
-//                }
-//            }
-
             onClick(lock = true)
         }
     }
@@ -150,7 +155,6 @@ object ShiningGuideEditor {
                             ShiningDispatchers.launchDB {
                                 if (GuideElementRegistry.saveElement(theElement, true)) {
                                     submit {
-//                                        elementContainer.registerElement(theElement)
                                         ctxtCreate.onCreate(theElement)
                                         ShiningDispatchers.launchDB {
                                             if (GuideElementRegistry.saveElement(elementContainer))
@@ -165,7 +169,6 @@ object ShiningGuideEditor {
                             ShiningDispatchers.launchDB {
                                 if (GuideElementRegistry.saveElement(theElement, true)) {
                                     submit {
-//                                        elementContainerState.addElement(theElement)
                                         ctxtCreate.onCreate(theElement)
                                         player.sendPrefixedLangText("text-shining_guide-draft-load-success")
                                     }

@@ -44,4 +44,9 @@ interface IGuideElementRegistry {
 
     fun removeElementFuture(element: IGuideElement): CompletableFuture<Boolean>
     
+    fun <T : MutableMap<NamespacedId, IGuideElement>> getLostElementsTo(map: T): T
+    
+    fun getLostElements(): Map<NamespacedId, IGuideElement> =
+        getLostElementsTo(HashMap())
+    
 }

@@ -20,17 +20,24 @@ object ShiningGuideClipboard {
         when (session.mode) {
             COPY -> {}
             CUT -> {
-                session.container.unregisterElement(session.element, false)
-                ShiningDispatchers.launchDB { 
-                    GuideElementRegistry.saveElement(session.container)
+                session.container?.let { container ->
+                    container.unregisterElement(session.element.getId(), cascade = false, remove = false)
+                    ShiningDispatchers.launchDB {
+                        GuideElementRegistry.saveElement(container)
+                    }
                 }
                 clipboardMap -= player.uniqueId
             }
         }
+        session.pasteCallback.accept(session)
         return session
     }
     
     fun hasClipboard(player: Player): Boolean =
         clipboardMap.containsKey(player.uniqueId)
+    
+    fun clearClipboard(player: Player) {
+        clipboardMap -= player.uniqueId
+    }
     
 }

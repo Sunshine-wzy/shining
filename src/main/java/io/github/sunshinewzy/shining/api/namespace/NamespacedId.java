@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  * ID may only contain lowercase alphanumeric characters,
  * underscores, hyphens, and forward slashes.
  */
-public class NamespacedId {
+public class NamespacedId implements Comparable<NamespacedId> {
 
 	private final Namespace namespace;
 	private final String id;
@@ -84,6 +84,11 @@ public class NamespacedId {
 		return namespace.getName() + ":" + id;
 	}
 
+	@Override
+	public int compareTo(@NotNull NamespacedId o) {
+		return toString().compareTo(o.toString());
+	}
+	
 
 	private static final Namespace SHINING = Namespace.get("shining");
 	public static final Pattern VALID_ID = Pattern.compile("[a-z0-9/_-]+");

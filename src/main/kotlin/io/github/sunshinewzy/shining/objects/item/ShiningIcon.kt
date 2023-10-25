@@ -54,6 +54,7 @@ enum class ShiningIcon(val item: ItemStack) : Itemable {
     CHECK_LORE(NamespacedIdItem(Material.BREAD, NamespacedId(Shining, "icon-check_lore"))),
     CUT(NamespacedIdItem(Material.SHEARS, NamespacedId(Shining, "icon-cut"))),
     PASTE(NamespacedIdItem(Material.SLIME_BLOCK, NamespacedId(Shining, "icon-paste"))),
+    REFRESH(NamespacedIdItem(Material.BUCKET, NamespacedId(Shining, "icon-refresh"))),
     
     ;
 

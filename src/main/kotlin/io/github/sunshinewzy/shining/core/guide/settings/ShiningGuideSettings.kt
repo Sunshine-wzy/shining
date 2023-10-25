@@ -7,6 +7,7 @@ import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.commands.CommandGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.ShiningGuideEditor
+import io.github.sunshinewzy.shining.core.guide.ShiningGuideRecycleBin
 import io.github.sunshinewzy.shining.core.guide.draft.ShiningGuideDraft
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
@@ -70,7 +71,7 @@ object ShiningGuideSettings {
                     }
                     
                     set('h', itemRecycleBin.toLocalizedItem(player)) {
-                        
+                        ShiningGuideRecycleBin.open(player, team)
                     }
                 }
             }

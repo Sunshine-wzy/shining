@@ -43,11 +43,7 @@ object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
         }
 
     override fun <T: IGuideElement> register(element: T): T {
-        val id = element.getId()
-        getState(id)?.let { state ->
-            element.update(state, true)
-        }
-        elementCache[id] = element
+        codeElementCache[element.getId()] = element
         return element
     }
     
@@ -80,11 +76,22 @@ object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
         if (stateToElementCache.contains(id))
             return null
         
+        codeElementCache[id]?.let { codeElement ->
+            getState(id)?.let { 
+                stateToElementCache += id
+                codeElement.update(it, true)
+                stateToElementCache -= id
+            }
+            
+            elementCache[id] = codeElement
+            return codeElement
+        }
+        
         stateCache[id]?.let {
             stateToElementCache += id
             val element = it.toElement()
-            elementCache[id] = element
             stateToElementCache -= id
+            elementCache[id] = element
             return element
         }
         return null
@@ -173,6 +180,17 @@ object GuideElementRegistry : LongIdTable(), IGuideElementRegistry {
             removeElement(element)
             true
         }
+
+    override fun <T : MutableMap<NamespacedId, IGuideElement>> getLostElementsTo(map: T): T {
+        val existElements = ShiningGuide.getElements(isDeep = true, container = true).mapTo(HashSet()) { it.getId() }
+        stateCache.forEach { (id, _) -> 
+            if (!existElements.contains(id)) {
+                map[id] = getElement(id) ?: return@forEach
+            }
+        }
+        map -= ShiningGuide.getId()
+        return map
+    }
     
     
     private fun insertElement(element: IGuideElement): EntityID<Long> =

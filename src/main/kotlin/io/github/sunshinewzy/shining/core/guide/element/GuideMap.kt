@@ -272,31 +272,35 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
         registerElement(element, Coordinate2D.ORIGIN)
     }
 
-    override fun unregisterElement(id: NamespacedId, cascade: Boolean) {
+    override fun unregisterElement(id: NamespacedId, cascade: Boolean, remove: Boolean) {
         val coordinate = idToCoordinate[id] ?: return
         elements[coordinate]?.let { element ->
             if (element.getId() == id) {
                 if (cascade && element is IGuideElementContainer) {
-                    element.unregisterAllElements(true)
+                    element.unregisterAllElements(true, remove)
                 }
                 
                 elements -= coordinate
                 idToCoordinate -= id
-                ShiningDispatchers.transactionIO {
-                    GuideElementRegistry.removeElement(element)
+                if (remove) {
+                    ShiningDispatchers.transactionIO {
+                        GuideElementRegistry.removeElement(element)
+                    }
                 }
             }
         }
     }
 
-    override fun unregisterAllElements(cascade: Boolean) {
+    override fun unregisterAllElements(cascade: Boolean, remove: Boolean) {
         elements.forEach { (_, element) -> 
             if (cascade && element is IGuideElementContainer) {
-                element.unregisterAllElements(true)
+                element.unregisterAllElements(true, remove)
             }
             
-            ShiningDispatchers.transactionIO { 
-                GuideElementRegistry.removeElement(element)
+            if (remove) {
+                ShiningDispatchers.transactionIO {
+                    GuideElementRegistry.removeElement(element)
+                }
             }
         }
         
@@ -323,11 +327,12 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
         return null
     }
 
-    override fun getElements(isDeep: Boolean): List<IGuideElement> {
+    override fun getElements(isDeep: Boolean, container: Boolean): List<IGuideElement> {
         val list = ArrayList<IGuideElement>()
         if (isDeep) {
-            elements.forEach { (coordinate, element) -> 
+            elements.forEach { (_, element) -> 
                 if (element is IGuideElementContainer) {
+                    if (container) list += element
                     list += element.getElements(true)
                 } else list += element
             }
