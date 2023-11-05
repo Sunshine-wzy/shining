@@ -6,11 +6,11 @@ import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.guide.team.IGuideTeamManager
 import io.github.sunshinewzy.shining.api.machine.IMachineRegistry
-import io.github.sunshinewzy.shining.api.universal.item.UniversalItem
+import io.github.sunshinewzy.shining.api.universal.item.IUniversalItemRegistry
 
 interface IShiningAPI {
 
-    fun getUniversalItemRegistry(): IClassRegistry<UniversalItem>
+    fun getUniversalItemRegistry(): IUniversalItemRegistry
 
     fun getGuideElementRegistry(): IGuideElementRegistry
     

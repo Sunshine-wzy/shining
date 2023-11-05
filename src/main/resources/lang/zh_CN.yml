@@ -206,6 +206,7 @@ menu-shining_guide-editor-state-category-element-title: '类别状态编辑 - �
 menu-shining_guide-editor-state-map-title: 'Shining 指南 - 图状态编辑'
 menu-shining_guide-editor-state-map-element-title: '图状态编辑 - 元素'
 menu-shining_guide-editor-state-empty-title: 'Shining 指南 - 空状态编辑'
+menu-shining_guide-editor-state-craft_item-title: 'Shining 指南 - 物品合成状态编辑'
 menu-shining_guide-draft-title: '草稿箱'
 menu-shining_guide-draft-symbol-folder: '&7&l文件夹'
 menu-shining_guide-draft-symbol-draft: '&7&l草稿'

@@ -71,12 +71,12 @@ class ItemCraftTask(
             throw NoRecipeException(craftItem)
 
         if (shapedRecipes.size == 1 && shapelessRecipes.isEmpty()) {
-            setCraftSlotItem(shapedRecipes.first().getRecipe())
+            setCraftSlotItem(shapedRecipes.first().getRecipeItem())
         } else if (shapelessRecipes.size == 1 && shapedRecipes.isEmpty()) {
             setCraftSlotItem(shapelessRecipes.first().ingredientList)
         } else {
             shapedRecipes.forEach {
-                pages.add(it.getRecipe())
+                pages.add(it.getRecipeItem())
             }
             shapelessRecipes.forEach { shapedRecipe ->
                 val list = shapedRecipe.ingredientList
@@ -311,12 +311,12 @@ class ItemCraftTask(
 
 
             if (shapedRecipes.size == 1 && shapelessRecipes.isEmpty()) {
-                inv.setCraftSlotItem(shapedRecipes.first().getRecipe())
+                inv.setCraftSlotItem(shapedRecipes.first().getRecipeItem())
             } else if (shapelessRecipes.size == 1 && shapedRecipes.isEmpty()) {
                 inv.setCraftSlotItem(shapelessRecipes.first().ingredientList)
             } else {
                 shapedRecipes.forEach {
-                    pages.add(it.getRecipe())
+                    pages.add(it.getRecipeItem())
                 }
                 shapelessRecipes.forEach { shapedRecipe ->
                     val list = shapedRecipe.ingredientList

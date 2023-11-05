@@ -41,6 +41,11 @@ interface UniversalItem : Cloneable {
     fun isSimilar(other: UniversalItem): Boolean =
         isSimilar(other, checkAmount = true, checkMeta = true, checkName = true, checkLore = true)
     
+    fun isSimilar(other: ItemStack, checkAmount: Boolean, checkMeta: Boolean, checkName: Boolean, checkLore: Boolean): Boolean
+    
+    fun isSimilar(other: ItemStack) =
+        isSimilar(other, checkAmount = true, checkMeta = true, checkName = true, checkLore = true)
+    
     public override fun clone(): UniversalItem
     
 }

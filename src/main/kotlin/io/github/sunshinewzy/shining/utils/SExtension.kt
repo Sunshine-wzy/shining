@@ -546,30 +546,6 @@ fun File.getDataPath(plugin: JavaPlugin) =
 
 //endregion
 
-//region Recipe 配方
-
-fun ShapedRecipe.getRecipe(): Array<ItemStack> {
-    val recipe = Array(9) { ItemStack(Material.AIR) }
-    val rows = shape
-    val ingredients = ingredientMap
-
-    for (i in rows.indices) {
-        val base = i * 3
-        val str = rows[i]
-
-        for (j in str.indices) {
-            if (str[j] != ' ') {
-                val item = ingredients[str[j]] ?: continue
-                recipe[base + j] = ItemStack(item.type)
-            }
-        }
-    }
-
-    return recipe
-}
-
-//endregion
-
 //region Block 方块
 
 fun Block.getDurability() = state.data.toItemStack(1).durability

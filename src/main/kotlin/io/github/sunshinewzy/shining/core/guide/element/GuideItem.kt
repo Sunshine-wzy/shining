@@ -121,18 +121,15 @@ open class GuideItem : GuideElement {
         player.openMenu<Linked<ItemStack>>(player.getLangText(ShiningGuide.TITLE)) {
             rows(5)
             slots(slotOrders)
+            onBuildEdge(edgeOrders)
             
             elements { missingItems }
-            
             onGenerate { _, element, _, _ -> element }
-            
-            onBuildEdge(edgeOrders)
 
             setPreviousPage(4 orderWith 5) { _, hasPreviousPage ->
                 if (hasPreviousPage) ShiningIcon.PAGE_PREVIOUS_GLASS_PANE.toLocalizedItem(player)
                 else ShiningIcon.EDGE.item
             }
-
             setNextPage(6 orderWith 5) { _, hasNextPage ->
                 if (hasNextPage) ShiningIcon.PAGE_NEXT_GLASS_PANE.toLocalizedItem(player)
                 else ShiningIcon.EDGE.item
@@ -143,7 +140,6 @@ open class GuideItem : GuideElement {
             }
             
             set(2 orderWith 3, itemTipMissingItems.toLocalizedItem(player))
-            
             set(8 orderWith 3, ShiningIcon.SUBMIT_FAILURE.toLocalizedItem(player))
         }
     }
@@ -174,14 +170,14 @@ open class GuideItem : GuideElement {
     override fun register(): GuideItem = super.register() as GuideItem
     
     
-    @Suppress("ConvertArgumentToSet")
     companion object {
         val slotOrders: List<Int> = listOf(
             4 orderWith 2, 5 orderWith 2, 6 orderWith 2,
             4 orderWith 3, 5 orderWith 3, 6 orderWith 3,
             4 orderWith 4, 5 orderWith 4, 6 orderWith 4
         )
-        
+
+        @Suppress("ConvertArgumentToSet")
         val edgeOrders: List<Int> = OrderUtils.getFullOrders(5).also { 
             it -= slotOrders
         }

@@ -8,7 +8,7 @@ import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
 import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.guide.team.IGuideTeamManager
 import io.github.sunshinewzy.shining.api.machine.IMachineRegistry
-import io.github.sunshinewzy.shining.api.universal.item.UniversalItem
+import io.github.sunshinewzy.shining.api.universal.item.IUniversalItemRegistry
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
 import io.github.sunshinewzy.shining.core.guide.reward.GuideRewardRegistry
@@ -19,7 +19,7 @@ import io.github.sunshinewzy.shining.core.universal.item.UniversalItemRegistry
 
 class ShiningAPI : IShiningAPI {
 
-    override fun getUniversalItemRegistry(): IClassRegistry<UniversalItem> = UniversalItemRegistry
+    override fun getUniversalItemRegistry(): IUniversalItemRegistry = UniversalItemRegistry
 
     override fun getGuideElementRegistry(): IGuideElementRegistry = GuideElementRegistry
     

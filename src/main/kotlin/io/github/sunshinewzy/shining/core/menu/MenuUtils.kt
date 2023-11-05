@@ -19,7 +19,7 @@ import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 import taboolib.module.ui.type.Linked
-import taboolib.platform.util.isAir
+import taboolib.platform.util.isNotAir
 
 inline fun <reified T> Player.openMultiPageMenu(title: String = "chest", builder: Linked<T>.() -> Unit) {
     openMenu<Linked<T>>(title) {
@@ -147,7 +147,7 @@ fun Basic.onBuildEdge(edgeOrders: Collection<Int>, action: ((Player, Inventory) 
     onBuild(false) { player, inv ->
         edgeOrders.forEach { index ->
             inv.getItem(index)?.let {
-                if (!it.isAir()) return@forEach
+                if (it.isNotAir()) return@forEach
             }
 
             inv.setItem(index, ShiningIcon.EDGE.item)

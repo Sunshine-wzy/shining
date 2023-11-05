@@ -9,6 +9,7 @@ import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.api.universal.item.UniversalItem
 import io.github.sunshinewzy.shining.core.dictionary.DictionaryRegistry
 import io.github.sunshinewzy.shining.core.dictionary.containsDictionaryItem
+import io.github.sunshinewzy.shining.core.dictionary.getDictionaryName
 import io.github.sunshinewzy.shining.core.dictionary.removeDictionaryItem
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
 import io.github.sunshinewzy.shining.core.editor.chat.type.Text
@@ -133,7 +134,13 @@ class DictionaryUniversalItem(
         if (other !is DictionaryUniversalItem) return false
         
         if (name != other.name) return false
-        return !checkAmount || amount == other.amount
+        return !checkAmount || other.amount >= amount
+    }
+
+    override fun isSimilar(other: ItemStack, checkAmount: Boolean, checkMeta: Boolean, checkName: Boolean, checkLore: Boolean): Boolean {
+        val theName = other.getDictionaryName() ?: return false
+        if (name != theName) return false
+        return !checkAmount || other.amount >= amount
     }
 
     override fun equals(other: Any?): Boolean {

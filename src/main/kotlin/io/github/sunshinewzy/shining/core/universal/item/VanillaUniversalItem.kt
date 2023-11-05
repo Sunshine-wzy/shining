@@ -104,6 +104,16 @@ class VanillaUniversalItem(var item: ItemStack) : UniversalItem {
         )
     }
 
+    override fun isSimilar(other: ItemStack, checkAmount: Boolean, checkMeta: Boolean, checkName: Boolean, checkLore: Boolean): Boolean {
+        return item.isItemSimilar(
+            other,
+            checkAmount = checkAmount,
+            checkMeta = checkMeta,
+            checkName = checkName,
+            checkLore = checkLore
+        )
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is VanillaUniversalItem) return false
