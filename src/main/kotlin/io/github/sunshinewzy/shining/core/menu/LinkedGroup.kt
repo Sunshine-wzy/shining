@@ -27,7 +27,7 @@ open class LinkedGroup<T>(title: String) : Basic(title) {
     internal var elementsCache = emptyList<T>()
 
     /** 点击事件回调 **/
-    internal var elementClickCallback: ((event: ClickEvent, item: ItemStack) -> Unit) = { _, _ -> }
+    internal var elementClickCallback: ((event: ClickEvent, index: Int, item: ItemStack) -> Unit) = { _, _, _ -> }
 
     /** 元素生成回调 **/
     internal var generateCallback: ((player: Player, element: T) -> List<ItemStack>) = { _, _ -> emptyList() }
@@ -99,7 +99,7 @@ open class LinkedGroup<T>(title: String) : Basic(title) {
     /**
      * 元素点击回调
      */
-    open fun onClick(callback: (event: ClickEvent, item: ItemStack) -> Unit) {
+    open fun onClick(callback: (event: ClickEvent, index: Int, item: ItemStack) -> Unit) {
         elementClickCallback = callback
     }
 
@@ -155,7 +155,7 @@ open class LinkedGroup<T>(title: String) : Basic(title) {
      * 是否可以前往下一页
      */
     open fun hasNextPage(): Boolean {
-        return isNext(page, elementsCache.size, menuSlots.size)
+        return page < elementsCache.size - 1
     }
 
     override fun createTitle(): String {
@@ -174,7 +174,7 @@ open class LinkedGroup<T>(title: String) : Basic(title) {
         elementsCache = elementsCallback()
 
         // 本次页面所使用的元素缓存
-        val elementMap = hashMapOf<Int, ItemStack>()
+        val elementMap = hashMapOf<Int, Pair<Int, ItemStack>>()
         val elementGroup = elementsCache.getOrNull(page) ?: throw IllegalStateException("Page $page does not exist.")
 
         /**
@@ -187,7 +187,7 @@ open class LinkedGroup<T>(title: String) : Basic(title) {
             val itemStacks = callback(player, elementGroup)
             itemStacks.forEachIndexed { index, itemStack ->
                 val slot = menuSlots.getOrNull(index) ?: 0
-                elementMap[slot] = itemStack
+                elementMap[slot] = index to itemStack
                 if (itemStack.isNotAir()) {
                     inventory.setItem(slot, itemStack)
                 }
@@ -203,17 +203,11 @@ open class LinkedGroup<T>(title: String) : Basic(title) {
             if (menuLocked) {
                 it.isCancelled = true
             }
-            elementClickCallback(it, elementMap[it.rawSlot] ?: return@selfClick)
+            val pair = elementMap[it.rawSlot] ?: return@selfClick
+            elementClickCallback(it, pair.first, pair.second)
         }
         // 构建页面
         return super.build()
-    }
-
-    /**
-     * 是否存在下一页
-     */
-    private fun isNext(page: Int, size: Int, entry: Int): Boolean {
-        return size / entry.toDouble() > page + 1
     }
     
 }

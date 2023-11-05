@@ -9,7 +9,11 @@ import org.bukkit.inventory.ItemStack
 )
 interface UniversalRecipeChoice : Cloneable {
     
+    fun getItemStack(): ItemStack
+    
     fun test(item: ItemStack): Boolean
+
+    fun iterator(): Iterator<ItemStack>
 
     public override fun clone(): UniversalRecipeChoice
     

@@ -54,7 +54,8 @@ open class GuideItem : GuideElement {
                 player.openMenu<Linked<UniversalItem>>(player.getLangText(ShiningGuide.TITLE)) {
                     rows(5)
                     slots(slotOrders)
-
+                    onBuildEdge(edgeOrders)
+                    
                     elements { itemGroup.items }
 
                     val playerInventory = player.inventory
@@ -74,13 +75,10 @@ open class GuideItem : GuideElement {
                         else element.getItemStack().also { missingItems += it }
                     }
 
-                    onBuildEdge(edgeOrders)
-
                     setPreviousPage(4 orderWith 5) { _, hasPreviousPage ->
                         if (hasPreviousPage) ShiningIcon.PAGE_PREVIOUS_GLASS_PANE.toLocalizedItem(player)
                         else ShiningIcon.EDGE.item
                     }
-
                     setNextPage(6 orderWith 5) { _, hasNextPage ->
                         if (hasNextPage) ShiningIcon.PAGE_NEXT_GLASS_PANE.toLocalizedItem(player)
                         else ShiningIcon.EDGE.item
@@ -89,27 +87,22 @@ open class GuideItem : GuideElement {
                     setBackButton(player, team, context)
 
                     set(2 orderWith 3, itemTip.toLocalizedItem(player))
-
+                    set(5 orderWith 1, ShiningIcon.IS_CONSUME.toOpenOrCloseLocalizedItem(itemGroup.isConsume, player))
+                    if (getRewards().isNotEmpty()) {
+                        set(5 orderWith 5, ShiningIcon.VIEW_REWARDS.toLocalizedItem(player)) {
+                            openViewRewardsMenu(player, team, context)
+                        }
+                    }
+                    
                     if (canComplete) {
                         set(8 orderWith 3, ShiningIcon.SUBMIT.toLocalizedItem(player)) {
                             if (itemGroup.contains(player)) {
                                 if (itemGroup.isConsume) itemGroup.consume(player)
                                 complete(player, team)
                             } else {
+                                fail(player)
                                 openMissingItemsMenu(player, team, context, missingItems)
                             }
-                        }
-                    }
-
-                    set(
-                        5 orderWith 1,
-                        if (itemGroup.isConsume) ShiningIcon.IS_CONSUME.toStateShinyLocalizedItem("open", player)
-                        else ShiningIcon.IS_CONSUME.toStateLocalizedItem("close", player)
-                    )
-                    
-                    if (getRewards().isNotEmpty()) {
-                        set(5 orderWith 5, ShiningIcon.VIEW_REWARDS.toLocalizedItem(player)) {
-                            openViewRewardsMenu(player, team, context)
                         }
                     }
                 }

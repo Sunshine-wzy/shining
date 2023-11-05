@@ -18,8 +18,11 @@ data class ItemUniversalRecipeChoice(val choices: List<UniversalItem>) : Univers
     constructor(vararg items: UniversalItem) : this(items.toList())
     
     constructor() : this(VanillaUniversalItem())
+
     
-    
+    override fun getItemStack(): ItemStack =
+        choices.first().getItemStack()
+
     override fun test(item: ItemStack): Boolean {
         choices.forEach { 
             if (it.isSimilar(item))
@@ -27,6 +30,9 @@ data class ItemUniversalRecipeChoice(val choices: List<UniversalItem>) : Univers
         }
         return false
     }
+
+    override fun iterator(): Iterator<ItemStack> =
+        choices.map { it.getItemStack() }.iterator()
 
     override fun clone(): ItemUniversalRecipeChoice = ItemUniversalRecipeChoice(ArrayList(choices))
     

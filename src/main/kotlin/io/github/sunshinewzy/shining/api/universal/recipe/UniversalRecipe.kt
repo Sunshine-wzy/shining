@@ -9,5 +9,14 @@ interface UniversalRecipe {
     fun getResult(): UniversalItem
     
     fun getResults(): List<UniversalItem>
+
+    fun iterator(): UniversalRecipeIterator =
+        UniversalRecipeIterator(this)
+    
+    fun hasChoice(): Boolean {
+        val iterator = iterator()
+        iterator.next()
+        return iterator.hasNext()
+    }
     
 }

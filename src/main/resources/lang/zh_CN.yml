@@ -18,6 +18,7 @@ item-shining-shining_guide-settings-recycle_bin: '&e回收站'
 item-shining-shining_guide-settings-recycle_bin-open_element: '&a打开元素'
 item-shining-shining_guide-element-item-tip: [ '&b&l提示', '', '&f取得右侧物品 &a⇨' ]
 item-shining-shining_guide-element-item-tip_missing_items: [ '&b&l提示', '', '&f缺少右侧物品 &a⇨' ]
+item-shining-shining_guide-element-craft_item-crafting_table: '&b工作台合成'
 item-shining-shining_guide-selector:
   close: [ '&e选择器', '&c&l已关闭', '', '&a> 点击开启', '&b> Shift点击提交' ]
   open: [ '&e选择器', '&a&l已开启', '', '&c> 点击关闭', '&b> Shift点击提交' ]
@@ -46,6 +47,7 @@ item-shining-shining_guide-editor-state-element-repeatable_settings: '&a可重�
 item-shining-shining_guide-editor-state-category-priority: '&d优先级'
 item-shining-shining_guide-editor-state-map-base_point: '&b基点'
 item-shining-shining_guide-editor-state-map-coordinate: '&d相对坐标'
+item-shining-shining_guide-editor-state-craft_item-create: '&a创建合成目标'
 item-shining-shining_guide-editor-state-basic-locks-create-experience: '&b经验锁'
 item-shining-shining_guide-editor-state-basic-locks-create-item: '&e物品锁'
 item-shining-shining_guide-editor-state-empty-default_complete:
@@ -61,6 +63,7 @@ item-shining-shining_guide-state-item: [ '&bItem - 物品', '', '&f取得指定�
 item-shining-shining_guide-state-category: [ '&eCategory - 分类', '', '&f能有序的容纳各种元素' ]
 item-shining-shining_guide-state-map: [ '&dMap - 图', '', '&f能灵活的容纳各种元素', '&f适合制作科技线' ]
 item-shining-shining_guide-state-empty: [ '&7Empty - 空', '', '&f没有界面的元素', '&f可以作为提示' ]
+item-shining-shining_guide-state-craft_item: [ '&aCraftItem - 制作物品', '', '&f自动显示合成表' ]
 item-shining-shining_guide-reward-item-icon: [ '&bItem - 物品', '', '&f奖励物品' ]
 item-shining-shining_guide-reward-command-icon: [ '&cCommand - 指令', '', '&f执行指令', '&f支持PAPI变量' ]
 item-shining-shining_wrench: '&b扳手'

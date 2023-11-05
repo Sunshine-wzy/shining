@@ -17,8 +17,11 @@ data class MaterialUniversalRecipeChoice(val choices: List<Material>) : Universa
     constructor(vararg types: Material) : this(types.toList())
     
     constructor() : this(Material.STONE)
-    
-    
+
+
+    override fun getItemStack(): ItemStack =
+        ItemStack(choices.first())
+
     override fun test(item: ItemStack): Boolean {
         choices.forEach { 
             if (item.type == it)
@@ -26,6 +29,9 @@ data class MaterialUniversalRecipeChoice(val choices: List<Material>) : Universa
         }
         return false
     }
+
+    override fun iterator(): Iterator<ItemStack> =
+        choices.map { ItemStack(it) }.iterator()
 
     override fun clone(): MaterialUniversalRecipeChoice = MaterialUniversalRecipeChoice(ArrayList(choices))
     

@@ -224,7 +224,8 @@ object Shining : Plugin(), ShiningPlugin {
             GuideItemState::class.java to NamespacedIdItem(Material.STICK, NamespacedId(Shining, "shining_guide-state-item")),
             GuideCategoryState::class.java to NamespacedIdItem(Material.BOOK, NamespacedId(Shining, "shining_guide-state-category")),
             GuideMapState::class.java to NamespacedIdItem(Material.MAP, NamespacedId(Shining, "shining_guide-state-map")),
-            GuideEmptyState::class.java to NamespacedIdItem(Material.PAPER, NamespacedId(Shining, "shining_guide-state-empty"))
+            GuideEmptyState::class.java to NamespacedIdItem(Material.PAPER, NamespacedId(Shining, "shining_guide-state-empty")),
+            GuideCraftItemState::class.java to NamespacedIdItem(Material.CRAFTING_TABLE, NamespacedId(Shining, "shining_guide-state-craft_item"))
         ))
         
         GuideRewardRegistry.register(mapOf(
