@@ -34,6 +34,8 @@ object DictionaryRegistry : IDictionaryRegistry {
         return itemsById[id.lowercase()] ?: emptyList()
     }
 
+    override fun getItems(): Map<NamespacedId, IDictionaryItem> = itemsByName
+
 
     override fun registerItem(name: NamespacedId, item: ItemStack, vararg behaviors: ItemBehavior): IDictionaryItem {
         return register(DictionaryItem(name, item.setDictionaryName(name), *behaviors))

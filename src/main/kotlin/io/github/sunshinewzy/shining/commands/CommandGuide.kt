@@ -9,6 +9,7 @@ import io.github.sunshinewzy.shining.core.guide.team.GuideTeam.Companion.getGuid
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeam.Companion.letGuideTeamOrWarn
 import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
+import io.github.sunshinewzy.shining.utils.giveItem
 import io.github.sunshinewzy.shining.utils.sendMsg
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
@@ -25,6 +26,7 @@ object CommandGuide {
     const val PERMISSION_TEAM = "shining.guide.team"
     const val PERMISSION_OPEN_TEAM = "shining.guide.open.team"
     const val PERMISSION_RELOAD = "shining.command.guide.reload"
+    const val PERMISSION_GIVE = "shining.command.guide.give"
     
     
     val guide = subCommand {
@@ -85,7 +87,7 @@ object CommandGuide {
                                             ShiningDispatchers.launchDB { 
                                                 val theId = NamespacedId.fromString(context["element"]) ?: return@launchDB
                                                 val theElement = GuideElementRegistry.getElement(theId) ?: return@launchDB
-                                                val thePlayer = Bukkit.getPlayer(context["player"]) ?: return@launchDB
+                                                val thePlayer = Bukkit.getPlayerExact(context["player"]) ?: return@launchDB
                                                 val theTeam = thePlayer.getGuideTeam() ?: return@launchDB
                                                 val theCondition = ElementCondition.valueOf(context["condition"])
                                                 
@@ -100,7 +102,7 @@ object CommandGuide {
                                     execute<Player> { sender, context, argument ->
                                         ShiningDispatchers.launchDB {
                                             val theId = NamespacedId.fromString(context["element"]) ?: return@launchDB
-                                            val thePlayer = Bukkit.getPlayer(context["player"]) ?: return@launchDB
+                                            val thePlayer = Bukkit.getPlayerExact(context["player"]) ?: return@launchDB
                                             val theTeam = thePlayer.getGuideTeam() ?: return@launchDB
 
                                             theTeam.getTeamData().removeElementCondition(theId)
@@ -113,7 +115,7 @@ object CommandGuide {
                                     execute<Player> { sender, context, argument ->
                                         ShiningDispatchers.launchDB {
                                             val theId = NamespacedId.fromString(context["element"]) ?: return@launchDB
-                                            val thePlayer = Bukkit.getPlayer(context["player"]) ?: return@launchDB
+                                            val thePlayer = Bukkit.getPlayerExact(context["player"]) ?: return@launchDB
                                             val theTeam = thePlayer.getGuideTeam() ?: return@launchDB
 
                                             val elementCondition = theTeam.getTeamData().getElementCondition(theId) ?: return@launchDB
@@ -125,6 +127,19 @@ object CommandGuide {
                         }
                     }
                 }
+            }
+        }
+        
+        literal("give", permission = PERMISSION_GIVE) {
+            player(optional = true) {
+                execute<Player> { _, _, argument -> 
+                    val thePlayer = Bukkit.getPlayerExact(argument) ?: return@execute
+                    thePlayer.giveItem(ShiningGuide.getItemStack())
+                }
+            }
+            
+            execute<Player> { sender, _, _ -> 
+                sender.giveItem(ShiningGuide.getItemStack())
             }
         }
         

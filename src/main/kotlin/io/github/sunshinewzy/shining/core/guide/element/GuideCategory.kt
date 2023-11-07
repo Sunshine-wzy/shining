@@ -24,6 +24,7 @@ import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
 import io.github.sunshinewzy.shining.utils.putSetElement
 import kotlinx.coroutines.runBlocking
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.submit
@@ -188,6 +189,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
 
                     set(5 orderWith 1, ShiningIcon.SETTINGS.getLanguageItem().toLocalizedItem(player)) {
                         ShiningGuideSettings.openSettingsMenu(player, team)
+                        player.playSound(player.location, Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1f)
                     }
 
                     // Select elements
@@ -204,6 +206,8 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
 
                     // Shortcut bar
                     context[GuideShortcutBarContext]?.update(this)
+                    
+                    onPageChange { it.playSound(player.location, Sound.UI_BUTTON_CLICK, 1f, 1f) }
                 }
             }
         }

@@ -254,6 +254,7 @@ object Shining : Plugin(), ShiningPlugin {
         registerPermission(Permission(CommandGuide.PERMISSION_TEAM, PermissionDefault.OP))
         registerPermission(Permission(CommandGuide.PERMISSION_OPEN_TEAM, PermissionDefault.TRUE))
         registerPermission(Permission(CommandGuide.PERMISSION_RELOAD, PermissionDefault.OP))
+        registerPermission(Permission(CommandGuide.PERMISSION_GIVE, PermissionDefault.OP))
     }
 
 

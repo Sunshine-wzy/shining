@@ -29,6 +29,9 @@ object ShiningCommand {
 
     @CommandBody(permission = "shining.command.guide", permissionDefault = PermissionDefault.TRUE)
     val guide = CommandGuide.guide
+    
+    @CommandBody(permission = "shining.command.dictionary", permissionDefault = PermissionDefault.OP)
+    val dictionary = CommandDictionary.dictionary
 
 
     fun registerSCommands() {

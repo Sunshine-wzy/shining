@@ -34,6 +34,7 @@ open class MapMenu<T>(title: String) : Basic(title) {
     internal var clickEmptyCallback: ((event: ClickEvent, coordinate: Coordinate2D) -> Unit) = { _, _ -> }
     internal var generateCallback: ((player: Player, element: T, coordinate: Coordinate2D, slot: Int) -> ItemStack) = { _, _, _, _ -> ItemStack(Material.AIR) }
     internal var asyncGenerateCallback: ((player: Player, element: T, coordinate: Coordinate2D, slot: Int) -> ItemStack) = { _, _, _, _ -> ItemStack(Material.AIR) }
+    internal var moveCallback: ((player: Player) -> Unit) = { _ -> }
     
     private lateinit var player: Player
     private val moveItems: Array<Pair<Int, (offset: Coordinate2D) -> ItemStack>?> = Array(4) { null }
@@ -82,12 +83,17 @@ open class MapMenu<T>(title: String) : Basic(title) {
         clickEmptyCallback = callback
     }
     
+    open fun onMove(callback: (player: Player) -> Unit) {
+        moveCallback = callback
+    }
+    
     open fun setMoveRight(slot: Int, callback: (offset: Coordinate2D) -> ItemStack) {
         moveItems[Direction.RIGHT.ordinal] = slot to callback
         onClick(slot) { 
             offset = offset.add(moveSpeed, 0)
             updateOffsetArea()
             player.openInventory(build())
+            moveCallback(player)
         }
     }
     
@@ -97,6 +103,7 @@ open class MapMenu<T>(title: String) : Basic(title) {
             offset = offset.add(-moveSpeed, 0)
             updateOffsetArea()
             player.openInventory(build())
+            moveCallback(player)
         }
     }
 
@@ -106,6 +113,7 @@ open class MapMenu<T>(title: String) : Basic(title) {
             offset = offset.add(0, moveSpeed)
             updateOffsetArea()
             player.openInventory(build())
+            moveCallback(player)
         }
     }
 
@@ -115,6 +123,7 @@ open class MapMenu<T>(title: String) : Basic(title) {
             offset = offset.add(0, -moveSpeed)
             updateOffsetArea()
             player.openInventory(build())
+            moveCallback(player)
         }
     }
     
@@ -123,6 +132,7 @@ open class MapMenu<T>(title: String) : Basic(title) {
         onClick(slot) {
             offset(Coordinate2D.ORIGIN)
             player.openInventory(build())
+            moveCallback(player)
         }
     }
     

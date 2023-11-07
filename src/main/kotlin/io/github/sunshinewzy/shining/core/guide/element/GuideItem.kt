@@ -19,6 +19,7 @@ import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.OrderUtils
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.submit
@@ -105,6 +106,8 @@ open class GuideItem : GuideElement {
                             }
                         }
                     }
+                    
+                    onPageChange { it.playSound(player.location, Sound.UI_BUTTON_CLICK, 1f, 1f) }
                 }
             }
         }

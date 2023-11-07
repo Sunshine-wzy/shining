@@ -22,6 +22,7 @@ import io.github.sunshinewzy.shining.utils.OrderUtils
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapedRecipe
@@ -76,19 +77,18 @@ class GuideCraftItem : GuideElement {
 
     override fun openMenu(player: Player, team: IGuideTeam, context: GuideContext) {
         val recipeCandidates = Bukkit.getRecipesFor(craftItem.getItemStack())
-        val recipes = ArrayList<UniversalRecipe>()
-        recipeCandidates.forEach { 
-            if (!craftItem.isSimilar(it.result, checkAmount = false, checkMeta = true, checkName = true, checkLore = true)) return@forEach
-            when (it) {
-                is ShapedRecipe, is ShapelessRecipe -> {
-                    recipes += VanillaUniversalRecipe(it)
-                }
-            }
-        }
-        if (recipes.isEmpty()) return
         
         ShiningDispatchers.launchDB { 
             val canComplete = canTeamComplete(team)
+            val recipes = ArrayList<UniversalRecipe>()
+            recipeCandidates.forEach {
+                if (!craftItem.isSimilar(it.result, checkAmount = false, checkMeta = true, checkName = true, checkLore = true)) return@forEach
+                when (it) {
+                    is ShapedRecipe, is ShapelessRecipe -> {
+                        recipes += VanillaUniversalRecipe(it)
+                    }
+                }
+            }
             
             submit {
                 player.openMenu<LinkedGroup<UniversalRecipe>>(player.getLangText(ShiningGuide.TITLE)) {
@@ -138,7 +138,7 @@ class GuideCraftItem : GuideElement {
                     var task: PlatformExecutor.PlatformTask? = null
                     onBuild { player, inventory ->
                         task?.cancel()
-                        if (recipes[page].hasChoice()) {
+                        if (recipes.getOrNull(page)?.hasChoice() == true) {
                             val iterator = recipes[page].iterator()
                             task = submit(delay = 20L, period = 20L) task@{
                                 if (!iterator.hasNext())
@@ -156,7 +156,11 @@ class GuideCraftItem : GuideElement {
                         }
                     }
                     
-                    onPageChange { task?.cancel() }
+                    onPageChange {
+                        task?.cancel()
+                        it.playSound(player.location, Sound.UI_BUTTON_CLICK, 1f, 1f)
+                    }
+                    
                     onClose { task?.cancel() }
                 }
             }

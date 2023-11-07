@@ -15,6 +15,8 @@ interface IDictionaryRegistry {
     fun getOrFail(item: ItemStack): IDictionaryItem
 
     fun getById(id: String): List<IDictionaryItem>
+    
+    fun getItems(): Map<NamespacedId, IDictionaryItem>
 
 
     fun registerItem(name: NamespacedId, item: ItemStack, vararg behaviors: ItemBehavior): IDictionaryItem

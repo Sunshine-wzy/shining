@@ -175,7 +175,7 @@ open class LinkedGroup<T>(title: String) : Basic(title) {
 
         // 本次页面所使用的元素缓存
         val elementMap = hashMapOf<Int, Pair<Int, ItemStack>>()
-        val elementGroup = elementsCache.getOrNull(page) ?: throw IllegalStateException("Page $page does not exist.")
+        val elementGroup = elementsCache.getOrNull(page)
 
         /**
          * 构建事件处理函数
@@ -184,12 +184,14 @@ open class LinkedGroup<T>(title: String) : Basic(title) {
             player = p
             // 生成元素对应物品
             val callback = if (async) asyncGenerateCallback else generateCallback
-            val itemStacks = callback(player, elementGroup)
-            itemStacks.forEachIndexed { index, itemStack ->
-                val slot = menuSlots.getOrNull(index) ?: 0
-                elementMap[slot] = index to itemStack
-                if (itemStack.isNotAir()) {
-                    inventory.setItem(slot, itemStack)
+            if (elementGroup != null) {
+                val itemStacks = callback(player, elementGroup)
+                itemStacks.forEachIndexed { index, itemStack ->
+                    val slot = menuSlots.getOrNull(index) ?: 0
+                    elementMap[slot] = index to itemStack
+                    if (itemStack.isNotAir()) {
+                        inventory.setItem(slot, itemStack)
+                    }
                 }
             }
         }

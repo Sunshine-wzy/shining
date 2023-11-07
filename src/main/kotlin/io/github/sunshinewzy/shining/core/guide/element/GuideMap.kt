@@ -28,6 +28,7 @@ import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
 import kotlinx.coroutines.runBlocking
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.submit
@@ -188,6 +189,7 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
 
                     set(5 orderWith 1, ShiningIcon.SETTINGS.getLanguageItem().toLocalizedItem(player)) {
                         ShiningGuideSettings.openSettingsMenu(player, team)
+                        player.playSound(player.location, Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1f)
                     }
 
                     // Select elements
@@ -208,6 +210,8 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
                     onClose(once = false) {
                         ShiningGuide.recordElementAdditionalContext(player, this@GuideMap, OffsetContext(offset))
                     }
+                    
+                    onMove { it.playSound(player.location, Sound.UI_BUTTON_CLICK, 1f, 1f) }
                 }
             }
         }

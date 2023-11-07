@@ -27,7 +27,6 @@ import io.github.sunshinewzy.shining.core.guide.context.GuideShortcutBarContext
 import io.github.sunshinewzy.shining.core.guide.draft.GuideDraftContext
 import io.github.sunshinewzy.shining.core.guide.draft.ShiningGuideDraft
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
-import io.github.sunshinewzy.shining.core.guide.element.IGuideElementSuspend
 import io.github.sunshinewzy.shining.core.guide.lock.LockExperience
 import io.github.sunshinewzy.shining.core.guide.lock.LockItem
 import io.github.sunshinewzy.shining.core.guide.reward.GuideRewardRegistry
@@ -41,7 +40,6 @@ import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.*
-import kotlinx.coroutines.runBlocking
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -413,10 +411,8 @@ abstract class GuideElementState : IGuideElementState {
             elements { getDependencyElements() }
 
             onGenerate(true) { player, element, index, slot ->
-                runBlocking(ShiningDispatchers.DB) {
-                    (element as IGuideElementSuspend).getSymbolByCondition(player, CompletedGuideTeam.getInstance(), ElementCondition.UNLOCKED)
-                        .insertLore(0, "&7${element.getId()}", "")
-                }
+                element.getSymbolByConditionFuture(player, CompletedGuideTeam.getInstance(), ElementCondition.UNLOCKED)
+                    .get().insertLore(0, "&7${element.getId()}", "")
             }
 
             onClick { event, element ->
@@ -429,7 +425,7 @@ abstract class GuideElementState : IGuideElementState {
             
             onClick(lock = true) {
                 if (it.rawSlot in ShiningGuide.slotOrders && it.currentItem.isAir()) {
-                    ShiningGuide.openCompletedMainMenu(
+                    ShiningGuide.openCompletedLastElement(
                         player,
                         GuideShortcutBarContext() + GuideSelectElementsContext({ element ->
                             this@GuideElementState.element?.let { origin ->
