@@ -84,8 +84,6 @@ import taboolib.platform.BukkitPlugin
 
 @RuntimeDependencies(
     RuntimeDependency(value = "org.jetbrains.kotlin:kotlin-reflect:1.7.21", isolated = true, transitive = false),
-    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.4.0", isolated = true, transitive = false),
-    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.4.0", isolated = true, transitive = false),
     RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.4", isolated = true, transitive = false),
     RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4", isolated = true, transitive = false),
     RuntimeDependency(value = "org.jetbrains.exposed:exposed-core:0.41.1", isolated = true, transitive = false),

@@ -92,7 +92,13 @@ object MachineCreator {
                 "---------"
             )
             
+            set('a', itemMachineTypeSingle.toLocalizedItem(player)) {
+                
+            }
             
+            set('b', itemMachineTypeMultiple.toLocalizedItem(player)) {
+                
+            }
             
             onClick(lock = true)
         }
@@ -166,5 +172,6 @@ object MachineCreator {
         }
     }
 
+    fun getLastStructure(uuid: UUID): IMachineStructure? = lastStructureMap[uuid]
 
 }

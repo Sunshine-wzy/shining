@@ -9,6 +9,8 @@ import io.github.sunshinewzy.shining.core.addon.loader.ShiningAddonLoadingExcept
 import taboolib.common.env.Dependency
 
 object ShiningAddonJarDescriptionDeserializer : StdDeserializer<ShiningAddonJarDescription>(ShiningAddonJarDescription::class.java) {
+    
+    private fun readResolve(): Any = ShiningAddonJarDescriptionDeserializer
 
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): ShiningAddonJarDescription {
         val node = p.readValueAsTree<JsonNode>()

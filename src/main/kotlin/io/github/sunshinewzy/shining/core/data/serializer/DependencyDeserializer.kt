@@ -7,6 +7,8 @@ import taboolib.common.env.Dependency
 import taboolib.common.env.DependencyScope
 
 object DependencyDeserializer : StdDeserializer<Dependency>(Dependency::class.java) {
+    
+    private fun readResolve(): Any = DependencyDeserializer
 
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Dependency {
         val args = p.valueAsString.split(":")

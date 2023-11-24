@@ -33,6 +33,9 @@ object ShiningCommand {
     @CommandBody(permission = "shining.command.dictionary", permissionDefault = PermissionDefault.OP)
     val dictionary = CommandDictionary.dictionary
 
+    @CommandBody(permission = "shining.command.machine", permissionDefault = PermissionDefault.OP)
+    val machine = CommandMachine.machine
+    
 
     fun registerSCommands() {
         SCommand("SunST", "sun")

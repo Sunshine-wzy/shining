@@ -28,7 +28,7 @@ taboolib {
     install("platform-bukkit")
     
     classifier = null
-    version = "6.0.12-33"
+    version = "6.0.12-35"
     
     options(
         "skip-kotlin-relocate",
@@ -72,8 +72,6 @@ dependencies {
     compileOnly(kotlin("stdlib"))
 
     compileOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.0")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
     compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
 
