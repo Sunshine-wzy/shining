@@ -38,6 +38,7 @@ import io.github.sunshinewzy.shining.core.machine.ShiningMachineWrench
 import io.github.sunshinewzy.shining.core.machine.legacy.*
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipe
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipes
+import io.github.sunshinewzy.shining.core.machine.structure.MultipleMachineStructure
 import io.github.sunshinewzy.shining.core.machine.structure.SingleMachineStructure
 import io.github.sunshinewzy.shining.core.task.TaskProgress
 import io.github.sunshinewzy.shining.core.universal.block.VanillaUniversalBlock
@@ -204,7 +205,11 @@ object Shining : Plugin(), ShiningPlugin {
             // IGuideReward
             GuideRewardItem::class.java, GuideRewardCommand::class.java,
             // UniversalItem
-            VanillaUniversalItem::class.java, DictionaryUniversalItem::class.java
+            VanillaUniversalItem::class.java, DictionaryUniversalItem::class.java,
+            // UniversalBlock
+            VanillaUniversalBlock::class.java,
+            // IMachineStructure
+            SingleMachineStructure::class.java, MultipleMachineStructure::class.java
         )
         
         arrayOf(

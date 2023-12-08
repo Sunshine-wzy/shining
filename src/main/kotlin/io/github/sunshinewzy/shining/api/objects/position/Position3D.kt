@@ -29,15 +29,16 @@ data class Position3D @JvmOverloads constructor(val x: Int, val y: Int, val z: I
     fun getBlock(): Block =
         getBlockOrNull() ?: throw IllegalStateException("The world cannot be null.")
 
-    fun spawnParticle(
+    fun <T> spawnParticle(
         player: Player,
         particle: Particle,
         count: Int,
         offsetX: Double,
         offsetY: Double,
-        offsetZ: Double
+        offsetZ: Double,
+        data: T?
     ) {
-        player.spawnParticle(particle, x.toDouble(), y.toDouble(), z.toDouble(), count, offsetX, offsetY, offsetZ)
+        player.spawnParticle(particle, x.toDouble() + offsetX, y.toDouble() + offsetY, z.toDouble() + offsetZ, count, 0.0, 0.0, 0.0, data)
     }
 
     

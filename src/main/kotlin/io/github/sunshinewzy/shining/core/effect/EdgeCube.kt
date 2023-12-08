@@ -28,12 +28,12 @@ class EdgeCube @JvmOverloads constructor(
 
     override fun show() {
         // 获得最大最小的两个点
-        val minX = min(minLoc.blockX, maxLoc.blockX) - 0.5
-        val minY = min(minLoc.blockY, maxLoc.blockY) - 0.5
-        val minZ = min(minLoc.blockZ, maxLoc.blockZ) - 0.5
-        val maxX = max(minLoc.blockX, maxLoc.blockX) + 0.5
-        val maxY = max(minLoc.blockY, maxLoc.blockY) + 0.5
-        val maxZ = max(minLoc.blockZ, maxLoc.blockZ) + 0.5
+        val minX = min(minLoc.blockX, maxLoc.blockX).toDouble()
+        val minY = min(minLoc.blockY, maxLoc.blockY).toDouble()
+        val minZ = min(minLoc.blockZ, maxLoc.blockZ).toDouble()
+        val maxX = max(minLoc.blockX, maxLoc.blockX) + 1.0
+        val maxY = max(minLoc.blockY, maxLoc.blockY) + 1.0
+        val maxZ = max(minLoc.blockZ, maxLoc.blockZ) + 1.0
         val minLoc = Location(this.minLoc.world, minX, minY, minZ)
 
         // 获得立方体的 长 宽 高

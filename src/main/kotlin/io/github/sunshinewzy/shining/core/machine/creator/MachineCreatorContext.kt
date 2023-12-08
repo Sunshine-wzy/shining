@@ -3,7 +3,9 @@ package io.github.sunshinewzy.shining.core.machine.creator
 import io.github.sunshinewzy.shining.api.objects.position.Position3D
 import io.github.sunshinewzy.shining.core.effect.EdgeCube
 import io.github.sunshinewzy.shining.core.effect.ShiningParticle
+import org.bukkit.Color
 import org.bukkit.Particle
+import org.bukkit.Particle.DustOptions
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import taboolib.common.util.Location
@@ -23,15 +25,7 @@ data class MachineCreatorContext(
 
     fun playParticle(player: Player) {
         center?.let { pos ->
-            ShiningParticle.aroundBlock(player, Particle.REDSTONE, pos)
-        }
-        
-        first?.let { pos ->
-            ShiningParticle.aroundBlock(player, Particle.LAVA, pos)
-        }
-
-        second?.let { pos ->
-            ShiningParticle.aroundBlock(player, Particle.LAVA, pos)
+            ShiningParticle.aroundBlock(player, Particle.REDSTONE, pos, DustOptions(Color.RED, 1f))
         }
 
         if (first != null && second != null) {
@@ -45,7 +39,7 @@ data class MachineCreatorContext(
                     override fun spawn(location: Location) {
                         player.spawnParticle(Particle.VILLAGER_HAPPY, location.toBukkitLocation(), 1, 0.0, 0.0, 0.0)
                     }
-                }
+                }, 0.5
             ).show()
         }
     }

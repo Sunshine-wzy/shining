@@ -6,8 +6,9 @@ import io.github.sunshinewzy.shining.api.machine.structure.IMachineStructure
 import io.github.sunshinewzy.shining.api.machine.structure.MachineStructureType
 import io.github.sunshinewzy.shining.api.machine.structure.MachineStructureType.*
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
-import io.github.sunshinewzy.shining.core.dictionary.DictionaryItem
+import io.github.sunshinewzy.shining.core.dictionary.DictionaryRegistry
 import io.github.sunshinewzy.shining.core.lang.getLangText
+import io.github.sunshinewzy.shining.core.lang.item.LocalizedItem
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
 import io.github.sunshinewzy.shining.core.machine.structure.MultipleMachineStructure
@@ -33,10 +34,11 @@ import java.util.*
 
 object MachineCreator {
     val creatorId = NamespacedId(Shining, "machine_creator")
-    val creatorItem = DictionaryItem(
-        creatorId, ItemStack(Material.IRON_AXE),
+    val creatorItem = DictionaryRegistry.registerItem(
+        creatorId, LocalizedItem(Material.IRON_AXE, creatorId),
         object : ItemBehavior() {
             override fun onInteract(event: PlayerInteractEvent, player: Player, item: ItemStack, action: Action) {
+                event.isCancelled = true
                 creatorInteract(event)
             }
         }

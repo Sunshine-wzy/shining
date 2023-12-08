@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.api.universal.block
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.github.sunshinewzy.shining.api.machine.structure.IRotator
 import org.bukkit.Location
@@ -19,6 +20,7 @@ interface UniversalBlock {
      * 
      * @param block The block to set
      */
+    @JsonIgnore
     fun setBlock(block: Block)
     
     /**
@@ -27,6 +29,7 @@ interface UniversalBlock {
      * @param block The Block to get the BlockState at
      * @return The BlockState that would be set
      */
+    @JsonIgnore
     fun getState(block: Block): BlockState
 
     /**
@@ -40,11 +43,13 @@ interface UniversalBlock {
     /**
      * @return Whether the Material is air - for 1.15+, AIR, CAVE_AIR, or VOID_AIR
      */
+    @JsonIgnore
     fun isAir(): Boolean
 
     /**
      * @return The type of this [UniversalBlock]
      */
+    @JsonIgnore
     fun getType(): Material
 
     /**
