@@ -1,8 +1,10 @@
 package io.github.sunshinewzy.shining.api.machine.structure
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.github.sunshinewzy.shining.api.universal.block.UniversalBlock
 import org.bukkit.Location
+import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import java.util.function.BiConsumer
@@ -25,5 +27,10 @@ interface IMachineStructure {
     fun project(player: Player, location: Location, direction: BlockFace?)
     
     fun forEachBlock(location: Location, direction: BlockFace?, action: BiConsumer<Location, UniversalBlock>)
+    
+    @JsonIgnore
+    fun getCenterBlock(): UniversalBlock
+    
+    fun compareCenter(block: Block): Boolean
     
 }

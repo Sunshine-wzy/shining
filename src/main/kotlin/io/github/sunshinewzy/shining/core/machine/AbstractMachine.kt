@@ -1,10 +1,9 @@
 package io.github.sunshinewzy.shining.core.machine
 
-import io.github.sunshinewzy.shining.api.machine.IMachine
-import io.github.sunshinewzy.shining.api.machine.IMachineWrench
-import io.github.sunshinewzy.shining.api.machine.MachineProperty
+import io.github.sunshinewzy.shining.api.machine.*
 import io.github.sunshinewzy.shining.api.machine.component.IMachineComponent
-import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifeCycle
+import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifecycle
+import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifecycle.*
 import io.github.sunshinewzy.shining.api.machine.structure.IMachineStructure
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -15,8 +14,8 @@ abstract class AbstractMachine(
 ) : IMachine {
 
     private val componentRegistry: MutableMap<Class<out IMachineComponent>, IMachineComponent> = ConcurrentHashMap()
-    private val componentLifeCycles: MutableMap<Class<out IMachineComponent>, MutableSet<MachineComponentLifeCycle>> = HashMap()
-    private val componentLifeCycleRegistry: MutableMap<MachineComponentLifeCycle, MutableSet<Class<out IMachineComponent>>> = EnumMap(MachineComponentLifeCycle::class.java)
+    private val componentLifecycles: MutableMap<Class<out IMachineComponent>, MutableSet<MachineComponentLifecycle>> = HashMap()
+    private val componentLifecycleRegistry: MutableMap<MachineComponentLifecycle, MutableSet<Class<out IMachineComponent>>> = EnumMap(MachineComponentLifecycle::class.java)
 
 
     override fun register(wrench: IMachineWrench): AbstractMachine {
@@ -40,16 +39,16 @@ abstract class AbstractMachine(
     override fun <T : IMachineComponent> addComponent(type: Class<T>, component: T): T {
         componentRegistry[type] = component
         
-        val lifeCycles = scanComponentLifeCycleMethods(type)
-        componentLifeCycles[type] = lifeCycles
+        val lifecycles = scanComponentLifecycleMethods(type)
+        componentLifecycles[type] = lifecycles
         
-        lifeCycles.forEach { lifeCycle ->
-            componentLifeCycleRegistry
-                .getOrPut(lifeCycle) { HashSet() }
+        lifecycles.forEach { lifecycle ->
+            componentLifecycleRegistry
+                .getOrPut(lifecycle) { HashSet() }
                 .add(type)
         }
         
-        if (hasComponentLifeCycle(type, MachineComponentLifeCycle.LOAD))
+        if (hasComponentLifecycle(type, LOAD))
             component.onLoad()
         return component
     }
@@ -62,10 +61,10 @@ abstract class AbstractMachine(
     @Suppress("UNCHECKED_CAST")
     override fun <T : IMachineComponent> removeComponent(type: Class<T>): T? {
         val component = componentRegistry.remove(type) as? T ?: return null
-        if (hasComponentLifeCycle(type, MachineComponentLifeCycle.DESTROY))
+        if (hasComponentLifecycle(type, DESTROY))
             component.onDestroy()
-        componentLifeCycles.remove(type)?.forEach { lifeCycle ->
-            componentLifeCycleRegistry[lifeCycle]?.remove(type)
+        componentLifecycles.remove(type)?.forEach { lifecycle ->
+            componentLifecycleRegistry[lifecycle]?.remove(type)
         }
         return component
     }
@@ -73,59 +72,77 @@ abstract class AbstractMachine(
     override fun <T : IMachineComponent> hasComponent(type: Class<T>): Boolean =
         componentRegistry.containsKey(type)
 
-    override fun <T : IMachineComponent> hasComponentLifeCycle(type: Class<T>, lifeCycle: MachineComponentLifeCycle): Boolean {
-        val lifeCycles = componentLifeCycles[type] ?: return false
-        return lifeCycles.contains(lifeCycle)
+    override fun <T : IMachineComponent> hasComponentLifecycle(type: Class<T>, lifecycle: MachineComponentLifecycle): Boolean {
+        val lifecycles = componentLifecycles[type] ?: return false
+        return lifecycles.contains(lifecycle)
     }
 
-    private fun <T : IMachineComponent> scanComponentLifeCycleMethods(type: Class<T>): HashSet<MachineComponentLifeCycle> {
-        val lifeCycles = HashSet<MachineComponentLifeCycle>()
+    override fun doLifecycle(lifecycle: MachineComponentLifecycle, context: IMachineContext?) {
+        componentLifecycleRegistry[lifecycle]?.forEach { type ->
+            val component = getComponent(type)
+            when (lifecycle) {
+                LOAD -> component.onLoad()
+                ENABLE -> component.onEnable()
+                ACTIVATE -> component.onActivate(context!!)
+                UPDATE -> component.onUpdate(context!!)
+                INTERACT -> component.onInteract(context!! as IMachineInteractContext)
+                RUN -> component.onRun(context!! as IMachineRunContext)
+                DEACTIVATE -> component.onDeactivate(context!!)
+                DISABLE -> component.onDisable()
+                DESTROY -> component.onDestroy()
+            }
+        }
+    }
+    
+
+    private fun <T : IMachineComponent> scanComponentLifecycleMethods(type: Class<T>): HashSet<MachineComponentLifecycle> {
+        val lifecycles = HashSet<MachineComponentLifecycle>()
         val declaredMethods = type.javaClass.declaredMethods
         for (declaredMethod in declaredMethods) {
-            machineComponentLifeCycleMethodNames[declaredMethod.name]?.let { lifeCycle ->
+            machineComponentLifecycleMethodNames[declaredMethod.name]?.let { lifecycle ->
                 val parameterTypes = declaredMethod.parameterTypes
-                if (lifeCycle.parameterTypes.size != parameterTypes.size) return@let
-                for (i in lifeCycle.parameterTypes.indices) {
-                    if (lifeCycle.parameterTypes[i] != parameterTypes[i])
+                if (lifecycle.parameterTypes.size != parameterTypes.size) return@let
+                for (i in lifecycle.parameterTypes.indices) {
+                    if (lifecycle.parameterTypes[i] != parameterTypes[i])
                         return@let
                 }
-                lifeCycles += lifeCycle
+                lifecycles += lifecycle
             }
         }
         
-        if (lifeCycles.size != machineComponentLifeCycleMethodNames.size) {
-            scanParentComponentLifeCycleMethods(type.superclass, lifeCycles)
+        if (lifecycles.size != machineComponentLifecycleMethodNames.size) {
+            scanParentComponentLifecycleMethods(type.superclass, lifecycles)
         }
-        return lifeCycles
+        return lifecycles
     }
     
-    private fun scanParentComponentLifeCycleMethods(type: Class<*>?, lifeCycles: HashSet<MachineComponentLifeCycle>) {
+    private fun scanParentComponentLifecycleMethods(type: Class<*>?, lifecycles: HashSet<MachineComponentLifecycle>) {
         if (type == null || type == IMachineComponent::class.java || type == Any::class.java) return
 
         val declaredMethods = type.javaClass.declaredMethods
         for (declaredMethod in declaredMethods) {
-            machineComponentLifeCycleMethodNames[declaredMethod.name]?.let { lifeCycle ->
-                if (lifeCycles.contains(lifeCycle)) return@let
+            machineComponentLifecycleMethodNames[declaredMethod.name]?.let { lifecycle ->
+                if (lifecycles.contains(lifecycle)) return@let
                 
                 val parameterTypes = declaredMethod.parameterTypes
-                if (lifeCycle.parameterTypes.size != parameterTypes.size) return@let
-                for (i in lifeCycle.parameterTypes.indices) {
-                    if (lifeCycle.parameterTypes[i] != parameterTypes[i])
+                if (lifecycle.parameterTypes.size != parameterTypes.size) return@let
+                for (i in lifecycle.parameterTypes.indices) {
+                    if (lifecycle.parameterTypes[i] != parameterTypes[i])
                         return@let
                 }
-                lifeCycles += lifeCycle
+                lifecycles += lifecycle
             }
         }
 
-        if (lifeCycles.size != machineComponentLifeCycleMethodNames.size) {
-            scanParentComponentLifeCycleMethods(type.superclass, lifeCycles)
+        if (lifecycles.size != machineComponentLifecycleMethodNames.size) {
+            scanParentComponentLifecycleMethods(type.superclass, lifecycles)
         }
     }
     
     
     companion object {
-        val machineComponentLifeCycleMethodNames: Map<String, MachineComponentLifeCycle> =
-            MachineComponentLifeCycle.values().associateBy { it.methodName }
+        val machineComponentLifecycleMethodNames: Map<String, MachineComponentLifecycle> =
+            MachineComponentLifecycle.values().associateBy { it.methodName }
     }
     
 }

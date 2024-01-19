@@ -96,6 +96,8 @@ object ShiningGuideRecycleBin {
             }
             
             onBack(player) { open(player, team) }
+            
+            onClick(lock = true)
         }
     }
     

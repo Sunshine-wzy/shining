@@ -78,6 +78,11 @@ class MultipleMachineStructure : AbstractMachineStructure() {
         }
     }
 
+    override fun getCenterBlock(): UniversalBlock = ingredients[center]
+
+    override fun compareCenter(block: Block): Boolean =
+        compare(ingredients[center], block)
+
     fun compare(ingredient: UniversalBlock, block: Block): Boolean =
         ingredient.compare(block, strictMode, ignoreAir)
     

@@ -1,9 +1,11 @@
 package io.github.sunshinewzy.shining.api.machine.component;
 
 import io.github.sunshinewzy.shining.api.machine.IMachineContext;
+import io.github.sunshinewzy.shining.api.machine.IMachineInteractContext;
+import io.github.sunshinewzy.shining.api.machine.IMachineRunContext;
 import org.jetbrains.annotations.NotNull;
 
-public enum MachineComponentLifeCycle {
+public enum MachineComponentLifecycle {
 	/**
 	 * The component is added to the machine.
 	 */
@@ -17,7 +19,7 @@ public enum MachineComponentLifeCycle {
 	/**
 	 * The machine is created.
 	 */
-	ACTIVE("onActive", IMachineContext.class),
+	ACTIVATE("onActivate", IMachineContext.class),
 
 	/**
 	 * Every tick.
@@ -25,9 +27,19 @@ public enum MachineComponentLifeCycle {
 	UPDATE("onUpdate", IMachineContext.class),
 
 	/**
+	 * An interactive block of the machine is interacted with by a player.
+	 */
+	INTERACT("onInteract", IMachineInteractContext.class),
+
+	/**
+	 * The machine is triggered to run.
+	 */
+	RUN("onRun", IMachineRunContext.class),
+	
+	/**
 	 * The machine is destroyed.
 	 */
-	DEACTIVE("onDeactive", IMachineContext.class),
+	DEACTIVATE("onDeactivate", IMachineContext.class),
 
 	/**
 	 * The component is disabled.
@@ -45,12 +57,12 @@ public enum MachineComponentLifeCycle {
 	@NotNull
 	private final Class<?>[] parameterTypes;
 	
-	MachineComponentLifeCycle(@NotNull String methodName, @NotNull Class<?>... parameterTypes) {
+	MachineComponentLifecycle(@NotNull String methodName, @NotNull Class<?>... parameterTypes) {
 		this.methodName = methodName;
 		this.parameterTypes = parameterTypes;
 	}
 	
-	MachineComponentLifeCycle(@NotNull String methodName) {
+	MachineComponentLifecycle(@NotNull String methodName) {
 		this(methodName, new Class[]{});
 	}
 

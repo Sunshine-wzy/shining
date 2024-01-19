@@ -28,7 +28,7 @@ taboolib {
     install("platform-bukkit")
     
     classifier = null
-    version = "6.0.12-35"
+    version = "6.0.12-69"
     
     options(
         "skip-kotlin-relocate",
@@ -67,8 +67,8 @@ val exposedVersion: String by project
 val jacksonVersion: String by project
 dependencies {
     compileOnly("ink.ptms:nms-all:1.0.0")
-    compileOnly("ink.ptms.core:v12001:12001:universal")
-    compileOnly("ink.ptms.core:v12001:12001:mapped")
+    compileOnly("ink.ptms.core:v12004:12004:universal")
+    compileOnly("ink.ptms.core:v12004:12004:mapped")
     compileOnly(kotlin("stdlib"))
 
     compileOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")

@@ -2,6 +2,8 @@ package io.github.sunshinewzy.shining.api.machine.component
 
 import io.github.sunshinewzy.shining.api.machine.IMachine
 import io.github.sunshinewzy.shining.api.machine.IMachineContext
+import io.github.sunshinewzy.shining.api.machine.IMachineInteractContext
+import io.github.sunshinewzy.shining.api.machine.IMachineRunContext
 
 interface IMachineComponent {
 
@@ -53,10 +55,10 @@ interface IMachineComponent {
         machine.hasComponent(type)
 
     /**
-     * Check if [type] has the [lifeCycle].
+     * Check if [type] has the [lifecycle].
      */
-    fun <T : IMachineComponent> hasComponentLifeCycle(type: Class<T>, lifeCycle: MachineComponentLifeCycle): Boolean =
-        machine.hasComponentLifeCycle(type, lifeCycle)
+    fun <T : IMachineComponent> hasComponentLifecycle(type: Class<T>, lifecycle: MachineComponentLifecycle): Boolean =
+        machine.hasComponentLifecycle(type, lifecycle)
 
 
     /**
@@ -72,7 +74,7 @@ interface IMachineComponent {
     /**
      * Executed when the machine is created.
      */
-    fun onActive(context: IMachineContext) {}
+    fun onActivate(context: IMachineContext) {}
 
     /**
      * Executed every tick.
@@ -80,9 +82,24 @@ interface IMachineComponent {
     fun onUpdate(context: IMachineContext) {}
 
     /**
+     * Executed when an interactive block of the machine is interacted with by a player.
+     */
+    fun onInteract(context: IMachineInteractContext) {}
+
+    /**
+     * Executed when the machine is triggered to run.
+     * 
+     * The player interacts with an interactive block of the machine by right click can trigger it to run,
+     * which means [onInteract] will be executed first and then [onRun] will be executed.
+     * 
+     * Additionally, the machine can be triggered to run manually.
+     */
+    fun onRun(context: IMachineRunContext) {}
+
+    /**
      * Executed when the machine is destroyed.
      */
-    fun onDeactive(context: IMachineContext) {}
+    fun onDeactivate(context: IMachineContext) {}
 
     /**
      * Executed when the component is disabled.

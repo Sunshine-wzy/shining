@@ -8,6 +8,7 @@ import io.github.sunshinewzy.shining.api.machine.IMachineWrench
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.dictionary.DictionaryRegistry
 import io.github.sunshinewzy.shining.core.lang.item.LocalizedItem
+import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
 import io.github.sunshinewzy.shining.utils.position3D
 import org.bukkit.Effect
 import org.bukkit.Location
@@ -18,6 +19,7 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
+import java.util.*
 
 object ShiningMachineWrench : IMachineWrench {
     
@@ -31,32 +33,41 @@ object ShiningMachineWrench : IMachineWrench {
                 val clickedBlock = event.clickedBlock ?: return
                 if (clickedBlock.type == Material.AIR) return
                 
+                event.isCancelled = true
                 check(clickedBlock.location, event.blockFace, player)
             }
         }
     )
     
-    private val machineRegistry: MutableList<IMachine> = ArrayList()
+    private val machineRegistry: MutableMap<Material, MutableList<IMachine>> = EnumMap(org.bukkit.Material::class.java)
     
 
     override fun registerMachine(machine: IMachine) {
-        machineRegistry += machine
+        machineRegistry
+            .getOrPut(machine.structure.getCenterBlock().getType()) { ArrayList() }
+            .add(machine)
     }
 
-    override fun check(location: Location, direction: BlockFace?, player: Player?) {
+    override fun check(location: Location, direction: BlockFace?, player: Player?): Boolean {
         val position = location.position3D
-        if (MachineManager.hasMachine(position)) return
+        if (MachineManager.hasMachine(position)) {
+            player?.sendPrefixedLangText("text-machine-wrench-build-failure-already_exists")
+            return false
+        }
         
-        for (machine in machineRegistry) {
-            if (machine.structure.check(location, direction)) {
-                MachineManager.activate(position, machine)
-                
-                player?.sendMessage("机器构建成功!")
-                player?.playEffect(location, Effect.ENDER_SIGNAL, 1)
-                player?.playEffect(location, Effect.CLICK1, 1)
-                break
+        machineRegistry[location.block.type]?.let { list ->
+            for (machine in list) {
+                if (machine.structure.check(location, direction)) {
+                    MachineManager.activate(position, machine)
+
+                    player?.sendPrefixedLangText("text-machine-wrench-build-success")
+                    player?.playEffect(location, Effect.ENDER_SIGNAL, 1)
+                    player?.playEffect(location, Effect.CLICK1, 1)
+                    return true
+                }
             }
         }
+        return false
     }
 
     override fun getItemStack(): ItemStack = wrenchItem.getItemStack()

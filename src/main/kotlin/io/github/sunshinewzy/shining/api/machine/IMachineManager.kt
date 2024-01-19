@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.api.machine
 
 import io.github.sunshinewzy.shining.api.objects.position.Position3D
+import io.github.sunshinewzy.shining.core.machine.MachineRunContext
 
 /**
  * Manage all lifecycles of machines.
@@ -16,17 +17,29 @@ interface IMachineManager {
     /**
      * When a machine is destroyed, [deactivate] will be executed, which will unbind the [position] to the machine.
      */
-    fun deactivate(position: Position3D)
+    fun deactivate(position: Position3D): IMachine?
 
     /**
      * Run the machine at [position].
      */
-    fun run(position: Position3D)
+    fun run(position: Position3D): MachineRunContext?
 
     /**
      * Check if there is a machine at [position].
      */
     fun hasMachine(position: Position3D): Boolean
+
+    /**
+     * Get the machine at [position].
+     * 
+     * If there is no machine at [position], it will return null.
+     */
+    fun getMachine(position: Position3D): IMachine?
+
+    /**
+     * Get the center of the interactive block.
+     */
+    fun getInteractiveBlockCenter(position: Position3D): Position3D?
 
     /**
      * Register a [processor].

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName
 import io.github.sunshinewzy.shining.api.universal.block.UniversalBlock
 import io.github.sunshinewzy.shining.core.universal.block.VanillaUniversalBlock
 import org.bukkit.Location
+import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import java.util.function.BiConsumer
@@ -27,5 +28,10 @@ class SingleMachineStructure(var block: UniversalBlock) : AbstractMachineStructu
     override fun forEachBlock(location: Location, direction: BlockFace?, action: BiConsumer<Location, UniversalBlock>) {
         action.accept(location, block)
     }
+
+    override fun getCenterBlock(): UniversalBlock = block
+
+    override fun compareCenter(block: Block): Boolean =
+        this.block.compare(block, strictMode, ignoreAir)
     
 }

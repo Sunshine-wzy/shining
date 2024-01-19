@@ -9,8 +9,8 @@ interface IMachineWrench {
     
     fun registerMachine(machine: IMachine)
     
-    fun check(location: Location, direction: BlockFace?, player: Player?)
-    
+    fun check(location: Location, direction: BlockFace?, player: Player?): Boolean
+
     fun getItemStack(): ItemStack
     
 }

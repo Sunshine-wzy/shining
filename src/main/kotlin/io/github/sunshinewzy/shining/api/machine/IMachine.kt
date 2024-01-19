@@ -1,7 +1,7 @@
 package io.github.sunshinewzy.shining.api.machine
 
 import io.github.sunshinewzy.shining.api.machine.component.IMachineComponent
-import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifeCycle
+import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifecycle
 import io.github.sunshinewzy.shining.api.machine.structure.IMachineStructure
 
 /**
@@ -10,7 +10,6 @@ import io.github.sunshinewzy.shining.api.machine.structure.IMachineStructure
 interface IMachine {
 
     val property: MachineProperty
-    
     var structure: IMachineStructure
 
 
@@ -62,8 +61,13 @@ interface IMachine {
     fun <T : IMachineComponent> hasComponent(type: Class<T>): Boolean
 
     /**
-     * Check if [type] has the [lifeCycle].
+     * Check if [type] has the [lifecycle].
      */
-    fun <T : IMachineComponent> hasComponentLifeCycle(type: Class<T>, lifeCycle: MachineComponentLifeCycle): Boolean
+    fun <T : IMachineComponent> hasComponentLifecycle(type: Class<T>, lifecycle: MachineComponentLifecycle): Boolean
 
+    /**
+     * Execute the specified lifecycle methods of all components
+     */
+    fun doLifecycle(lifecycle: MachineComponentLifecycle, context: IMachineContext? = null)
+    
 }

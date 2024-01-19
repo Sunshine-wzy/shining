@@ -51,7 +51,7 @@ object MachineCreator {
     private val itemMachineType = NamespacedIdItem(Material.GLASS, NamespacedId(Shining, "machine-creator-type"))
     private val itemMachineAutoType = NamespacedIdItem(Material.REDSTONE_BLOCK, NamespacedId(Shining, "machine-creator-auto"))
     private val itemMachineTypeSingle = NamespacedIdItem(Material.IRON_BLOCK, NamespacedId(Shining, "machine-creator-type-single"))
-    private val itemMachineTypeMultiple = NamespacedIdItem(Material.IRON_BLOCK, NamespacedId(Shining, "machine-creator-type-multiple"))
+    private val itemMachineTypeMultiple = NamespacedIdItem(Material.GOLD_BLOCK, NamespacedId(Shining, "machine-creator-type-multiple"))
 
 
     fun open(player: Player) {
