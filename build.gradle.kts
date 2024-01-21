@@ -51,7 +51,8 @@ taboolib {
         }
         
         dependencies { 
-            name("PlaceholderAPI").optional(true)
+            name("PlaceholderAPI").optional
+            name("eco").loadbefore  // "In order to fix the loading order"
         }
     }
 }
