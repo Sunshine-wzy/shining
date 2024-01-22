@@ -1,7 +1,6 @@
 package io.github.sunshinewzy.shining.api.machine
 
 import io.github.sunshinewzy.shining.api.objects.position.Position3D
-import io.github.sunshinewzy.shining.core.machine.MachineRunContext
 
 /**
  * Manage all lifecycles of machines.
@@ -22,7 +21,7 @@ interface IMachineManager {
     /**
      * Run the machine at [position].
      */
-    fun run(position: Position3D): MachineRunContext?
+    fun run(position: Position3D): IMachineRunContext?
 
     /**
      * Check if there is a machine at [position].
