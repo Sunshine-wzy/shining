@@ -233,7 +233,7 @@ abstract class GuideElementState : IGuideElementState {
                 openEditor(player, team, context)
             }
 
-            set('a', itemEditId.toCurrentLocalizedItem(player, "&f$id")) {
+            set('a', itemEditId.toCurrentLocalizedItem(player, id.toString())) {
                 player.openChatEditor<TextMap>(itemEditId.toLocalizedItem(player).getDisplayName()) {
                     id?.also {
                         map(mapOf("namespace" to it.namespace.toString(), "id" to it.id))
@@ -611,8 +611,8 @@ abstract class GuideElementState : IGuideElementState {
         private val itemBasicEditor = NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-editor-state-element-basic_editor"))
         private val itemAdvancedEditor = NamespacedIdItem(Material.DIAMOND, NamespacedId(Shining, "shining_guide-editor-state-element-advanced_editor"))
         
-        private val itemEditId = NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-editor-state-element-id"))
-        private val itemEditDescriptionName = NamespacedIdItem(Material.APPLE, NamespacedId(Shining, "shining_guide-editor-state-element-description_name"))
+        val itemEditId = NamespacedIdItem(Material.NAME_TAG, NamespacedId(Shining, "shining_guide-editor-state-element-id"))
+        val itemEditDescriptionName = NamespacedIdItem(Material.APPLE, NamespacedId(Shining, "shining_guide-editor-state-element-description_name"))
         private val itemEditDescriptionLore = NamespacedIdItem(Material.BREAD, NamespacedId(Shining, "shining_guide-editor-state-element-description_lore"))
         private val itemEditSymbol = NamespacedIdItem(Material.EMERALD, NamespacedId(Shining, "shining_guide-editor-state-element-symbol"))
         private val itemEditSymbolCurrent = NamespacedIdItem(Material.EMERALD, NamespacedId(Shining, "shining_guide-editor-state-element-symbol-current"))

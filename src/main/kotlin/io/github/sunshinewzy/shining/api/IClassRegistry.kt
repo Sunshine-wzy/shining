@@ -9,6 +9,8 @@ interface IClassRegistry<T> {
     
     fun register(classes: Map<Class<out T>, ILanguageItem>)
     
+    fun getIcon(clazz: Class<out T>): ILanguageItem?
+    
     fun getRegisteredClassMap(): Map<Class<out T>, ILanguageItem>
     
     fun getRegisteredClassPairList(): List<SPair<Class<out T>, ILanguageItem>>

@@ -3,9 +3,12 @@ package io.github.sunshinewzy.shining.core.machine.structure
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonTypeName
+import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.api.objects.coordinate.Coordinate3D
 import io.github.sunshinewzy.shining.api.objects.coordinate.MutableCoordinate3D
 import io.github.sunshinewzy.shining.api.universal.block.UniversalBlock
+import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.universal.block.VanillaUniversalBlock
 import org.bukkit.Location
 import org.bukkit.Material
@@ -358,6 +361,7 @@ class MultipleMachineStructure : AbstractMachineStructure() {
     
     
     companion object {
+        val itemIcon = NamespacedIdItem(Material.GOLD_BLOCK, NamespacedId(Shining, "machine-structure-multiple-icon"))
         val blockFaces: Set<BlockFace> = EnumSet.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST)
     }
     

@@ -19,6 +19,8 @@ abstract class AbstractClassRegistry<T> : IClassRegistry<T> {
         updateClassPairListCache()
     }
 
+    override fun getIcon(clazz: Class<out T>): ILanguageItem? = classMap[clazz]
+
     override fun getRegisteredClassMap(): Map<Class<out T>, ILanguageItem> = classMap
 
     override fun getRegisteredClassPairList(): List<SPair<Class<out T>, ILanguageItem>> = classPairListCache

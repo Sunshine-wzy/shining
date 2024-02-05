@@ -38,6 +38,7 @@ import io.github.sunshinewzy.shining.core.machine.ShiningMachineWrench
 import io.github.sunshinewzy.shining.core.machine.legacy.*
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipe
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipes
+import io.github.sunshinewzy.shining.core.machine.structure.MachineStructureRegistry
 import io.github.sunshinewzy.shining.core.machine.structure.MultipleMachineStructure
 import io.github.sunshinewzy.shining.core.machine.structure.SingleMachineStructure
 import io.github.sunshinewzy.shining.core.task.TaskProgress
@@ -239,6 +240,11 @@ object Shining : Plugin(), ShiningPlugin {
         UniversalItemRegistry.register(mapOf(
             VanillaUniversalItem::class.java to NamespacedIdItem(Material.GRASS_BLOCK, NamespacedId(Shining, "item-universal-vanilla-icon")),
             DictionaryUniversalItem::class.java to NamespacedIdItem(Material.BOOKSHELF, NamespacedId(Shining, "item-universal-dictionary-icon"))
+        ))
+        
+        MachineStructureRegistry.register(mapOf(
+            SingleMachineStructure::class.java to SingleMachineStructure.itemIcon,
+            MultipleMachineStructure::class.java to MultipleMachineStructure.itemIcon
         ))
     }
 
