@@ -4,10 +4,11 @@ import io.github.sunshinewzy.shining.api.machine.IMachineWrench
 import io.github.sunshinewzy.shining.api.machine.MachineProperty
 import io.github.sunshinewzy.shining.api.machine.structure.IMachineStructure
 
-open class Machine(
-    property: MachineProperty,
-    structure: IMachineStructure
-) : AbstractMachine(property, structure) {
+open class Machine : AbstractMachine {
+    
+    constructor(property: MachineProperty, structure: IMachineStructure) : super(property, structure)
+    constructor() : super()
+    
 
     override fun register(wrench: IMachineWrench): Machine {
         super.register(wrench)

@@ -15,7 +15,7 @@ import taboolib.module.nms.MinecraftVersion
 @JsonTypeName("vanilla")
 class VanillaUniversalBlock(val data: BlockData) : UniversalBlock {
     
-    constructor() : this(Bukkit.createBlockData(Material.AIR))
+    constructor() : this(Bukkit.createBlockData(Material.STONE))
     
     constructor(string: String) : this(Bukkit.createBlockData(string))
     

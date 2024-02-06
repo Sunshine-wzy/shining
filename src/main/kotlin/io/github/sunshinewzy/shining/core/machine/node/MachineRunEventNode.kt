@@ -1,3 +1,10 @@
 package io.github.sunshinewzy.shining.core.machine.node
 
-open class MachineRunEventNode : MachineInteractEventNode()
+import org.bukkit.Material
+import org.bukkit.inventory.ItemStack
+
+open class MachineRunEventNode : MachineInteractEventNode() {
+
+    override fun getIcon(): ItemStack = ItemStack(Material.REDSTONE_TORCH)
+    
+}

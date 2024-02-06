@@ -1,5 +1,7 @@
 package io.github.sunshinewzy.shining.api.blueprint
 
+import org.bukkit.inventory.ItemStack
+
 /**
  * The basic unit of blueprints
  */
@@ -14,6 +16,11 @@ interface IBlueprintNode {
      * Executed when the node is edited.
      */
     fun onEdit()
+
+    /**
+     * Gets the icon of the node.
+     */
+    fun getIcon(): ItemStack
 
     /**
      * Gets the amount of successor nodes.

@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.api.machine
 
+import io.github.sunshinewzy.shining.api.blueprint.IBlueprintClass
 import io.github.sunshinewzy.shining.api.machine.component.IMachineComponent
 import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifecycle
 import io.github.sunshinewzy.shining.api.machine.structure.IMachineStructure
@@ -11,6 +12,7 @@ interface IMachine {
 
     val property: MachineProperty
     var structure: IMachineStructure
+    val blueprint: IBlueprintClass
 
 
     /**

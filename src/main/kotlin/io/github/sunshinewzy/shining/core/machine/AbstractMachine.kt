@@ -1,10 +1,14 @@
 package io.github.sunshinewzy.shining.core.machine
 
+import io.github.sunshinewzy.shining.api.blueprint.IBlueprintClass
 import io.github.sunshinewzy.shining.api.machine.*
 import io.github.sunshinewzy.shining.api.machine.component.IMachineComponent
 import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifecycle
 import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifecycle.*
 import io.github.sunshinewzy.shining.api.machine.structure.IMachineStructure
+import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.blueprint.BlueprintClass
+import io.github.sunshinewzy.shining.core.machine.structure.SingleMachineStructure
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -13,10 +17,14 @@ abstract class AbstractMachine(
     override var structure: IMachineStructure
 ) : IMachine {
 
+    override val blueprint: IBlueprintClass = BlueprintClass()
+
     private val componentRegistry: MutableMap<Class<out IMachineComponent>, IMachineComponent> = ConcurrentHashMap()
     private val componentLifecycles: MutableMap<Class<out IMachineComponent>, MutableSet<MachineComponentLifecycle>> = HashMap()
     private val componentLifecycleRegistry: MutableMap<MachineComponentLifecycle, MutableSet<Class<out IMachineComponent>>> = EnumMap(MachineComponentLifecycle::class.java)
 
+    constructor() : this(MachineProperty(NamespacedId.NULL, "null"), SingleMachineStructure())
+    
 
     override fun register(wrench: IMachineWrench): AbstractMachine {
         register()

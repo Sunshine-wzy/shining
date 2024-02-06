@@ -2,6 +2,8 @@ package io.github.sunshinewzy.shining.core.machine.creator
 
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.dictionary.behavior.ItemBehavior
+import io.github.sunshinewzy.shining.api.machine.IMachine
+import io.github.sunshinewzy.shining.api.machine.IMachineWrench
 import io.github.sunshinewzy.shining.api.machine.MachineProperty
 import io.github.sunshinewzy.shining.api.machine.structure.IMachineStructure
 import io.github.sunshinewzy.shining.api.machine.structure.MachineStructureType
@@ -17,10 +19,14 @@ import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.LocalizedItem
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
+import io.github.sunshinewzy.shining.core.machine.Machine
 import io.github.sunshinewzy.shining.core.machine.MachineRegistry
+import io.github.sunshinewzy.shining.core.machine.MachineWrenchRegistry
+import io.github.sunshinewzy.shining.core.machine.ShiningMachineWrench
 import io.github.sunshinewzy.shining.core.machine.structure.MachineStructureRegistry
 import io.github.sunshinewzy.shining.core.machine.structure.MultipleMachineStructure
 import io.github.sunshinewzy.shining.core.machine.structure.SingleMachineStructure
+import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.core.universal.block.VanillaUniversalBlock
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.getDisplayName
@@ -40,6 +46,7 @@ import taboolib.common.platform.Awake
 import taboolib.common.platform.function.submit
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
+import taboolib.platform.util.buildItem
 import java.util.*
 
 object MachineCreator {
@@ -57,6 +64,7 @@ object MachineCreator {
     private const val PERIOD = 20L   // tick
     private val contextMap: MutableMap<UUID, MachineCreatorContext> = HashMap()
     private val lastStructureMap: MutableMap<UUID, IMachineStructure> = HashMap()
+    private val lastMachineMap: MutableMap<UUID, IMachine> = HashMap()
     
     private val itemMachineType = NamespacedIdItem(Material.GLASS, NamespacedId(Shining, "machine-creator-type"))
     private val itemMachineAutoType = NamespacedIdItem(Material.REDSTONE_BLOCK, NamespacedId(Shining, "machine-creator-auto"))
@@ -84,7 +92,7 @@ object MachineCreator {
                     autoType(context)?.let { type ->
                         scan(context, type)?.let { structure ->
                             lastStructureMap[player.uniqueId] = structure
-                            openCreateMachineMenu(player, MachineProperty(NamespacedId.NULL, ""), structure)
+                            openCreateMachineMenu(player, MachineProperty(NamespacedId.NULL, ""), structure, ShiningMachineWrench)
                         }
                     }
                 }
@@ -116,16 +124,18 @@ object MachineCreator {
         }
     }
     
-    fun openCreateMachineMenu(player: Player, property: MachineProperty, structure: IMachineStructure) {
+    fun openCreateMachineMenu(player: Player, property: MachineProperty, structure: IMachineStructure, wrench: IMachineWrench) {
         player.openMenu<Basic>(player.getLangText("menu-machine-creator-create-title")) {
             rows(4)
             
             map(
                 "---------",
-                "- ab  s -",
-                "-   c   -",
+                "- ab  c -",
+                "- sw  d -",
                 "---------",
             )
+            
+            set('-', ShiningIcon.EDGE.item)
             
             set('a', GuideElementState.itemEditId.toCurrentLocalizedItem(player, property.id.toString())) {
                 player.openChatEditor<TextMap>(GuideElementState.itemEditId.toLocalizedItem(player).getDisplayName()) {
@@ -151,7 +161,7 @@ object MachineCreator {
                         val theId = content["id"] ?: return@onSubmit
 
                         val namespacedId = NamespacedId.fromString("$theNamespace:$theId") ?: return@onSubmit
-                        if (MachineRegistry.hasMachine(namespacedId)) {
+                        if (namespacedId == NamespacedId.NULL || MachineRegistry.hasMachine(namespacedId)) {
                             player.sendPrefixedLangText("text-shining_guide-editor-state-element-basic-id-duplication")
                             return@onSubmit
                         }
@@ -160,7 +170,7 @@ object MachineCreator {
                     }
 
                     onFinal {
-                        openCreateMachineMenu(player, property, structure)
+                        openCreateMachineMenu(player, property, structure, wrench)
                     }
                 }
             }
@@ -174,7 +184,7 @@ object MachineCreator {
                     }
 
                     onFinal {
-                        openCreateMachineMenu(player, property, structure)
+                        openCreateMachineMenu(player, property, structure, wrench)
                     }
                 }
             }
@@ -182,11 +192,43 @@ object MachineCreator {
             val structureIcon = MachineStructureRegistry.getIcon(structure::class.java) ?: return
             set('s', structureIcon.toLocalizedItemStack(player))
             
-            set('c', itemBlueprint.toLocalizedItem(player)) {
+            set('w', ShiningMachineWrench.itemMachineWrench.toLocalizedItem(player)) {
+                openSelectWrenchMenu(player, property, structure, wrench)
+            }
+            
+            set('c', ShiningIcon.CONFIRM.toLocalizedItem(player)) {
+                if (property.id == NamespacedId.NULL || MachineRegistry.hasMachine(property.id)) {
+                    player.sendPrefixedLangText("text-shining_guide-editor-state-element-basic-id-duplication")
+                    return@set
+                }
                 
+                val machine = Machine(property, structure)
+                machine.register(wrench)
+                lastMachineMap[player.uniqueId] = machine
+            }
+            
+            set('d', ShiningIcon.CANCEL.toLocalizedItem(player)) {
+                player.closeInventory()
             }
             
             onClick(lock = true)
+        }
+    }
+    
+    fun openSelectWrenchMenu(player: Player, property: MachineProperty, structure: IMachineStructure, wrench: IMachineWrench) {
+        player.openMultiPageMenu<IMachineWrench> { 
+            elements { MachineWrenchRegistry.getAllWrenches() }
+            
+            onGenerate { player, element, index, slot -> 
+                buildItem(element.getItemStack()) {
+                    lore.addAll(0, listOf("&f${element.getId()}", ""))
+                    colored()
+                }
+            }
+            
+            onClick { event, element -> 
+                openCreateMachineMenu(player, property, structure, element)
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.api
 
+import io.github.sunshinewzy.shining.api.blueprint.IBlueprintEditor
 import io.github.sunshinewzy.shining.api.guide.IShiningGuide
 import io.github.sunshinewzy.shining.api.guide.element.IGuideElementRegistry
 import io.github.sunshinewzy.shining.api.guide.reward.IGuideReward
@@ -23,5 +24,7 @@ interface IShiningAPI {
     fun getGuideTeamManager(): IGuideTeamManager
     
     fun getMachineRegistry(): IMachineRegistry
+    
+    fun getBlueprintEditor(): IBlueprintEditor
     
 }
