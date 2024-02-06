@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.core.blueprint
 
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintNode
+import io.github.sunshinewzy.shining.core.blueprint.node.EmptyBlueprintNode
 
 abstract class AbstractBlueprintNode(private val successorAmount: Int = 1) : IBlueprintNode {
 

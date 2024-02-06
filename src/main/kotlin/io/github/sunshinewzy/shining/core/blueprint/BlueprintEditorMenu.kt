@@ -59,13 +59,26 @@ open class BlueprintEditorMenu(title: String) : MapMenu<IBlueprintNode>(title) {
         nodeTreePageChangeCallback = callback
     }
     
-    open fun switchToNodeTree(tree: IBlueprintNodeTree) {
+    open fun switchNodeTree(tree: IBlueprintNodeTree) {
         val map = HashMap<Coordinate2D, IBlueprintNode>()
         tree.getRootOrNull()?.let { root ->
-            
+            putBlueprintNode(map, root, 0, 0)
         }
         elementsCache = map
     }
+    
+    private fun putBlueprintNode(map: HashMap<Coordinate2D, IBlueprintNode>, node: IBlueprintNode, x: Int, y: Int): Int {
+        map[Coordinate2D(x, y)] = node
+        val successors = node.successors
+        if (successors.isEmpty()) return 1
+
+        var sum = 0
+        for (successor in successors) {
+            sum += putBlueprintNode(map, successor, x + 1, y + sum)
+        }
+        return sum
+    }
+    
     
     protected val nodeTreeElementMap = HashMap<Int, IBlueprintNodeTree>()
     protected var nodeTreeElementItems: List<IBlueprintNodeTree> = emptyList()
@@ -80,10 +93,15 @@ open class BlueprintEditorMenu(title: String) : MapMenu<IBlueprintNode>(title) {
     }
 
     override fun processSelfBuild() {
-        elementsCache = elementsCallback()
+        onGenerate { _, element, _, _ -> element.icon }
+        val nodeTrees = blueprintClass.nodeTrees
+        if (nodeTrees.isNotEmpty()) {
+            switchNodeTree(nodeTrees[0])
+        }
+        
         val elementMap = HashMap<Int, Pair<IBlueprintNode, Coordinate2D>>()
         nodeTreeElementMap.clear()
-        nodeTreeElementItems = subList(blueprintClass.getNodeTrees(), nodeTreePage * 5, (nodeTreePage + 1) * 5)
+        nodeTreeElementItems = subList(nodeTrees, nodeTreePage * 5, (nodeTreePage + 1) * 5)
 
         selfBuild { player, inventory -> processBuild(player, inventory, false) }
         selfBuild(async = true) { player, inventory -> processBuild(player, inventory, true) }
@@ -94,7 +112,7 @@ open class BlueprintEditorMenu(title: String) : MapMenu<IBlueprintNode>(title) {
             elementMap[it.rawSlot]?.let { pair ->
                 elementClickCallback(it, pair.first, pair.second)
             } ?: nodeTreeElementMap[it.rawSlot]?.let { tree ->
-                switchToNodeTree(tree)
+                switchNodeTree(tree)
             } ?: kotlin.run {
                 val rawCoordinate = it.rawSlot.toCoordinate2D()
                 if (rawCoordinate in menuArea && it.currentItem.isAir()) {
@@ -104,7 +122,6 @@ open class BlueprintEditorMenu(title: String) : MapMenu<IBlueprintNode>(title) {
         }
     }
 
-    
     companion object {
         val NODE_TREE_BASE_INDEX = 3 orderWith 6
     }

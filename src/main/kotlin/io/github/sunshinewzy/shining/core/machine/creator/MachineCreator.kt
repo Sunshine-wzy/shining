@@ -10,6 +10,8 @@ import io.github.sunshinewzy.shining.api.machine.structure.MachineStructureType
 import io.github.sunshinewzy.shining.api.machine.structure.MachineStructureType.*
 import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.core.blueprint.BlueprintNodeTree
+import io.github.sunshinewzy.shining.core.blueprint.node.BranchNode
 import io.github.sunshinewzy.shining.core.dictionary.DictionaryRegistry
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
 import io.github.sunshinewzy.shining.core.editor.chat.type.Text
@@ -23,6 +25,8 @@ import io.github.sunshinewzy.shining.core.machine.Machine
 import io.github.sunshinewzy.shining.core.machine.MachineRegistry
 import io.github.sunshinewzy.shining.core.machine.MachineWrenchRegistry
 import io.github.sunshinewzy.shining.core.machine.ShiningMachineWrench
+import io.github.sunshinewzy.shining.core.machine.node.MachineInteractEventNode
+import io.github.sunshinewzy.shining.core.machine.node.MachineRunEventNode
 import io.github.sunshinewzy.shining.core.machine.structure.MachineStructureRegistry
 import io.github.sunshinewzy.shining.core.machine.structure.MultipleMachineStructure
 import io.github.sunshinewzy.shining.core.machine.structure.SingleMachineStructure
@@ -205,6 +209,38 @@ object MachineCreator {
                 val machine = Machine(property, structure)
                 machine.register(wrench)
                 lastMachineMap[player.uniqueId] = machine
+
+                val nodeTrees = machine.blueprint.nodeTrees
+                val tree = BlueprintNodeTree()
+                nodeTrees += tree
+                for (i in 1..6) {
+                    val theTree = BlueprintNodeTree()
+                    theTree.root = MachineInteractEventNode()
+                    nodeTrees += theTree
+                }
+                tree.root = MachineRunEventNode()
+                val branchNode = BranchNode()
+                tree.root.successors[0] = branchNode
+                val b1 = BranchNode()
+                val b2 = BranchNode()
+                val b11 = BranchNode()
+                val b111 = BranchNode()
+                val b112 = BranchNode()
+                val b12 = BranchNode()
+                val b121 = BranchNode()
+                val b21 = BranchNode()
+                val b22 = BranchNode()
+                branchNode.successors[0] = b1
+                branchNode.successors[1] = b2
+                b1.successors[0] = b11
+                b1.successors[1] = b12
+                b2.successors[0] = b21
+                b2.successors[1] = b22
+                b11.successors[0] = b111
+                b11.successors[1] = b112
+                b12.successors[0] = b121
+
+                machine.blueprint.edit(player)
             }
             
             set('d', ShiningIcon.CANCEL.toLocalizedItem(player)) {
@@ -216,7 +252,7 @@ object MachineCreator {
     }
     
     fun openSelectWrenchMenu(player: Player, property: MachineProperty, structure: IMachineStructure, wrench: IMachineWrench) {
-        player.openMultiPageMenu<IMachineWrench> { 
+        player.openMultiPageMenu<IMachineWrench>(player.getLangText("menu-machine-creator-create-wrench-title")) { 
             elements { MachineWrenchRegistry.getAllWrenches() }
             
             onGenerate { player, element, index, slot -> 
