@@ -12,6 +12,9 @@ import io.github.sunshinewzy.shining.api.namespace.Namespace
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.blueprint.BlueprintNodeTree
 import io.github.sunshinewzy.shining.core.blueprint.node.BranchNode
+import io.github.sunshinewzy.shining.core.blueprint.node.BreakBlockNode
+import io.github.sunshinewzy.shining.core.blueprint.node.PlaceBlockNode
+import io.github.sunshinewzy.shining.core.blueprint.node.SpawnItemNode
 import io.github.sunshinewzy.shining.core.dictionary.DictionaryRegistry
 import io.github.sunshinewzy.shining.core.editor.chat.openChatEditor
 import io.github.sunshinewzy.shining.core.editor.chat.type.Text
@@ -219,26 +222,26 @@ object MachineCreator {
                     nodeTrees += theTree
                 }
                 tree.root = MachineRunEventNode()
+                val bb = BreakBlockNode()
+                val pb = PlaceBlockNode()
+                val si = SpawnItemNode()
+                tree.root.setSuccessor(bb)
+                bb.setSuccessor(pb)
+                pb.setSuccessor(si)
                 val branchNode = BranchNode()
-                tree.root.successors[0] = branchNode
-                val b1 = BranchNode()
-                val b2 = BranchNode()
-                val b11 = BranchNode()
-                val b111 = BranchNode()
-                val b112 = BranchNode()
-                val b12 = BranchNode()
-                val b121 = BranchNode()
-                val b21 = BranchNode()
-                val b22 = BranchNode()
-                branchNode.successors[0] = b1
-                branchNode.successors[1] = b2
-                b1.successors[0] = b11
-                b1.successors[1] = b12
-                b2.successors[0] = b21
-                b2.successors[1] = b22
-                b11.successors[0] = b111
-                b11.successors[1] = b112
-                b12.successors[0] = b121
+                si.setSuccessor(branchNode)
+                val bb1 = BreakBlockNode()
+                val pb1 = PlaceBlockNode()
+                val si1 = SpawnItemNode()
+                branchNode.setSuccessor(0, bb1)
+                bb1.setSuccessor(pb1)
+                pb1.setSuccessor(si1)
+                val bb2 = BreakBlockNode()
+                val pb2 = PlaceBlockNode()
+                val si2 = SpawnItemNode()
+                branchNode.setSuccessor(1, bb2)
+                bb2.setSuccessor(pb2)
+                pb2.setSuccessor(si2)
 
                 machine.blueprint.edit(player)
             }

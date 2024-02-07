@@ -6,6 +6,7 @@ import io.github.sunshinewzy.shining.api.lang.node.ISectionNode
 import io.github.sunshinewzy.shining.api.lang.node.ITextNode
 import io.github.sunshinewzy.shining.api.lang.node.LanguageNode
 
+@Suppress("ReplaceCallWithBinaryOperator")
 interface ILanguageManager {
 
     fun reload()
@@ -17,9 +18,10 @@ interface ILanguageManager {
     fun getLanguageFile(locale: String): LanguageFile?
 
     fun getLanguageNode(locale: String, node: String): LanguageNode? =
-        getLanguageFile(locale)?.let {
-            it.nodeMap[node]
-        }
+        getLanguageFile(locale)?.nodeMap?.get(node) ?:
+        if (!locale.equals(ShiningConfig.language))
+            getLanguageFile(ShiningConfig.language)?.nodeMap?.get(node)
+        else null
 
     fun getLangTextNode(locale: String, node: String): ITextNode? =
         getLanguageNode(locale, node)?.let {
@@ -40,17 +42,13 @@ interface ILanguageManager {
         getLangTextNode(locale, node)?.text
 
     fun getLangText(locale: String, node: String): String =
-        (getLangTextOrNull(locale, node)
-            ?: if (locale != ShiningConfig.language) getLangTextOrNull(ShiningConfig.language, node) else null)
-            ?: "{$locale:$node}"
+        getLangTextOrNull(locale, node) ?: "{$locale:$node}"
 
     fun getLangTextOrNull(locale: String, node: String, vararg args: String?): String? =
         getLangTextNode(locale, node)?.format(*args)
 
     fun getLangText(locale: String, node: String, vararg args: String?): String =
-        (getLangTextOrNull(locale, node, *args)
-            ?: if (locale != ShiningConfig.language) getLangTextOrNull(ShiningConfig.language, node, *args) else null)
-            ?: "{$locale:$node:${args.joinToString()}}"
+        getLangTextOrNull(locale, node, *args) ?: "{$locale:$node:${args.joinToString()}}"
 
     fun transfer(source: String): String
 

@@ -1,16 +1,19 @@
 package io.github.sunshinewzy.shining.core.blueprint.node
 
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintNode
+import io.github.sunshinewzy.shining.core.blueprint.IBlueprintLangNode
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-object EmptyBlueprintNode : IBlueprintNode {
+object EmptyBlueprintNode : IBlueprintLangNode {
 
     override fun onExecute() {}
 
     override fun onEdit() {}
 
     override fun getIcon(): ItemStack = ItemStack(Material.GLASS_PANE)
+
+    override fun getLanguageNode(): String = "text-blueprint-node-empty"
 
     override fun getSuccessorAmount(): Int = 0
 

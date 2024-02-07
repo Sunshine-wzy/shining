@@ -38,10 +38,8 @@ fun ItemStack.localize(languageNode: LanguageNode?): ItemStack {
         is ListNode -> {
             val list = LinkedList<String>()
             languageNode.list.filterIsInstance<TextNode>().mapTo(list) { it.text }
-
             if (list.isNotEmpty()) {
                 setName(list.removeFirst())
-
                 if (list.isNotEmpty()) {
                     setLore(list)
                 }

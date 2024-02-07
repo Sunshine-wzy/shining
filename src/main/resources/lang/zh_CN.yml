@@ -267,5 +267,14 @@ text-machine-creator-select-position: '&a选择点 {0}: {1}'
 text-machine-creator-select-center: '&a选择中心点: {0}'
 text-machine-wrench-build-success: '&a机器构建成功!'
 text-machine-wrench-build-failure-already_exists: '&c机器构建失败，此处已存在机器'
+text-blueprint-node_tree: '节点树'
+text-blueprint-node_tree-root: '根节点'
+text-blueprint-node-empty: ['&f空节点', '&7没有任何功能','&7既没有前驱也没有后继', '&7通常作为节点树的末端终止节点']
+text-blueprint-node-branch: ['&b分支节点', '&7选择结构(if)','&7有2个后继']
+text-blueprint-node-block-break: ['&c破坏方块节点', '&7破坏目标方块']
+text-blueprint-node-block-place: ['&a放置方块节点', '&7放置目标方块']
+text-blueprint-node-item-spawn: ['&a生成物品节点', '&7生成目标物品']
+text-blueprint-node-event-machine-interact: ['&d机器交互事件节点', '&7当玩家与机器的可交互方块交互时触发']
+text-blueprint-node-event-machine-run: ['&d机器运行事件节点', '&7当机器运行时触发']
 task-shining_guide_task-map-description-name: '&aShining 引导'
 task-shining_guide_task-map-description-lore: '&7了解shining的基础设施'

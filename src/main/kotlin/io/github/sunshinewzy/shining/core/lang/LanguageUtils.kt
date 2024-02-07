@@ -25,7 +25,7 @@ fun NamespacedId.getLanguageNodeOrNull(prefix: String = "", locale: String = lan
 
 @JvmOverloads
 fun NamespacedId.getLanguageNode(prefix: String = "", locale: String = language): LanguageNode =
-    (getLanguageNodeOrNull(prefix, locale) ?: if (locale != language) getLanguageNodeOrNull(prefix, language) else null)
+    getLanguageNodeOrNull(prefix, locale)
         ?: throw LanguageException("Cannot find the node '${toNodeString(prefix)}' in '$locale.yml'.")
 
 
