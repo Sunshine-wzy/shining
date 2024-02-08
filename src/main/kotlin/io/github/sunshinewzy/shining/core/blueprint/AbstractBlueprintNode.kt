@@ -19,7 +19,7 @@ abstract class AbstractBlueprintNode(private val successorAmount: Int = 1) : IBl
 
     override fun getPredecessorOrNull(): IBlueprintNode? = predecessor
 
-    override fun setPredecessor(node: IBlueprintNode): IBlueprintNode? {
+    override fun setPredecessor(node: IBlueprintNode?): IBlueprintNode? {
         val pre = predecessor
         predecessor = node
         return pre

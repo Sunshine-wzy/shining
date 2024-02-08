@@ -21,6 +21,6 @@ object EmptyBlueprintNode : IBlueprintLangNode {
 
     override fun getPredecessorOrNull(): IBlueprintNode? = null
 
-    override fun setPredecessor(node: IBlueprintNode): IBlueprintNode? = null
+    override fun setPredecessor(node: IBlueprintNode?): IBlueprintNode? = null
     
 }

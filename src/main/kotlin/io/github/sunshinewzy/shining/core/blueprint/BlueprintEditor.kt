@@ -2,6 +2,7 @@ package io.github.sunshinewzy.shining.core.blueprint
 
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintClass
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintEditor
+import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import org.bukkit.entity.Player
 
 object BlueprintEditor : IBlueprintEditor {
@@ -13,6 +14,10 @@ object BlueprintEditor : IBlueprintEditor {
         } else {
             blueprint.edit(player)
         }
+    }
+
+    override fun openNodeSelector(player: Player, context: GuideContext) {
+        
     }
     
 }

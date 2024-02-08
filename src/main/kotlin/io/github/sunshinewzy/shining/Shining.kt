@@ -19,7 +19,6 @@ import io.github.sunshinewzy.shining.core.ShiningAPI
 import io.github.sunshinewzy.shining.core.addon.ShiningAddonRegistry
 import io.github.sunshinewzy.shining.core.data.DataManager
 import io.github.sunshinewzy.shining.core.data.SerializationModules
-import io.github.sunshinewzy.shining.core.data.legacy.internal.SLocationData
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.element.GuideCategory
 import io.github.sunshinewzy.shining.core.guide.element.GuideElementRegistry
@@ -35,7 +34,9 @@ import io.github.sunshinewzy.shining.core.item.ConsumableItemGroup
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.machine.Machine
 import io.github.sunshinewzy.shining.core.machine.ShiningMachineWrench
-import io.github.sunshinewzy.shining.core.machine.legacy.*
+import io.github.sunshinewzy.shining.core.machine.legacy.SFlatMachineInformation
+import io.github.sunshinewzy.shining.core.machine.legacy.SMachineInformation
+import io.github.sunshinewzy.shining.core.machine.legacy.SSingleMachineInformation
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipe
 import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipes
 import io.github.sunshinewzy.shining.core.machine.structure.MachineStructureRegistry
@@ -50,7 +51,6 @@ import io.github.sunshinewzy.shining.listeners.SunSTSubscriber
 import io.github.sunshinewzy.shining.objects.SItem
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.legacy.SBlock
-import io.github.sunshinewzy.shining.objects.machine.SunSTMachineManager
 import io.github.sunshinewzy.shining.utils.SReflect
 import io.github.sunshinewzy.shining.utils.ShiningTestApi
 import io.github.sunshinewzy.shining.utils.giveItem
@@ -182,16 +182,11 @@ object Shining : Plugin(), ShiningPlugin {
             
             submit {
                 ShiningGuide.reload()
-                
                 pluginManager.callEvent(ShiningDataLoadingCompleteEvent())
             }
         }
         
         SItem.initAction()
-        SLocationData.init()
-        SSingleMachine.init()
-        SFlatMachine.init()
-        SunSTMachineManager.register()
         
         ShiningAddonRegistry.loadAddons()
         submit { 

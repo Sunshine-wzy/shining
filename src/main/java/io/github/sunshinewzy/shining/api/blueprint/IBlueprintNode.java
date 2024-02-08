@@ -116,7 +116,7 @@ public interface IBlueprintNode {
 	 * @return The previous predecessor node, or null if it does not exist
 	 */
 	@Nullable
-	IBlueprintNode setPredecessor(@NotNull IBlueprintNode node);
+	IBlueprintNode setPredecessor(@Nullable IBlueprintNode node);
 
 	/**
 	 * Gets the width of the node.

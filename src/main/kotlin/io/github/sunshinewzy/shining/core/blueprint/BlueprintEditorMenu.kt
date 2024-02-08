@@ -1,16 +1,20 @@
 package io.github.sunshinewzy.shining.core.blueprint
 
+import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintClass
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintNode
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintNodeTree
+import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.api.objects.coordinate.Coordinate2D
 import io.github.sunshinewzy.shining.core.blueprint.node.EmptyBlueprintNode
 import io.github.sunshinewzy.shining.core.lang.getLangText
+import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.menu.MapMenu
 import io.github.sunshinewzy.shining.core.menu.onBack
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
 import io.github.sunshinewzy.shining.utils.toCoordinate2D
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
@@ -165,8 +169,8 @@ open class BlueprintEditorMenu(title: String) : MapMenu<IBlueprintNode>(title) {
             
             if (node != EmptyBlueprintNode) {
                 val pre = node.predecessorOrNull
+                var index = 0
                 if (pre != null) {
-                    var index = 0
                     val array = pre.successors
                     for (nodeInArray in array) {
                         if (node == nodeInArray) break
@@ -197,6 +201,7 @@ open class BlueprintEditorMenu(title: String) : MapMenu<IBlueprintNode>(title) {
                             if (prePre == null) {
                                 pre.setSuccessor(0, node.successor)
                                 node.setSuccessor(0, pre)
+                                node.setPredecessor(null)
                                 currentNodeTree.root = node
                             } else {
                                 var preIndex = 0
@@ -222,15 +227,9 @@ open class BlueprintEditorMenu(title: String) : MapMenu<IBlueprintNode>(title) {
                             if (pre == null) {
                                 node.setSuccessor(0, suc.successor)
                                 suc.setSuccessor(0, node)
+                                suc.setPredecessor(null)
                                 currentNodeTree.root = suc
                             } else {
-                                var index = 0
-                                val array = pre.successors
-                                for (nodeInArray in array) {
-                                    if (node == nodeInArray) break
-                                    index++
-                                }
-                                
                                 node.setSuccessor(0, suc.successor)
                                 suc.setSuccessor(0, node)
                                 pre.setSuccessor(index, suc)
@@ -239,6 +238,11 @@ open class BlueprintEditorMenu(title: String) : MapMenu<IBlueprintNode>(title) {
                         }
                     }
                 }
+                
+                set('i', itemInsertNode.toLocalizedItem(player)) {
+                    
+                }
+                
             }
             
             onClick(lock = true)
@@ -253,6 +257,7 @@ open class BlueprintEditorMenu(title: String) : MapMenu<IBlueprintNode>(title) {
     
     companion object {
         val NODE_TREE_BASE_INDEX = 3 orderWith 6
+        private val itemInsertNode = NamespacedIdItem(Material.NETHER_STAR, NamespacedId(Shining, "editor-blueprint-insert_node"))
     }
     
 }

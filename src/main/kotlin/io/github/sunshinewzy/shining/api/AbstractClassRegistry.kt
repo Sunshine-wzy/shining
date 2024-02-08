@@ -5,7 +5,7 @@ import io.github.sunshinewzy.shining.api.objects.SPair
 
 abstract class AbstractClassRegistry<T> : IClassRegistry<T> {
 
-    protected val classMap: MutableMap<Class<out T>, ILanguageItem> = HashMap()
+    protected val classMap: MutableMap<Class<out T>, ILanguageItem> = LinkedHashMap()
     protected val classPairListCache: MutableList<SPair<Class<out T>, ILanguageItem>> = ArrayList()
     
     

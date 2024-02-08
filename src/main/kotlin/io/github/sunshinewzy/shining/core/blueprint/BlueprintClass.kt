@@ -50,10 +50,6 @@ class BlueprintClass : IBlueprintClass {
                     }
                 } else ShiningIcon.EDGE.item
             }
-            
-            onClick { event, element, coordinate -> 
-                
-            }
         }
     }
     

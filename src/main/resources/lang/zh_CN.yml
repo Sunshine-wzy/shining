@@ -128,6 +128,11 @@ item-shining-icon-paste: '&a粘贴'
 item-shining-icon-refresh: '&b刷新'
 item-shining-editor-item-lore-chat_editor: [ '&a编辑Lore', '', '&7> 使用&eChatEditor' ]
 item-shining-editor-item-lore-gui: [ '&a编辑Lore', '', '&7> 使用&bGUI' ]
+item-shining-editor-blueprint-insert_node: [ '&a插入新节点' ]
+item-shining-blueprint-node-type-event: '&d事件节点'
+item-shining-blueprint-node-type-function: '&a功能节点'
+item-shining-blueprint-node-type-flow_control: '&b流程控制节点'
+item-shining-blueprint-node-type-variable: '&e变量结点'
 item-shining-item-universal-vanilla-icon: '&f普通物品'
 item-shining-item-universal-vanilla-current: [ '&b物品', '', '&a⇨ 当前 ⇨' ]
 item-shining-item-universal-vanilla-hand: '&e替换为手持物品'
@@ -135,7 +140,7 @@ item-shining-item-universal-vanilla-editor: '&d打开物品编辑器'
 item-shining-item-universal-dictionary-icon: '&e字典物品'
 item-shining-item-universal-dictionary-name: '&b编辑物品字典名'
 item-shining-item-universal-dictionary-amount: '&e编辑物品数量'
-item-shining-machine_creator: ['&b机器创建器', '', '&f左键：&7选择点1', '&f右键：&7选择点2', '&fShift + 左键：&7选择中心点', '&fShift + 右键：&7创建机器']
+item-shining-machine_creator: [ '&b机器创建器', '', '&f左键：&7选择点1', '&f右键：&7选择点2', '&fShift + 左键：&7选择中心点', '&fShift + 右键：&7创建机器' ]
 item-shining-machine-creator-type: '&d选择机器类型'
 item-shining-machine-creator-auto: '&a自动检测机器类型'
 item-shining-machine-creator-blueprint: '&b蓝图'
@@ -269,12 +274,12 @@ text-machine-wrench-build-success: '&a机器构建成功!'
 text-machine-wrench-build-failure-already_exists: '&c机器构建失败，此处已存在机器'
 text-blueprint-node_tree: '节点树'
 text-blueprint-node_tree-root: '根节点'
-text-blueprint-node-empty: ['&f空节点', '&7没有任何功能','&7既没有前驱也没有后继', '&7通常作为节点树的末端终止节点']
-text-blueprint-node-branch: ['&b分支节点', '&7选择结构(if)','&7有2个后继']
-text-blueprint-node-block-break: ['&c破坏方块节点', '&7破坏目标方块']
-text-blueprint-node-block-place: ['&a放置方块节点', '&7放置目标方块']
-text-blueprint-node-item-spawn: ['&a生成物品节点', '&7生成目标物品']
-text-blueprint-node-event-machine-interact: ['&d机器交互事件节点', '&7当玩家与机器的可交互方块交互时触发']
-text-blueprint-node-event-machine-run: ['&d机器运行事件节点', '&7当机器运行时触发']
+text-blueprint-node-empty: [ '&f空节点', '&7没有任何功能','&7既没有前驱也没有后继', '&7通常作为节点树的末端终止节点' ]
+text-blueprint-node-branch: [ '&b分支节点', '&7选择结构(if)','&7有2个后继' ]
+text-blueprint-node-block-break: [ '&c破坏方块节点', '&7破坏目标方块' ]
+text-blueprint-node-block-place: [ '&a放置方块节点', '&7放置目标方块' ]
+text-blueprint-node-item-spawn: [ '&a生成物品节点', '&7生成目标物品' ]
+text-blueprint-node-event-machine-interact: [ '&d机器交互事件节点', '&7当玩家与机器的可交互方块交互时触发' ]
+text-blueprint-node-event-machine-run: [ '&d机器运行事件节点', '&7当机器运行时触发' ]
 task-shining_guide_task-map-description-name: '&aShining 引导'
 task-shining_guide_task-map-description-lore: '&7了解shining的基础设施'
