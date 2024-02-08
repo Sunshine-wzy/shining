@@ -33,7 +33,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import taboolib.common.platform.function.submit
 import taboolib.common.util.sync
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 import taboolib.platform.util.buildItem
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -360,7 +360,7 @@ class GuideDraftFolder(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
                 val theName = this@GuideDraftFolder.name
                 
                 submit {
-                    player.openMenu<Basic>(itemCreateFolder.toLocalizedItem(player).getDisplayName()) {
+                    player.openMenu<Chest>(itemCreateFolder.toLocalizedItem(player).getDisplayName()) {
                         rows(3)
 
                         map(

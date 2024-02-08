@@ -12,7 +12,7 @@ import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 
 class GuideEmptyState : GuideElementState() {
     
@@ -20,7 +20,7 @@ class GuideEmptyState : GuideElementState() {
     
 
     override fun openAdvancedEditor(player: Player, team: IGuideTeam, context: GuideContext) {
-        player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-empty-title")) { 
+        player.openMenu<Chest>(player.getLangText("menu-shining_guide-editor-state-empty-title")) { 
             rows(3)
 
             map(

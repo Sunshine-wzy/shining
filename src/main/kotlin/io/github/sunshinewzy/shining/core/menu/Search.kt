@@ -4,11 +4,12 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import taboolib.module.ui.type.Linked
+import taboolib.module.ui.type.impl.PageableChestImpl
 import taboolib.platform.util.isNotAir
 import java.util.*
 
-open class Search<T>(title: String) : Linked<T>(title) {
+@Suppress("UnstableApiUsage")
+open class Search<T>(title: String) : PageableChestImpl<T>(title) {
     private var searchMap: () -> Map<String, T> = { hashMapOf() }
     private var searchMapCache: Map<String, T> = emptyMap()
     private var searchText: String = ""

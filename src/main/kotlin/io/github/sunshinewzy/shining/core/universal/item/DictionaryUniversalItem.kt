@@ -25,7 +25,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 
 @JsonTypeName("dictionary")
 class DictionaryUniversalItem(
@@ -55,7 +55,7 @@ class DictionaryUniversalItem(
         inventory.removeDictionaryItem(name, amount)
 
     override fun openEditor(player: Player, context: GuideContext) {
-        player.openMenu<Basic>(player.getLangText("menu-item-universal-dictionary-title")) {
+        player.openMenu<Chest>(player.getLangText("menu-item-universal-dictionary-title")) {
             rows(3)
             
             map(

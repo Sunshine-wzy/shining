@@ -4,7 +4,7 @@ import io.github.sunshinewzy.shining.api.guide.context.GuideContext
 import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 import taboolib.platform.util.isNotAir
 
 class GuideShortcutBarContext : AbstractGuideContextElement(GuideShortcutBarContext) {
@@ -12,7 +12,7 @@ class GuideShortcutBarContext : AbstractGuideContextElement(GuideShortcutBarCont
     private val slots: Array<ItemStack> = Array(5) { AIR }
     
     
-    fun update(menu: Basic) {
+    fun update(menu: Chest) {
         for (i in RANGE) {
             if (slots[i].isNotAir())
                 menu.set((i + 3) orderWith 6, slots[i])

@@ -3,8 +3,6 @@ package io.github.sunshinewzy.shining.core.data
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.github.sunshinewzy.shining.Shining
-import io.github.sunshinewzy.shining.core.data.database.DatabaseSQL
-import io.github.sunshinewzy.shining.core.data.database.DatabaseSQLite
 import io.github.sunshinewzy.shining.core.data.database.player.PlayerData
 import io.github.sunshinewzy.shining.core.data.legacy.SAutoSaveData
 import io.github.sunshinewzy.shining.core.data.legacy.internal.SunSTPlayerData
@@ -33,7 +31,6 @@ import taboolib.module.database.HostSQLite
 import java.io.File
 import java.sql.Connection
 import javax.sql.DataSource
-import io.github.sunshinewzy.shining.core.data.database.Database as SDatabase
 
 
 object DataManager {
@@ -41,18 +38,13 @@ object DataManager {
     private val allReloadData = ArrayList<SAutoSaveData>()
     private val lazyOperations = arrayListOf<LazyOperational>()
 
-
     val databaseConfig: ConfigurationSection by lazy {
         Shining.config.getConfigurationSection("database")
             ?: throw RuntimeException("Config 'database' does not exist.")
     }
 
-
     lateinit var database: Database
         private set
-    lateinit var sDatabase: SDatabase<*>
-        private set
-
 
     val allAutoSaveData = ArrayList<SAutoSaveData>()
     val sPlayerData = HashMap<String, SunSTPlayerData>()
@@ -62,13 +54,11 @@ object DataManager {
 
 
     suspend fun init() {
-        if (Shining.config.getBoolean("database.enable")) {
+        database = if (Shining.config.getBoolean("database.enable")) {
             val hostSQL = HostSQL(databaseConfig)
-            database = Database.connect(createDataSource(hostSQL))
-            sDatabase = DatabaseSQL(hostSQL)
+            Database.connect(createDataSource(hostSQL))
         } else {
-            database = Database.connect(createDataSource(HostSQLite(newFile(getDataFolder(), "data/data.db"))))
-            sDatabase = DatabaseSQLite(newFile(getDataFolder(), "data/sdata.db"))
+            Database.connect(createDataSource(HostSQLite(newFile(getDataFolder(), "data/data.db"))))
         }
 
         submit(async = true, delay = autoSavePeriod, period = autoSavePeriod) {

@@ -7,7 +7,7 @@ import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.module.ui.ClickEvent
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 
 class GuideEditorContext {
     
@@ -19,7 +19,7 @@ class GuideEditorContext {
         companion object : GuideContext.Key<BackNoEvent>
     }
     
-    class Builder(val builder: Basic.() -> Unit) : AbstractGuideContextElement(Builder) {
+    class Builder(val builder: Chest.() -> Unit) : AbstractGuideContextElement(Builder) {
         companion object : GuideContext.Key<Builder>
     }
     

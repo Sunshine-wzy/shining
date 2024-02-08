@@ -22,7 +22,7 @@ import org.bukkit.inventory.ItemStack
 import taboolib.module.chat.colored
 import taboolib.module.nms.getName
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 import taboolib.platform.util.buildItem
 
 class LockItem(
@@ -44,7 +44,7 @@ class LockItem(
     }
 
     override fun openEditor(player: Player, team: IGuideTeam, context: GuideContext, state: IGuideElementState) {
-        player.openMenu<Basic>(player.getLangText("menu-shining_guide-lock-item-title").colored()) {
+        player.openMenu<Chest>(player.getLangText("menu-shining_guide-lock-item-title").colored()) {
             rows(4)
 
             map(
@@ -92,7 +92,7 @@ class LockItem(
     }
 
     override fun tip(player: Player) {
-        player.openMenu<Basic>(player.getLangText(ShiningGuide.TITLE)) {
+        player.openMenu<Chest>(player.getLangText(ShiningGuide.TITLE)) {
             rows(3)
 
             map(

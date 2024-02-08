@@ -24,7 +24,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.submit
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Linked
+import taboolib.module.ui.type.PageableChest
 import taboolib.platform.util.buildItem
 import java.util.*
 
@@ -52,7 +52,7 @@ open class GuideItem : GuideElement {
             val canComplete = canTeamComplete(team)
             
             submit {
-                player.openMenu<Linked<UniversalItem>>(player.getLangText(ShiningGuide.TITLE)) {
+                player.openMenu<PageableChest<UniversalItem>>(player.getLangText(ShiningGuide.TITLE)) {
                     rows(5)
                     slots(slotOrders)
                     onBuildEdge(edgeOrders)
@@ -114,7 +114,7 @@ open class GuideItem : GuideElement {
     }
     
     fun openMissingItemsMenu(player: Player, team: IGuideTeam, context: GuideContext, missingItems: List<ItemStack>) {
-        player.openMenu<Linked<ItemStack>>(player.getLangText(ShiningGuide.TITLE)) {
+        player.openMenu<PageableChest<ItemStack>>(player.getLangText(ShiningGuide.TITLE)) {
             rows(5)
             slots(slotOrders)
             onBuildEdge(edgeOrders)

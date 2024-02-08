@@ -4,11 +4,11 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import taboolib.module.ui.ClickEvent
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.impl.ChestImpl
 import taboolib.platform.util.isNotAir
 import java.util.concurrent.CopyOnWriteArrayList
 
-open class LinkedGroup<T>(title: String) : Basic(title) {
+open class LinkedGroup<T>(title: String) : ChestImpl(title) {
 
     /** 页数 **/
     var page = 0

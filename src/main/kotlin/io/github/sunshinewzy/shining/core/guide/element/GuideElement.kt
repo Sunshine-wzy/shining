@@ -38,7 +38,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.submit
 import taboolib.module.chat.colored
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 import java.util.*
 
 abstract class GuideElement(
@@ -390,7 +390,7 @@ abstract class GuideElement(
     }
     
     
-    fun Basic.setBackButton(player: Player, team: IGuideTeam, context: GuideContext, slot: Int = 2 orderWith 1) {
+    fun Chest.setBackButton(player: Player, team: IGuideTeam, context: GuideContext, slot: Int = 2 orderWith 1) {
         set(slot, ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
             if (clickEvent().isShiftClick) {
                 ShiningGuide.openMainMenu(player, team, context)
@@ -400,7 +400,7 @@ abstract class GuideElement(
         }
     }
     
-    fun Basic.setBackButton(player: Player, team: IGuideTeam, context: GuideContext, slot: Char) {
+    fun Chest.setBackButton(player: Player, team: IGuideTeam, context: GuideContext, slot: Char) {
         set(slot, ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
             if (clickEvent().isShiftClick) {
                 ShiningGuide.openMainMenu(player, team, context)

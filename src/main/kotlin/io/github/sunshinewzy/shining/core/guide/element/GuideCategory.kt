@@ -29,7 +29,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.submit
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Linked
+import taboolib.module.ui.type.PageableChest
 import java.util.*
 
 /**
@@ -56,7 +56,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
             val canComplete = canTeamComplete(team)
 
             submit {
-                player.openMenu<Linked<IGuideElement>>(player.getLangText(ShiningGuide.TITLE)) {
+                player.openMenu<PageableChest<IGuideElement>>(player.getLangText(ShiningGuide.TITLE)) {
                     rows(6)
                     slots(ShiningGuide.slotOrders)
 

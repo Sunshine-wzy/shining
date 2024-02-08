@@ -1,3 +1,4 @@
+import io.izzel.taboolib.gradle.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
@@ -5,37 +6,31 @@ plugins {
     val kotlinVersion = "1.7.21"
     `java-library`
     `maven-publish`
-    id("io.izzel.taboolib") version "1.56"
+    id("io.izzel.taboolib") version "2.0.5"
     id("org.jetbrains.kotlin.jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
     id("org.jetbrains.dokka") version "1.7.20"
 }
 
 taboolib {
-    install("common")
-    install("common-5")
-    install("module-ai")
-    install("module-chat")
-    install("module-configuration")
-    install("module-database")
-    install("module-effect")
-    install("module-metrics")
-    install("module-navigation")
-    install("module-nms")
-    install("module-nms-util")
-    install("module-ui")
-    install("expansion-command-helper")
-    install("platform-bukkit")
+    env {
+        install(AI, CHAT, CONFIGURATION, DATABASE, EFFECT, METRICS, NAVIGATION, NMS, NMS_UTIL, UI)
+        install(EXPANSION_COMMAND_HELPER)
+        install(BUKKIT_ALL, "platform-bukkit-impl")
+        
+        enableIsolatedClassloader = true
+//        debug = true
+    }
     
+    version { 
+        taboolib = "6.1.0-dev"
+        coroutines = "1.6.4"
+        
+        skipKotlinRelocate = true
+    }
+
     classifier = null
-    version = "6.0.12-69"
-    
-    options(
-        "skip-kotlin-relocate",
-        "enable-isolated-classloader",
-        "keep-kotlin-module"
-    )
-    
+
 //    relocate("com.zaxxer.hikari.", "com.zaxxer.hikari_4_0_3.")
     
     description { 

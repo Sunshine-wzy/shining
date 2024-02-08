@@ -2,9 +2,9 @@ package io.github.sunshinewzy.shining.core.addon.loader
 
 import io.github.sunshinewzy.shining.api.ShiningConfig
 import io.github.sunshinewzy.shining.utils.poll
+import taboolib.common.PrimitiveIO
 import taboolib.common.env.Dependency
 import taboolib.common.env.DependencyDownloader
-import taboolib.common.env.IO
 import taboolib.common.env.Repository
 import java.io.File
 import java.io.FileNotFoundException
@@ -107,9 +107,9 @@ object LibraryLoaderPools {
                 )
             )
             val pomFile1 = File(pomFile.path + ".sha1")
-
+            
             // Verify file integrity
-            if (IO.validation(pomFile, pomFile1)) {
+            if (PrimitiveIO.validation(pomFile, pomFile1)) {
                 downloader.loadDependencyFromInputStream(pomFile.toPath().toUri().toURL().openStream())
             } else {
                 pomFile.parentFile.mkdirs()

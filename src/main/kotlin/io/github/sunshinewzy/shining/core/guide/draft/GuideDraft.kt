@@ -20,7 +20,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 import taboolib.common.platform.function.submit
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 import taboolib.platform.util.buildItem
 
 class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
@@ -31,7 +31,7 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
     override fun getSymbol(player: Player): ItemStack {
         return transaction {
             val theState = state.value
-            buildItem(theState.symbol ?: ItemStack(Material.PAPER)) {
+            buildItem(theState.symbol) {
                 name = theState.descriptionName
                 lore.addAll(0, listOf(player.getLangText("menu-shining_guide-draft-symbol-draft"), ""))
                 lore.addAll(2, theState.descriptionLore)
@@ -47,7 +47,7 @@ class GuideDraft(id: EntityID<Long>) : LongEntity(id), IGuideDraft {
     }
     
     fun openMenu(player: Player, previousFolder: GuideDraftFolder? = null) {
-        player.openMenu<Basic>(player.getLangText("menu-shining_guide-draft-editor-title")) {
+        player.openMenu<Chest>(player.getLangText("menu-shining_guide-draft-editor-title")) {
             rows(3)
 
             map(

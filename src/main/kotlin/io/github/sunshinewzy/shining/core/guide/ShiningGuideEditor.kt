@@ -31,7 +31,7 @@ import org.bukkit.entity.Player
 import taboolib.common.platform.function.submit
 import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 import java.util.*
 
 object ShiningGuideEditor {
@@ -54,7 +54,7 @@ object ShiningGuideEditor {
         elementContainer: IGuideElementContainer? = null,
         elementContainerState: IGuideElementContainerState? = null
     ) {
-        player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-title")) {
+        player.openMenu<Chest>(player.getLangText("menu-shining_guide-editor-title")) {
             rows(4)
 
             map(
@@ -178,7 +178,7 @@ object ShiningGuideEditor {
                     }
                 })
             }
-
+            
             onBack(player) {
                 openEditor(player, team, context, element, elementContainer, elementContainerState)
             }
@@ -206,7 +206,7 @@ object ShiningGuideEditor {
         isEditModeEnabled(player) && isEditorEnabled(player)
         
 
-    fun Basic.setEditor(
+    fun Chest.setEditor(
         player: Player,
         slot: Int = 6 orderWith 1,
         item: LanguageItem = itemEditor,

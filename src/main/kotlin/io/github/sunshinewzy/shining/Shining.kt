@@ -71,6 +71,7 @@ import org.bukkit.plugin.PluginManager
 import org.bukkit.plugin.ServicePriority
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
+import taboolib.common.classloader.IsolatedClassLoader
 import taboolib.common.env.RuntimeDependencies
 import taboolib.common.env.RuntimeDependency
 import taboolib.common.platform.Platform
@@ -85,14 +86,14 @@ import taboolib.module.metrics.Metrics
 import taboolib.platform.BukkitPlugin
 
 @RuntimeDependencies(
-    RuntimeDependency(value = "org.jetbrains.kotlin:kotlin-reflect:1.7.21", isolated = true, transitive = false),
-    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.4", isolated = true, transitive = false),
-    RuntimeDependency(value = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4", isolated = true, transitive = false),
-    RuntimeDependency(value = "org.jetbrains.exposed:exposed-core:0.41.1", isolated = true, transitive = false),
-    RuntimeDependency(value = "org.jetbrains.exposed:exposed-dao:0.41.1", isolated = true, transitive = false),
-    RuntimeDependency(value = "org.jetbrains.exposed:exposed-jdbc:0.41.1", isolated = true, transitive = false),
-    RuntimeDependency(value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0", isolated = true, transitive = false),
-    RuntimeDependency(value = "!com.zaxxer:HikariCP:4.0.3", isolated = true)
+    RuntimeDependency(value = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.21", transitive = false),
+    RuntimeDependency(value = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.21", transitive = false),
+    RuntimeDependency(value = "org.jetbrains.kotlin:kotlin-reflect:1.7.21", transitive = false),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-core:0.41.1", transitive = false),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-dao:0.41.1", transitive = false),
+    RuntimeDependency(value = "org.jetbrains.exposed:exposed-jdbc:0.41.1", transitive = false),
+    RuntimeDependency(value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0", transitive = false),
+    RuntimeDependency(value = "!com.zaxxer:HikariCP:4.0.3")
 )
 object Shining : Plugin(), ShiningPlugin {
     
@@ -111,14 +112,14 @@ object Shining : Plugin(), ShiningPlugin {
     @get:JvmName("prefix")
     val prefix: String by lazy { config.getString("prefix")?.colored() ?: COLOR_NAME }
     val objectMapper: ObjectMapper = jsonMapper {
-        typeFactory(TypeFactory.defaultInstance().withClassLoader(BukkitPlugin.getIsolatedClassLoader()))
+        typeFactory(TypeFactory.defaultInstance().withClassLoader(IsolatedClassLoader.INSTANCE))
         
         addModule(kotlinModule())
         addModule(SerializationModules.shining)
         addModule(SerializationModules.bukkit)
     }
     val yamlObjectMapper: ObjectMapper = ObjectMapper(YAMLFactory()).apply { 
-        setTypeFactory(TypeFactory.defaultInstance().withClassLoader(BukkitPlugin.getIsolatedClassLoader()))
+        setTypeFactory(TypeFactory.defaultInstance().withClassLoader(IsolatedClassLoader.INSTANCE))
         
         registerModule(kotlinModule())
         registerModule(SerializationModules.shining)

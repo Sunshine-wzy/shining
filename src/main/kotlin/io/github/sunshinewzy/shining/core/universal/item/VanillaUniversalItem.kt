@@ -17,7 +17,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 
 @JsonTypeName("vanilla")
 class VanillaUniversalItem(var item: ItemStack) : UniversalItem {
@@ -48,7 +48,7 @@ class VanillaUniversalItem(var item: ItemStack) : UniversalItem {
         }
 
     override fun openEditor(player: Player, context: GuideContext) {
-        player.openMenu<Basic>(player.getLangText("menu-item-universal-vanilla-title")) { 
+        player.openMenu<Chest>(player.getLangText("menu-item-universal-vanilla-title")) { 
             rows(3)
             
             map(

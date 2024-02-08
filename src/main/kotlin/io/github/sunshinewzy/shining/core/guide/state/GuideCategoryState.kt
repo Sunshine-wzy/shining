@@ -31,7 +31,7 @@ import kotlinx.coroutines.runBlocking
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 import java.util.*
 
 class GuideCategoryState : GuideElementState(), IGuideElementPriorityContainerState {
@@ -175,7 +175,7 @@ class GuideCategoryState : GuideElementState(), IGuideElementPriorityContainerSt
     }
     
     fun editElement(player: Player, team: IGuideTeam, context: GuideContext, element: IGuideElement) {
-        player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-category-element-title")) { 
+        player.openMenu<Chest>(player.getLangText("menu-shining_guide-editor-state-category-element-title")) { 
             rows(3)
 
             map(

@@ -19,8 +19,8 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.module.chat.colored
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
-import taboolib.module.ui.type.Linked
+import taboolib.module.ui.type.Chest
+import taboolib.module.ui.type.PageableChest
 
 object ItemEditor {
     private val itemEditLoreWithChatEditor = NamespacedIdItem(Material.EMERALD, NamespacedId(Shining, "editor-item-lore-chat_editor"))
@@ -47,7 +47,7 @@ object ItemEditor {
 
 
     fun editItem(item: ItemStack, player: Player, context: GuideContext = EmptyGuideContext) {
-        player.openMenu<Basic>(player.getLangText("menu-editor-item-title")) {
+        player.openMenu<Chest>(player.getLangText("menu-editor-item-title")) {
             rows(3)
 
             map(
@@ -114,7 +114,7 @@ object ItemEditor {
     }
 
     fun editLoreWithGUI(item: ItemStack, player: Player, context: GuideContext) {
-        player.openMenu<Linked<String>>(player.getLangText("menu-editor-item-lore-title")) {
+        player.openMenu<PageableChest<String>>(player.getLangText("menu-editor-item-lore-title")) {
             buildMultiPage(player)
 
             elements { item.getLore() }

@@ -19,7 +19,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.module.chat.colored
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 
 class LockExperience(
     level: Int,
@@ -40,7 +40,7 @@ class LockExperience(
     }
 
     override fun openEditor(player: Player, team: IGuideTeam, context: GuideContext, state: IGuideElementState) {
-        player.openMenu<Basic>(player.getLangText("menu-shining_guide-lock-experience-title").colored()) {
+        player.openMenu<Chest>(player.getLangText("menu-shining_guide-lock-experience-title").colored()) {
             rows(3)
 
             map(

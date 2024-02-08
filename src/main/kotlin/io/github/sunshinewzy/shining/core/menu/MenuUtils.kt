@@ -17,12 +17,12 @@ import taboolib.module.chat.colored
 import taboolib.module.chat.uncolored
 import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
-import taboolib.module.ui.type.Linked
+import taboolib.module.ui.type.Chest
+import taboolib.module.ui.type.PageableChest
 import taboolib.platform.util.isNotAir
 
-inline fun <reified T> Player.openMultiPageMenu(title: String = "chest", builder: Linked<T>.() -> Unit) {
-    openMenu<Linked<T>>(title) {
+inline fun <reified T> Player.openMultiPageMenu(title: String = "chest", builder: PageableChest<T>.() -> Unit) {
+    openMenu<PageableChest<T>>(title) {
         buildMultiPage(this@openMultiPageMenu)
         builder(this)
     }
@@ -62,7 +62,7 @@ class ConfirmMenuBuilder {
         private set
     var finalAction: ClickEvent.() -> Unit = {}
         private set
-    var buildAction: Basic.() -> Unit = {}
+    var buildAction: Chest.() -> Unit = {}
         private set
     
     fun onConfirm(action: ClickEvent.() -> Unit) {
@@ -77,7 +77,7 @@ class ConfirmMenuBuilder {
         finalAction = action
     }
     
-    fun onBuild(action: Basic.() -> Unit) {
+    fun onBuild(action: Chest.() -> Unit) {
         buildAction = action
     }
 }
@@ -90,7 +90,7 @@ inline fun Player.openConfirmMenu(
     val menuBuilder = ConfirmMenuBuilder()
     builder(menuBuilder)
     
-    openMenu<Basic>(title) { 
+    openMenu<Chest>(title) { 
         rows(3)
 
         map(
@@ -126,7 +126,7 @@ inline fun Player.openDeleteConfirmMenu(builder: ConfirmMenuBuilder.() -> Unit) 
 }
 
 
-fun <T> Linked<T>.buildMultiPage(player: Player) {
+fun <T> PageableChest<T>.buildMultiPage(player: Player) {
     rows(6)
     slots(ShiningGuide.slotOrders)
 
@@ -143,7 +143,7 @@ fun <T> Linked<T>.buildMultiPage(player: Player) {
     }
 }
 
-fun Basic.onBuildEdge(edgeOrders: Collection<Int>, action: ((Player, Inventory) -> Unit)? = null) {
+fun Chest.onBuildEdge(edgeOrders: Collection<Int>, action: ((Player, Inventory) -> Unit)? = null) {
     onBuild(false) { player, inv ->
         edgeOrders.forEach { index ->
             inv.getItem(index)?.let {
@@ -157,7 +157,7 @@ fun Basic.onBuildEdge(edgeOrders: Collection<Int>, action: ((Player, Inventory) 
     }
 }
 
-fun Basic.onBack(
+fun Chest.onBack(
     slot: Int = 2 orderWith 1,
     item: ItemStack = ShiningIcon.BACK.item,
     onClick: ClickEvent.() -> Unit
@@ -165,7 +165,7 @@ fun Basic.onBack(
     set(slot, item, onClick)
 }
 
-fun Basic.onBack(
+fun Chest.onBack(
     player: Player,
     slot: Int = 2 orderWith 1,
     item: ItemStack = ShiningIcon.BACK.toLocalizedItem(player),
@@ -174,7 +174,7 @@ fun Basic.onBack(
     onBack(slot, item, onClick)
 }
 
-fun Basic.onBackMenu(player: Player, team: IGuideTeam, context: GuideContext = EmptyGuideContext, slot: Char = 'B') {
+fun Chest.onBackMenu(player: Player, team: IGuideTeam, context: GuideContext = EmptyGuideContext, slot: Char = 'B') {
     set(slot, ShiningIcon.BACK_MENU.toLocalizedItem(player)) {
         if (clickEvent().isShiftClick) {
             ShiningGuide.openMainMenu(player, team, context)
@@ -184,7 +184,7 @@ fun Basic.onBackMenu(player: Player, team: IGuideTeam, context: GuideContext = E
     }
 }
 
-fun Basic.onBackMenu(player: Player, team: IGuideTeam, context: GuideContext = EmptyGuideContext, slot: Int) {
+fun Chest.onBackMenu(player: Player, team: IGuideTeam, context: GuideContext = EmptyGuideContext, slot: Int) {
     set(slot, ShiningIcon.BACK_MENU.getLanguageItem().toLocalizedItem(player)) {
         if (clickEvent().isShiftClick) {
             ShiningGuide.openMainMenu(player, team, context)

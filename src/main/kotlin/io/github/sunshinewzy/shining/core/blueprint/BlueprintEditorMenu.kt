@@ -20,7 +20,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import taboolib.common.util.subList
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 import taboolib.platform.util.buildItem
 import taboolib.platform.util.isAir
 
@@ -152,7 +152,7 @@ open class BlueprintEditorMenu(title: String) : MapMenu<IBlueprintNode>(title) {
     }
     
     protected open fun editNode(node: IBlueprintNode) {
-        player.openMenu<Basic>(title) { 
+        player.openMenu<Chest>(title) { 
             rows(5)
             map(
                 "-B-------",

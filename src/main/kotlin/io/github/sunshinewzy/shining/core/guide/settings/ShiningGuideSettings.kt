@@ -15,7 +15,7 @@ import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 
 object ShiningGuideSettings {
 
@@ -29,7 +29,7 @@ object ShiningGuideSettings {
     
 
     fun openSettingsMenu(player: Player, team: IGuideTeam) {
-        player.openMenu<Basic>(player.getLangText("menu-shining_guide-settings-title")) {
+        player.openMenu<Chest>(player.getLangText("menu-shining_guide-settings-title")) {
             rows(6)
 
             map(

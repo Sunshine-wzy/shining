@@ -33,7 +33,7 @@ import kotlinx.coroutines.runBlocking
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 
 class GuideMapState : GuideElementState(), IGuideElementContainerState {
 
@@ -149,7 +149,7 @@ class GuideMapState : GuideElementState(), IGuideElementContainerState {
     }
 
     fun editElement(player: Player, team: IGuideTeam, context: GuideContext, element: IGuideElement, coordinate: Coordinate2D) {
-        player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-map-element-title")) {
+        player.openMenu<Chest>(player.getLangText("menu-shining_guide-editor-state-map-element-title")) {
             rows(3)
 
             map(

@@ -35,7 +35,7 @@ import taboolib.common.platform.SkipTo
 import taboolib.common.platform.function.submit
 import taboolib.module.chat.colored
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 import taboolib.platform.util.buildItem
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -291,7 +291,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id), IGuideTeam {
     }
 
     override fun openInfoMenu(player: Player) {
-        player.openMenu<Basic>(player.getLangText("menu-shining_guide-team-info-title")) {
+        player.openMenu<Chest>(player.getLangText("menu-shining_guide-team-info-title")) {
             rows(5)
 
             map(
@@ -347,7 +347,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id), IGuideTeam {
             return
         }
 
-        player.openMenu<Basic>(player.getLangText("menu-shining_guide-team-manage-title")) {
+        player.openMenu<Chest>(player.getLangText("menu-shining_guide-team-manage-title")) {
             rows(6)
 
             map(
@@ -576,7 +576,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id), IGuideTeam {
             event.call()
             if (event.isCancelled) return
             
-            openMenu<Basic>(getLangText("menu-shining_guide-team-setup-title")) {
+            openMenu<Chest>(getLangText("menu-shining_guide-team-setup-title")) {
                 rows(3)
 
                 map(
@@ -597,7 +597,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id), IGuideTeam {
 
 
         private fun Player.createGuideTeam(name: String = "", symbol: ItemStack = ItemStack(Material.GRASS_BLOCK)) {
-            openMenu<Basic>(getLangText("menu-shining_guide-team-create-title")) {
+            openMenu<Chest>(getLangText("menu-shining_guide-team-create-title")) {
                 rows(3)
 
                 map(
@@ -735,7 +735,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id), IGuideTeam {
                                 }
                                 closeInventory()
                             } else {
-                                openMenu<Basic>(getLangText("menu-shining_guide-team-join-reapply-title")) {
+                                openMenu<Chest>(getLangText("menu-shining_guide-team-join-reapply-title")) {
                                     rows(1)
 
                                     map("oooaobooo")

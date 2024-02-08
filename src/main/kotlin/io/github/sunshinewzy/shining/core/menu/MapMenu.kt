@@ -9,13 +9,13 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import taboolib.module.ui.ClickEvent
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.impl.ChestImpl
 import taboolib.platform.util.buildItem
 import taboolib.platform.util.isAir
 import taboolib.platform.util.isNotAir
 import java.util.concurrent.ConcurrentHashMap
 
-open class MapMenu<T>(title: String) : Basic(title) {
+open class MapMenu<T>(title: String) : ChestImpl(title) {
     
     var offset: Coordinate2D = Coordinate2D.ORIGIN
         private set

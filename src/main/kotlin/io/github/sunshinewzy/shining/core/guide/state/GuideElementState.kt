@@ -46,7 +46,7 @@ import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.submit
 import taboolib.common.util.sync
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 import taboolib.platform.util.isAir
 import java.util.*
 import kotlin.properties.ReadWriteProperty
@@ -151,7 +151,7 @@ abstract class GuideElementState : IGuideElementState {
     override fun getDependencyElementMap(): Map<NamespacedId, IGuideElement> = getDependencyElementMapTo(HashMap())
 
     override fun openEditor(player: Player, team: IGuideTeam, context: GuideContext) {
-        player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-title")) {
+        player.openMenu<Chest>(player.getLangText("menu-shining_guide-editor-state-title")) {
             rows(4)
 
             map(
@@ -217,7 +217,7 @@ abstract class GuideElementState : IGuideElementState {
     }
 
     override fun openBasicEditor(player: Player, team: IGuideTeam, context: GuideContext) {
-        player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-title")) {
+        player.openMenu<Chest>(player.getLangText("menu-shining_guide-editor-state-basic-title")) {
             rows(4)
 
             map(
@@ -326,7 +326,7 @@ abstract class GuideElementState : IGuideElementState {
     }
 
     override fun openSymbolEditor(player: Player, team: IGuideTeam, context: GuideContext) {
-        player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-symbol-title")) { 
+        player.openMenu<Chest>(player.getLangText("menu-shining_guide-editor-state-basic-symbol-title")) { 
             rows(4)
             
             map(
@@ -364,7 +364,7 @@ abstract class GuideElementState : IGuideElementState {
     }
     
     override fun openRepeatableSettingsEditor(player: Player, team: IGuideTeam, context: GuideContext) {
-        player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-repeatable_settings-title")) {
+        player.openMenu<Chest>(player.getLangText("menu-shining_guide-editor-state-basic-repeatable_settings-title")) {
             rows(3)
 
             map(
@@ -444,7 +444,7 @@ abstract class GuideElementState : IGuideElementState {
     }
 
     fun openDependencyEditor(player: Player, team: IGuideTeam, element: IGuideElement, context: GuideContext) {
-        player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-dependencies-title")) {
+        player.openMenu<Chest>(player.getLangText("menu-shining_guide-editor-state-basic-dependencies-title")) {
             rows(3)
 
             map(
@@ -493,7 +493,7 @@ abstract class GuideElementState : IGuideElementState {
     }
     
     fun openCreateNewLockMenu(player: Player, team: IGuideTeam, context: GuideContext) {
-        player.openMenu<Basic>(player.getLangText("menu-shining_guide-editor-state-basic-locks-create-title")) {
+        player.openMenu<Chest>(player.getLangText("menu-shining_guide-editor-state-basic-locks-create-title")) {
             rows(3)
 
             map(

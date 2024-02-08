@@ -52,7 +52,7 @@ import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.function.submit
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 import taboolib.platform.util.buildItem
 import java.util.*
 
@@ -79,7 +79,7 @@ object MachineCreator {
     
 
     fun open(player: Player) {
-        player.openMenu<Basic>(player.getLangText("menu-machine-creator-create-title")) {
+        player.openMenu<Chest>(player.getLangText("menu-machine-creator-create-title")) {
             rows(3)
 
             map(
@@ -110,7 +110,7 @@ object MachineCreator {
     }
     
     fun openCreateByTypeMenu(player: Player) {
-        player.openMenu<Basic>(player.getLangText("menu-machine-creator-create-type-title")) {
+        player.openMenu<Chest>(player.getLangText("menu-machine-creator-create-type-title")) {
             rows(3)
             
             map(
@@ -132,7 +132,7 @@ object MachineCreator {
     }
     
     fun openCreateMachineMenu(player: Player, property: MachineProperty, structure: IMachineStructure, wrench: IMachineWrench) {
-        player.openMenu<Basic>(player.getLangText("menu-machine-creator-create-title")) {
+        player.openMenu<Chest>(player.getLangText("menu-machine-creator-create-title")) {
             rows(4)
             
             map(
