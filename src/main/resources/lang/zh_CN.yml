@@ -132,7 +132,7 @@ item-shining-editor-blueprint-insert_node: [ '&a插入新节点' ]
 item-shining-blueprint-node-type-event: '&d事件节点'
 item-shining-blueprint-node-type-function: '&a功能节点'
 item-shining-blueprint-node-type-flow_control: '&b流程控制节点'
-item-shining-blueprint-node-type-variable: '&e变量结点'
+item-shining-blueprint-node-type-variable: '&e变量节点'
 item-shining-item-universal-vanilla-icon: '&f普通物品'
 item-shining-item-universal-vanilla-current: [ '&b物品', '', '&a⇨ 当前 ⇨' ]
 item-shining-item-universal-vanilla-hand: '&e替换为手持物品'

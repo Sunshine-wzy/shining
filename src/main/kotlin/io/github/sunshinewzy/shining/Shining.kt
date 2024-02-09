@@ -92,6 +92,9 @@ import taboolib.platform.BukkitPlugin
     RuntimeDependency(value = "org.jetbrains.exposed:exposed-core:0.41.1", transitive = false),
     RuntimeDependency(value = "org.jetbrains.exposed:exposed-dao:0.41.1", transitive = false),
     RuntimeDependency(value = "org.jetbrains.exposed:exposed-jdbc:0.41.1", transitive = false),
+    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-core:2.15.0", transitive = false),
+    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-databind:2.15.0", transitive = false),
+    RuntimeDependency(value = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.0", transitive = false),
     RuntimeDependency(value = "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0", transitive = false),
     RuntimeDependency(value = "!com.zaxxer:HikariCP:4.0.3")
 )
