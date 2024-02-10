@@ -89,6 +89,7 @@ item-shining-icon-confirm: '&a确认'
 item-shining-icon-cancel: '&c取消'
 item-shining-icon-settings: '&e设置'
 item-shining-icon-remove: '&c移除'
+item-shining-icon-remove_cascade: '&c级联移除'
 item-shining-icon-select_mode:
   close: [ '&d选择模式', '&c&l已关闭', '', '&a> 点击开启' ]
   open: [ '&d选择模式', '&a&l已开启', '', '&c> 点击关闭' ]
@@ -128,11 +129,13 @@ item-shining-icon-paste: '&a粘贴'
 item-shining-icon-refresh: '&b刷新'
 item-shining-editor-item-lore-chat_editor: [ '&a编辑Lore', '', '&7> 使用&eChatEditor' ]
 item-shining-editor-item-lore-gui: [ '&a编辑Lore', '', '&7> 使用&bGUI' ]
-item-shining-editor-blueprint-insert_node: [ '&a插入新节点' ]
+item-shining-editor-blueprint-insert_node: '&a插入新节点'
+item-shining-editor-blueprint-edit_node: '&e编辑节点'
 item-shining-blueprint-node-type-event: '&d事件节点'
 item-shining-blueprint-node-type-function: '&a功能节点'
 item-shining-blueprint-node-type-flow_control: '&b流程控制节点'
 item-shining-blueprint-node-type-variable: '&e变量节点'
+item-shining-blueprint-node-type-other: '&f其它节点'
 item-shining-item-universal-vanilla-icon: '&f普通物品'
 item-shining-item-universal-vanilla-current: [ '&b物品', '', '&a⇨ 当前 ⇨' ]
 item-shining-item-universal-vanilla-hand: '&e替换为手持物品'
@@ -232,8 +235,10 @@ menu-editor-item-lore-title: '物品Lore编辑'
 menu-editor-item-lore-add: '添加物品Lore'
 menu-editor-item-lore-remove: '&a物品Lore删除成功'
 menu-editor-blueprint-title: '蓝图编辑器'
+menu-editor-blueprint-node_selector-title: '蓝图节点选择器'
 menu-confirm-delete: '删除'
 menu-confirm-title: '确认'
+menu-confirm-delete-cascade: '级联删除'
 menu-machine-creator-create-title: '创建机器'
 menu-machine-creator-create-type-title: '选择机器类型'
 menu-machine-creator-create-wrench-title: '选择扳手'

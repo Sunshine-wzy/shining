@@ -42,6 +42,12 @@ import io.github.sunshinewzy.shining.core.machine.legacy.custom.SMachineRecipes
 import io.github.sunshinewzy.shining.core.machine.structure.MachineStructureRegistry
 import io.github.sunshinewzy.shining.core.machine.structure.MultipleMachineStructure
 import io.github.sunshinewzy.shining.core.machine.structure.SingleMachineStructure
+import io.github.sunshinewzy.shining.core.menu.MapChest
+import io.github.sunshinewzy.shining.core.menu.PageableCategoryChest
+import io.github.sunshinewzy.shining.core.menu.PageableGroupChest
+import io.github.sunshinewzy.shining.core.menu.impl.MapChestImpl
+import io.github.sunshinewzy.shining.core.menu.impl.PageableCategoryChestImpl
+import io.github.sunshinewzy.shining.core.menu.impl.PageableGroupChestImpl
 import io.github.sunshinewzy.shining.core.task.TaskProgress
 import io.github.sunshinewzy.shining.core.universal.block.VanillaUniversalBlock
 import io.github.sunshinewzy.shining.core.universal.item.DictionaryUniversalItem
@@ -83,6 +89,7 @@ import taboolib.module.chat.colored
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.Configuration
 import taboolib.module.metrics.Metrics
+import taboolib.module.ui.Menu
 import taboolib.platform.BukkitPlugin
 
 @RuntimeDependencies(
@@ -172,6 +179,7 @@ object Shining : Plugin(), ShiningPlugin {
         registerClasses()
         registerListeners()
         registerPermissions()
+        registerMenus()
         
         try {
             SReflect.init()
@@ -263,6 +271,12 @@ object Shining : Plugin(), ShiningPlugin {
         registerPermission(Permission(CommandGuide.PERMISSION_OPEN_TEAM, PermissionDefault.TRUE))
         registerPermission(Permission(CommandGuide.PERMISSION_RELOAD, PermissionDefault.OP))
         registerPermission(Permission(CommandGuide.PERMISSION_GIVE, PermissionDefault.OP))
+    }
+    
+    private fun registerMenus() {
+        Menu.registerImplementation(MapChest::class.java, MapChestImpl::class.java)
+        Menu.registerImplementation(PageableGroupChest::class.java, PageableGroupChestImpl::class.java)
+        Menu.registerImplementation(PageableCategoryChest::class.java, PageableCategoryChestImpl::class.java)
     }
 
 

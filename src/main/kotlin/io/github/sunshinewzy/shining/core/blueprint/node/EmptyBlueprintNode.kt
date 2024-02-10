@@ -5,7 +5,11 @@ import io.github.sunshinewzy.shining.core.blueprint.IBlueprintLangNode
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-object EmptyBlueprintNode : IBlueprintLangNode {
+open class EmptyBlueprintNode : IBlueprintLangNode {
+
+    private val successors: Array<IBlueprintNode> = emptyArray()
+    private var predecessor: IBlueprintNode? = null
+    
 
     override fun onExecute() {}
 
@@ -17,10 +21,16 @@ object EmptyBlueprintNode : IBlueprintLangNode {
 
     override fun getSuccessorAmount(): Int = 0
 
-    override fun getSuccessors(): Array<IBlueprintNode> = emptyArray()
+    override fun getSuccessors(): Array<IBlueprintNode> = successors
 
-    override fun getPredecessorOrNull(): IBlueprintNode? = null
+    override fun getPredecessorOrNull(): IBlueprintNode? = predecessor
 
-    override fun setPredecessor(node: IBlueprintNode?): IBlueprintNode? = null
+    override fun setPredecessor(node: IBlueprintNode?): IBlueprintNode? {
+        val pre = predecessor
+        predecessor = node
+        return pre
+    }
+
+    override fun instantiate(): IBlueprintNode = EmptyBlueprintNode()
     
 }

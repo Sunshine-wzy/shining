@@ -5,7 +5,7 @@ import io.github.sunshinewzy.shining.core.blueprint.IBlueprintLangNode
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-class BranchNode : AbstractBlueprintNode(2), IBlueprintLangNode {
+open class BranchNode : AbstractBlueprintNode(2), IBlueprintLangNode {
 
     override fun getIcon(): ItemStack = ItemStack(Material.OAK_FENCE_GATE)
 

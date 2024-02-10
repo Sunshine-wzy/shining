@@ -242,6 +242,7 @@ object MachineCreator {
                 branchNode.setSuccessor(1, bb2)
                 bb2.setSuccessor(pb2)
                 pb2.setSuccessor(si2)
+                nodeTrees += BlueprintNodeTree()
 
                 machine.blueprint.edit(player)
             }

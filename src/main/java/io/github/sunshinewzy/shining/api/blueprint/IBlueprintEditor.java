@@ -1,6 +1,5 @@
 package io.github.sunshinewzy.shining.api.blueprint;
 
-import io.github.sunshinewzy.shining.api.guide.context.EmptyGuideContext;
 import io.github.sunshinewzy.shining.api.guide.context.GuideContext;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -14,10 +13,6 @@ public interface IBlueprintEditor {
 		open(player, null);
 	}
 	
-	void openNodeSelector(@NotNull Player player, @NotNull GuideContext context);
-	
-	default void openNodeSelector(@NotNull Player player) {
-		openNodeSelector(player, EmptyGuideContext.INSTANCE);
-	}
+	void openNodeSelector(@NotNull Player player, @NotNull BlueprintNodeType defaultType, @NotNull GuideContext context);
 	
 }

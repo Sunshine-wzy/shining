@@ -34,9 +34,6 @@ import java.util.*
 
 /**
  * Represent a category, which is showed in the guide.
- *
- * @param id to identify this [GuideCategory]
- * @param symbol to display this [GuideCategory] in guide
  */
 open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
     
@@ -65,7 +62,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
                     val dependencyLockedElements = HashSet<IGuideElement>()
                     val lockLockedElements = HashSet<IGuideElement>()
                     val repeatableElements = HashMap<IGuideElement, Long>()
-                    onGenerate(true) { player, elementFuture, index, slot ->
+                    onGenerate(true) { player, elementFuture, _, _ ->
                         val element = elementFuture as IGuideElementSuspend
                         runBlocking(ShiningDispatchers.DB) {
                             if (ShiningGuideEditor.isEditModeEnabled(player) || team == CompletedGuideTeam.getInstance()) {
@@ -85,16 +82,13 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
 
                     onBuild(false, ShiningGuide.onBuildEdge)
 
-                    setPreviousPage(2 orderWith 6) { page, hasPreviousPage ->
-                        if (hasPreviousPage) {
-                            ShiningIcon.PAGE_PREVIOUS_GLASS_PANE.item
-                        } else ShiningIcon.EDGE.item
+                    setPreviousPage(2 orderWith 6) { _, hasPreviousPage ->
+                        if (hasPreviousPage) ShiningIcon.PAGE_PREVIOUS_GLASS_PANE.toLocalizedItem(player)
+                        else ShiningIcon.EDGE.item
                     }
-
-                    setNextPage(8 orderWith 6) { page, hasNextPage ->
-                        if (hasNextPage) {
-                            ShiningIcon.PAGE_NEXT_GLASS_PANE.item
-                        } else ShiningIcon.EDGE.item
+                    setNextPage(8 orderWith 6) { _, hasNextPage ->
+                        if (hasNextPage) ShiningIcon.PAGE_NEXT_GLASS_PANE.toLocalizedItem(player)
+                        else ShiningIcon.EDGE.item
                     }
 
                     onClick { event, element ->
@@ -318,7 +312,7 @@ open class GuideCategory : GuideElement, IGuideElementPriorityContainerSuspend {
         }
         
         if (isDeep) {
-            priorityToElements.forEach { (priority, elements) -> 
+            priorityToElements.forEach { (_, elements) -> 
                 elements.forEach { element ->
                     if (element is IGuideElementContainer) {
                         element.getElement(id, true)?.let { 

@@ -133,4 +133,11 @@ public interface IBlueprintNode {
 		return sum;
 	}
 	
+	default void clear() {
+		setPredecessor(null);
+	}
+	
+	@NotNull
+	IBlueprintNode instantiate();
+	
 }

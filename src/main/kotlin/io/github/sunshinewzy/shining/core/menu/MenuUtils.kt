@@ -13,7 +13,6 @@ import io.github.sunshinewzy.shining.utils.orderWith
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import taboolib.module.chat.colored
 import taboolib.module.chat.uncolored
 import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.openMenu
@@ -31,9 +30,9 @@ inline fun <reified T> Player.openMultiPageMenu(title: String = "chest", builder
 inline fun <reified T> Player.openSearchMenu(
     title: String = "chest",
     searchText: String = "",
-    builder: Search<T>.() -> Unit
+    builder: SearchChest<T>.() -> Unit
 ) {
-    openMenu<Search<T>>(title) {
+    openMenu<SearchChest<T>>(title) {
         buildMultiPage(this@openSearchMenu)
 
         set(8 orderWith 1, ShiningIcon.SEARCH.item) {
@@ -55,7 +54,7 @@ inline fun <reified T> Player.openSearchMenu(
     }
 }
 
-class ConfirmMenuBuilder {
+open class ConfirmMenuBuilder {
     var confirmAction: ClickEvent.() -> Unit = {}
         private set
     var cancelAction: ClickEvent.() -> Unit = {}
@@ -83,8 +82,8 @@ class ConfirmMenuBuilder {
 }
 
 inline fun Player.openConfirmMenu(
-    title: String = "chest",
-    description: String = "",
+    title: String,
+    description: String,
     builder: ConfirmMenuBuilder.() -> Unit
 ) {
     val menuBuilder = ConfirmMenuBuilder()
@@ -118,13 +117,72 @@ inline fun Player.openConfirmMenu(
 }
 
 inline fun Player.openConfirmMenu(description: String, builder: ConfirmMenuBuilder.() -> Unit) {
-    openConfirmMenu("${getLangText("menu-confirm-title").colored()} $description", description, builder)
+    openConfirmMenu("${getLangText("menu-confirm-title")} $description", description, builder)
 }
 
 inline fun Player.openDeleteConfirmMenu(builder: ConfirmMenuBuilder.() -> Unit) {
-    openConfirmMenu(this.getLangText("menu-confirm-delete").colored(), builder)
+    openConfirmMenu(this.getLangText("menu-confirm-delete"), builder)
 }
 
+open class CascadeDeleteConfirmMenuBuilder : ConfirmMenuBuilder() {
+    var cascadeDeleteAction: ClickEvent.() -> Unit = {}
+        private set
+    
+    fun onCascadeDelete(action: ClickEvent.() -> Unit) {
+        cascadeDeleteAction = action
+    }
+}
+
+inline fun Player.openCascadeDeleteConfirmMenu(
+    title: String,
+    description: String,
+    hasConfirm: Boolean = true,
+    builder: CascadeDeleteConfirmMenuBuilder.() -> Unit
+) {
+    val menuBuilder = CascadeDeleteConfirmMenuBuilder()
+    builder(menuBuilder)
+
+    openMenu<Chest>(title) {
+        rows(3)
+
+        map(
+            "---------",
+            "- c a b -",
+            "---------"
+        )
+
+        set('-', ShiningIcon.EDGE.item)
+
+        if (hasConfirm) {
+            set('a', ShiningIcon.CONFIRM.toLocalizedItem(this@openCascadeDeleteConfirmMenu).clone().addLore("&f$description")) {
+                menuBuilder.confirmAction(this)
+                menuBuilder.finalAction(this)
+            }
+        }
+
+        set('b', ShiningIcon.CANCEL.toLocalizedItem(this@openCascadeDeleteConfirmMenu).clone().addLore("&f$description")) {
+            menuBuilder.cancelAction(this)
+            menuBuilder.finalAction(this)
+        }
+        
+        set('c', ShiningIcon.REMOVE_CASCADE.toLocalizedItem(this@openCascadeDeleteConfirmMenu)) {
+            openConfirmMenu(getLangText("menu-confirm-delete-cascade")) { 
+                onConfirm { menuBuilder.cascadeDeleteAction(this) }
+                onCancel { menuBuilder.cancelAction(this) }
+                onFinal { menuBuilder.finalAction(this) }
+            }
+        }
+
+        onClick(lock = true)
+
+        menuBuilder.buildAction(this)
+    }
+}
+
+inline fun Player.openCascadeDeleteConfirmMenu(hasConfirm: Boolean = true, builder: CascadeDeleteConfirmMenuBuilder.() -> Unit) {
+    val deleteCascade = getLangText("menu-confirm-delete")
+    openCascadeDeleteConfirmMenu("${getLangText("menu-confirm-title")} $deleteCascade", deleteCascade, hasConfirm, builder)
+}
 
 fun <T> PageableChest<T>.buildMultiPage(player: Player) {
     rows(6)

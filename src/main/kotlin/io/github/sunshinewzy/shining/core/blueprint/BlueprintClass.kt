@@ -22,7 +22,7 @@ class BlueprintClass : IBlueprintClass {
     override fun getNodeTrees(): ArrayList<IBlueprintNodeTree> = nodeTrees
 
     override fun edit(player: Player) {
-        player.openMenu<BlueprintEditorMenu>(player.getLangText("menu-editor-blueprint-title")) { 
+        player.openMenu<BlueprintEditorChest>(player.getLangText("menu-editor-blueprint-title")) { 
             rows(6)
             area(Rectangle(2, 2, 8, 5))
             base(Coordinate2D(2, 2))

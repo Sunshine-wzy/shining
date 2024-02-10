@@ -22,7 +22,7 @@ import io.github.sunshinewzy.shining.core.guide.context.GuideShortcutBarContext
 import io.github.sunshinewzy.shining.core.guide.settings.ShiningGuideSettings
 import io.github.sunshinewzy.shining.core.guide.state.GuideMapState
 import io.github.sunshinewzy.shining.core.lang.getLangText
-import io.github.sunshinewzy.shining.core.menu.MapMenu
+import io.github.sunshinewzy.shining.core.menu.impl.MapChestImpl
 import io.github.sunshinewzy.shining.core.menu.onBuildEdge
 import io.github.sunshinewzy.shining.objects.ShiningDispatchers
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
@@ -61,7 +61,7 @@ class GuideMap : GuideElement, IGuideElementContainerSuspend {
             val canComplete = canTeamComplete(team)
 
             submit {
-                player.openMenu<MapMenu<IGuideElement>>(player.getLangText(ShiningGuide.TITLE)) {
+                player.openMenu<MapChestImpl<IGuideElement>>(player.getLangText(ShiningGuide.TITLE)) {
                     rows(6)
                     area(Rectangle(2, 2, 8, 5))
 

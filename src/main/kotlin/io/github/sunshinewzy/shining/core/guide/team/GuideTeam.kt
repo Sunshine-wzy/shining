@@ -14,7 +14,7 @@ import io.github.sunshinewzy.shining.core.editor.chat.type.Text
 import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.lang.*
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
-import io.github.sunshinewzy.shining.core.menu.Search
+import io.github.sunshinewzy.shining.core.menu.SearchChest
 import io.github.sunshinewzy.shining.core.menu.onBack
 import io.github.sunshinewzy.shining.core.menu.openMultiPageMenu
 import io.github.sunshinewzy.shining.core.menu.openSearchMenu
@@ -632,7 +632,7 @@ open class GuideTeam(id: EntityID<Int>) : IntEntity(id), IGuideTeam {
 
                 onClick('c') {
                     openSearchMenu<ItemStack>(getLangText("menu-shining_guide-team-create-search_symbol-title")) {
-                        searchMap { Search.allItemMap }
+                        searchMap { SearchChest.allItemMap }
 
                         onClick { _, item -> createGuideTeam(name, item) }
 

@@ -6,7 +6,7 @@ import io.github.sunshinewzy.shining.core.blueprint.node.EmptyBlueprintNode
 
 open class BlueprintNodeTree : IBlueprintNodeTree {
     
-    private var root: IBlueprintNode = EmptyBlueprintNode
+    private var root: IBlueprintNode = EmptyBlueprintNode()
 
 
     override fun getRoot(): IBlueprintNode = root

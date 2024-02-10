@@ -1,5 +1,6 @@
-package io.github.sunshinewzy.shining.core.menu
+package io.github.sunshinewzy.shining.core.menu.impl
 
+import io.github.sunshinewzy.shining.core.menu.PageableGroupChest
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
@@ -8,35 +9,34 @@ import taboolib.module.ui.type.impl.ChestImpl
 import taboolib.platform.util.isNotAir
 import java.util.concurrent.CopyOnWriteArrayList
 
-open class LinkedGroup<T>(title: String) : ChestImpl(title) {
+open class PageableGroupChestImpl<T>(title: String) : ChestImpl(title), PageableGroupChest<T> {
 
     /** 页数 **/
-    var page = 0
-        private set
+    override var page = 0
 
     /** 锁定所有位置 **/
-    internal var menuLocked = true
+    var menuLocked = true
 
     /** 页面可用位置 **/
-    internal val menuSlots = CopyOnWriteArrayList<Int>()
+    val menuSlots = CopyOnWriteArrayList<Int>()
 
     /** 页面可用元素回调 **/
-    internal var elementsCallback: (() -> List<T>) = { CopyOnWriteArrayList() }
+    var elementsCallback: (() -> List<T>) = { CopyOnWriteArrayList() }
 
     /** 页面可用元素缓存 **/
-    internal var elementsCache = emptyList<T>()
+    var elementsCache = emptyList<T>()
 
     /** 点击事件回调 **/
-    internal var elementClickCallback: ((event: ClickEvent, index: Int, item: ItemStack) -> Unit) = { _, _, _ -> }
+    var elementClickCallback: ((event: ClickEvent, index: Int, item: ItemStack) -> Unit) = { _, _, _ -> }
 
     /** 元素生成回调 **/
-    internal var generateCallback: ((player: Player, element: T) -> List<ItemStack>) = { _, _ -> emptyList() }
+    var generateCallback: ((player: Player, element: T) -> List<ItemStack>) = { _, _ -> emptyList() }
 
     /** 异步元素生成回调 **/
-    internal var asyncGenerateCallback: ((player: Player, element: T) -> List<ItemStack>) = { _, _ -> emptyList() }
+    var asyncGenerateCallback: ((player: Player, element: T) -> List<ItemStack>) = { _, _ -> emptyList() }
 
     /** 页面切换回调 */
-    internal var pageChangeCallback: ((player: Player) -> Unit) = { _ -> }
+    var pageChangeCallback: ((player: Player) -> Unit) = { _ -> }
 
     /** 页面玩家 **/
     private lateinit var player: Player
@@ -45,21 +45,21 @@ open class LinkedGroup<T>(title: String) : ChestImpl(title) {
      * 是否锁定所有位置
      * 默认为 true
      */
-    open fun menuLocked(lockAll: Boolean) {
+    override fun menuLocked(lockAll: Boolean) {
         this.menuLocked = lockAll
     }
 
     /**
      * 设置页数
      */
-    open fun page(page: Int) {
+    override fun page(page: Int) {
         this.page = page
     }
 
     /**
      * 设置可用位置
      */
-    open fun slots(slots: List<Int>) {
+    override fun slots(slots: List<Int>) {
         this.menuSlots.clear()
         this.menuSlots += slots
     }
@@ -67,21 +67,21 @@ open class LinkedGroup<T>(title: String) : ChestImpl(title) {
     /**
      * 通过抽象字符选择由 map 函数铺设的页面位置
      */
-    open fun slotsBy(char: Char) {
+    override fun slotsBy(char: Char) {
         slots(getSlots(char))
     }
 
     /**
      * 可用元素列表回调
      */
-    open fun elements(elements: () -> List<T>) {
+    override fun elements(elements: () -> List<T>) {
         elementsCallback = elements
     }
 
     /**
      * 元素对应物品生成回调
      */
-    open fun onGenerate(async: Boolean = false, callback: (player: Player, element: T) -> List<ItemStack>) {
+    override fun onGenerate(async: Boolean, callback: (player: Player, element: T) -> List<ItemStack>) {
         if (async) {
             asyncGenerateCallback = callback
         } else {
@@ -92,21 +92,21 @@ open class LinkedGroup<T>(title: String) : ChestImpl(title) {
     /**
      * 页面构建回调
      */
-    open fun onBuild(async: Boolean, callback: (inventory: Inventory) -> Unit) {
+    override fun onBuild(async: Boolean, callback: (inventory: Inventory) -> Unit) {
         onBuild(async = async) { _, inventory -> callback(inventory) }
     }
 
     /**
      * 元素点击回调
      */
-    open fun onClick(callback: (event: ClickEvent, index: Int, item: ItemStack) -> Unit) {
+    override fun onClick(callback: (event: ClickEvent, index: Int, item: ItemStack) -> Unit) {
         elementClickCallback = callback
     }
 
     /**
      * 设置下一页按钮
      */
-    open fun setNextPage(slot: Int, callback: (page: Int, hasNextPage: Boolean) -> ItemStack) {
+    override fun setNextPage(slot: Int, callback: (page: Int, hasNextPage: Boolean) -> ItemStack) {
         // 设置物品
         set(slot) { callback(page, hasNextPage()) }
         // 点击事件
@@ -123,7 +123,7 @@ open class LinkedGroup<T>(title: String) : ChestImpl(title) {
     /**
      * 设置上一页按钮
      */
-    open fun setPreviousPage(slot: Int, callback: (page: Int, hasPreviousPage: Boolean) -> ItemStack) {
+    override fun setPreviousPage(slot: Int, callback: (page: Int, hasPreviousPage: Boolean) -> ItemStack) {
         // 设置物品
         set(slot) { callback(page, hasPreviousPage()) }
         // 点击事件
@@ -140,21 +140,21 @@ open class LinkedGroup<T>(title: String) : ChestImpl(title) {
     /**
      * 切换页面回调
      */
-    open fun onPageChange(callback: (player: Player) -> Unit) {
+    override fun onPageChange(callback: (player: Player) -> Unit) {
         pageChangeCallback = callback
     }
 
     /**
      * 是否可以返回上一页
      */
-    open fun hasPreviousPage(): Boolean {
+    override fun hasPreviousPage(): Boolean {
         return page > 0
     }
 
     /**
      * 是否可以前往下一页
      */
-    open fun hasNextPage(): Boolean {
+    override fun hasNextPage(): Boolean {
         return page < elementsCache.size - 1
     }
 
@@ -162,7 +162,7 @@ open class LinkedGroup<T>(title: String) : ChestImpl(title) {
         return title.replace("%p", (page + 1).toString())
     }
 
-    open fun resetElementsCache() {
+    override fun resetElementsCache() {
         elementsCache = elementsCallback()
     }
 

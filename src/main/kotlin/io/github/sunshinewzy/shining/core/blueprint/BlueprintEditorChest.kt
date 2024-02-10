@@ -1,16 +1,19 @@
 package io.github.sunshinewzy.shining.core.blueprint
 
 import io.github.sunshinewzy.shining.Shining
+import io.github.sunshinewzy.shining.api.blueprint.BlueprintNodeType
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintClass
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintNode
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintNodeTree
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.api.objects.coordinate.Coordinate2D
 import io.github.sunshinewzy.shining.core.blueprint.node.EmptyBlueprintNode
+import io.github.sunshinewzy.shining.core.guide.context.GuideEditorContext
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
-import io.github.sunshinewzy.shining.core.menu.MapMenu
+import io.github.sunshinewzy.shining.core.menu.impl.MapChestImpl
 import io.github.sunshinewzy.shining.core.menu.onBack
+import io.github.sunshinewzy.shining.core.menu.openCascadeDeleteConfirmMenu
 import io.github.sunshinewzy.shining.objects.item.ShiningIcon
 import io.github.sunshinewzy.shining.utils.orderWith
 import io.github.sunshinewzy.shining.utils.toCoordinate2D
@@ -24,7 +27,7 @@ import taboolib.module.ui.type.Chest
 import taboolib.platform.util.buildItem
 import taboolib.platform.util.isAir
 
-open class BlueprintEditorMenu(title: String) : MapMenu<IBlueprintNode>(title) {
+open class BlueprintEditorChest(title: String) : MapChestImpl<IBlueprintNode>(title) {
     
     var blueprintClass: IBlueprintClass = BlueprintClass()
         private set
@@ -126,7 +129,8 @@ open class BlueprintEditorMenu(title: String) : MapMenu<IBlueprintNode>(title) {
         if (nodeTrees.isNotEmpty() && !this::currentNodeTree.isInitialized) {
             switchNodeTree(nodeTrees[0])
         }
-        
+
+        elementMap.clear()
         nodeTreeElementMap.clear()
         nodeTreeElementItems = subList(nodeTrees, nodeTreePage * 5, (nodeTreePage + 1) * 5)
 
@@ -137,9 +141,10 @@ open class BlueprintEditorMenu(title: String) : MapMenu<IBlueprintNode>(title) {
                 it.isCancelled = true
             }
             elementMap[it.rawSlot]?.let { pair ->
-                editNode(pair.first)
+                editNode(pair.first, pair.second)
                 elementClickCallback(it, pair.first, pair.second)
             } ?: nodeTreeElementMap[it.rawSlot]?.let { tree ->
+                offset(Coordinate2D.ORIGIN)
                 switchNodeTree(tree)
                 player.openInventory(build())
             } ?: kotlin.run {
@@ -151,7 +156,7 @@ open class BlueprintEditorMenu(title: String) : MapMenu<IBlueprintNode>(title) {
         }
     }
     
-    protected open fun editNode(node: IBlueprintNode) {
+    protected open fun editNode(node: IBlueprintNode, coordinate: Coordinate2D) {
         player.openMenu<Chest>(title) { 
             rows(5)
             map(
@@ -164,19 +169,39 @@ open class BlueprintEditorMenu(title: String) : MapMenu<IBlueprintNode>(title) {
             
             set('-', ShiningIcon.EDGE.item)
             onBack(player) { 
-                player.openInventory(this@BlueprintEditorMenu.build())
+                player.openInventory(this@BlueprintEditorChest.build())
+            }
+
+            val pre = node.predecessorOrNull
+            var index = 0
+            if (pre != null) {
+                for (nodeInArray in pre.successors) {
+                    if (node == nodeInArray) break
+                    index++
+                }
             }
             
-            if (node != EmptyBlueprintNode) {
-                val pre = node.predecessorOrNull
-                var index = 0
+            if (node is EmptyBlueprintNode) {
+                set('i', itemInsertNode.toLocalizedItem(player)) {
+                    BlueprintEditor.openNodeSelector(
+                        player,
+                        if (node === currentNodeTree.root) BlueprintNodeType.EVENT else BlueprintNodeType.FUNCTION,
+                        GuideEditorContext.Back {
+                            editNode(node, coordinate)
+                        } + BlueprintEditor.SelectNodeContext { newNode ->
+                            newNode.setSuccessor(0, node)
+                            if (pre == null) {
+                                currentNodeTree.root = newNode
+                            } else {
+                                pre.setSuccessor(index, newNode)
+                            }
+                            reopen()
+                        }
+                    )
+                }
+            } else {
                 if (pre != null) {
                     val array = pre.successors
-                    for (nodeInArray in array) {
-                        if (node == nodeInArray) break
-                        index++
-                    }
-                    
                     if (index > 0) {
                         set('u', ShiningIcon.MOVE_UP.toLocalizedItem(player)) {
                             val temp = array[index - 1]
@@ -224,14 +249,12 @@ open class BlueprintEditorMenu(title: String) : MapMenu<IBlueprintNode>(title) {
                     val suc = node.successor
                     if (suc.successorAmount == 1) {
                         set('r', ShiningIcon.MOVE_RIGHT.toLocalizedItem(player)) {
+                            node.setSuccessor(0, suc.successor)
+                            suc.setSuccessor(0, node)
                             if (pre == null) {
-                                node.setSuccessor(0, suc.successor)
-                                suc.setSuccessor(0, node)
                                 suc.setPredecessor(null)
                                 currentNodeTree.root = suc
                             } else {
-                                node.setSuccessor(0, suc.successor)
-                                suc.setSuccessor(0, node)
                                 pre.setSuccessor(index, suc)
                             }
                             reopen()
@@ -240,9 +263,58 @@ open class BlueprintEditorMenu(title: String) : MapMenu<IBlueprintNode>(title) {
                 }
                 
                 set('i', itemInsertNode.toLocalizedItem(player)) {
-                    
+                    BlueprintEditor.openNodeSelector(
+                        player,
+                        BlueprintNodeType.FUNCTION,
+                        GuideEditorContext.Back {
+                            editNode(node, coordinate)
+                        } + BlueprintEditor.SelectNodeContext { newNode ->
+                            newNode.setSuccessor(0, node)
+                            if (pre == null) {
+                                currentNodeTree.root = newNode
+                            } else {
+                                pre.setSuccessor(index, newNode)
+                            }
+                            reopen()
+                        }
+                    )
                 }
                 
+                set('x', ShiningIcon.REMOVE.toLocalizedItem(player)) {
+                    val isOneSuccessor = node.successorAmount == 1
+                    player.openCascadeDeleteConfirmMenu(isOneSuccessor) {
+                        if (isOneSuccessor) {
+                            val suc = node.successor
+                            onConfirm {
+                                node.clear()
+                                if (pre == null) {
+                                    suc.setPredecessor(null)
+                                    currentNodeTree.setRoot(suc)
+                                } else {
+                                    pre.setSuccessor(index, suc)
+                                }
+                                reopen()
+                            }
+                        }
+                        
+                        onCascadeDelete {
+                            val emptyNode = EmptyBlueprintNode()
+                            if (pre == null) {
+                                currentNodeTree.setRoot(emptyNode)
+                            } else {
+                                node.setPredecessor(null)
+                                pre.setSuccessor(index, emptyNode)
+                            }
+                            reopen()
+                        }
+                        
+                        onCancel { editNode(node, coordinate) }
+                    }
+                }
+                
+                set('e', itemEditNode.toLocalizedItem(player)) {
+                    node.onEdit()
+                }
             }
             
             onClick(lock = true)
@@ -258,6 +330,7 @@ open class BlueprintEditorMenu(title: String) : MapMenu<IBlueprintNode>(title) {
     companion object {
         val NODE_TREE_BASE_INDEX = 3 orderWith 6
         private val itemInsertNode = NamespacedIdItem(Material.NETHER_STAR, NamespacedId(Shining, "editor-blueprint-insert_node"))
+        private val itemEditNode = NamespacedIdItem(Material.BOOK, NamespacedId(Shining, "editor-blueprint-edit_node"))
     }
     
 }

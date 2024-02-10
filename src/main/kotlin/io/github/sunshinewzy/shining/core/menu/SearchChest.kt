@@ -9,7 +9,7 @@ import taboolib.platform.util.isNotAir
 import java.util.*
 
 @Suppress("UnstableApiUsage")
-open class Search<T>(title: String) : PageableChestImpl<T>(title) {
+open class SearchChest<T>(title: String) : PageableChestImpl<T>(title) {
     private var searchMap: () -> Map<String, T> = { hashMapOf() }
     private var searchMapCache: Map<String, T> = emptyMap()
     private var searchText: String = ""

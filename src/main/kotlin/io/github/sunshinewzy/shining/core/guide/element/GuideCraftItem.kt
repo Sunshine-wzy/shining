@@ -12,7 +12,7 @@ import io.github.sunshinewzy.shining.core.guide.ShiningGuide
 import io.github.sunshinewzy.shining.core.guide.state.GuideCraftItemState
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
-import io.github.sunshinewzy.shining.core.menu.LinkedGroup
+import io.github.sunshinewzy.shining.core.menu.impl.PageableGroupChestImpl
 import io.github.sunshinewzy.shining.core.menu.onBuildEdge
 import io.github.sunshinewzy.shining.core.universal.item.VanillaUniversalItem
 import io.github.sunshinewzy.shining.core.universal.recipe.VanillaUniversalRecipe
@@ -91,7 +91,7 @@ class GuideCraftItem : GuideElement {
             }
             
             submit {
-                player.openMenu<LinkedGroup<UniversalRecipe>>(player.getLangText(ShiningGuide.TITLE)) {
+                player.openMenu<PageableGroupChestImpl<UniversalRecipe>>(player.getLangText(ShiningGuide.TITLE)) {
                     rows(5)
                     slots(slotOrders)
                     onBuildEdge(edgeOrders)

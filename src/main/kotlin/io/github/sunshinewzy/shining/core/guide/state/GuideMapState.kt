@@ -20,7 +20,7 @@ import io.github.sunshinewzy.shining.core.guide.element.IGuideElementSuspend
 import io.github.sunshinewzy.shining.core.lang.getLangText
 import io.github.sunshinewzy.shining.core.lang.item.NamespacedIdItem
 import io.github.sunshinewzy.shining.core.lang.sendPrefixedLangText
-import io.github.sunshinewzy.shining.core.menu.MapMenu
+import io.github.sunshinewzy.shining.core.menu.impl.MapChestImpl
 import io.github.sunshinewzy.shining.core.menu.onBack
 import io.github.sunshinewzy.shining.core.menu.onBuildEdge
 import io.github.sunshinewzy.shining.core.menu.openDeleteConfirmMenu
@@ -83,7 +83,7 @@ class GuideMapState : GuideElementState(), IGuideElementContainerState {
     }
 
     override fun openAdvancedEditor(player: Player, team: IGuideTeam, context: GuideContext) {
-        player.openMenu<MapMenu<IGuideElement>>(player.getLangText("menu-shining_guide-editor-state-map-title")) { 
+        player.openMenu<MapChestImpl<IGuideElement>>(player.getLangText("menu-shining_guide-editor-state-map-title")) { 
             rows(6)
             area(Rectangle(2, 2, 8, 5))
             

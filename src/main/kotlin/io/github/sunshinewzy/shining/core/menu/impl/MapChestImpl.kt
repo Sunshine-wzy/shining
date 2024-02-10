@@ -1,7 +1,8 @@
-package io.github.sunshinewzy.shining.core.menu
+package io.github.sunshinewzy.shining.core.menu.impl
 
 import io.github.sunshinewzy.shining.api.objects.coordinate.Coordinate2D
 import io.github.sunshinewzy.shining.api.objects.coordinate.Rectangle
+import io.github.sunshinewzy.shining.core.menu.MapChest
 import io.github.sunshinewzy.shining.utils.orderWith
 import io.github.sunshinewzy.shining.utils.toCoordinate2D
 import org.bukkit.Material
@@ -15,16 +16,13 @@ import taboolib.platform.util.isAir
 import taboolib.platform.util.isNotAir
 import java.util.concurrent.ConcurrentHashMap
 
-open class MapMenu<T>(title: String) : ChestImpl(title) {
+open class MapChestImpl<T>(title: String) : ChestImpl(title), MapChest<T> {
     
-    var offset: Coordinate2D = Coordinate2D.ORIGIN
-        private set
-    var baseCoordinate: Coordinate2D = Coordinate2D(3, 3)
-        private set
-    var moveSpeed: Int = 2
-        private set
-    var isShinyMoveItem: Boolean = true
-        private set
+    override var offset: Coordinate2D = Coordinate2D.ORIGIN
+    override var baseCoordinate: Coordinate2D = Coordinate2D(3, 3)
+    override var moveSpeed: Int = 2
+    override var isShinyMoveItem: Boolean = true
+    
     protected var menuLocked: Boolean = true
     protected var menuArea: Rectangle = Rectangle.ORIGIN
     protected var offsetArea: Rectangle = Rectangle.ORIGIN
@@ -40,54 +38,54 @@ open class MapMenu<T>(title: String) : ChestImpl(title) {
     private val moveItems: Array<Pair<Int, (offset: Coordinate2D) -> ItemStack>?> = Array(4) { null }
     
     
-    open fun speed(speed: Int) {
+    override fun speed(speed: Int) {
         moveSpeed = speed
     }
     
-    open fun menuLocked(lockAll: Boolean) {
+    override fun menuLocked(lockAll: Boolean) {
         this.menuLocked = lockAll
     }
     
-    open fun area(area: Rectangle) {
+    override fun area(area: Rectangle) {
         this.menuArea = area
         updateOffsetArea()
     }
     
-    open fun base(base: Coordinate2D) {
+    override fun base(base: Coordinate2D) {
         baseCoordinate = base
     }
     
-    open fun offset(offset: Coordinate2D) {
+    override fun offset(offset: Coordinate2D) {
         this.offset = offset
         updateOffsetArea()
     }
     
-    open fun shinyMoveItem(shinyMoveItem: Boolean) {
+    override fun shinyMoveItem(shinyMoveItem: Boolean) {
         isShinyMoveItem = shinyMoveItem
     }
     
-    open fun elements(elements: () -> Map<Coordinate2D, T>) {
+    override fun elements(elements: () -> Map<Coordinate2D, T>) {
         elementsCallback = elements
     }
     
-    open fun onGenerate(async: Boolean = false, callback: (player: Player, element: T, coordinate: Coordinate2D, slot: Int) -> ItemStack) {
+    override fun onGenerate(async: Boolean, callback: (player: Player, element: T, coordinate: Coordinate2D, slot: Int) -> ItemStack) {
         if (async) asyncGenerateCallback = callback
         else generateCallback = callback
     }
     
-    open fun onClick(callback: (event: ClickEvent, element: T, coordinate: Coordinate2D) -> Unit) {
+    override fun onClick(callback: (event: ClickEvent, element: T, coordinate: Coordinate2D) -> Unit) {
         elementClickCallback = callback
     }
     
-    open fun onClickEmpty(callback: (event: ClickEvent, coordinate: Coordinate2D) -> Unit) {
+    override fun onClickEmpty(callback: (event: ClickEvent, coordinate: Coordinate2D) -> Unit) {
         clickEmptyCallback = callback
     }
     
-    open fun onMove(callback: (player: Player) -> Unit) {
+    override fun onMove(callback: (player: Player) -> Unit) {
         moveCallback = callback
     }
     
-    open fun setMoveRight(slot: Int, callback: (offset: Coordinate2D) -> ItemStack) {
+    override fun setMoveRight(slot: Int, callback: (offset: Coordinate2D) -> ItemStack) {
         moveItems[Direction.RIGHT.ordinal] = slot to callback
         onClick(slot) { 
             offset = offset.add(moveSpeed, 0)
@@ -97,7 +95,7 @@ open class MapMenu<T>(title: String) : ChestImpl(title) {
         }
     }
     
-    open fun setMoveLeft(slot: Int, callback: (offset: Coordinate2D) -> ItemStack) {
+    override fun setMoveLeft(slot: Int, callback: (offset: Coordinate2D) -> ItemStack) {
         moveItems[Direction.LEFT.ordinal] = slot to callback
         onClick(slot) {
             offset = offset.add(-moveSpeed, 0)
@@ -107,7 +105,7 @@ open class MapMenu<T>(title: String) : ChestImpl(title) {
         }
     }
 
-    open fun setMoveDown(slot: Int, callback: (offset: Coordinate2D) -> ItemStack) {
+    override fun setMoveDown(slot: Int, callback: (offset: Coordinate2D) -> ItemStack) {
         moveItems[Direction.DOWN.ordinal] = slot to callback
         onClick(slot) {
             offset = offset.add(0, moveSpeed)
@@ -117,7 +115,7 @@ open class MapMenu<T>(title: String) : ChestImpl(title) {
         }
     }
 
-    open fun setMoveUp(slot: Int, callback: (offset: Coordinate2D) -> ItemStack) {
+    override fun setMoveUp(slot: Int, callback: (offset: Coordinate2D) -> ItemStack) {
         moveItems[Direction.UP.ordinal] = slot to callback
         onClick(slot) {
             offset = offset.add(0, -moveSpeed)
@@ -127,7 +125,7 @@ open class MapMenu<T>(title: String) : ChestImpl(title) {
         }
     }
     
-    open fun setMoveToOrigin(slot: Int, callback: () -> ItemStack) {
+    override fun setMoveToOrigin(slot: Int, callback: () -> ItemStack) {
         set(slot, callback)
         onClick(slot) {
             offset(Coordinate2D.ORIGIN)
