@@ -8,8 +8,11 @@ import io.github.sunshinewzy.shining.api.guide.state.IGuideElementState
 import io.github.sunshinewzy.shining.api.guide.team.IGuideTeamManager
 import io.github.sunshinewzy.shining.api.machine.IMachineRegistry
 import io.github.sunshinewzy.shining.api.universal.item.IUniversalItemRegistry
+import org.bukkit.plugin.Plugin
 
 interface IShiningAPI {
+    
+    fun getPlugin(): Plugin
 
     fun getUniversalItemRegistry(): IUniversalItemRegistry
 

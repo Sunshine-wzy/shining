@@ -2,6 +2,7 @@ package io.github.sunshinewzy.shining.core.blueprint
 
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintNode
 import io.github.sunshinewzy.shining.core.blueprint.node.EmptyBlueprintNode
+import org.bukkit.entity.Player
 
 abstract class AbstractBlueprintNode(private val successorAmount: Int = 1) : IBlueprintNode {
 
@@ -15,7 +16,7 @@ abstract class AbstractBlueprintNode(private val successorAmount: Int = 1) : IBl
 
     override fun onExecute() {}
 
-    override fun onEdit() {}
+    override fun onEdit(player: Player) {}
 
     override fun getSuccessorAmount(): Int = successorAmount
 

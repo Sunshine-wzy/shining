@@ -3,6 +3,7 @@ package io.github.sunshinewzy.shining.api.blueprint;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.github.sunshinewzy.shining.api.utils.Intrinsics;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +23,7 @@ public interface IBlueprintNode {
 	/**
 	 * Executed when the node is edited.
 	 */
-	void onEdit();
+	void onEdit(@NotNull Player player);
 
 	/**
 	 * Gets the icon of the node.

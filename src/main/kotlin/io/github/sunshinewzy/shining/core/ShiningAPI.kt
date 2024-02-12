@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.core
 
+import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.IClassRegistry
 import io.github.sunshinewzy.shining.api.IShiningAPI
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintEditor
@@ -18,8 +19,11 @@ import io.github.sunshinewzy.shining.core.guide.state.GuideElementStateRegistry
 import io.github.sunshinewzy.shining.core.guide.team.GuideTeamManager
 import io.github.sunshinewzy.shining.core.machine.MachineRegistry
 import io.github.sunshinewzy.shining.core.universal.item.UniversalItemRegistry
+import org.bukkit.plugin.Plugin
 
 class ShiningAPI : IShiningAPI {
+
+    override fun getPlugin(): Plugin = Shining.plugin
 
     override fun getUniversalItemRegistry(): IUniversalItemRegistry = UniversalItemRegistry
 

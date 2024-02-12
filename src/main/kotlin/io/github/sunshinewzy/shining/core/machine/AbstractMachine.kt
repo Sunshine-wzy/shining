@@ -1,16 +1,22 @@
 package io.github.sunshinewzy.shining.core.machine
 
+import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintClass
 import io.github.sunshinewzy.shining.api.machine.*
 import io.github.sunshinewzy.shining.api.machine.component.IMachineComponent
 import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifecycle
 import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifecycle.*
+import io.github.sunshinewzy.shining.api.machine.event.*
 import io.github.sunshinewzy.shining.api.machine.structure.IMachineStructure
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
 import io.github.sunshinewzy.shining.core.blueprint.BlueprintClass
 import io.github.sunshinewzy.shining.core.machine.structure.SingleMachineStructure
+import org.bukkit.Bukkit
+import java.lang.reflect.Modifier
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.function.BiConsumer
+import java.util.logging.Level
 
 abstract class AbstractMachine(
     override val property: MachineProperty,
@@ -35,6 +41,68 @@ abstract class AbstractMachine(
     override fun register(): AbstractMachine {
         MachineRegistry.registerMachine(this)
         return this
+    }
+
+    override fun callEvent(event: MachineEvent) {
+        if (event.isAsynchronous) {
+            check(!Thread.holdsLock(this)) { event.getEventName() + " cannot be triggered asynchronously from inside synchronized code." }
+            check(!Bukkit.isPrimaryThread()) { event.getEventName() + " cannot be triggered asynchronously from primary server thread." }
+        } else {
+            check(Bukkit.isPrimaryThread()) { event.getEventName() + " cannot be triggered asynchronously from another thread." }
+        }
+        
+        fireEvent(event)
+    }
+    
+    private fun fireEvent(event: MachineEvent) {
+        val handlers = event.getHandlers()
+        val listeners = handlers.registeredListeners
+
+        for (registration in listeners) {
+            // TODO: machine world-settings
+//            if (!registration.machine.isEnabled) {
+//                continue
+//            }
+            try {
+                registration.callEvent(event)
+            } catch (th: Throwable) {
+                Shining.plugin.logger.log(
+                    Level.SEVERE,
+                    "Could not pass event " + event.getEventName() + " to machine " + property.id,
+                    th
+                )
+            }
+        }
+    }
+
+    override fun registerEvents(listener: MachineListener) {
+        for ((key, value) in MachineEventUtils.createRegisteredListeners(listener, this).entries) {
+            getEventListeners(getRegistrationClass(key)).registerAll(value)
+        }
+    }
+
+    override fun registerEvent(
+        event: Class<out MachineEvent>,
+        listener: MachineListener,
+        priority: MachineEventPriority,
+        executor: MachineEventExecutor,
+        ignoreCancelled: Boolean
+    ) {
+        getEventListeners(event).register(MachineRegisteredListener(listener, executor, priority, this, ignoreCancelled))
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : MachineEvent> registerListener(
+        event: Class<T>,
+        priority: MachineEventPriority,
+        ignoreCancelled: Boolean,
+        callback: BiConsumer<T, MachineListener>
+    ): MachineListener {
+        val listener = CallbackMachineListener(event) { machineEvent, machineListener->
+            callback.accept(machineEvent as T, machineListener)
+        }
+        registerEvent(event, listener, priority, listener, ignoreCancelled)
+        return listener
     }
 
     override fun <T : IMachineComponent> getComponent(type: Class<T>): T =
@@ -144,6 +212,31 @@ abstract class AbstractMachine(
 
         if (lifecycles.size != machineComponentLifecycleMethodNames.size) {
             scanParentComponentLifecycleMethods(type.superclass, lifecycles)
+        }
+    }
+
+    private fun getEventListeners(type: Class<out MachineEvent>): MachineHandlerList {
+        return try {
+            val method = getRegistrationClass(type).getDeclaredMethod("getHandlerList")
+            method.setAccessible(true)
+            if (!Modifier.isStatic(method.modifiers)) {
+                throw IllegalAccessException("getHandlerList must be static")
+            }
+            method.invoke(null) as MachineHandlerList
+        } catch (e: Exception) {
+            throw IllegalStateException("Error while registering listener for event type $type: $e")
+        }
+    }
+
+    private fun getRegistrationClass(clazz: Class<out MachineEvent>): Class<out MachineEvent> {
+        return try {
+            clazz.getDeclaredMethod("getHandlerList")
+            clazz
+        } catch (ex: NoSuchMethodException) {
+            if (clazz.superclass != null && clazz.superclass != MachineEvent::class.java
+                && MachineEvent::class.java.isAssignableFrom(clazz.superclass)
+            ) getRegistrationClass(clazz.superclass.asSubclass(MachineEvent::class.java))
+            else throw IllegalStateException("Unable to find handler list for event " + clazz.getName() + ". Static getHandlerList method required!")
         }
     }
     
