@@ -3,11 +3,9 @@ package io.github.sunshinewzy.shining.api.machine
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintClass
 import io.github.sunshinewzy.shining.api.machine.component.IMachineComponent
 import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifecycle
-import io.github.sunshinewzy.shining.api.machine.event.MachineEvent
-import io.github.sunshinewzy.shining.api.machine.event.MachineEventExecutor
-import io.github.sunshinewzy.shining.api.machine.event.MachineEventPriority
-import io.github.sunshinewzy.shining.api.machine.event.MachineListener
+import io.github.sunshinewzy.shining.api.machine.event.*
 import io.github.sunshinewzy.shining.api.machine.structure.IMachineStructure
+import io.github.sunshinewzy.shining.api.objects.coordinate.Coordinate3D
 import java.util.function.BiConsumer
 
 /**
@@ -30,18 +28,6 @@ interface IMachine {
      * You need to call [IMachineManager.activate] manually.
      */
     fun register(): IMachine
-
-    /**
-     * Calls an event with the given details
-     *
-     * @param event Event details
-     * @throws IllegalStateException Thrown when an asynchronous event is
-     *     fired from synchronous code.
-     *     <i>Note: This is best-effort basis, and should not be used to test
-     *     synchronized state. This is an indicator for flawed flow logic.</i>
-     */
-    @Throws(IllegalStateException::class)
-    fun callEvent(event: MachineEvent)
 
     /**
      * Registers all the events in the given listener class
@@ -105,6 +91,19 @@ interface IMachine {
      */
     fun <T : MachineEvent> registerListener(event: Class<T>, callback: BiConsumer<T, MachineListener>): MachineListener =
         registerListener(event, MachineEventPriority.NORMAL, true, callback)
+
+    /**
+     * Calls an event with the given details
+     *
+     * @param event Event details
+     * @return False if the event is cancelled. Always true if the event is not [MachineCancellable].
+     * @throws IllegalStateException Thrown when an asynchronous event is
+     *     fired from synchronous code.
+     *     <i>Note: This is best-effort basis, and should not be used to test
+     *     synchronized state. This is an indicator for flawed flow logic.</i>
+     */
+    @Throws(IllegalStateException::class)
+    fun callEvent(event: MachineEvent): Boolean
     
     /**
      * @return A Component of the matching type, otherwise throw an exception.
@@ -150,6 +149,21 @@ interface IMachine {
     /**
      * Execute the specified lifecycle methods of all components
      */
-    fun doLifecycle(lifecycle: MachineComponentLifecycle, context: IMachineContext? = null)
+    fun doLifecycle(lifecycle: MachineComponentLifecycle, context: IMachineContext?)
+
+    /**
+     * Execute the specified lifecycle methods of all components
+     */
+    fun doLifecycle(lifecycle: MachineComponentLifecycle) {
+        doLifecycle(lifecycle, null)
+    }
     
+    fun <T : MachineCoordinateEvent> bindCoordinateEvent(coordinate: Coordinate3D, event: Class<T>)
+    
+    fun <T : MachineCoordinateEvent> unbindCoordinateEvent(coordinate: Coordinate3D, event: Class<T>)
+    
+    fun getCoordinateEventCoordinates(): Set<Coordinate3D>
+    
+    fun getCoordinateEvents(coordinate: Coordinate3D): Set<Class<out MachineCoordinateEvent>>
+
 }

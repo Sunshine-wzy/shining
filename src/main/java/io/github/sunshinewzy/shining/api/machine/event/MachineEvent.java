@@ -1,6 +1,7 @@
 package io.github.sunshinewzy.shining.api.machine.event;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents an event.
@@ -8,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * All events require a static method named getHandlerList() which returns the same {@link MachineHandlerList} as {@link #getHandlers()}.
  */
 public abstract class MachineEvent {
+	@Nullable
 	private String name;
 	private final boolean async;
 
@@ -75,7 +77,6 @@ public abstract class MachineEvent {
 	}
 
 	public enum Result {
-
 		/**
 		 * Deny the event. Depending on the event, the action indicated by the
 		 * event will either not take place or will be reverted. Some actions

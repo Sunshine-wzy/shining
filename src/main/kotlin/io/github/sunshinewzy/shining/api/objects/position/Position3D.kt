@@ -1,5 +1,6 @@
 package io.github.sunshinewzy.shining.api.objects.position
 
+import io.github.sunshinewzy.shining.api.objects.coordinate.Coordinate3D
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Particle
@@ -10,6 +11,15 @@ data class Position3D @JvmOverloads constructor(val x: Int, val y: Int, val z: I
 
     constructor(location: Location) : this(location.blockX, location.blockY, location.blockZ, location.world?.name)
 
+    operator fun plus(coordinate: Coordinate3D): Position3D =
+        Position3D(x + coordinate.x, y + coordinate.y, z + coordinate.z, world)
+
+    operator fun minus(coordinate: Coordinate3D): Position3D =
+        Position3D(x - coordinate.x, y - coordinate.y, z - coordinate.z, world)
+
+    fun add(x: Int, y: Int, z: Int): Position3D =
+        Position3D(this.x + x, this.y + y, this.z + z, world)
+    
     override fun toString(): String = "$x,$y,$z;$world"
 
     fun toLocationOrNull(): Location? {

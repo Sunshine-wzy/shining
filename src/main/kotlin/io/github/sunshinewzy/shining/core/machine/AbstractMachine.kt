@@ -2,13 +2,17 @@ package io.github.sunshinewzy.shining.core.machine
 
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintClass
-import io.github.sunshinewzy.shining.api.machine.*
+import io.github.sunshinewzy.shining.api.machine.IMachine
+import io.github.sunshinewzy.shining.api.machine.IMachineContext
+import io.github.sunshinewzy.shining.api.machine.IMachineWrench
+import io.github.sunshinewzy.shining.api.machine.MachineProperty
 import io.github.sunshinewzy.shining.api.machine.component.IMachineComponent
 import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifecycle
 import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifecycle.*
 import io.github.sunshinewzy.shining.api.machine.event.*
 import io.github.sunshinewzy.shining.api.machine.structure.IMachineStructure
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId
+import io.github.sunshinewzy.shining.api.objects.coordinate.Coordinate3D
 import io.github.sunshinewzy.shining.core.blueprint.BlueprintClass
 import io.github.sunshinewzy.shining.core.machine.structure.SingleMachineStructure
 import org.bukkit.Bukkit
@@ -28,7 +32,8 @@ abstract class AbstractMachine(
     private val componentRegistry: MutableMap<Class<out IMachineComponent>, IMachineComponent> = ConcurrentHashMap()
     private val componentLifecycles: MutableMap<Class<out IMachineComponent>, MutableSet<MachineComponentLifecycle>> = HashMap()
     private val componentLifecycleRegistry: MutableMap<MachineComponentLifecycle, MutableSet<Class<out IMachineComponent>>> = EnumMap(MachineComponentLifecycle::class.java)
-
+    private val coordinateToEvents: MutableMap<Coordinate3D, MutableSet<Class<out MachineCoordinateEvent>>> = ConcurrentHashMap()
+    
     constructor() : this(MachineProperty(NamespacedId.NULL, "null"), SingleMachineStructure())
     
 
@@ -41,38 +46,6 @@ abstract class AbstractMachine(
     override fun register(): AbstractMachine {
         MachineRegistry.registerMachine(this)
         return this
-    }
-
-    override fun callEvent(event: MachineEvent) {
-        if (event.isAsynchronous) {
-            check(!Thread.holdsLock(this)) { event.getEventName() + " cannot be triggered asynchronously from inside synchronized code." }
-            check(!Bukkit.isPrimaryThread()) { event.getEventName() + " cannot be triggered asynchronously from primary server thread." }
-        } else {
-            check(Bukkit.isPrimaryThread()) { event.getEventName() + " cannot be triggered asynchronously from another thread." }
-        }
-        
-        fireEvent(event)
-    }
-    
-    private fun fireEvent(event: MachineEvent) {
-        val handlers = event.getHandlers()
-        val listeners = handlers.registeredListeners
-
-        for (registration in listeners) {
-            // TODO: machine world-settings
-//            if (!registration.machine.isEnabled) {
-//                continue
-//            }
-            try {
-                registration.callEvent(event)
-            } catch (th: Throwable) {
-                Shining.plugin.logger.log(
-                    Level.SEVERE,
-                    "Could not pass event " + event.getEventName() + " to machine " + property.id,
-                    th
-                )
-            }
-        }
     }
 
     override fun registerEvents(listener: MachineListener) {
@@ -103,6 +76,45 @@ abstract class AbstractMachine(
         }
         registerEvent(event, listener, priority, listener, ignoreCancelled)
         return listener
+    }
+
+    override fun callEvent(event: MachineEvent): Boolean {
+        if (event.isAsynchronous) {
+            check(!Thread.holdsLock(this)) { event.getEventName() + " cannot be triggered asynchronously from inside synchronized code." }
+            check(!Bukkit.isPrimaryThread()) { event.getEventName() + " cannot be triggered asynchronously from primary server thread." }
+        } else {
+            check(Bukkit.isPrimaryThread()) { event.getEventName() + " cannot be triggered asynchronously from another thread." }
+        }
+
+        fireEvent(event)
+        if (event is MachineCancellable) {
+            return !event.isCancelled
+        }
+        return true
+    }
+
+    private fun fireEvent(event: MachineEvent) {
+        val handlers = event.getHandlers()
+        val listeners = handlers.registeredListeners
+
+        for (registration in listeners) {
+            // TODO: machine world-settings
+//            if (!registration.machine.isEnabled) {
+//                continue
+//            }
+            if (registration.machine !== this)
+                continue
+            
+            try {
+                registration.callEvent(event)
+            } catch (th: Throwable) {
+                Shining.plugin.logger.log(
+                    Level.SEVERE,
+                    "Could not pass event " + event.getEventName() + " to machine " + registration.machine.property.id,
+                    th
+                )
+            }
+        }
     }
 
     override fun <T : IMachineComponent> getComponent(type: Class<T>): T =
@@ -161,15 +173,26 @@ abstract class AbstractMachine(
                 ENABLE -> component.onEnable()
                 ACTIVATE -> component.onActivate(context!!)
                 UPDATE -> component.onUpdate(context!!)
-                INTERACT -> component.onInteract(context!! as IMachineInteractContext)
-                RUN -> component.onRun(context!! as IMachineRunContext)
                 DEACTIVATE -> component.onDeactivate(context!!)
                 DISABLE -> component.onDisable()
                 DESTROY -> component.onDestroy()
             }
         }
     }
-    
+
+    override fun <T : MachineCoordinateEvent> bindCoordinateEvent(coordinate: Coordinate3D, event: Class<T>) {
+        coordinateToEvents.getOrPut(coordinate) { ConcurrentHashMap.newKeySet() }.add(event)
+    }
+
+    override fun <T : MachineCoordinateEvent> unbindCoordinateEvent(coordinate: Coordinate3D, event: Class<T>) {
+        coordinateToEvents[coordinate]?.remove(event)
+    }
+
+    override fun getCoordinateEventCoordinates(): Set<Coordinate3D> =
+        coordinateToEvents.keys
+
+    override fun getCoordinateEvents(coordinate: Coordinate3D): Set<Class<out MachineCoordinateEvent>> =
+        coordinateToEvents[coordinate] ?: emptySet()
 
     private fun <T : IMachineComponent> scanComponentLifecycleMethods(type: Class<T>): HashSet<MachineComponentLifecycle> {
         val lifecycles = HashSet<MachineComponentLifecycle>()

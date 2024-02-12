@@ -2,8 +2,6 @@ package io.github.sunshinewzy.shining.api.machine.component
 
 import io.github.sunshinewzy.shining.api.machine.IMachine
 import io.github.sunshinewzy.shining.api.machine.IMachineContext
-import io.github.sunshinewzy.shining.api.machine.IMachineInteractContext
-import io.github.sunshinewzy.shining.api.machine.IMachineRunContext
 
 interface IMachineComponent {
 
@@ -80,21 +78,6 @@ interface IMachineComponent {
      * Executed every tick.
      */
     fun onUpdate(context: IMachineContext) {}
-
-    /**
-     * Executed when an interactive block of the machine is interacted with by a player.
-     */
-    fun onInteract(context: IMachineInteractContext) {}
-
-    /**
-     * Executed when the machine is triggered to run.
-     * 
-     * The player interacts with an interactive block of the machine by right click can trigger it to run,
-     * which means [onInteract] will be executed first and then [onRun] will be executed.
-     * 
-     * Additionally, the machine can be triggered to run manually.
-     */
-    fun onRun(context: IMachineRunContext) {}
 
     /**
      * Executed when the machine is destroyed.

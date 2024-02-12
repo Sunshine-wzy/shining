@@ -1,8 +1,6 @@
 package io.github.sunshinewzy.shining.api.machine.component;
 
 import io.github.sunshinewzy.shining.api.machine.IMachineContext;
-import io.github.sunshinewzy.shining.api.machine.IMachineInteractContext;
-import io.github.sunshinewzy.shining.api.machine.IMachineRunContext;
 import org.jetbrains.annotations.NotNull;
 
 public enum MachineComponentLifecycle {
@@ -25,16 +23,6 @@ public enum MachineComponentLifecycle {
 	 * Every tick.
 	 */
 	UPDATE("onUpdate", IMachineContext.class),
-
-	/**
-	 * An interactive block of the machine is interacted with by a player.
-	 */
-	INTERACT("onInteract", IMachineInteractContext.class),
-
-	/**
-	 * The machine is triggered to run.
-	 */
-	RUN("onRun", IMachineRunContext.class),
 	
 	/**
 	 * The machine is destroyed.

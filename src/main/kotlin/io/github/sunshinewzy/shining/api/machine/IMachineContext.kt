@@ -7,6 +7,6 @@ interface IMachineContext {
     /**
      * The absolute position of the center block of the machine
      */
-    val position: Position3D
+    val center: Position3D
     
 }

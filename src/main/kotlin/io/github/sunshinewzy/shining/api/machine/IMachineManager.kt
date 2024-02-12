@@ -1,5 +1,7 @@
 package io.github.sunshinewzy.shining.api.machine
 
+import io.github.sunshinewzy.shining.api.machine.event.run.MachineRunEvent
+import io.github.sunshinewzy.shining.api.objects.coordinate.Coordinate3D
 import io.github.sunshinewzy.shining.api.objects.position.Position3D
 
 /**
@@ -21,7 +23,7 @@ interface IMachineManager {
     /**
      * Run the machine at [position].
      */
-    fun run(position: Position3D): IMachineRunContext?
+    fun run(position: Position3D): MachineRunEvent?
 
     /**
      * Check if there is a machine at [position].
@@ -34,6 +36,14 @@ interface IMachineManager {
      * If there is no machine at [position], it will return null.
      */
     fun getMachine(position: Position3D): IMachine?
+
+    fun bindCoordinateEventPosition(machine: IMachine)
+    
+    fun bindCoordinateEventPosition(machine: IMachine, coordinate: Coordinate3D)
+    
+    fun unbindCoordinateEventPosition(machine: IMachine)
+    
+    fun unbindCoordinateEventPosition(machine: IMachine, coordinate: Coordinate3D)
 
     /**
      * Get the center of the interactive block.
