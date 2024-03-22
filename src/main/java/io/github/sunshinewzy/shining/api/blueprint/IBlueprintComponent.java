@@ -15,13 +15,17 @@ public interface IBlueprintComponent {
 	 * @return A Component of the matching type, otherwise throw an exception.
 	 */
 	@NotNull
-	<T extends IBlueprintComponent> T getComponent(@NotNull Class<T> type);
+	default <T extends IBlueprintComponent> T getComponent(@NotNull Class<T> type) {
+		return getBlueprint().getComponent(type);
+	}
 
 	/**
 	 * @return A Component of the matching type, otherwise null if no Component is found.
 	 */
 	@Nullable
-	<T extends IBlueprintComponent> T getComponentOrNull(@NotNull Class<T> type);
+	default <T extends IBlueprintComponent> T getComponentOrNull(@NotNull Class<T> type) {
+		return getBlueprint().getComponentOrNull(type);
+	}
 
 	/**
 	 * Add the component to the blueprint.
@@ -30,7 +34,9 @@ public interface IBlueprintComponent {
 	 * @return component
 	 */
 	@NotNull
-	<T extends IBlueprintComponent> T addComponent(@NotNull Class<T> type, @NotNull T component);
+	default <T extends IBlueprintComponent> T addComponent(@NotNull Class<T> type, @NotNull T component) {
+		return getBlueprint().addComponent(type, component);
+	}
 
 	/**
 	 * Add the component to the blueprint. The [type] will be instantiated by reflection.
@@ -39,23 +45,31 @@ public interface IBlueprintComponent {
 	 * @return An instance of type
 	 */
 	@NotNull
-	<T extends IBlueprintComponent> T addComponent(@NotNull Class<T> type);
+	default <T extends IBlueprintComponent> T addComponent(@NotNull Class<T> type) {
+		return getBlueprint().addComponent(type);
+	}
 
 	/**
 	 * Remove the component from the blueprint.
 	 */
 	@Nullable
-	<T extends IBlueprintComponent> T removeComponent(@NotNull Class<T> type);
+	default <T extends IBlueprintComponent> T removeComponent(@NotNull Class<T> type) {
+		return getBlueprint().removeComponent(type);
+	}
 
 	/**
 	 * Check if the blueprint has the component of type.
 	 */
-	<T extends IBlueprintComponent> boolean hasComponent(@NotNull Class<T> type);
+	default <T extends IBlueprintComponent> boolean hasComponent(@NotNull Class<T> type) {
+		return getBlueprint().hasComponent(type);
+	}
 
 	/**
 	 * Check if type has the lifecycle.
 	 */
-	<T extends IBlueprintComponent> boolean hasComponentLifecycle(@NotNull Class<T> type, @NotNull BlueprintComponentLifecycle lifecycle);
+	default <T extends IBlueprintComponent> boolean hasComponentLifecycle(@NotNull Class<T> type, @NotNull BlueprintComponentLifecycle lifecycle) {
+		return getBlueprint().hasComponentLifecycle(type, lifecycle);
+	}
 
 	/**
 	 * Executed when the component is added to the blueprint.
