@@ -2,13 +2,8 @@ package io.github.sunshinewzy.shining.core.machine
 
 import io.github.sunshinewzy.shining.Shining
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintClass
-import io.github.sunshinewzy.shining.api.machine.IMachine
-import io.github.sunshinewzy.shining.api.machine.IMachineContext
-import io.github.sunshinewzy.shining.api.machine.IMachineWrench
-import io.github.sunshinewzy.shining.api.machine.MachineProperty
-import io.github.sunshinewzy.shining.api.machine.component.IMachineComponent
-import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifecycle
-import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifecycle.*
+import io.github.sunshinewzy.shining.api.machine.*
+import io.github.sunshinewzy.shining.api.machine.MachineComponentLifecycle.*
 import io.github.sunshinewzy.shining.api.machine.event.*
 import io.github.sunshinewzy.shining.api.machine.structure.IMachineStructure
 import io.github.sunshinewzy.shining.api.namespace.NamespacedId

@@ -1,17 +1,15 @@
 package io.github.sunshinewzy.shining.api.blueprint;
 
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+public interface IBlueprintComponent {
 
-public interface IBlueprintClass {
-	
+	/**
+	 * The blueprint class this component is attached to. A component is always attached to a blueprint.
+	 */
 	@NotNull
-	ArrayList<IBlueprintNodeTree> getNodeTrees();
-	
-	void edit(@NotNull Player player);
+	IBlueprintClass getBlueprint();
 
 	/**
 	 * @return A Component of the matching type, otherwise throw an exception.
@@ -60,8 +58,38 @@ public interface IBlueprintClass {
 	<T extends IBlueprintComponent> boolean hasComponentLifecycle(@NotNull Class<T> type, @NotNull BlueprintComponentLifecycle lifecycle);
 
 	/**
-	 * Execute the specified lifecycle methods of all components.
+	 * Executed when the component is added to the blueprint.
 	 */
-	void doLifecycle(@NotNull BlueprintComponentLifecycle lifecycle);
+	default void onLoad() {}
+
+	/**
+	 * Executed when the component is enabled.
+	 */
+	default void onEnable() {}
+
+	/**
+	 * Executed when the blueprint is created.
+	 */
+	default void onActivate() {}
+
+	/**
+	 * Executed every tick.
+	 */
+	default void onUpdate() {}
+
+	/**
+	 * Executed when the blueprint is destroyed.
+	 */
+	default void onDeactivate() {}
+
+	/**
+	 * Executed when the component is disabled.
+	 */
+	default void onDisable() {}
+
+	/**
+	 * Executed when the component is removed from the blueprint.
+	 */
+	default void onDestroy() {}
 	
 }

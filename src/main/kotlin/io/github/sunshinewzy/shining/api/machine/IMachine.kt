@@ -1,8 +1,6 @@
 package io.github.sunshinewzy.shining.api.machine
 
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintClass
-import io.github.sunshinewzy.shining.api.machine.component.IMachineComponent
-import io.github.sunshinewzy.shining.api.machine.component.MachineComponentLifecycle
 import io.github.sunshinewzy.shining.api.machine.event.*
 import io.github.sunshinewzy.shining.api.machine.structure.IMachineStructure
 import io.github.sunshinewzy.shining.api.objects.coordinate.Coordinate3D
@@ -147,12 +145,12 @@ interface IMachine {
     fun <T : IMachineComponent> hasComponentLifecycle(type: Class<T>, lifecycle: MachineComponentLifecycle): Boolean
 
     /**
-     * Execute the specified lifecycle methods of all components
+     * Execute the specified lifecycle methods of all components.
      */
     fun doLifecycle(lifecycle: MachineComponentLifecycle, context: IMachineContext?)
 
     /**
-     * Execute the specified lifecycle methods of all components
+     * Execute the specified lifecycle methods of all components.
      */
     fun doLifecycle(lifecycle: MachineComponentLifecycle) {
         doLifecycle(lifecycle, null)

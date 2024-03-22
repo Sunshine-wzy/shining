@@ -313,7 +313,7 @@ open class BlueprintEditorChest(title: String) : MapChestImpl<IBlueprintNode>(ti
                 }
                 
                 set('e', itemEditNode.toLocalizedItem(player)) {
-                    node.onEdit()
+                    node.onEdit(player)
                 }
             }
             

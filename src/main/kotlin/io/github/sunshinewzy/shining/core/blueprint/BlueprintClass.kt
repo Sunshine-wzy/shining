@@ -1,6 +1,8 @@
 package io.github.sunshinewzy.shining.core.blueprint
 
+import io.github.sunshinewzy.shining.api.blueprint.BlueprintComponentLifecycle
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintClass
+import io.github.sunshinewzy.shining.api.blueprint.IBlueprintComponent
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintNodeTree
 import io.github.sunshinewzy.shining.api.objects.coordinate.Coordinate2D
 import io.github.sunshinewzy.shining.api.objects.coordinate.Rectangle
@@ -13,11 +15,16 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import taboolib.module.ui.openMenu
 import taboolib.platform.util.buildItem
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 class BlueprintClass : IBlueprintClass {
     
     private val nodeTrees: ArrayList<IBlueprintNodeTree> = ArrayList()
-    
+    private val componentRegistry: MutableMap<Class<out IBlueprintComponent>, IBlueprintComponent> = ConcurrentHashMap()
+    private val componentLifecycles: MutableMap<Class<out IBlueprintComponent>, MutableSet<BlueprintComponentLifecycle>> = HashMap()
+    private val componentLifecycleRegistry: MutableMap<BlueprintComponentLifecycle, MutableSet<Class<out IBlueprintComponent>>> = EnumMap(BlueprintComponentLifecycle::class.java)
+
 
     override fun getNodeTrees(): ArrayList<IBlueprintNodeTree> = nodeTrees
 
@@ -51,6 +58,110 @@ class BlueprintClass : IBlueprintClass {
                 } else ShiningIcon.EDGE.item
             }
         }
+    }
+
+    override fun <T : IBlueprintComponent> getComponent(type: Class<T>): T =
+        getComponentOrNull(type) ?: throw IllegalArgumentException("The blueprint does not have a component of type '$type'.")
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : IBlueprintComponent> getComponentOrNull(type: Class<T>): T? =
+        componentRegistry[type] as? T
+
+    override fun <T : IBlueprintComponent> addComponent(type: Class<T>, component: T): T {
+        componentRegistry[type] = component
+
+        val lifecycles = scanComponentLifecycleMethods(type)
+        componentLifecycles[type] = lifecycles
+
+        lifecycles.forEach { lifecycle ->
+            componentLifecycleRegistry
+                .getOrPut(lifecycle) { HashSet() }
+                .add(type)
+        }
+
+        if (hasComponentLifecycle(type, BlueprintComponentLifecycle.LOAD))
+            component.onLoad()
+        return component
+    }
+
+    override fun <T : IBlueprintComponent> addComponent(type: Class<T>): T {
+        val component = type.getConstructor(IBlueprintClass::class.java).newInstance(this) as T
+        return addComponent(type, component)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : IBlueprintComponent> removeComponent(type: Class<T>): T? {
+        val component = componentRegistry.remove(type) as? T ?: return null
+        if (hasComponentLifecycle(type, BlueprintComponentLifecycle.DESTROY))
+            component.onDestroy()
+        componentLifecycles.remove(type)?.forEach { lifecycle ->
+            componentLifecycleRegistry[lifecycle]?.remove(type)
+        }
+        return component
+    }
+
+    override fun <T : IBlueprintComponent> hasComponent(type: Class<T>): Boolean =
+        componentRegistry.containsKey(type)
+
+    override fun <T : IBlueprintComponent?> hasComponentLifecycle(type: Class<T>, lifecycle: BlueprintComponentLifecycle): Boolean {
+        val lifecycles = componentLifecycles[type] ?: return false
+        return lifecycles.contains(lifecycle)
+    }
+
+    override fun doLifecycle(lifecycle: BlueprintComponentLifecycle) {
+        componentLifecycleRegistry[lifecycle]?.forEach { type ->
+            val component = getComponent(type)
+            when (lifecycle) {
+                BlueprintComponentLifecycle.LOAD -> component.onLoad()
+                BlueprintComponentLifecycle.ENABLE -> component.onEnable()
+                BlueprintComponentLifecycle.ACTIVATE -> component.onActivate()
+                BlueprintComponentLifecycle.UPDATE -> component.onUpdate()
+                BlueprintComponentLifecycle.DEACTIVATE -> component.onDeactivate()
+                BlueprintComponentLifecycle.DISABLE -> component.onDisable()
+                BlueprintComponentLifecycle.DESTROY -> component.onDestroy()
+            }
+        }
+    }
+
+    private fun <T : IBlueprintComponent> scanComponentLifecycleMethods(type: Class<T>): HashSet<BlueprintComponentLifecycle> {
+        val lifecycles = HashSet<BlueprintComponentLifecycle>()
+        val declaredMethods = type.javaClass.declaredMethods
+        for (declaredMethod in declaredMethods) {
+            blueprintComponentLifecycleMethodNames[declaredMethod.name]?.let { lifecycle ->
+                val parameterTypes = declaredMethod.parameterTypes
+                if (parameterTypes.isNotEmpty()) return@let
+                lifecycles += lifecycle
+            }
+        }
+
+        if (lifecycles.size != blueprintComponentLifecycleMethodNames.size) {
+            scanParentComponentLifecycleMethods(type.superclass, lifecycles)
+        }
+        return lifecycles
+    }
+
+    private fun scanParentComponentLifecycleMethods(type: Class<*>?, lifecycles: HashSet<BlueprintComponentLifecycle>) {
+        if (type == null || type == IBlueprintComponent::class.java || type == Any::class.java) return
+
+        val declaredMethods = type.javaClass.declaredMethods
+        for (declaredMethod in declaredMethods) {
+            blueprintComponentLifecycleMethodNames[declaredMethod.name]?.let { lifecycle ->
+                if (lifecycles.contains(lifecycle)) return@let
+
+                val parameterTypes = declaredMethod.parameterTypes
+                if (parameterTypes.isNotEmpty()) return@let
+                lifecycles += lifecycle
+            }
+        }
+
+        if (lifecycles.size != blueprintComponentLifecycleMethodNames.size) {
+            scanParentComponentLifecycleMethods(type.superclass, lifecycles)
+        }
+    }
+    
+    companion object {
+        val blueprintComponentLifecycleMethodNames: Map<String, BlueprintComponentLifecycle> =
+            BlueprintComponentLifecycle.values().associateBy { it.methodName }
     }
     
 }

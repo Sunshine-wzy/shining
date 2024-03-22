@@ -1,7 +1,4 @@
-package io.github.sunshinewzy.shining.api.machine.component
-
-import io.github.sunshinewzy.shining.api.machine.IMachine
-import io.github.sunshinewzy.shining.api.machine.IMachineContext
+package io.github.sunshinewzy.shining.api.machine
 
 interface IMachineComponent {
 

@@ -1,6 +1,5 @@
-package io.github.sunshinewzy.shining.api.machine.component;
+package io.github.sunshinewzy.shining.api.machine;
 
-import io.github.sunshinewzy.shining.api.machine.IMachineContext;
 import org.jetbrains.annotations.NotNull;
 
 public enum MachineComponentLifecycle {

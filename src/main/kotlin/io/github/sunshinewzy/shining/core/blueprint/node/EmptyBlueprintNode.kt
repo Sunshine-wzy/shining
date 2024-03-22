@@ -3,6 +3,7 @@ package io.github.sunshinewzy.shining.core.blueprint.node
 import io.github.sunshinewzy.shining.api.blueprint.IBlueprintNode
 import io.github.sunshinewzy.shining.core.blueprint.IBlueprintLangNode
 import org.bukkit.Material
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 open class EmptyBlueprintNode : IBlueprintLangNode {
@@ -13,7 +14,7 @@ open class EmptyBlueprintNode : IBlueprintLangNode {
 
     override fun onExecute() {}
 
-    override fun onEdit() {}
+    override fun onEdit(player: Player) {}
 
     override fun getIcon(): ItemStack = ItemStack(Material.GLASS_PANE)
 
