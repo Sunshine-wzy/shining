@@ -7,12 +7,13 @@ import io.github.sunshinewzy.shining.api.lang.transfer.TextTransfer
 import io.github.sunshinewzy.shining.core.lang.transfer.ColorTextTransfer
 import taboolib.common.platform.function.warning
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 import java.util.jar.JarFile
 
 abstract class LanguageManager(val jarFile: File) : ILanguageManager {
 
     protected val languageCode: HashSet<String> = HashSet()
-    protected val languageFileMap: HashMap<String, LanguageFile> = HashMap()
+    protected val languageFileMap: ConcurrentHashMap<String, LanguageFile> = ConcurrentHashMap()
 
     val textTransfer: MutableList<TextTransfer> = ArrayList()
 

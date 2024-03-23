@@ -3,13 +3,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
 plugins {
-    val kotlinVersion = "1.7.21"
+    val kotlinVersion = "1.8.22"
     `java-library`
     `maven-publish`
-    id("io.izzel.taboolib") version "2.0.5"
+    id("io.izzel.taboolib") version "2.0.11"
     id("org.jetbrains.kotlin.jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
-    id("org.jetbrains.dokka") version "1.7.20"
 }
 
 taboolib {
@@ -23,7 +22,7 @@ taboolib {
     }
     
     version { 
-        taboolib = "6.1.0-dev"
+        taboolib = "6.1.1-beta15"
         coroutines = "1.6.4"
         
         skipKotlinRelocate = true
@@ -78,9 +77,6 @@ dependencies {
     compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
 
     taboo("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion") { isTransitive = false }
-//    taboo("com.fasterxml.jackson.core:jackson-core:$jacksonVersion") { isTransitive = false }
-//    taboo("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion") { isTransitive = false }
-//    taboo("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion") { isTransitive = false }
     compileOnly("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
     compileOnly("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     compileOnly("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
